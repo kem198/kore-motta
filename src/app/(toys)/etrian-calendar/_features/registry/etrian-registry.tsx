@@ -2,7 +2,6 @@
 
 import { sampleEtrians } from "@/app/(toys)/etrian-calendar/_common/constants/sample";
 import { Etrian } from "@/app/(toys)/etrian-calendar/_common/types/etrian";
-import { RegistryFormValues } from "@/app/(toys)/etrian-calendar/_features/registry/schemas/registry-form-schema";
 import { ConfirmDialog } from "@/components/shared/dialog/confirm-dialog";
 import { ExportDialog } from "@/components/shared/dialog/export-dialog";
 import { ImportDialog } from "@/components/shared/dialog/import-dialog";
@@ -12,6 +11,7 @@ import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
 import { useEtrianRegistry } from "@/hooks/use-etrian-registry";
+import { RegistryFormValues } from "@/schemas/registry-form-schema";
 import {
   AlertCircleIcon,
   DownloadIcon,

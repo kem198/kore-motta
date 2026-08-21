@@ -13,10 +13,6 @@ import {
 import { Controller, useForm } from "react-hook-form";
 
 import { Etrian } from "@/app/(toys)/etrian-calendar/_common/types/etrian";
-import {
-  RegistryFormValues,
-  registryFormSchema,
-} from "@/app/(toys)/etrian-calendar/_features/registry/schemas/registry-form-schema";
 import { Required } from "@/components/shared/required";
 import { Button } from "@/components/ui/button";
 import {
@@ -39,6 +35,10 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  RegistryFormValues,
+  registryFormSchema,
+} from "@/schemas/registry-form-schema";
 
 type EditDialogProps = {
   etrian: Etrian;

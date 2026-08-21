@@ -1,12 +1,12 @@
 "use client";
 
-import {
-  RegistryFormValues,
-  registryFormSchema,
-} from "@/app/(toys)/etrian-calendar/_features/registry/schemas/registry-form-schema";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import {
+  RegistryFormValues,
+  registryFormSchema,
+} from "@/schemas/registry-form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UserRoundPlus } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
