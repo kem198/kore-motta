@@ -1,18 +1,7 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { UserRoundCheck } from "lucide-react";
-import {
-  ComponentProps,
-  ReactElement,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
-import { Controller, useForm } from "react-hook-form";
-
 import { Required } from "@/components/shared/required";
+import { TodoToggle } from "@/components/shared/todo-toggle";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -36,6 +25,17 @@ import { Textarea } from "@/components/ui/textarea";
 import { MESSAGES } from "@/constants/messages";
 import { TodoFormValues, todoFormSchema } from "@/schemas/todo-form-schema";
 import { Todo } from "@/types/todo";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { UserRoundCheck } from "lucide-react";
+import {
+  ComponentProps,
+  ReactElement,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
+import { Controller, useForm } from "react-hook-form";
 
 type EditDialogProps = {
   todo: Todo;
@@ -44,12 +44,13 @@ type EditDialogProps = {
 } & ComponentProps<typeof DialogTrigger>;
 
 export function EditDialog({
-  todo: todo,
+  todo,
   onSave,
   children,
   ...props
 }: EditDialogProps) {
   const [open, setOpen] = useState(false);
+  const [completed, setCompleted] = useState(todo.completed);
 
   const form = useForm<TodoFormValues>({
     resolver: zodResolver(todoFormSchema),
@@ -64,6 +65,7 @@ export function EditDialog({
       name: todo.name,
       memo: todo.memo,
     });
+    setCompleted(todo.completed);
   }, [todo, form]);
 
   useEffect(() => {
@@ -79,6 +81,7 @@ export function EditDialog({
       ...todo,
       name: data.name.trim(),
       memo: data.memo?.trim() || undefined,
+      completed,
     };
 
     onSave(updatedTodo);
@@ -102,6 +105,15 @@ export function EditDialog({
         <form id="todo-edit" onSubmit={form.handleSubmit(handleSubmit)}>
           <FieldGroup>
             <FieldSet>
+              <Field>
+                {/* TODO: ボタンの見た目を整える */}
+                <TodoToggle
+                  todo={{ ...todo, completed }}
+                  onChange={(updated) => setCompleted(updated.completed)}
+                  aria-label={`${todo.name} の完了状態`}
+                />
+              </Field>
+
               <Controller
                 name="name"
                 control={form.control}
@@ -150,6 +162,7 @@ export function EditDialog({
             </FieldSet>
           </FieldGroup>
         </form>
+
         <DialogFooter className="gap-y-2">
           <DialogClose
             render={
