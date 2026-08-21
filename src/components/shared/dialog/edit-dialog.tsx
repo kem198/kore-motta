@@ -92,8 +92,6 @@ export function EditDialog({
         <DialogHeader>
           <DialogTitle>Todo の編集</DialogTitle>
           <DialogDescription>
-            Todo の情報を設定してください。
-            <br />
             <Required /> は必須項目です。
           </DialogDescription>
         </DialogHeader>
