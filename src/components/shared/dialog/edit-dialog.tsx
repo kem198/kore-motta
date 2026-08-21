@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { MESSAGES } from "@/constants/messages";
 import { TodoFormValues, todoFormSchema } from "@/schemas/todo-form-schema";
 import { Todo } from "@/types/todo";
 
@@ -90,9 +91,11 @@ export function EditDialog({
 
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Todo の編集</DialogTitle>
+          <DialogTitle>{MESSAGES.dialogs.editItem}</DialogTitle>
           <DialogDescription>
-            <Required /> は必須項目です。
+            <>
+              <Required /> {MESSAGES.validation.requiredNote}
+            </>
           </DialogDescription>
         </DialogHeader>
 
@@ -105,14 +108,14 @@ export function EditDialog({
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor="todo-name-edit">
-                      タイトル
+                      {MESSAGES.labels.title}
                       <Required />
                     </FieldLabel>
                     <Input
                       {...field}
                       id="todo-name-edit"
                       aria-invalid={fieldState.invalid}
-                      placeholder="財布"
+                      placeholder={MESSAGES.placeholders.title}
                       autoComplete="off"
                     />
                     {fieldState.invalid && (
@@ -127,11 +130,13 @@ export function EditDialog({
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field>
-                    <FieldLabel htmlFor="todo-memo">メモ</FieldLabel>
+                    <FieldLabel htmlFor="todo-memo">
+                      {MESSAGES.labels.memo}
+                    </FieldLabel>
                     <Textarea
                       {...field}
                       id="todo-memo"
-                      placeholder="カバンのポケットに入れる"
+                      placeholder={MESSAGES.placeholders.memo}
                       rows={4}
                       className="resize-none"
                       aria-invalid={fieldState.invalid}
@@ -149,13 +154,13 @@ export function EditDialog({
           <DialogClose
             render={
               <Button type="button" variant="outline">
-                キャンセル
+                {MESSAGES.actions.cancel}
               </Button>
             }
           />
           <Button type="submit" form="todo-edit">
             <UserRoundCheck />
-            更新
+            {MESSAGES.actions.update}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Field, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { MESSAGES } from "@/constants/messages";
 import { TodoFormValues, todoFormSchema } from "@/schemas/todo-form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UserRoundPlus } from "lucide-react";
@@ -39,7 +40,7 @@ export function TodoForm({ onSubmit, isEditing }: TodoFormProps) {
                 {...field}
                 id="todoname"
                 aria-invalid={fieldState.invalid}
-                placeholder="ししょー"
+                placeholder={MESSAGES.placeholders.newItem}
                 autoComplete="off"
                 disabled={isEditing}
               />
@@ -49,7 +50,7 @@ export function TodoForm({ onSubmit, isEditing }: TodoFormProps) {
         />
         <Button type="submit" form="todoadd" disabled={isEditing}>
           <UserRoundPlus />
-          登録
+          {MESSAGES.actions.add}
         </Button>
       </div>
     </form>

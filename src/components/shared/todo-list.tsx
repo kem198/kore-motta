@@ -15,6 +15,7 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import { Skeleton } from "@/components/ui/skeleton";
+import { MESSAGES } from "@/constants/messages";
 import { Todo } from "@/types/todo";
 import {
   AlertCircleIcon,
@@ -80,20 +81,20 @@ function TodoItem({
         {isEditing && (
           <>
             <ConfirmDialog
-              title="Todo の削除"
-              description="下記の Todo を削除します。"
+              title={MESSAGES.dialogs.deleteItem.title}
+              description={MESSAGES.dialogs.deleteItem.description}
               content={
                 <>
                   <p>
-                    Todo: <span className="font-semibold">{todo.name}</span>
+                    アイテム: <span className="font-semibold">{todo.name}</span>
                   </p>
                   <Alert variant="destructive">
                     <AlertCircleIcon size={16} />
-                    <AlertTitle>この操作は元に戻せません。</AlertTitle>
+                    <AlertTitle>{MESSAGES.warnings.irreversible}</AlertTitle>
                   </Alert>
                 </>
               }
-              confirmButtonLabel="削除"
+              confirmButtonLabel={MESSAGES.actions.delete}
               confirmButtonVariant="destructive"
               onConfirm={() => onDelete(todo)}
             >
@@ -101,7 +102,7 @@ function TodoItem({
                 variant="destructive"
                 size="icon"
                 className="rounded-full"
-                aria-label={`削除: ${todo.name}`}
+                aria-label={`${MESSAGES.actions.delete}: ${todo.name}`}
               >
                 <Trash2 />
               </Button>
@@ -114,7 +115,7 @@ function TodoItem({
                 className="rounded-full"
                 onClick={() => onReorder(index, index - 1)}
                 disabled={index === 0}
-                aria-label={`上へ移動: ${todo.name}`}
+                aria-label={`${MESSAGES.aria.moveUp}: ${todo.name}`}
               >
                 <ChevronUp />
               </Button>
@@ -125,7 +126,7 @@ function TodoItem({
                 className="rounded-full"
                 onClick={() => onReorder(index, index + 1)}
                 disabled={index === length - 1}
-                aria-label={`下へ移動: ${todo.name}`}
+                aria-label={`${MESSAGES.aria.moveDown}: ${todo.name}`}
               >
                 <ChevronDown />
               </Button>
@@ -135,7 +136,7 @@ function TodoItem({
                   variant="secondary"
                   size="icon"
                   className="rounded-full"
-                  aria-label={`編集: ${todo.name}`}
+                  aria-label={`${MESSAGES.actions.edit}: ${todo.name}`}
                 >
                   <Pencil />
                 </Button>
@@ -150,7 +151,7 @@ function TodoItem({
               variant="secondary"
               size="icon"
               className="rounded-full"
-              aria-label={`編集: ${todo.name}`}
+              aria-label={`${MESSAGES.actions.edit}: ${todo.name}`}
             >
               <Pencil />
             </Button>

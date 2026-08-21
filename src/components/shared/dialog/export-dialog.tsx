@@ -10,6 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "@/components/ui/toast";
+import { MESSAGES } from "@/constants/messages";
 import { TodoStorage } from "@/types/todo";
 import { ComponentProps, ReactElement, ReactNode } from "react";
 
@@ -23,16 +24,20 @@ export function ExportDialog({
   children,
   ...props
 }: ExportDialogProps) {
+  const lines = MESSAGES.dialogs.export.description.split("\n");
   return (
     <Dialog>
       <DialogTrigger render={children as ReactElement} {...props} />
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Todo 情報のエクスポート</DialogTitle>
+          <DialogTitle>{MESSAGES.dialogs.export.title}</DialogTitle>
           <DialogDescription>
-            ブラウザ上に保存されている Todo 情報を表示します。
-            <br />
-            コピーして復元や端末間の移行にご利用ください。
+            {lines.map((line: string, i: number) => (
+              <span key={i}>
+                {line}
+                <br />
+              </span>
+            ))}
           </DialogDescription>
         </DialogHeader>
         <Button
@@ -41,18 +46,18 @@ export function ExportDialog({
               const json = JSON.stringify(todoStorage, null, 2);
               void navigator.clipboard.writeText(json);
               toast.add({
-                title: "Todo 情報をクリップボードにコピーしました",
+                title: MESSAGES.toast.clipboardCopied,
                 type: "success",
               });
-            } catch (e) {
+            } catch {
               toast.add({
-                title: "Todo 情報をクリップボードにコピーしました",
+                title: MESSAGES.toast.clipboardCopied,
                 type: "error",
               });
             }
           }}
         >
-          コピー
+          {MESSAGES.actions.copy}
         </Button>
         <JsonDisplay
           data={todoStorage}

@@ -1,1 +1,3 @@
-export const UNSET_SELECT_VALUE = "未設定";
+import { MESSAGES } from "@/constants/messages";
+
+export const UNSET_SELECT_VALUE = MESSAGES.actions.unset;

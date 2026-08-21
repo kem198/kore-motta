@@ -9,6 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { MESSAGES } from "@/constants/messages";
 import { ComponentProps, ReactElement, ReactNode } from "react";
 
 type ConfirmDialogProps = {
@@ -28,9 +29,9 @@ export function ConfirmDialog({
   title,
   description,
   content,
-  confirmButtonLabel = "はい",
+  confirmButtonLabel = MESSAGES.actions.yes,
   confirmButtonVariant = "default",
-  cancelButtonLabel = "キャンセル",
+  cancelButtonLabel = MESSAGES.actions.cancel,
   onConfirm,
   onCancel,
   className,

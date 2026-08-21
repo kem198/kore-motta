@@ -1,7 +1,5 @@
 "use client";
 
-import { ReactElement, useState } from "react";
-
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,38 +13,52 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
+import { MESSAGES } from "@/constants/messages";
 import { AlertCircleIcon } from "lucide-react";
+import { ComponentProps, ReactElement, useState } from "react";
 
 type ImportDialogProps = {
   onImport: (data: string) => boolean;
   children: React.ReactNode;
-};
+} & ComponentProps<typeof DialogTrigger>;
 
-export function ImportDialog({ onImport, children }: ImportDialogProps) {
+export function ImportDialog({
+  onImport,
+  children,
+  ...props
+}: ImportDialogProps) {
   const [value, setValue] = useState("");
   const [error, setError] = useState(false);
   const [open, setOpen] = useState(false);
 
   const handleImport = () => {
-    const success = onImport(value);
-    setError(!success);
-    if (success) {
+    const ok = onImport(value);
+
+    if (ok) {
       setOpen(false);
       setValue("");
+      setError(false);
+    } else {
+      setError(true);
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={children as ReactElement} />
+      <DialogTrigger render={children as ReactElement} {...props} />
 
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Todo 情報のインポート</DialogTitle>
+          <DialogTitle>{MESSAGES.dialogs.import.title}</DialogTitle>
           <DialogDescription>
-            Todo 情報を復元します。
-            <br />
-            「エクスポート」でコピーした文字列を貼り付けて「インポート」ボタンを押してください。
+            {MESSAGES.dialogs.import.description
+              .split("\n")
+              .map((line: string, i: number) => (
+                <span key={i}>
+                  {line}
+                  <br />
+                </span>
+              ))}
           </DialogDescription>
         </DialogHeader>
 
@@ -60,20 +72,20 @@ export function ImportDialog({ onImport, children }: ImportDialogProps) {
             className="bg-muted/50 min-h-[160px] w-full cursor-text resize-none p-2 font-mono text-xs break-words whitespace-pre-wrap select-text"
           />
         </ScrollArea>
+
         <Alert variant="destructive">
           <AlertCircleIcon size={16} />
-          <AlertTitle>
-            現在の登録内容を上書きします。この操作は元に戻せません。
-          </AlertTitle>
+          <AlertTitle>{MESSAGES.warnings.overwrite}</AlertTitle>
         </Alert>
+
         {error && (
           <p className="text-destructive text-sm">
-            Todo の形式が不正なため、インポートを中止しました。
+            {MESSAGES.toast.importError}
           </p>
         )}
 
         <DialogFooter>
-          <Button onClick={handleImport}>インポート</Button>
+          <Button onClick={handleImport}>{MESSAGES.actions.import}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

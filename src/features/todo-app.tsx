@@ -8,6 +8,7 @@ import { TodoList } from "@/components/shared/todo-list";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
+import { MESSAGES } from "@/constants/messages";
 import { sampleTodos } from "@/constants/sample";
 import { CURRENT_TODO_STORAGE_VERSION } from "@/constants/version";
 import { useTodos } from "@/hooks/use-todos";
@@ -53,8 +54,8 @@ export function TodoApp() {
       addTodo(newTodo);
 
       toast.add({
-        title: "Todo を登録しました",
-        description: "登録しました",
+        title: MESSAGES.toast.created,
+        description: `アイテム: ${trimmedName}`,
         type: "success",
       });
     },
@@ -66,8 +67,8 @@ export function TodoApp() {
       deleteTodoById(todo.id);
 
       toast.add({
-        title: "Todo を削除しました",
-        description: "削除しました",
+        title: MESSAGES.toast.deleted,
+        description: `アイテム: ${todo.name}`,
         type: "success",
       });
     },
@@ -79,8 +80,8 @@ export function TodoApp() {
       updateTodo(todo);
 
       toast.add({
-        title: "Todo を更新しました",
-        description: "更新しました",
+        title: MESSAGES.toast.updated,
+        description: MESSAGES.toast.updated,
         type: "success",
       });
     },
@@ -93,7 +94,7 @@ export function TodoApp() {
     setIsEditing(false);
 
     toast.add({
-      title: "登録内容を初期化しました",
+      title: MESSAGES.toast.reset,
       type: "success",
     });
   }, [resetTodos]);
@@ -125,7 +126,7 @@ export function TodoApp() {
       updateTodos(reordered);
 
       toast.add({
-        title: "並び順を更新しました",
+        title: MESSAGES.toast.reordered,
         type: "success",
       });
     },
@@ -138,14 +139,14 @@ export function TodoApp() {
         importTodoStorage(data);
 
         toast.add({
-          title: "Todo をインポートしました",
+          title: MESSAGES.toast.imported,
           type: "success",
         });
 
         return true;
       } catch {
         toast.add({
-          title: "Todo 情報の形式が不正なため、インポートを中止しました。",
+          title: MESSAGES.toast.importError,
           type: "error",
         });
 
@@ -190,21 +191,24 @@ export function TodoApp() {
             {isEditing && (
               <>
                 <ConfirmDialog
-                  title="登録内容の初期化"
-                  description="登録内容を初期状態に戻します。"
+                  title={MESSAGES.dialogs.reset.title}
+                  description={MESSAGES.dialogs.reset.description}
                   content={
                     <Alert variant="destructive">
                       <AlertCircleIcon size={16} />
-                      <AlertTitle>この操作は元に戻せません。</AlertTitle>
+                      <AlertTitle>{MESSAGES.warnings.overwrite}</AlertTitle>
                     </Alert>
                   }
-                  confirmButtonLabel="初期化"
+                  confirmButtonLabel={MESSAGES.actions.reset}
                   confirmButtonVariant="destructive"
                   onConfirm={handleReset}
                   className="w-fit"
                 >
-                  <Button variant="destructive" aria-label="初期化">
-                    初期化
+                  <Button
+                    variant="destructive"
+                    aria-label={MESSAGES.actions.reset}
+                  >
+                    {MESSAGES.actions.reset}
                   </Button>
                 </ConfirmDialog>
 
@@ -217,22 +221,26 @@ export function TodoApp() {
                 >
                   <Button
                     variant="secondary"
-                    aria-label="エクスポート"
+                    aria-label={MESSAGES.actions.export}
                     className="inline-flex items-center gap-2"
                   >
                     <UploadIcon className="sm:hidden" />
-                    <span className="hidden sm:inline">エクスポート</span>
+                    <span className="hidden sm:inline">
+                      {MESSAGES.actions.export}
+                    </span>
                   </Button>
                 </ExportDialog>
 
                 <ImportDialog onImport={handleImport}>
                   <Button
                     variant="secondary"
-                    aria-label="インポート"
+                    aria-label={MESSAGES.actions.import}
                     className="inline-flex items-center gap-2"
                   >
                     <DownloadIcon className="sm:hidden" />
-                    <span className="hidden sm:inline">インポート</span>
+                    <span className="hidden sm:inline">
+                      {MESSAGES.actions.import}
+                    </span>
                   </Button>
                 </ImportDialog>
               </>
@@ -242,10 +250,12 @@ export function TodoApp() {
           <Button
             variant={isEditing ? "default" : "secondary"}
             onClick={() => setIsEditing((prev) => !prev)}
-            aria-label={isEditing ? "編集完了" : "編集開始"}
+            aria-label={
+              isEditing ? MESSAGES.actions.done : `${MESSAGES.actions.edit}開始`
+            }
           >
             <UserPen />
-            {isEditing ? "完了" : "編集"}
+            {isEditing ? MESSAGES.actions.done : MESSAGES.actions.edit}
           </Button>
         </div>
       </div>
