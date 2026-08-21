@@ -1,8 +1,11 @@
 import { TODO_STORAGE_KEY } from "@/hooks/use-todos";
 import { TodoStorage } from "@/types/todo";
-import { expect, Page, test } from "@playwright/test";
+import { expect, Locator, Page, test } from "@playwright/test";
 
 test.describe("Todo ページのテスト", () => {
+  /** テストの Assert 範囲 */
+  let assertScope: Locator;
+
   /** テスト対象のページへ遷移する */
   const navigateToTodo = async (page: Page) => {
     await expect(page).toHaveURL("/");
@@ -11,6 +14,9 @@ test.describe("Todo ページのテスト", () => {
   test.beforeEach(async ({ page }) => {
     // ルートへ移動しておく
     await page.goto("/");
+
+    // テストの Assert 範囲を設定
+    assertScope = page.locator('[data-testid="todo"]');
   });
 
   test.describe("TodoApp のテスト", () => {
@@ -21,6 +27,7 @@ test.describe("Todo ページのテスト", () => {
           id: "dummy-todo",
           name: "dummy",
           order: 0,
+          completed: false,
         },
       ],
     };
@@ -58,6 +65,7 @@ test.describe("Todo ページのテスト", () => {
               name: "カギ",
               order: 0,
               memo: "家の鍵",
+              completed: false,
             },
           ],
         };
@@ -72,8 +80,8 @@ test.describe("Todo ページのテスト", () => {
         await navigateToTodo(page);
 
         // Assert
-        await expect(page.getByText("カギ")).toBeVisible();
-        await expect(page.getByText("家の鍵")).toBeVisible();
+        await expect(assertScope.getByText("カギ")).toBeVisible();
+        await expect(assertScope.getByText("家の鍵")).toBeVisible();
       });
     });
 
@@ -87,7 +95,9 @@ test.describe("Todo ページのテスト", () => {
         await page.getByRole("button", { name: "追加" }).click();
 
         // Assert (表示が正しいこと)
-        await expect(page.getByText("カギ", { exact: true })).toBeVisible();
+        await expect(
+          assertScope.getByText("カギ", { exact: true }),
+        ).toBeVisible();
 
         // Assert (データストアへ登録されていること)
         const todoStorage: TodoStorage = await page.evaluate(
@@ -110,8 +120,8 @@ test.describe("Todo ページのテスト", () => {
         await page.getByRole("button", { name: "更新" }).click();
 
         // Assert (表示が正しいこと)
-        await expect(page.getByText("カギ").first()).toBeVisible();
-        await expect(page.getByText("家の鍵").first()).toBeVisible();
+        await expect(assertScope.getByText("カギ").first()).toBeVisible();
+        await expect(assertScope.getByText("家の鍵").first()).toBeVisible();
 
         // Assert (データストアへ登録されていること)
         const migrated: TodoStorage = await page.evaluate(
@@ -135,7 +145,7 @@ test.describe("Todo ページのテスト", () => {
 
         // Assert (表示が正しいこと)
         await expect(
-          page.getByText("dummy", { exact: true }),
+          assertScope.getByText("dummy", { exact: true }),
         ).not.toBeVisible();
 
         // Assert (データストアへ登録されていないこと)
@@ -160,12 +170,14 @@ test.describe("Todo ページのテスト", () => {
               name: "カギ",
               order: 0,
               memo: "家の鍵",
+              completed: false,
             },
             {
               id: "test-todo-02",
               name: "財布",
               order: 1,
               memo: "白い財布",
+              completed: false,
             },
           ],
         };
@@ -216,6 +228,7 @@ test.describe("Todo ページのテスト", () => {
               name: "カギ",
               order: 0,
               memo: "家の鍵",
+              completed: false,
             },
           ],
         };
@@ -230,8 +243,8 @@ test.describe("Todo ページのテスト", () => {
         await page.getByRole("button", { name: "インポート" }).click();
 
         // Assert (表示が復元されること)
-        await expect(page.getByText("カギ")).toBeVisible();
-        await expect(page.getByText("家の鍵")).toBeVisible();
+        await expect(assertScope.getByText("カギ")).toBeVisible();
+        await expect(assertScope.getByText("家の鍵")).toBeVisible();
 
         // Assert (データストアへ保存されていること)
         const migrated: TodoStorage = await page.evaluate(
@@ -263,7 +276,7 @@ test.describe("Todo ページのテスト", () => {
         ).toBeVisible();
 
         // Assert (表示がダミーデータのままであること)
-        await expect(page.getByText("dummy")).toBeVisible();
+        await expect(assertScope.getByText("dummy")).toBeVisible();
 
         // Assert (データストアが更新されていないこと)
         const migratedInvalidJson: TodoStorage = await page.evaluate(
@@ -309,7 +322,7 @@ test.describe("Todo ページのテスト", () => {
         ).toBeVisible();
 
         // Assert (表示がダミーデータのままであること)
-        await expect(page.getByText("dummy")).toBeVisible();
+        await expect(assertScope.getByText("dummy")).toBeVisible();
 
         // Assert (データストアが更新されていないこと)
         const migratedCorrupted: TodoStorage = await page.evaluate(
