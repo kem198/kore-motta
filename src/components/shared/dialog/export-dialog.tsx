@@ -1,4 +1,3 @@
-import { EtrianRegistry } from "@/app/(toys)/etrian-calendar/_common/types/etrian";
 import { JsonDisplay } from "@/components/shared/json-display";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,6 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "@/components/ui/toast";
+import { EtrianRegistry } from "@/types/etrian";
 import { ComponentProps, ReactElement, ReactNode } from "react";
 
 type ExportDialogProps = {

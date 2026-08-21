@@ -12,7 +12,6 @@ import {
 } from "react";
 import { Controller, useForm } from "react-hook-form";
 
-import { Etrian } from "@/app/(toys)/etrian-calendar/_common/types/etrian";
 import { Required } from "@/components/shared/required";
 import { Button } from "@/components/ui/button";
 import {
@@ -39,6 +38,7 @@ import {
   RegistryFormValues,
   registryFormSchema,
 } from "@/schemas/registry-form-schema";
+import { Etrian } from "@/types/etrian";
 
 type EditDialogProps = {
   etrian: Etrian;

@@ -1,7 +1,5 @@
 "use client";
 
-import { sampleEtrians } from "@/app/(toys)/etrian-calendar/_common/constants/sample";
-import { Etrian } from "@/app/(toys)/etrian-calendar/_common/types/etrian";
 import { ConfirmDialog } from "@/components/shared/dialog/confirm-dialog";
 import { ExportDialog } from "@/components/shared/dialog/export-dialog";
 import { ImportDialog } from "@/components/shared/dialog/import-dialog";
@@ -10,8 +8,10 @@ import { EtrianRegistryItemList } from "@/components/shared/etrian-registry-list
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
+import { sampleEtrians } from "@/constants/sample";
 import { useEtrianRegistry } from "@/hooks/use-etrian-registry";
 import { RegistryFormValues } from "@/schemas/registry-form-schema";
+import { Etrian } from "@/types/etrian";
 import {
   AlertCircleIcon,
   DownloadIcon,

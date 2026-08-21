@@ -1,4 +1,4 @@
-import { Etrian } from "@/app/(toys)/etrian-calendar/_common/types/etrian";
+import { Etrian } from "@/types/etrian";
 
 export const sampleEtrians: Etrian[] = [
   {

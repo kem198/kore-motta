@@ -1,4 +1,3 @@
-import { Etrian } from "@/app/(toys)/etrian-calendar/_common/types/etrian";
 import { ConfirmDialog } from "@/components/shared/dialog/confirm-dialog";
 import { EditDialog } from "@/components/shared/dialog/edit-dialog";
 import { Alert, AlertTitle } from "@/components/ui/alert";
@@ -17,6 +16,7 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Etrian } from "@/types/etrian";
 import {
   AlertCircleIcon,
   ChevronDown,
