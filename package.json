@@ -10,7 +10,9 @@
     "lint": "eslint",
     "format": "npx prettier . --write",
     "test": "echo No tests available.",
-    "clean": "rm -rf .next"
+    "clean": "rm -rf .next",
+    "e2e": "playwright test",
+    "e2e:show": "npx playwright show-report"
   },
   "dependencies": {
     "next": "16.3.1",
