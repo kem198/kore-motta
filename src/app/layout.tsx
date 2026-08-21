@@ -15,7 +15,7 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: `${SITE_NAME} | ${SITE_DESCRIPTION}`,
+  title: `${SITE_NAME}`,
   description: SITE_DESCRIPTION,
 };
 
