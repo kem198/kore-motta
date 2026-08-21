@@ -55,7 +55,7 @@ export function TodoApp() {
 
       toast.add({
         title: MESSAGES.toast.created,
-        description: `アイテム: ${trimmedName}`,
+        description: trimmedName,
         type: "success",
       });
     },
@@ -68,7 +68,7 @@ export function TodoApp() {
 
       toast.add({
         title: MESSAGES.toast.deleted,
-        description: `アイテム: ${todo.name}`,
+        description: todo.name,
         type: "success",
       });
     },
@@ -81,7 +81,7 @@ export function TodoApp() {
 
       toast.add({
         title: MESSAGES.toast.updated,
-        description: MESSAGES.toast.updated,
+        description: todo.name,
         type: "success",
       });
     },
