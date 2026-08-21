@@ -1,8 +1,4 @@
 import { Etrian } from "@/app/(toys)/etrian-calendar/_common/types/etrian";
-import {
-  AffiliationBadge,
-  DateOfBirthBadge,
-} from "@/app/(toys)/etrian-calendar/_features/registry/components/badge";
 import { BirthdayMessage } from "@/app/(toys)/etrian-calendar/_features/registry/components/birthday-message";
 import { ConfirmDialog } from "@/app/(toys)/etrian-calendar/_features/registry/components/dialog/confirm-dialog";
 import { EditDialog } from "@/app/(toys)/etrian-calendar/_features/registry/components/dialog/edit-dialog";
@@ -84,10 +80,7 @@ function EtrianRegistryItem({
 
         <ItemFooter className={etrian.memo ? "pt-2" : undefined}>
           <div className="flex flex-wrap items-center gap-2">
-            <DateOfBirthBadge dateOfBirth={etrian.dateOfBirth} />
-            {(etrian.affiliations ?? []).map((affiliation) => (
-              <AffiliationBadge key={affiliation} affiliation={affiliation} />
-            ))}
+            {/* TODO: もともと Badge のリスト表示があった場所 */}
           </div>
         </ItemFooter>
       </ItemContent>
