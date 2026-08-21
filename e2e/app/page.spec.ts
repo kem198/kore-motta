@@ -81,13 +81,13 @@ test.describe("Todo ページのテスト", () => {
       test("Todo を登録できること", async ({ page }) => {
         // Arrange
         await navigateToTodo(page);
-        await page.getByRole("textbox", { name: "ししょー" }).fill("カギ");
+        await page.getByRole("textbox", { name: "財布" }).fill("カギ");
 
         // Act
-        await page.getByRole("button", { name: "登録" }).click();
+        await page.getByRole("button", { name: "追加" }).click();
 
         // Assert (表示が正しいこと)
-        await expect(page.getByText("カギ")).toBeVisible();
+        await expect(page.getByText("カギ", { exact: true })).toBeVisible();
 
         // Assert (データストアへ登録されていること)
         const todoStorage: TodoStorage = await page.evaluate(
@@ -103,7 +103,7 @@ test.describe("Todo ページのテスト", () => {
         // Arrange
         await navigateToTodo(page);
         await page.getByRole("button", { name: "編集: dummy" }).click();
-        await page.getByRole("textbox", { name: "名前 *" }).fill("カギ");
+        await page.getByRole("textbox", { name: "タイトル *" }).fill("カギ");
         await page.getByRole("textbox", { name: "メモ" }).fill("家の鍵");
 
         // Act
@@ -134,7 +134,9 @@ test.describe("Todo ページのテスト", () => {
         await page.getByRole("button", { name: "削除" }).click();
 
         // Assert (表示が正しいこと)
-        await expect(page.getByText("dummy").first()).not.toBeVisible();
+        await expect(
+          page.getByText("dummy", { exact: true }),
+        ).not.toBeVisible();
 
         // Assert (データストアへ登録されていないこと)
         const migrated: TodoStorage = await page.evaluate(
@@ -255,7 +257,9 @@ test.describe("Todo ページのテスト", () => {
 
         // Assert
         await expect(
-          page.getByText("Todo の形式が不正なため、インポートを中止しました。"),
+          page.getByText(
+            "アイテム情報の形式が不正なため、インポートできませんでした。",
+          ),
         ).toBeVisible();
 
         // Assert (表示がダミーデータのままであること)
@@ -299,7 +303,9 @@ test.describe("Todo ページのテスト", () => {
 
         // Assert
         await expect(
-          page.getByText("Todo の形式が不正なため、インポートを中止しました。"),
+          page.getByText(
+            "アイテム情報の形式が不正なため、インポートできませんでした。",
+          ),
         ).toBeVisible();
 
         // Assert (表示がダミーデータのままであること)
