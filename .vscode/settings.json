@@ -4,5 +4,5 @@
   "workbench.editor.customLabels.patterns": {
     "**/app/**/*": "🏠 ${dirname}/${filename}.${extname}",
     "**/components/**/*": "🧩 ${filename}.${extname}"
-  },
+  }
 }
