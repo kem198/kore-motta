@@ -94,7 +94,7 @@ export function useTodos(options: UseTodosOptions = {}): UseTodosReturn {
   }, []);
 
   const resetTodos = useCallback(() => {
-    setTodos([]);
+    setTodos((prev) => prev.map((todo) => ({ ...todo, completed: false })));
   }, []);
 
   const clearMigrationError = useCallback(() => {

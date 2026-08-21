@@ -157,6 +157,64 @@ test.describe("Todo ページのテスト", () => {
       });
     });
 
+    test.describe("初期化時のテスト", () => {
+      test("Todo を初期化すると、登録済み Todo が削除されず、完了状態が未完了に戻ること", async ({
+        page,
+      }) => {
+        // Arrange
+        const todoStorage: TodoStorage = {
+          version: 1,
+          todos: [
+            {
+              id: "reset-todo-01",
+              name: "カギ",
+              order: 0,
+              memo: "家の鍵",
+              completed: true,
+            },
+            {
+              id: "reset-todo-02",
+              name: "財布",
+              order: 1,
+              memo: "白い財布",
+              completed: false,
+            },
+          ],
+        };
+
+        await page.evaluate(
+          ([key, value]) => {
+            localStorage.setItem(key, value);
+          },
+          [TODO_STORAGE_KEY, JSON.stringify(todoStorage)],
+        );
+        await navigateToTodo(page);
+
+        // Act
+        await page.getByRole("button", { name: "編集開始" }).click();
+        await page.getByRole("button", { name: "初期化" }).click();
+        await page.getByRole("button", { name: "初期化" }).click();
+
+        // Assert (表示が残ること)
+        await expect(
+          assertScope.getByText("カギ", { exact: true }),
+        ).toBeVisible();
+        await expect(
+          assertScope.getByText("財布", { exact: true }),
+        ).toBeVisible();
+
+        // Assert (完了状態が未完了に戻ること)
+        const migrated: TodoStorage = await page.evaluate(
+          (key) => JSON.parse(localStorage.getItem(key)!),
+          TODO_STORAGE_KEY,
+        );
+        expect(migrated.todos).toHaveLength(2);
+        expect(migrated.todos.every((todo) => todo.completed === false)).toBe(
+          true,
+        );
+      });
+    });
+
     test.describe("エクスポート時のテスト", () => {
       test("Todo が登録済みの状態で、「エクスポート」ボタンをクリックした時、登録内容のエクスポート用テキストが表示されること", async ({
         page,

@@ -85,5 +85,13 @@ export function deleteTodoById(storageKey: string, id: string): void {
 }
 
 export function resetTodos(storageKey: string): void {
-  setTodos(storageKey, []);
+  const storage = getStorageData(storageKey);
+
+  setTodos(
+    storageKey,
+    storage.todos.map((todo) => ({
+      ...todo,
+      completed: false,
+    })),
+  );
 }
