@@ -5,7 +5,6 @@ import {
   Etrian,
   EtrianRegistry,
 } from "@/app/(toys)/etrian-calendar/_common/types/etrian";
-import { migrateEtrianRegistry } from "@/app/(toys)/etrian-calendar/_features/registry/utils/migration-utils";
 
 export const ETRIAN_REGISTRY_STORAGE_KEY = "etrianRegistry";
 
@@ -57,9 +56,8 @@ export function useEtrianRegistry(
     try {
       if (data) {
         const parsedData = JSON.parse(data);
-        const migratedRegistry = migrateEtrianRegistry(parsedData);
-        setStoredEtrianRegistry(migratedRegistry);
-        setStoredEtrians(migratedRegistry.etrians);
+        setStoredEtrianRegistry(parsedData);
+        setStoredEtrians(parsedData.etrians);
       } else {
         setStoredEtrianRegistry(null);
         setStoredEtrians([]);
@@ -121,12 +119,10 @@ export function useEtrianRegistry(
   }, []);
 
   const importEtrianRegistry = useCallback((data: string) => {
-    const parsedData = JSON.parse(data);
+    const parsedTodos = JSON.parse(data);
 
-    const migratedRegistry = migrateEtrianRegistry(parsedData);
-
-    setStoredEtrianRegistry(migratedRegistry);
-    setStoredEtrians(migratedRegistry.etrians);
+    setStoredEtrianRegistry(parsedTodos);
+    setStoredEtrians(parsedTodos.etrians);
   }, []);
 
   return {

@@ -1,19 +1,14 @@
 "use client";
 
 import { sampleEtrians } from "@/app/(toys)/etrian-calendar/_common/constants/sample";
-import {
-  Etrian,
-  EtrianDay,
-} from "@/app/(toys)/etrian-calendar/_common/types/etrian";
+import { Etrian } from "@/app/(toys)/etrian-calendar/_common/types/etrian";
 import { ConfirmDialog } from "@/app/(toys)/etrian-calendar/_features/registry/components/dialog/confirm-dialog";
 import { ExportDialog } from "@/app/(toys)/etrian-calendar/_features/registry/components/dialog/export-dialog";
 import { ImportDialog } from "@/app/(toys)/etrian-calendar/_features/registry/components/dialog/import-dialog";
-import { MigrationErrorDialog } from "@/app/(toys)/etrian-calendar/_features/registry/components/dialog/migration-error-dialog";
 import { EtrianRegistryForm } from "@/app/(toys)/etrian-calendar/_features/registry/components/etrian-registry-form";
 import { EtrianRegistryItemList } from "@/app/(toys)/etrian-calendar/_features/registry/components/etrian-registry-list";
 import { useEtrianRegistry } from "@/app/(toys)/etrian-calendar/_features/registry/hooks/use-etrian-registry";
 import { RegistryFormValues } from "@/app/(toys)/etrian-calendar/_features/registry/schemas/registry-form-schema";
-import { migrateEtrianRegistry } from "@/app/(toys)/etrian-calendar/_features/registry/utils/migration-utils";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
@@ -49,25 +44,10 @@ export function EtrianRegistry() {
         return;
       }
 
-      const normalizedAffiliations = (values.affiliations ?? "")
-        .split(",")
-        .map((value) => value.trim())
-        .filter((value) => value.length > 0);
-
       const newEtrian: Etrian = {
         id: crypto.randomUUID(),
         name: trimmedName,
         order: 0,
-        affiliations: normalizedAffiliations,
-        dateOfBirth:
-          values.dateOfBirth &&
-          values.dateOfBirth.month &&
-          values.dateOfBirth.month !== "未設定"
-            ? {
-                month: values.dateOfBirth.month,
-                day: Number(values.dateOfBirth.day) as EtrianDay,
-              }
-            : undefined,
         memo: values.memo?.trim() || undefined,
       };
 
@@ -156,10 +136,6 @@ export function EtrianRegistry() {
     (data: string) => {
       try {
         const parsed = JSON.parse(data);
-        const migrated = migrateEtrianRegistry(parsed);
-
-        updateEtrians(migrated.etrians);
-
         toast.add({
           title: "インポートされた冒険者情報で更新しました",
           type: "success",
@@ -190,12 +166,6 @@ export function EtrianRegistry() {
 
   return (
     <div className="flex flex-col gap-4">
-      <MigrationErrorDialog
-        open={migrationError.hasError}
-        originalData={migrationError.originalData}
-        onConfirm={handleMigrationErrorConfirm}
-      />
-
       <div className="not-prose flex w-full flex-col gap-6">
         <EtrianRegistryForm onSubmit={handleCreate} isEditing={isEditing} />
 

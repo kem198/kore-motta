@@ -8,35 +8,15 @@ import {
 export type EtrianMonthName = (typeof etrianMonths)[number]["name"];
 export type EtrianMonthNameKana = (typeof etrianMonths)[number]["kana"];
 export type EtrianMonthNameWithNewYearsEve =
-  | EtrianMonthName
-  | EtrianNewYearsEveName;
+  EtrianMonthName | EtrianNewYearsEveName;
 export type EtrianNewYearsEveName = (typeof etrianNewYearsEve)["name"];
 export type EtrianNewYearsEveNameKana = (typeof etrianNewYearsEve)["kana"];
 
 export type EtrianDay = (typeof etrianDays)[number];
 
-export type EtrianDateOfBirth = {
-  month: EtrianMonthNameWithNewYearsEve;
-  day: EtrianDay;
-};
-
-export type EtrianV1 = {
-  id: string;
-  name: string;
-  dateOfBirth: {
-    month?: EtrianMonthNameWithNewYearsEve;
-    day?: EtrianDay;
-  };
-  affiliations: string[];
-  order: number;
-  memo?: string;
-};
-
 export type Etrian = {
   id: string;
   name: string;
-  dateOfBirth?: EtrianDateOfBirth;
-  affiliations: string[];
   order: number;
   memo?: string;
 };
