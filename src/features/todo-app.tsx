@@ -145,11 +145,6 @@ export function TodoApp() {
 
         return true;
       } catch {
-        toast.add({
-          title: MESSAGES.toast.importError,
-          type: "error",
-        });
-
         return false;
       }
     },
