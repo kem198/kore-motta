@@ -25,7 +25,6 @@ export function EtrianRegistryForm({
     defaultValues: {
       name: "",
       memo: "",
-      affiliations: "",
     },
   });
 

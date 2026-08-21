@@ -69,16 +69,6 @@ export function EditDialog({
     });
   }, [etrian, form]);
 
-  const normalizeAffiliations = (
-    affiliationsString: string | undefined,
-  ): string[] => {
-    if (!affiliationsString) return [];
-    return affiliationsString
-      .split(",")
-      .map((value) => value.trim())
-      .filter((value) => value.length > 0);
-  };
-
   useEffect(() => {
     if (!open) {
       return;
