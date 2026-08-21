@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { MESSAGES } from "@/constants/messages";
 import { TodoFormValues, todoFormSchema } from "@/schemas/todo-form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { UserRoundPlus } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 
 type TodoFormProps = {
@@ -49,7 +49,7 @@ export function TodoForm({ onSubmit, isEditing }: TodoFormProps) {
           )}
         />
         <Button type="submit" form="todoadd" disabled={isEditing}>
-          <UserRoundPlus />
+          <PlusIcon />
           {MESSAGES.actions.add}
         </Button>
       </div>

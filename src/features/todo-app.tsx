@@ -17,8 +17,8 @@ import { Todo } from "@/types/todo";
 import {
   AlertCircleIcon,
   DownloadIcon,
+  PencilIcon,
   UploadIcon,
-  UserPen,
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
@@ -250,7 +250,7 @@ export function TodoApp() {
               isEditing ? MESSAGES.actions.done : `${MESSAGES.actions.edit}開始`
             }
           >
-            <UserPen />
+            <PencilIcon />
             {isEditing ? MESSAGES.actions.done : MESSAGES.actions.edit}
           </Button>
         </div>
