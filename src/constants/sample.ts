@@ -1,6 +1,6 @@
-import { Etrian } from "@/types/todo";
+import { Todo } from "@/types/todo";
 
-export const sampleEtrians: Etrian[] = [
+export const sampleTodos: Todo[] = [
   {
     id: "sample-paladin",
     name: "ししょー",

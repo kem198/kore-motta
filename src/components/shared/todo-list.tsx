@@ -16,7 +16,7 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Etrian } from "@/types/todo";
+import { Todo } from "@/types/todo";
 import {
   AlertCircleIcon,
   ChevronDown,
@@ -26,7 +26,7 @@ import {
 } from "lucide-react";
 import { Fragment } from "react";
 
-function EtrianRegistrySkeleton() {
+function TodoListSkeleton() {
   return (
     <Item className="px-0">
       <ItemMedia>
@@ -35,48 +35,48 @@ function EtrianRegistrySkeleton() {
 
       <ItemContent className="flex flex-col gap-1">
         <Skeleton className="h-4 max-w-[10rem] rounded-full" />
-
         <Skeleton className="h-4 max-w-[16rem] rounded-full" />
       </ItemContent>
     </Item>
   );
 }
 
-type EtrianRegistryItemProps = {
-  etrian: Etrian;
+type TodoItemProps = {
+  todo: Todo;
   index: number;
   length: number;
   isEditing: boolean;
-  onDelete: (etrian: Etrian) => void;
-  onUpdate: (etrian: Etrian) => void;
+  onDelete: (todo: Todo) => void;
+  onUpdate: (todo: Todo) => void;
   onReorder: (startIndex: number, endIndex: number) => void;
 };
 
-function EtrianRegistryItem({
+function TodoItem({
   index,
-  etrian,
+  todo,
   length,
   isEditing,
   onDelete,
   onUpdate,
   onReorder,
-}: EtrianRegistryItemProps) {
+}: TodoItemProps) {
   return (
     <Item className="justify-end px-0 md:flex-row">
       <ItemMedia>
         <Avatar>
           <AvatarImage className="grayscale" />
-          <AvatarFallback>{etrian.name.charAt(0)}</AvatarFallback>
+          <AvatarFallback>{todo.name.charAt(0)}</AvatarFallback>
         </Avatar>
       </ItemMedia>
+
       <ItemContent>
         <ItemTitle className="flex flex-col items-start gap-0">
-          {etrian.name}
+          {todo.name}
         </ItemTitle>
 
-        <ItemDescription>{etrian.memo}</ItemDescription>
+        <ItemDescription>{todo.memo}</ItemDescription>
 
-        <ItemFooter className={etrian.memo ? "pt-2" : undefined}>
+        <ItemFooter className={todo.memo ? "pt-2" : undefined}>
           <div className="flex flex-wrap items-center gap-2">
             {/* TODO: もともと Badge のリスト表示があった場所 */}
           </div>
@@ -87,13 +87,12 @@ function EtrianRegistryItem({
         {isEditing && (
           <>
             <ConfirmDialog
-              title="冒険者情報の削除"
-              description="下記の冒険者情報を削除します。"
+              title="Todo の削除"
+              description="下記の Todo を削除します。"
               content={
                 <>
                   <p>
-                    冒険者名:{" "}
-                    <span className="font-semibold">{etrian.name}</span>
+                    Todo: <span className="font-semibold">{todo.name}</span>
                   </p>
                   <Alert variant="destructive">
                     <AlertCircleIcon size={16} />
@@ -103,17 +102,18 @@ function EtrianRegistryItem({
               }
               confirmButtonLabel="削除"
               confirmButtonVariant="destructive"
-              onConfirm={() => onDelete(etrian)}
+              onConfirm={() => onDelete(todo)}
             >
               <Button
                 variant="destructive"
                 size="icon"
                 className="rounded-full"
-                aria-label={`削除: ${etrian.name}`}
+                aria-label={`削除: ${todo.name}`}
               >
                 <Trash2 />
               </Button>
             </ConfirmDialog>
+
             <ButtonGroup>
               <Button
                 variant="secondary"
@@ -121,7 +121,7 @@ function EtrianRegistryItem({
                 className="rounded-full"
                 onClick={() => onReorder(index, index - 1)}
                 disabled={index === 0}
-                aria-label={`上へ移動: ${etrian.name}`}
+                aria-label={`上へ移動: ${todo.name}`}
               >
                 <ChevronUp />
               </Button>
@@ -132,17 +132,17 @@ function EtrianRegistryItem({
                 className="rounded-full"
                 onClick={() => onReorder(index, index + 1)}
                 disabled={index === length - 1}
-                aria-label={`下へ移動: ${etrian.name}`}
+                aria-label={`下へ移動: ${todo.name}`}
               >
                 <ChevronDown />
               </Button>
 
-              <EditDialog etrian={etrian} onSave={onUpdate}>
+              <EditDialog todo={todo} onSave={onUpdate}>
                 <Button
                   variant="secondary"
                   size="icon"
                   className="rounded-full"
-                  aria-label={`編集: ${etrian.name}`}
+                  aria-label={`編集: ${todo.name}`}
                 >
                   <Pencil />
                 </Button>
@@ -152,12 +152,12 @@ function EtrianRegistryItem({
         )}
 
         {!isEditing && (
-          <EditDialog etrian={etrian} onSave={onUpdate}>
+          <EditDialog todo={todo} onSave={onUpdate}>
             <Button
               variant="secondary"
               size="icon"
               className="rounded-full"
-              aria-label={`編集: ${etrian.name}`}
+              aria-label={`編集: ${todo.name}`}
             >
               <Pencil />
             </Button>
@@ -168,51 +168,51 @@ function EtrianRegistryItem({
   );
 }
 
-type EtrianRegistryItemListProps = {
-  etrians: Etrian[];
+type TodoListProps = {
+  todos: Todo[];
   isLoaded: boolean;
   isEditing: boolean;
-  onDelete: (etrian: Etrian) => void;
-  onUpdate: (etrian: Etrian) => void;
+  onDelete: (todo: Todo) => void;
+  onUpdate: (todo: Todo) => void;
   onReorder: (startIndex: number, endIndex: number) => void;
 };
 
-export function EtrianRegistryItemList({
-  etrians,
+export function TodoList({
+  todos,
   isLoaded,
   isEditing,
   onDelete,
   onUpdate,
   onReorder,
-}: EtrianRegistryItemListProps) {
+}: TodoListProps) {
   if (!isLoaded) {
     return (
       <ItemGroup>
-        <EtrianRegistrySkeleton />
-        <EtrianRegistrySkeleton />
-        <EtrianRegistrySkeleton />
+        <TodoListSkeleton />
+        <TodoListSkeleton />
+        <TodoListSkeleton />
       </ItemGroup>
     );
   }
 
-  if (etrians.length === 0) {
+  if (todos.length === 0) {
     return <ItemGroup />;
   }
 
   return (
     <ItemGroup>
-      {etrians.map((etrian, index) => (
-        <Fragment key={etrian.id}>
-          <EtrianRegistryItem
-            etrian={etrian}
+      {todos.map((todo, index) => (
+        <Fragment key={todo.id}>
+          <TodoItem
+            todo={todo}
             index={index}
-            length={etrians.length}
+            length={todos.length}
             isEditing={isEditing}
             onDelete={onDelete}
             onUpdate={onUpdate}
             onReorder={onReorder}
           />
-          {index !== etrians.length - 1 && <ItemSeparator />}
+          {index !== todos.length - 1 && <ItemSeparator />}
         </Fragment>
       ))}
     </ItemGroup>

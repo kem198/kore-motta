@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-export const registryFormSchema = z.object({
+export const todoFormSchema = z.object({
   name: z
     .string()
     .min(1, "1 文字以上入力してください。")
@@ -8,4 +8,4 @@ export const registryFormSchema = z.object({
   memo: z.string().max(100, "100 文字以下で入力してください。").optional(),
 });
 
-export type RegistryFormValues = z.infer<typeof registryFormSchema>;
+export type TodoFormValues = z.infer<typeof todoFormSchema>;

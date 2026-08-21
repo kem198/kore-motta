@@ -10,16 +10,16 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "@/components/ui/toast";
-import { EtrianRegistry } from "@/types/todo";
+import { TodoStorage } from "@/types/todo";
 import { ComponentProps, ReactElement, ReactNode } from "react";
 
 type ExportDialogProps = {
-  storedEtrianRegistry: EtrianRegistry;
+  todoStorage: TodoStorage;
   children: ReactNode;
 } & ComponentProps<typeof DialogTrigger>;
 
 export function ExportDialog({
-  storedEtrianRegistry,
+  todoStorage: todoStorage,
   children,
   ...props
 }: ExportDialogProps) {
@@ -38,7 +38,7 @@ export function ExportDialog({
         <Button
           onClick={() => {
             try {
-              const json = JSON.stringify(storedEtrianRegistry, null, 2);
+              const json = JSON.stringify(todoStorage, null, 2);
               void navigator.clipboard.writeText(json);
               toast.add({
                 title: "冒険者情報をクリップボードにコピーしました",
@@ -55,7 +55,7 @@ export function ExportDialog({
           コピー
         </Button>
         <JsonDisplay
-          data={storedEtrianRegistry}
+          data={todoStorage}
           scrollAreaProps={{ className: "max-h-[60vh]" }}
         />
 

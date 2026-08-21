@@ -1,39 +1,34 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { CURRENT_ETRIAN_REGISTRY_VERSION } from "@/constants/version";
-import { Etrian, EtrianRegistry } from "@/types/todo";
+import { CURRENT_TODO_STORAGE_VERSION } from "@/constants/version";
+import { Todo, TodoStorage } from "@/types/todo";
 
-export const ETRIAN_REGISTRY_STORAGE_KEY = "etrianRegistry";
+export const TODO_STORAGE_KEY = "todos";
 
-type UseEtrianRegistryOptions = {
+type UseTodosOptions = {
   storageKey?: string;
 };
 
-type UseEtrianRegistryReturn = {
-  storedEtrians: Etrian[];
-  storedEtrianRegistry: EtrianRegistry;
+type UseTodosReturn = {
+  todos: Todo[];
   isLoaded: boolean;
   migrationError: {
     hasError: boolean;
     originalData: string | null;
   };
-  addEtrian: (etrian: Etrian) => void;
-  updateEtrian: (etrian: Etrian) => void;
-  updateEtrians: (updatedEtrians: Etrian[]) => void;
-  deleteEtrianById: (id: string) => void;
-  resetEtrians: () => void;
-  importEtrianRegistry: (data: string) => void;
+  addTodo: (todo: Todo) => void;
+  updateTodo: (todo: Todo) => void;
+  updateTodos: (todos: Todo[]) => void;
+  deleteTodoById: (id: string) => void;
+  resetTodos: () => void;
+  importTodoStorage: (data: string) => void;
   clearMigrationError: () => void;
 };
 
-export function useEtrianRegistry(
-  options: UseEtrianRegistryOptions = {},
-): UseEtrianRegistryReturn {
-  const { storageKey = ETRIAN_REGISTRY_STORAGE_KEY } = options;
+export function useTodos(options: UseTodosOptions = {}): UseTodosReturn {
+  const { storageKey = TODO_STORAGE_KEY } = options;
 
-  const [storedEtrians, setStoredEtrians] = useState<Etrian[]>([]);
-  const [storedEtrianRegistry, setStoredEtrianRegistry] =
-    useState<EtrianRegistry | null>(null);
+  const [todos, setTodos] = useState<Todo[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [migrationError, setMigrationError] = useState<{
     hasError: boolean;
@@ -52,12 +47,11 @@ export function useEtrianRegistry(
 
     try {
       if (data) {
-        const parsedData = JSON.parse(data);
-        setStoredEtrianRegistry(parsedData);
-        setStoredEtrians(parsedData.etrians);
+        const parsedTodoStorage: TodoStorage = JSON.parse(data);
+
+        setTodos(parsedTodoStorage.todos);
       } else {
-        setStoredEtrianRegistry(null);
-        setStoredEtrians([]);
+        setTodos([]);
       }
     } catch {
       // マイグレーション処理に失敗した場合、元のデータを保持してエラー状態を設定する
@@ -66,8 +60,7 @@ export function useEtrianRegistry(
         hasError: true,
         originalData: data,
       });
-      setStoredEtrians([]);
-      setStoredEtrianRegistry(null);
+      setTodos([]);
     } finally {
       setIsLoaded(true);
     }
@@ -78,34 +71,34 @@ export function useEtrianRegistry(
       return;
     }
 
-    const registry: EtrianRegistry = {
-      version: CURRENT_ETRIAN_REGISTRY_VERSION,
-      etrians: storedEtrians,
+    const todoStorage: TodoStorage = {
+      version: CURRENT_TODO_STORAGE_VERSION,
+      todos,
     };
-    setStoredEtrianRegistry(registry);
-    window.localStorage.setItem(storageKey, JSON.stringify(registry));
-  }, [storedEtrians, isLoaded, storageKey]);
 
-  const addEtrian = useCallback((etrian: Etrian) => {
-    setStoredEtrians((prev) => [etrian, ...prev]);
+    window.localStorage.setItem(storageKey, JSON.stringify(todoStorage));
+  }, [todos, isLoaded, storageKey]);
+
+  const addTodo = useCallback((todo: Todo) => {
+    setTodos((prev) => [todo, ...prev]);
   }, []);
 
-  const updateEtrian = useCallback((updated: Etrian) => {
-    setStoredEtrians((prev) =>
+  const updateTodo = useCallback((updated: Todo) => {
+    setTodos((prev) =>
       prev.map((current) => (current.id === updated.id ? updated : current)),
     );
   }, []);
 
-  const updateEtrians = (updatedEtrians: Etrian[]) =>
-    setStoredEtrians(updatedEtrians);
-
-  const deleteEtrianById = useCallback((id: string) => {
-    setStoredEtrians((prev) => prev.filter((etrian) => etrian.id !== id));
+  const updateTodos = useCallback((updatedTodos: Todo[]) => {
+    setTodos(updatedTodos);
   }, []);
 
-  const resetEtrians = useCallback(() => {
-    setStoredEtrians([]);
-    setStoredEtrianRegistry(null);
+  const deleteTodoById = useCallback((id: string) => {
+    setTodos((prev) => prev.filter((todo) => todo.id !== id));
+  }, []);
+
+  const resetTodos = useCallback(() => {
+    setTodos([]);
   }, []);
 
   const clearMigrationError = useCallback(() => {
@@ -115,27 +108,22 @@ export function useEtrianRegistry(
     });
   }, []);
 
-  const importEtrianRegistry = useCallback((data: string) => {
-    const parsedTodos = JSON.parse(data);
+  const importTodoStorage = useCallback((data: string) => {
+    const parsedTodoStorage: TodoStorage = JSON.parse(data);
 
-    setStoredEtrianRegistry(parsedTodos);
-    setStoredEtrians(parsedTodos.etrians);
+    setTodos(parsedTodoStorage.todos);
   }, []);
 
   return {
-    storedEtrians,
-    storedEtrianRegistry: storedEtrianRegistry ?? {
-      version: CURRENT_ETRIAN_REGISTRY_VERSION,
-      etrians: storedEtrians,
-    },
+    todos,
     isLoaded,
     migrationError,
-    addEtrian,
-    updateEtrian,
-    updateEtrians,
-    deleteEtrianById,
-    resetEtrians,
-    importEtrianRegistry,
+    addTodo,
+    updateTodo,
+    updateTodos,
+    deleteTodoById,
+    resetTodos,
+    importTodoStorage,
     clearMigrationError,
   };
 }

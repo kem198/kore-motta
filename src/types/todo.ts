@@ -1,15 +1,15 @@
-import { CURRENT_ETRIAN_REGISTRY_VERSION } from "@/constants/version";
+import { CURRENT_TODO_STORAGE_VERSION } from "@/constants/version";
 
-export type Etrian = {
+export type Todo = {
   id: string;
   name: string;
   order: number;
   memo?: string;
 };
 
-export type EtrianRegistryVersion = typeof CURRENT_ETRIAN_REGISTRY_VERSION | 1;
+export type TodoStorageVersion = typeof CURRENT_TODO_STORAGE_VERSION | 1;
 
-export type EtrianRegistry = {
-  version: EtrianRegistryVersion;
-  etrians: Etrian[];
+export type TodoStorage = {
+  version: TodoStorageVersion;
+  todos: Todo[];
 };

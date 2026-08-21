@@ -3,15 +3,16 @@
 import { ConfirmDialog } from "@/components/shared/dialog/confirm-dialog";
 import { ExportDialog } from "@/components/shared/dialog/export-dialog";
 import { ImportDialog } from "@/components/shared/dialog/import-dialog";
-import { EtrianRegistryForm } from "@/components/shared/todo-form";
-import { EtrianRegistryItemList } from "@/components/shared/todo-list";
+import { TodoForm } from "@/components/shared/todo-form";
+import { TodoList } from "@/components/shared/todo-list";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
-import { sampleEtrians } from "@/constants/sample";
-import { useEtrianRegistry } from "@/hooks/use-todos";
-import { RegistryFormValues } from "@/schemas/todo-form-schema";
-import { Etrian } from "@/types/todo";
+import { sampleTodos } from "@/constants/sample";
+import { CURRENT_TODO_STORAGE_VERSION } from "@/constants/version";
+import { useTodos } from "@/hooks/use-todos";
+import { TodoFormValues } from "@/schemas/todo-form-schema";
+import { Todo } from "@/types/todo";
 import {
   AlertCircleIcon,
   DownloadIcon,
@@ -20,124 +21,137 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
-export function EtrianRegistry() {
+export function TodoApp() {
   const {
-    storedEtrians,
-    storedEtrianRegistry,
+    todos,
     isLoaded,
     migrationError,
-    addEtrian,
-    updateEtrian,
-    updateEtrians,
-    deleteEtrianById,
-    resetEtrians,
-    importEtrianRegistry,
+    addTodo,
+    updateTodo,
+    updateTodos,
+    deleteTodoById,
+    resetTodos,
+    importTodoStorage,
     clearMigrationError,
-  } = useEtrianRegistry();
+  } = useTodos();
 
   const [isEditing, setIsEditing] = useState(false);
 
   const handleCreate = useCallback(
-    (values: RegistryFormValues) => {
+    (values: TodoFormValues) => {
       const trimmedName = values.name.trim();
+
       if (!trimmedName) {
         return;
       }
 
-      const newEtrian: Etrian = {
+      const newTodo: Todo = {
         id: crypto.randomUUID(),
         name: trimmedName,
         order: 0,
         memo: values.memo?.trim() || undefined,
       };
 
-      addEtrian(newEtrian);
+      addTodo(newTodo);
 
       toast.add({
-        title: "冒険者を登録しました！",
-        description: `冒険者: ${trimmedName}`,
+        title: "Todo を登録しました",
+        description: `Todo: ${trimmedName}`,
         type: "success",
       });
     },
-    [addEtrian],
+    [addTodo],
   );
 
   const handleDelete = useCallback(
-    (target: Etrian) => {
-      deleteEtrianById(target.id);
+    (todo: Todo) => {
+      deleteTodoById(todo.id);
 
       toast.add({
-        title: "冒険者を削除しました",
-        description: `冒険者: ${target.name}`,
+        title: "Todo を削除しました",
+        description: `Todo: ${todo.name}`,
         type: "success",
       });
     },
-    [deleteEtrianById],
+    [deleteTodoById],
   );
 
   const handleUpdate = useCallback(
-    (updated: Etrian) => {
-      updateEtrian(updated);
+    (todo: Todo) => {
+      updateTodo(todo);
 
       toast.add({
-        title: "冒険者情報を更新しました！",
-        description: `冒険者: ${updated.name}`,
+        title: "Todo を更新しました",
+        description: `Todo: ${todo.name}`,
         type: "success",
       });
     },
-    [updateEtrian],
+    [updateTodo],
   );
 
   const handleReset = useCallback(() => {
-    resetEtrians();
-    localStorage.removeItem("etrianRegistryInitialized");
+    resetTodos();
+    localStorage.removeItem("todoSampleInitialized");
     setIsEditing(false);
+
     toast.add({
       title: "登録内容を初期化しました",
       type: "success",
     });
-  }, [resetEtrians]);
+  }, [resetTodos]);
 
   const handleMigrationErrorConfirm = useCallback(() => {
-    resetEtrians();
-    localStorage.removeItem("etrianRegistryInitialized");
+    resetTodos();
+    localStorage.removeItem("todoSampleInitialized");
     clearMigrationError();
+
     toast.add({
       title: "登録内容を初期化しました",
       type: "success",
     });
-  }, [resetEtrians, clearMigrationError]);
+  }, [resetTodos, clearMigrationError]);
 
-  function reorderEtrians(
-    etrians: Etrian[],
+  function reorderTodos(
+    todos: Todo[],
     startIndex: number,
     endIndex: number,
-  ): Etrian[] {
-    const newEtrians = [...etrians];
-    const [removed] = newEtrians.splice(startIndex, 1);
-    newEtrians.splice(endIndex, 0, removed);
-    return newEtrians.map((t, i) => ({ ...t, order: i }));
+  ): Todo[] {
+    const newTodos = [...todos];
+    const [removed] = newTodos.splice(startIndex, 1);
+
+    newTodos.splice(endIndex, 0, removed);
+
+    return newTodos.map((todo, index) => ({
+      ...todo,
+      order: index,
+    }));
   }
 
   const handleReorder = useCallback(
     (startIndex: number, endIndex: number) => {
-      if (!isLoaded) return;
-      const reordered = reorderEtrians(storedEtrians, startIndex, endIndex);
-      updateEtrians(reordered);
+      if (!isLoaded) {
+        return;
+      }
+
+      const reordered = reorderTodos(todos, startIndex, endIndex);
+
+      updateTodos(reordered);
+
       toast.add({
         title: "並び順を更新しました",
         type: "success",
       });
     },
-    [isLoaded, storedEtrians, updateEtrians],
+    [isLoaded, todos, updateTodos],
   );
 
   const handleImport = useCallback(
     (data: string) => {
       try {
-        const parsed = JSON.parse(data);
+        importTodoStorage(data);
+
         toast.add({
-          title: "インポートされた冒険者情報で更新しました",
+          title: "Todo をインポートしました",
           type: "success",
         });
 
@@ -146,31 +160,32 @@ export function EtrianRegistry() {
         return false;
       }
     },
-    [updateEtrians],
+    [importTodoStorage],
   );
 
   // サンプルデータ投入
   useEffect(() => {
-    const hasInitialized = localStorage.getItem("etrianRegistryInitialized");
+    const hasInitialized = localStorage.getItem("todoSampleInitialized");
 
-    if (!hasInitialized && isLoaded && storedEtrians.length === 0) {
-      const sortedSamples = [...sampleEtrians]
+    if (!hasInitialized && isLoaded && todos.length === 0) {
+      const sortedSamples = [...sampleTodos]
         .sort((a, b) => a.order - b.order)
         .reverse();
-      sortedSamples.forEach(addEtrian);
+
+      sortedSamples.forEach(addTodo);
 
       // 初期化しない限りサンプルデータが投入されないようにする
-      localStorage.setItem("etrianRegistryInitialized", "true");
+      localStorage.setItem("todoSampleInitialized", "true");
     }
-  }, [isLoaded, storedEtrians, addEtrian]);
+  }, [isLoaded, todos, addTodo]);
 
   return (
     <div className="flex flex-col gap-4">
       <div className="not-prose flex w-full flex-col gap-6">
-        <EtrianRegistryForm onSubmit={handleCreate} isEditing={isEditing} />
+        <TodoForm onSubmit={handleCreate} isEditing={isEditing} />
 
-        <EtrianRegistryItemList
-          etrians={storedEtrians}
+        <TodoList
+          todos={todos}
           isLoaded={isLoaded}
           isEditing={isEditing}
           onDelete={handleDelete}
@@ -200,8 +215,12 @@ export function EtrianRegistry() {
                     初期化
                   </Button>
                 </ConfirmDialog>
+
                 <ExportDialog
-                  storedEtrianRegistry={storedEtrianRegistry}
+                  todoStorage={{
+                    version: CURRENT_TODO_STORAGE_VERSION,
+                    todos,
+                  }}
                   className="w-fit"
                 >
                   <Button
@@ -213,6 +232,7 @@ export function EtrianRegistry() {
                     <span className="hidden sm:inline">エクスポート</span>
                   </Button>
                 </ExportDialog>
+
                 <ImportDialog onImport={handleImport}>
                   <Button
                     variant="secondary"

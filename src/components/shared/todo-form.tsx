@@ -3,38 +3,32 @@
 import { Button } from "@/components/ui/button";
 import { Field, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import {
-  RegistryFormValues,
-  registryFormSchema,
-} from "@/schemas/todo-form-schema";
+import { TodoFormValues, todoFormSchema } from "@/schemas/todo-form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UserRoundPlus } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 
-type EtrianRegistryFormProps = {
-  onSubmit: (values: RegistryFormValues) => void;
+type TodoFormProps = {
+  onSubmit: (values: TodoFormValues) => void;
   isEditing: boolean;
 };
 
-export function EtrianRegistryForm({
-  onSubmit,
-  isEditing,
-}: EtrianRegistryFormProps) {
-  const form = useForm<RegistryFormValues>({
-    resolver: zodResolver(registryFormSchema),
+export function TodoForm({ onSubmit, isEditing }: TodoFormProps) {
+  const form = useForm<TodoFormValues>({
+    resolver: zodResolver(todoFormSchema),
     defaultValues: {
       name: "",
       memo: "",
     },
   });
 
-  const handleSubmit = (values: RegistryFormValues) => {
+  const handleSubmit = (values: TodoFormValues) => {
     onSubmit(values);
     form.reset();
   };
 
   return (
-    <form id="etrian-add" onSubmit={form.handleSubmit(handleSubmit)}>
+    <form id="todoadd" onSubmit={form.handleSubmit(handleSubmit)}>
       <div className="flex gap-2">
         <Controller
           name="name"
@@ -43,7 +37,7 @@ export function EtrianRegistryForm({
             <Field data-invalid={fieldState.invalid}>
               <Input
                 {...field}
-                id="etrian-name"
+                id="todoname"
                 aria-invalid={fieldState.invalid}
                 placeholder="ししょー"
                 autoComplete="off"
@@ -53,7 +47,7 @@ export function EtrianRegistryForm({
             </Field>
           )}
         />
-        <Button type="submit" form="etrian-add" disabled={isEditing}>
+        <Button type="submit" form="todoadd" disabled={isEditing}>
           <UserRoundPlus />
           登録
         </Button>

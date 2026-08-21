@@ -34,28 +34,25 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  RegistryFormValues,
-  registryFormSchema,
-} from "@/schemas/todo-form-schema";
-import { Etrian } from "@/types/todo";
+import { TodoFormValues, todoFormSchema } from "@/schemas/todo-form-schema";
+import { Todo } from "@/types/todo";
 
 type EditDialogProps = {
-  etrian: Etrian;
-  onSave: (updated: Etrian) => void;
+  todo: Todo;
+  onSave: (updated: Todo) => void;
   children: ReactNode;
 } & ComponentProps<typeof DialogTrigger>;
 
 export function EditDialog({
-  etrian,
+  todo: todo,
   onSave,
   children,
   ...props
 }: EditDialogProps) {
   const [open, setOpen] = useState(false);
 
-  const form = useForm<RegistryFormValues>({
-    resolver: zodResolver(registryFormSchema),
+  const form = useForm<TodoFormValues>({
+    resolver: zodResolver(todoFormSchema),
     defaultValues: {
       name: "",
       memo: "",
@@ -64,10 +61,10 @@ export function EditDialog({
 
   const resetFormValues = useCallback(() => {
     form.reset({
-      name: etrian.name,
-      memo: etrian.memo,
+      name: todo.name,
+      memo: todo.memo,
     });
-  }, [etrian, form]);
+  }, [todo, form]);
 
   useEffect(() => {
     if (!open) {
@@ -77,14 +74,14 @@ export function EditDialog({
     resetFormValues();
   }, [open, resetFormValues]);
 
-  const handleSubmit = (data: RegistryFormValues) => {
-    const updatedEtrian: Etrian = {
-      ...etrian,
+  const handleSubmit = (data: TodoFormValues) => {
+    const updatedTodo: Todo = {
+      ...todo,
       name: data.name.trim(),
       memo: data.memo?.trim() || undefined,
     };
 
-    onSave(updatedEtrian);
+    onSave(updatedTodo);
     setOpen(false);
   };
 
@@ -102,7 +99,7 @@ export function EditDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <form id="etrian-edit" onSubmit={form.handleSubmit(handleSubmit)}>
+        <form id="todo-edit" onSubmit={form.handleSubmit(handleSubmit)}>
           <FieldGroup>
             <FieldSet>
               <Controller
@@ -110,13 +107,13 @@ export function EditDialog({
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="etrian-name-edit">
+                    <FieldLabel htmlFor="todo-name-edit">
                       名前
                       <Required />
                     </FieldLabel>
                     <Input
                       {...field}
-                      id="etrian-name-edit"
+                      id="todo-name-edit"
                       aria-invalid={fieldState.invalid}
                       placeholder="ししょー"
                       autoComplete="off"
@@ -133,10 +130,10 @@ export function EditDialog({
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field>
-                    <FieldLabel htmlFor="etrian-memo">メモ</FieldLabel>
+                    <FieldLabel htmlFor="todo-memo">メモ</FieldLabel>
                     <Textarea
                       {...field}
-                      id="etrian-memo"
+                      id="todo-memo"
                       placeholder="エトリアの冒険者。得意技はフロントガード。"
                       rows={4}
                       className="resize-none"
@@ -162,7 +159,7 @@ export function EditDialog({
               </Button>
             }
           />
-          <Button type="submit" form="etrian-edit">
+          <Button type="submit" form="todo-edit">
             <UserRoundCheck />
             更新
           </Button>
