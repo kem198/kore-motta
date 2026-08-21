@@ -25,14 +25,12 @@ export function TodoApp() {
   const {
     todos,
     isLoaded,
-    migrationError,
     addTodo,
     updateTodo,
     updateTodos,
     deleteTodoById,
     resetTodos,
     importTodoStorage,
-    clearMigrationError,
   } = useTodos();
 
   const [isEditing, setIsEditing] = useState(false);
@@ -56,7 +54,7 @@ export function TodoApp() {
 
       toast.add({
         title: "Todo を登録しました",
-        description: `Todo: ${trimmedName}`,
+        description: "登録しました",
         type: "success",
       });
     },
@@ -69,7 +67,7 @@ export function TodoApp() {
 
       toast.add({
         title: "Todo を削除しました",
-        description: `Todo: ${todo.name}`,
+        description: "削除しました",
         type: "success",
       });
     },
@@ -82,7 +80,7 @@ export function TodoApp() {
 
       toast.add({
         title: "Todo を更新しました",
-        description: `Todo: ${todo.name}`,
+        description: "更新しました",
         type: "success",
       });
     },
@@ -99,17 +97,6 @@ export function TodoApp() {
       type: "success",
     });
   }, [resetTodos]);
-
-  const handleMigrationErrorConfirm = useCallback(() => {
-    resetTodos();
-    localStorage.removeItem("todoSampleInitialized");
-    clearMigrationError();
-
-    toast.add({
-      title: "登録内容を初期化しました",
-      type: "success",
-    });
-  }, [resetTodos, clearMigrationError]);
 
   function reorderTodos(
     todos: Todo[],
@@ -157,6 +144,11 @@ export function TodoApp() {
 
         return true;
       } catch {
+        toast.add({
+          title: "Todo 情報の形式が不正なため、インポートを中止しました。",
+          type: "error",
+        });
+
         return false;
       }
     },

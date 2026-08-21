@@ -250,14 +250,12 @@ test.describe("Todo ページのテスト", () => {
         await page.getByRole("button", { name: "インポート" }).click();
 
         // Act
-        await page.getByRole("textbox").fill("dummyText");
+        await page.getByRole("textbox").fill("JSON ではない文字列");
         await page.getByRole("button", { name: "インポート" }).click();
 
         // Assert
         await expect(
-          page.getByText(
-            "Todo 情報の形式が不正なため、インポートを中止しました。",
-          ),
+          page.getByText("Todo の形式が不正なため、インポートを中止しました。"),
         ).toBeVisible();
 
         // Assert (表示がダミーデータのままであること)
@@ -301,9 +299,7 @@ test.describe("Todo ページのテスト", () => {
 
         // Assert
         await expect(
-          page.getByText(
-            "Todo 情報の形式が不正なため、インポートを中止しました。",
-          ),
+          page.getByText("Todo の形式が不正なため、インポートを中止しました。"),
         ).toBeVisible();
 
         // Assert (表示がダミーデータのままであること)

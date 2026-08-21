@@ -68,7 +68,7 @@ export function ImportDialog({ onImport, children }: ImportDialogProps) {
         </Alert>
         {error && (
           <p className="text-destructive text-sm">
-            冒険者情報の形式が不正なため、インポートを中止しました。
+            Todo の形式が不正なため、インポートを中止しました。
           </p>
         )}
 

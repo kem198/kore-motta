@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { CURRENT_TODO_STORAGE_VERSION } from "@/constants/version";
+import { parseTodoStorage } from "@/schemas/todo-storage-schema";
 import { Todo, TodoStorage } from "@/types/todo";
 
 export const TODO_STORAGE_KEY = "todos";
@@ -47,19 +48,14 @@ export function useTodos(options: UseTodosOptions = {}): UseTodosReturn {
 
     try {
       if (data) {
-        const parsedTodoStorage: TodoStorage = JSON.parse(data);
-
+        const parsedTodoStorage = parseTodoStorage(JSON.parse(data));
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setTodos(parsedTodoStorage.todos);
       } else {
         setTodos([]);
       }
     } catch {
-      // マイグレーション処理に失敗した場合、元のデータを保持してエラー状態を設定する
-      setMigrationError({
-        // MigrationErrorDialog を表示する
-        hasError: true,
-        originalData: data,
-      });
+      // validation error
       setTodos([]);
     } finally {
       setIsLoaded(true);
@@ -109,7 +105,7 @@ export function useTodos(options: UseTodosOptions = {}): UseTodosReturn {
   }, []);
 
   const importTodoStorage = useCallback((data: string) => {
-    const parsedTodoStorage: TodoStorage = JSON.parse(data);
+    const parsedTodoStorage = parseTodoStorage(JSON.parse(data));
 
     setTodos(parsedTodoStorage.todos);
   }, []);
