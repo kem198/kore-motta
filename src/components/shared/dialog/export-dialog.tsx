@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "@/components/ui/toast";
-import { EtrianRegistry } from "@/types/etrian";
+import { EtrianRegistry } from "@/types/todo";
 import { ComponentProps, ReactElement, ReactNode } from "react";
 
 type ExportDialogProps = {

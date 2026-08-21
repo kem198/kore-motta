@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import {
   RegistryFormValues,
   registryFormSchema,
-} from "@/schemas/registry-form-schema";
+} from "@/schemas/todo-form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UserRoundPlus } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";

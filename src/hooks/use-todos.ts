@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { CURRENT_ETRIAN_REGISTRY_VERSION } from "@/constants/version";
-import { Etrian, EtrianRegistry } from "@/types/etrian";
+import { Etrian, EtrianRegistry } from "@/types/todo";
 
 export const ETRIAN_REGISTRY_STORAGE_KEY = "etrianRegistry";
 

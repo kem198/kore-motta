@@ -1,4 +1,4 @@
-import { EtrianRegistry } from "@/features/etrian-registry";
+import { EtrianRegistry } from "@/features/todo-app";
 
 export default function Home() {
   return (

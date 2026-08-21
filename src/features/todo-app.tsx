@@ -3,15 +3,15 @@
 import { ConfirmDialog } from "@/components/shared/dialog/confirm-dialog";
 import { ExportDialog } from "@/components/shared/dialog/export-dialog";
 import { ImportDialog } from "@/components/shared/dialog/import-dialog";
-import { EtrianRegistryForm } from "@/components/shared/etrian-registry-form";
-import { EtrianRegistryItemList } from "@/components/shared/etrian-registry-list";
+import { EtrianRegistryForm } from "@/components/shared/todo-form";
+import { EtrianRegistryItemList } from "@/components/shared/todo-list";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
 import { sampleEtrians } from "@/constants/sample";
-import { useEtrianRegistry } from "@/hooks/use-etrian-registry";
-import { RegistryFormValues } from "@/schemas/registry-form-schema";
-import { Etrian } from "@/types/etrian";
+import { useEtrianRegistry } from "@/hooks/use-todos";
+import { RegistryFormValues } from "@/schemas/todo-form-schema";
+import { Etrian } from "@/types/todo";
 import {
   AlertCircleIcon,
   DownloadIcon,

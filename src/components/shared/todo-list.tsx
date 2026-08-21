@@ -16,7 +16,7 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Etrian } from "@/types/etrian";
+import { Etrian } from "@/types/todo";
 import {
   AlertCircleIcon,
   ChevronDown,

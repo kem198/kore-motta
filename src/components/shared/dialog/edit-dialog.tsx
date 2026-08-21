@@ -37,8 +37,8 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   RegistryFormValues,
   registryFormSchema,
-} from "@/schemas/registry-form-schema";
-import { Etrian } from "@/types/etrian";
+} from "@/schemas/todo-form-schema";
+import { Etrian } from "@/types/todo";
 
 type EditDialogProps = {
   etrian: Etrian;

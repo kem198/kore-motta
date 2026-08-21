@@ -1,4 +1,4 @@
-import { Etrian } from "@/types/etrian";
+import { Etrian } from "@/types/todo";
 
 export const sampleEtrians: Etrian[] = [
   {
