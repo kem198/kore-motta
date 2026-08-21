@@ -1,5 +1,4 @@
 import { Etrian } from "@/app/(toys)/etrian-calendar/_common/types/etrian";
-import { BirthdayMessage } from "@/app/(toys)/etrian-calendar/_features/registry/components/birthday-message";
 import { ConfirmDialog } from "@/app/(toys)/etrian-calendar/_features/registry/components/dialog/confirm-dialog";
 import { EditDialog } from "@/app/(toys)/etrian-calendar/_features/registry/components/dialog/edit-dialog";
 import { Alert, AlertTitle } from "@/components/ui/alert";
@@ -73,7 +72,6 @@ function EtrianRegistryItem({
       <ItemContent>
         <ItemTitle className="flex flex-col items-start gap-0">
           {etrian.name}
-          <BirthdayMessage etrian={etrian} />
         </ItemTitle>
 
         <ItemDescription>{etrian.memo}</ItemDescription>
