@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { ReactElement, useState } from "react";
 
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -38,7 +38,7 @@ export function ImportDialog({ onImport, children }: ImportDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogTrigger render={children as ReactElement} />
 
       <DialogContent>
         <DialogHeader>
@@ -50,14 +50,14 @@ export function ImportDialog({ onImport, children }: ImportDialogProps) {
           </DialogDescription>
         </DialogHeader>
 
-        <ScrollArea className="max-h-[60vh] rounded-md border border-border">
+        <ScrollArea className="border-border max-h-[60vh] rounded-md border">
           <Textarea
             value={value}
             onChange={(e) => {
               setValue(e.target.value);
               setError(false);
             }}
-            className="font-mono min-h-[160px] w-full cursor-text select-text resize-none whitespace-pre-wrap break-words bg-muted/50 p-2 text-xs"
+            className="bg-muted/50 min-h-[160px] w-full cursor-text resize-none p-2 font-mono text-xs break-words whitespace-pre-wrap select-text"
           />
         </ScrollArea>
         <Alert variant="destructive">
@@ -67,7 +67,7 @@ export function ImportDialog({ onImport, children }: ImportDialogProps) {
           </AlertTitle>
         </Alert>
         {error && (
-          <p className="text-sm text-destructive">
+          <p className="text-destructive text-sm">
             冒険者情報の形式が不正なため、インポートを中止しました。
           </p>
         )}

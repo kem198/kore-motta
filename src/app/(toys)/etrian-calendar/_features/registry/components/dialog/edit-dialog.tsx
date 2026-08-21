@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { UserRoundCheck } from "lucide-react";
 import {
   ComponentProps,
+  ReactElement,
   ReactNode,
   useCallback,
   useEffect,
@@ -140,15 +141,9 @@ export function EditDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild {...props}>
-        {children}
-      </DialogTrigger>
+      <DialogTrigger render={children as ReactElement} {...props} />
 
-      <DialogContent
-        onOpenAutoFocus={(event) => {
-          event.preventDefault();
-        }}
-      >
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>冒険者情報の編集</DialogTitle>
           <DialogDescription>
@@ -300,11 +295,13 @@ export function EditDialog({
           </FieldGroup>
         </form>
         <DialogFooter className="gap-y-2">
-          <DialogClose asChild>
-            <Button type="button" variant="outline">
-              キャンセル
-            </Button>
-          </DialogClose>
+          <DialogClose
+            render={
+              <Button type="button" variant="outline">
+                キャンセル
+              </Button>
+            }
+          />
           <Button type="submit" form="etrian-edit">
             <UserRoundCheck />
             更新

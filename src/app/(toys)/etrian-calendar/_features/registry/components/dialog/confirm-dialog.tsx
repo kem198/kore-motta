@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ComponentProps, ReactNode } from "react";
+import { ComponentProps, ReactElement, ReactNode } from "react";
 
 type ConfirmDialogProps = {
   title: ReactNode;
@@ -38,9 +38,7 @@ export function ConfirmDialog({
 }: ConfirmDialogProps) {
   return (
     <Dialog>
-      <DialogTrigger className={className} asChild>
-        {children}
-      </DialogTrigger>
+      <DialogTrigger render={children as ReactElement} className={className} />
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
@@ -50,16 +48,20 @@ export function ConfirmDialog({
         {content}
 
         <DialogFooter className="gap-y-2">
-          <DialogClose asChild>
-            <Button variant="outline" onClick={onCancel}>
-              {cancelButtonLabel}
-            </Button>
-          </DialogClose>
-          <DialogClose asChild>
-            <Button variant={confirmButtonVariant} onClick={onConfirm}>
-              {confirmButtonLabel}
-            </Button>
-          </DialogClose>
+          <DialogClose
+            render={
+              <Button variant="outline" onClick={onCancel}>
+                {cancelButtonLabel}
+              </Button>
+            }
+          />
+          <DialogClose
+            render={
+              <Button variant={confirmButtonVariant} onClick={onConfirm}>
+                {confirmButtonLabel}
+              </Button>
+            }
+          />
         </DialogFooter>
       </DialogContent>
     </Dialog>

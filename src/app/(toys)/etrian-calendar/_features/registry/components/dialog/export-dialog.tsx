@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "@/components/ui/toast";
-import { ComponentProps, ReactNode } from "react";
+import { ComponentProps, ReactElement, ReactNode } from "react";
 
 type ExportDialogProps = {
   storedEtrianRegistry: EtrianRegistry;
@@ -25,9 +25,7 @@ export function ExportDialog({
 }: ExportDialogProps) {
   return (
     <Dialog>
-      <DialogTrigger asChild {...props}>
-        {children}
-      </DialogTrigger>
+      <DialogTrigger render={children as ReactElement} {...props} />
       <DialogContent>
         <DialogHeader>
           <DialogTitle>冒険者情報のエクスポート</DialogTitle>
