@@ -8,6 +8,7 @@ const todoSchema = z
     name: z.string(),
     order: z.number(),
     memo: z.string().optional(),
+    completed: z.boolean(),
   })
   .strict();
 
