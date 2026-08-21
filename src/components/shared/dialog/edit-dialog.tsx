@@ -32,7 +32,6 @@ import {
   ReactElement,
   ReactNode,
   useCallback,
-  useEffect,
   useState,
 } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -68,13 +67,13 @@ export function EditDialog({
     setCompleted(todo.completed);
   }, [todo, form]);
 
-  useEffect(() => {
-    if (!open) {
-      return;
-    }
+  const handleOpenChange = (nextOpen: boolean) => {
+    setOpen(nextOpen);
 
-    resetFormValues();
-  }, [open, resetFormValues]);
+    if (nextOpen) {
+      resetFormValues();
+    }
+  };
 
   const handleSubmit = (data: TodoFormValues) => {
     const updatedTodo: Todo = {
@@ -89,7 +88,7 @@ export function EditDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger render={children as ReactElement} {...props} />
 
       <DialogContent>
