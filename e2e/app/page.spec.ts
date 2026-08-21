@@ -15,7 +15,7 @@ test.describe("Todo ページのテスト", () => {
 
   test.describe("TodoApp のテスト", () => {
     const DUMMY_TODO_STORAGE: TodoStorage = {
-      version: 2,
+      version: 1,
       todos: [
         {
           id: "dummy-todo",
@@ -51,7 +51,7 @@ test.describe("Todo ページのテスト", () => {
       }) => {
         // Arrange
         const todoStorage: TodoStorage = {
-          version: 2,
+          version: 1,
           todos: [
             {
               id: "test-todo",
@@ -90,11 +90,11 @@ test.describe("Todo ページのテスト", () => {
         await expect(page.getByText("カギ")).toBeVisible();
 
         // Assert (データストアへ登録されていること)
-        const migrated: TodoStorage = await page.evaluate(
+        const todoStorage: TodoStorage = await page.evaluate(
           (key) => JSON.parse(localStorage.getItem(key)!),
           TODO_STORAGE_KEY,
         );
-        expect(migrated.todos[0].name).toBe("カギ");
+        expect(todoStorage.todos[0].name).toBe("カギ");
       });
     });
 
@@ -118,7 +118,7 @@ test.describe("Todo ページのテスト", () => {
           (key) => JSON.parse(localStorage.getItem(key)!),
           TODO_STORAGE_KEY,
         );
-        expect(migrated.version).toBe(2);
+        expect(migrated.version).toBe(1);
         expect(migrated.todos[0].name).toBe("カギ");
       });
     });
@@ -151,7 +151,7 @@ test.describe("Todo ページのテスト", () => {
       }) => {
         // Arrange
         const todoStorage: TodoStorage = {
-          version: 2,
+          version: 1,
           todos: [
             {
               id: "test-todo-01",
@@ -183,7 +183,7 @@ test.describe("Todo ページのテスト", () => {
 
         // Assert
         // ダイアログは page の範囲外のためページ全体をテスト範囲にする
-        await expect(page.locator("body")).toContainText('"version": 2');
+        await expect(page.locator("body")).toContainText('"version": 1');
 
         await expect(page.locator("body")).toContainText(
           '"id": "test-todo-01"',
@@ -207,7 +207,7 @@ test.describe("Todo ページのテスト", () => {
       }) => {
         // Arrange
         const todoStorage: TodoStorage = {
-          version: 2,
+          version: 1,
           todos: [
             {
               id: "import-todo",
@@ -236,7 +236,7 @@ test.describe("Todo ページのテスト", () => {
           (key) => JSON.parse(localStorage.getItem(key)!),
           TODO_STORAGE_KEY,
         );
-        expect(migrated.version).toBe(2);
+        expect(migrated.version).toBe(1);
         expect(migrated.todos[0].id).toBe("import-todo");
         expect(migrated.todos[0].name).toBe("カギ");
       });
@@ -276,7 +276,7 @@ test.describe("Todo ページのテスト", () => {
       }) => {
         // Arrange
         const corruptedTodoStorage: unknown = {
-          version: 2,
+          version: 1,
           todos: [
             {
               id: "import-todo",
