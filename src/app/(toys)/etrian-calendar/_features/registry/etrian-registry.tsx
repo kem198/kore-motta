@@ -2,13 +2,13 @@
 
 import { sampleEtrians } from "@/app/(toys)/etrian-calendar/_common/constants/sample";
 import { Etrian } from "@/app/(toys)/etrian-calendar/_common/types/etrian";
-import { ConfirmDialog } from "@/app/(toys)/etrian-calendar/_features/registry/components/dialog/confirm-dialog";
-import { ExportDialog } from "@/app/(toys)/etrian-calendar/_features/registry/components/dialog/export-dialog";
-import { ImportDialog } from "@/app/(toys)/etrian-calendar/_features/registry/components/dialog/import-dialog";
 import { EtrianRegistryForm } from "@/app/(toys)/etrian-calendar/_features/registry/components/etrian-registry-form";
 import { EtrianRegistryItemList } from "@/app/(toys)/etrian-calendar/_features/registry/components/etrian-registry-list";
 import { useEtrianRegistry } from "@/app/(toys)/etrian-calendar/_features/registry/hooks/use-etrian-registry";
 import { RegistryFormValues } from "@/app/(toys)/etrian-calendar/_features/registry/schemas/registry-form-schema";
+import { ConfirmDialog } from "@/components/shared/dialog/confirm-dialog";
+import { ExportDialog } from "@/components/shared/dialog/export-dialog";
+import { ImportDialog } from "@/components/shared/dialog/import-dialog";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";

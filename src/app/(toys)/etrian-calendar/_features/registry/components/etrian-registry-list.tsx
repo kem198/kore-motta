@@ -1,6 +1,6 @@
 import { Etrian } from "@/app/(toys)/etrian-calendar/_common/types/etrian";
-import { ConfirmDialog } from "@/app/(toys)/etrian-calendar/_features/registry/components/dialog/confirm-dialog";
-import { EditDialog } from "@/app/(toys)/etrian-calendar/_features/registry/components/dialog/edit-dialog";
+import { ConfirmDialog } from "@/components/shared/dialog/confirm-dialog";
+import { EditDialog } from "@/components/shared/dialog/edit-dialog";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
