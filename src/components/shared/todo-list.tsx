@@ -2,7 +2,6 @@ import { ConfirmDialog } from "@/components/shared/dialog/confirm-dialog";
 import { EditDialog } from "@/components/shared/dialog/edit-dialog";
 import { TodoToggle } from "@/components/shared/todo-toggle";
 import { Alert, AlertTitle } from "@/components/ui/alert";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import {
@@ -63,12 +62,12 @@ function TodoItem({
 }: TodoItemProps) {
   return (
     <Item className="justify-end px-0 md:flex-row">
-      <TodoToggle aria-label="Toggle todo" todo={todo} onChange={onUpdate} />
       <ItemMedia>
-        <Avatar>
+        <TodoToggle aria-label="Toggle todo" todo={todo} onChange={onUpdate} />
+        {/* <Avatar>
           <AvatarImage className="grayscale" />
           <AvatarFallback>{todo.name.charAt(0)}</AvatarFallback>
-        </Avatar>
+        </Avatar> */}
       </ItemMedia>
 
       <ItemContent>
