@@ -5,6 +5,7 @@ export type Todo = {
   name: string;
   order: number;
   memo?: string;
+  completed: boolean;
 };
 
 export type TodoStorageVersion = typeof CURRENT_TODO_STORAGE_VERSION | 1;

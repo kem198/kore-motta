@@ -49,6 +49,7 @@ export function TodoApp() {
         name: trimmedName,
         order: 0,
         memo: values.memo?.trim() || undefined,
+        completed: false,
       };
 
       addTodo(newTodo);
