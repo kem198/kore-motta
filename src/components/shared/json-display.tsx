@@ -24,19 +24,19 @@ export function JsonDisplay({
     <ScrollArea
       {...scrollAreaProps}
       className={cn(
-        "rounded-md border border-border",
+        "border-border rounded-md border",
         scrollAreaProps?.className,
       )}
     >
       <Item
         {...itemProps}
-        className={cn("w-full bg-muted/50", itemProps?.className)}
+        className={cn("bg-muted/50 w-full", itemProps?.className)}
       >
         <ItemContent {...itemContentProps}>
           <pre
             {...preProps}
             className={cn(
-              "cursor-text select-text whitespace-pre-wrap break-words text-xs",
+              "cursor-text text-xs break-words whitespace-pre-wrap select-text",
               preProps?.className,
             )}
           >
