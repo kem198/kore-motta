@@ -42,9 +42,9 @@ export function ImportDialog({ onImport, children }: ImportDialogProps) {
 
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>冒険者情報のインポート</DialogTitle>
+          <DialogTitle>Todo 情報のインポート</DialogTitle>
           <DialogDescription>
-            冒険者情報を復元します。
+            Todo 情報を復元します。
             <br />
             「エクスポート」でコピーした文字列を貼り付けて「インポート」ボタンを押してください。
           </DialogDescription>

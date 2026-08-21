@@ -2,21 +2,14 @@ import { Todo } from "@/types/todo";
 
 export const sampleTodos: Todo[] = [
   {
-    id: "sample-paladin",
-    name: "ししょー",
+    id: "sample-wallet",
+    name: "窓の鍵",
     order: 0,
-    memo: "ウルトラCだろう…私もそう思う",
   },
   {
-    id: "sample-gunner",
-    name: "ガン子",
+    id: "sample-key",
+    name: "財布",
     order: 1,
-    memo: "私のフィギュアで3倍売れる",
-  },
-  {
-    id: "sample-medic",
-    name: "メディ子",
-    order: 2,
-    memo: "ずうずうしい！",
+    memo: "鞄のポケットに入れる",
   },
 ];

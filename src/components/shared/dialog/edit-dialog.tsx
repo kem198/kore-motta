@@ -26,7 +26,6 @@ import {
 } from "@/components/ui/dialog";
 import {
   Field,
-  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -91,9 +90,9 @@ export function EditDialog({
 
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>冒険者情報の編集</DialogTitle>
+          <DialogTitle>Todo の編集</DialogTitle>
           <DialogDescription>
-            冒険者のプロフィールを設定してください。
+            Todo の情報を設定してください。
             <br />
             <Required /> は必須項目です。
           </DialogDescription>
@@ -108,14 +107,14 @@ export function EditDialog({
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor="todo-name-edit">
-                      名前
+                      タイトル
                       <Required />
                     </FieldLabel>
                     <Input
                       {...field}
                       id="todo-name-edit"
                       aria-invalid={fieldState.invalid}
-                      placeholder="ししょー"
+                      placeholder="財布"
                       autoComplete="off"
                     />
                     {fieldState.invalid && (
@@ -134,14 +133,11 @@ export function EditDialog({
                     <Textarea
                       {...field}
                       id="todo-memo"
-                      placeholder="エトリアの冒険者。得意技はフロントガード。"
+                      placeholder="カバンのポケットに入れる"
                       rows={4}
                       className="resize-none"
                       aria-invalid={fieldState.invalid}
                     />
-                    <FieldDescription>
-                      お好みの内容を入力してください。
-                    </FieldDescription>
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}

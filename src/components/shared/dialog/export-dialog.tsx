@@ -28,9 +28,9 @@ export function ExportDialog({
       <DialogTrigger render={children as ReactElement} {...props} />
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>冒険者情報のエクスポート</DialogTitle>
+          <DialogTitle>Todo 情報のエクスポート</DialogTitle>
           <DialogDescription>
-            ブラウザ上に保存されている冒険者情報を表示します。
+            ブラウザ上に保存されている Todo 情報を表示します。
             <br />
             コピーして復元や端末間の移行にご利用ください。
           </DialogDescription>
@@ -41,12 +41,12 @@ export function ExportDialog({
               const json = JSON.stringify(todoStorage, null, 2);
               void navigator.clipboard.writeText(json);
               toast.add({
-                title: "冒険者情報をクリップボードにコピーしました",
+                title: "Todo 情報をクリップボードにコピーしました",
                 type: "success",
               });
             } catch (e) {
               toast.add({
-                title: "冒険者情報をクリップボードにコピーしました",
+                title: "Todo 情報をクリップボードにコピーしました",
                 type: "error",
               });
             }

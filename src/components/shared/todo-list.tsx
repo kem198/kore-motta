@@ -9,7 +9,6 @@ import {
   ItemActions,
   ItemContent,
   ItemDescription,
-  ItemFooter,
   ItemGroup,
   ItemMedia,
   ItemSeparator,
@@ -74,13 +73,7 @@ function TodoItem({
           {todo.name}
         </ItemTitle>
 
-        <ItemDescription>{todo.memo}</ItemDescription>
-
-        <ItemFooter className={todo.memo ? "pt-2" : undefined}>
-          <div className="flex flex-wrap items-center gap-2">
-            {/* TODO: もともと Badge のリスト表示があった場所 */}
-          </div>
-        </ItemFooter>
+        {todo.memo ? <ItemDescription>{todo.memo}</ItemDescription> : null}
       </ItemContent>
 
       <ItemActions className="flex w-full items-center justify-end gap-2 md:w-auto">
