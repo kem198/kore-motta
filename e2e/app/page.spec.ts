@@ -674,7 +674,7 @@ test.describe("Todo ページのテスト", () => {
         // Act
         await page.getByRole("button", { name: "仕事" }).click();
         await page.getByRole("button", { name: "カテゴリ設定" }).click();
-        await page.getByRole("textbox", { name: "タイトル" }).fill("営業");
+        await page.getByRole("textbox", { name: "カテゴリ名" }).fill("営業");
         await page.getByRole("button", { name: "更新" }).click();
 
         // Assert
