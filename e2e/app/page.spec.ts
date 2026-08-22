@@ -588,7 +588,7 @@ test.describe("Todo ページのテスト", () => {
           "朝活",
         );
 
-        // ストレージのカテゴリ配列でも末尾に追加されていること
+        // ストレージの categories（オブジェクト）でも末尾に追加されていること
         const persistedCategoryNames: string[] = await page.evaluate((key) => {
           const storage = JSON.parse(localStorage.getItem(key)!);
           const categories = (storage.categories ?? {}) as Record<
