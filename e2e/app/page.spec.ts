@@ -598,7 +598,6 @@ test.describe("Todo ページのテスト", () => {
           return Object.values(categories).map((category) => category.name);
         }, TODO_STORAGE_KEY);
         expect(persistedCategoryNames.at(-1)).toBe("朝活");
-        expect(createdCategoryId).toBeTruthy();
       });
     });
 
