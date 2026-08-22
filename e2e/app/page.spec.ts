@@ -642,6 +642,53 @@ test.describe("Todo ページのテスト", () => {
         expect(todoStorage.todos[0].name).toBe("カギ");
         expect(todoStorage.todos[0].categoryId).toBe(DEFAULT_CATEGORY_ID);
       });
+
+      test("選択中のカテゴリに属する Todo だけが表示されること", async ({
+        page,
+      }) => {
+        // Arrange
+        const todoStorage: TodoStorage = {
+          version: 1,
+          todos: [
+            {
+              id: "todo-unclassified",
+              name: "財布",
+              order: 0,
+              categoryId: DEFAULT_CATEGORY_ID,
+              completed: false,
+            },
+            {
+              id: "todo-work",
+              name: "資料作成",
+              order: 1,
+              categoryId: "work",
+              completed: false,
+            },
+          ],
+          categories: {
+            [DEFAULT_CATEGORY_ID]: { name: DEFAULT_CATEGORY_NAME },
+            work: { name: "仕事" },
+          },
+        };
+        await page.evaluate(
+          ([key, value]) => {
+            localStorage.setItem(key, value);
+          },
+          [TODO_STORAGE_KEY, JSON.stringify(todoStorage)],
+        );
+        await navigateToTodo(page);
+
+        // Act
+        await page.getByRole("button", { name: "仕事" }).click();
+
+        // Assert
+        await expect(
+          assertScope.getByText("資料作成", { exact: true }),
+        ).toBeVisible();
+        await expect(
+          assertScope.getByText("財布", { exact: true }),
+        ).not.toBeVisible();
+      });
     });
   });
 });
