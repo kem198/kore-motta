@@ -38,7 +38,7 @@ jobs:
         run: npx playwright install --with-deps chromium webkit
 
       - name: Run Playwright tests
-        run: npm run e2e
+        run: npm run e2e:all
 
       - name: Upload Playwright report
         if: ${{ !cancelled() }}
