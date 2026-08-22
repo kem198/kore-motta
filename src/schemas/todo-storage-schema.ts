@@ -1,4 +1,4 @@
-import { DEFAULT_CATEGORIES_STORAGE } from "@/constants/categories";
+import { DEFAULT_CATEGORIES_STORAGE, DEFAULT_CATEGORY_ID } from "@/constants/categories";
 import { CURRENT_TODO_STORAGE_VERSION } from "@/constants/version";
 import { TodoStorage } from "@/types/todo";
 import * as z from "zod";
@@ -10,7 +10,7 @@ const todoSchema = z
     id: z.string(),
     name: z.string(),
     order: z.number(),
-    categoryId: z.string().default("uncategorized"),
+    categoryId: z.string().default(DEFAULT_CATEGORY_ID),
     memo: z.string().optional(),
     completed: z.boolean(),
   })
