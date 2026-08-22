@@ -133,8 +133,8 @@ export function EditDialog({
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="todo-category-name">カテゴリ</FieldLabel>
-                カテゴリ: {categoryName}
+                <FieldLabel>カテゴリ</FieldLabel>
+                <div id="todo-category-name">カテゴリ: {categoryName}</div>
               </Field>
 
               <Controller
