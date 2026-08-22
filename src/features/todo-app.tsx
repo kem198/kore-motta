@@ -8,6 +8,10 @@ import { TodoList } from "@/components/shared/todo-list";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
+import {
+  DEFAULT_CATEGORIES_STORAGE,
+  DEFAULT_CATEGORY_ID,
+} from "@/constants/categories";
 import { MESSAGES } from "@/constants/messages";
 import { CURRENT_TODO_STORAGE_VERSION } from "@/constants/version";
 import { useTodos } from "@/hooks/use-todos";
@@ -19,7 +23,7 @@ import {
   PencilIcon,
   UploadIcon,
 } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export function TodoApp() {
   const {
@@ -34,6 +38,62 @@ export function TodoApp() {
   } = useTodos();
 
   const [isEditing, setIsEditing] = useState(false);
+  const [categories, setCategories] = useState<
+    Record<string, { name: string }>
+  >(() => {
+    try {
+      if (typeof window === "undefined") return DEFAULT_CATEGORIES_STORAGE;
+      const raw = window.localStorage.getItem("categories");
+      return raw ? JSON.parse(raw) : DEFAULT_CATEGORIES_STORAGE;
+    } catch {
+      return DEFAULT_CATEGORIES_STORAGE;
+    }
+  });
+
+  const [categoryName, setCategoryName] = useState("");
+  const [activeCategoryId, setActiveCategoryId] = useState<string>(
+    () => DEFAULT_CATEGORY_ID,
+  );
+
+  // 初回ロード時に localStorage に categories がなければ初期値を保存する
+  useEffect(() => {
+    try {
+      if (typeof window === "undefined") return;
+      const raw = window.localStorage.getItem("categories");
+      if (!raw) {
+        window.localStorage.setItem(
+          "categories",
+          JSON.stringify(DEFAULT_CATEGORIES_STORAGE),
+        );
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+  const handleAddCategory = useCallback(() => {
+    const name = categoryName.trim();
+    if (!name) return;
+
+    const id = crypto.randomUUID();
+
+    setCategories((prev) => {
+      const next = { [id]: { name }, ...prev };
+      try {
+        window.localStorage.setItem("categories", JSON.stringify(next));
+      } catch {
+        // ignore
+      }
+      return next;
+    });
+
+    setActiveCategoryId(id);
+    setCategoryName("");
+    toast.add({
+      title: "カテゴリを追加しました",
+      description: name,
+      type: "success",
+    });
+  }, [categoryName]);
 
   const handleCreate = useCallback(
     (values: TodoFormValues) => {
@@ -48,6 +108,7 @@ export function TodoApp() {
         name: trimmedName,
         order: 0,
         memo: values.memo?.trim() || undefined,
+        categoryId: DEFAULT_CATEGORY_ID,
         completed: false,
       };
 
@@ -153,6 +214,44 @@ export function TodoApp() {
   return (
     <div className="flex flex-col gap-4">
       <div className="not-prose flex w-full flex-col gap-6">
+        <div className="flex flex-col gap-2">
+          <label className="flex flex-col">
+            <span className="text-sm font-medium">カテゴリ名</span>
+            <input
+              aria-label="カテゴリ名"
+              value={categoryName}
+              onChange={(e) => setCategoryName(e.target.value)}
+              className="input"
+            />
+          </label>
+          <div>
+            <button
+              type="button"
+              onClick={handleAddCategory}
+              className="inline-flex items-center rounded bg-gray-100 px-3 py-1"
+            >
+              カテゴリ作成
+            </button>
+          </div>
+
+          {isLoaded && (
+            <div className="flex flex-wrap gap-2" aria-label="カテゴリ一覧">
+              {Object.entries(categories).map(([id, c]) => (
+                <div
+                  key={id}
+                  className={
+                    id === activeCategoryId
+                      ? "bg-primary text-primary-foreground inline-flex items-center rounded px-2 py-1"
+                      : "bg-muted rounded px-2 py-1"
+                  }
+                >
+                  {c.name}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
         <TodoForm onSubmit={handleCreate} isEditing={isEditing} />
 
         <TodoList
@@ -194,6 +293,7 @@ export function TodoApp() {
                   todoStorage={{
                     version: CURRENT_TODO_STORAGE_VERSION,
                     todos,
+                    categories,
                   }}
                   className="w-fit"
                 >

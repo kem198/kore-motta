@@ -1,4 +1,7 @@
-import { DEFAULT_CATEGORY_ID } from "@/constants/categories";
+import {
+  DEFAULT_CATEGORY_ID,
+  DEFAULT_CATEGORY_NAME,
+} from "@/constants/categories";
 import { TODO_STORAGE_KEY } from "@/hooks/use-todos";
 import { TodoStorage } from "@/types/todo";
 import { expect, Locator, Page, test } from "@playwright/test";
@@ -91,6 +94,30 @@ test.describe("Todo ページのテスト", () => {
         await expect(
           assertScope.getByText("家の鍵", { exact: true }),
         ).toBeVisible();
+      });
+
+      test.describe("カテゴリ初期化のテスト", () => {
+        test("localStorage が空のときデフォルトカテゴリが作成されること", async ({
+          page,
+        }) => {
+          // Arrange
+          await page.evaluate(() => localStorage.clear());
+
+          // Act
+          await navigateToTodo(page);
+
+          // Assert
+          const raw = await page.evaluate(() =>
+            localStorage.getItem("categories"),
+          );
+          expect(raw).not.toBeNull();
+
+          const categories = JSON.parse(raw!);
+          expect(categories[DEFAULT_CATEGORY_ID]).toBeDefined();
+          expect(categories[DEFAULT_CATEGORY_ID].name).toBe(
+            DEFAULT_CATEGORY_NAME,
+          );
+        });
       });
     });
 

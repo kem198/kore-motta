@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
+import { DEFAULT_CATEGORIES_STORAGE } from "@/constants/categories";
 import { CURRENT_TODO_STORAGE_VERSION } from "@/constants/version";
 import { parseTodoStorage } from "@/schemas/todo-storage-schema";
 import { Todo, TodoStorage } from "@/types/todo";
@@ -67,9 +68,15 @@ export function useTodos(options: UseTodosOptions = {}): UseTodosReturn {
       return;
     }
 
+    const rawCats = window.localStorage.getItem("categories");
+    const categories = rawCats
+      ? JSON.parse(rawCats)
+      : DEFAULT_CATEGORIES_STORAGE;
+
     const todoStorage: TodoStorage = {
       version: CURRENT_TODO_STORAGE_VERSION,
       todos,
+      categories,
     };
 
     window.localStorage.setItem(storageKey, JSON.stringify(todoStorage));
@@ -108,6 +115,16 @@ export function useTodos(options: UseTodosOptions = {}): UseTodosReturn {
     const parsedTodoStorage = parseTodoStorage(JSON.parse(data));
 
     setTodos(parsedTodoStorage.todos);
+    try {
+      if (typeof window !== "undefined" && parsedTodoStorage.categories) {
+        window.localStorage.setItem(
+          "categories",
+          JSON.stringify(parsedTodoStorage.categories),
+        );
+      }
+    } catch {
+      // ignore
+    }
   }, []);
 
   return {
