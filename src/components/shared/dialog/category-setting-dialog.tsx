@@ -91,6 +91,7 @@ export function CategorySettingDialog({
                   type="button"
                   variant="destructive"
                   onClick={() => onDelete(category)}
+                  className="mr-auto"
                 >
                   カテゴリを削除
                 </Button>
