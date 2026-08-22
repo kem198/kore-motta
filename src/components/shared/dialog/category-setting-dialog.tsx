@@ -11,7 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { AlertCircleIcon } from "lucide-react";
+import { AlertCircleIcon, SaveCheckIcon } from "lucide-react";
 
 export type CategorySettingDialogProps = {
   open: boolean;
@@ -63,12 +63,13 @@ export function CategorySettingDialog({
               )}
             </div>
 
-            <DialogFooter className="gap-y-2">
+            <DialogFooter className="flex items-center justify-between gap-y-2">
               {!isDefaultCategory && (
                 <Button
                   type="button"
                   variant="destructive"
                   onClick={() => onDelete(category)}
+                  className="mr-auto"
                 >
                   カテゴリを削除
                 </Button>
@@ -76,8 +77,8 @@ export function CategorySettingDialog({
 
               <DialogClose
                 render={
-                  <Button type="button" variant="outline">
-                    閉じる
+                  <Button type="button">
+                    <SaveCheckIcon /> 更新
                   </Button>
                 }
               />
