@@ -132,7 +132,7 @@ export function TodoApp() {
     setActiveCategoryId(id);
     setCategoryName("");
     toast.add({
-      title: "カテゴリを追加しました",
+      title: MESSAGES.toast.categoryCreated,
       description: name,
       type: "success",
     });
@@ -261,10 +261,10 @@ export function TodoApp() {
           <div className="flex gap-2">
             <label className="flex flex-1 flex-col gap-1">
               <Input
-                aria-label="カテゴリ名"
+                aria-label={MESSAGES.labels.categoryName}
                 value={categoryName}
                 onChange={(e) => setCategoryName(e.target.value)}
-                placeholder="出かける前"
+                placeholder={MESSAGES.placeholders.categoryName}
               />
             </label>
 
@@ -274,12 +274,15 @@ export function TodoApp() {
               disabled={!categoryName.trim()}
             >
               <PlusIcon />
-              カテゴリ作成
+              {MESSAGES.actions.createCategory}
             </Button>
           </div>
 
           {isLoaded && (
-            <div className="flex flex-wrap gap-2" aria-label="カテゴリ一覧">
+            <div
+              className="flex flex-wrap gap-2"
+              aria-label={MESSAGES.labels.categoryList}
+            >
               {Object.entries(categories).map(([id, c]) => {
                 const isSelected = id === activeCategoryId;
 
@@ -383,7 +386,9 @@ export function TodoApp() {
             variant={isEditing ? "default" : "secondary"}
             onClick={() => setIsEditing((prev) => !prev)}
             aria-label={
-              isEditing ? MESSAGES.actions.done : `${MESSAGES.actions.edit}開始`
+              isEditing
+                ? MESSAGES.actions.done
+                : `${MESSAGES.actions.editStart}`
             }
           >
             <PencilIcon />

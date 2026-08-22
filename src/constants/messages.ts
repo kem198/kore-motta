@@ -5,7 +5,9 @@ export const MESSAGES = {
     cancel: "キャンセル",
     copy: "コピー",
     add: "追加",
+    createCategory: "カテゴリ作成",
     edit: "編集",
+    editStart: "編集開始",
     done: "完了",
     reset: "初期化",
     import: "インポート",
@@ -39,12 +41,15 @@ export const MESSAGES = {
   labels: {
     title: "タイトル",
     memo: "メモ",
+    categoryName: "カテゴリ名",
+    categoryList: "カテゴリ一覧",
   },
 
   placeholders: {
     title: "財布",
     memo: "カバンのポケットに入れる",
     newItem: "財布",
+    categoryName: "出かける前",
   },
 
   validation: {
@@ -69,6 +74,7 @@ export const MESSAGES = {
     updated: "アイテムを更新しました",
     deleted: "アイテムを削除しました",
     imported: "アイテムをインポートしました",
+    categoryCreated: "カテゴリを追加しました",
     reordered: "並び順を更新しました",
     reset: "登録内容を初期化しました",
     importError: "アイテム情報の形式が不正なため、インポートできませんでした。",
