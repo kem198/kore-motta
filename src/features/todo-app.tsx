@@ -65,6 +65,10 @@ export function TodoApp() {
     () => DEFAULT_CATEGORY_ID,
   );
 
+  const visibleTodos = todos.filter(
+    (todo) => todo.categoryId === activeCategoryId,
+  );
+
   // 初回ロード時にストレージに categories がなければ初期値を保存する
   useEffect(() => {
     try {
@@ -312,7 +316,7 @@ export function TodoApp() {
         <TodoForm onSubmit={handleCreate} isEditing={isEditing} />
 
         <TodoList
-          todos={todos}
+          todos={visibleTodos}
           isLoaded={isLoaded}
           isEditing={isEditing}
           onDelete={handleDelete}

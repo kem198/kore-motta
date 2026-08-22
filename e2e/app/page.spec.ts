@@ -17,48 +17,44 @@ test.describe("Todo ページのテスト", () => {
     await expect(page).toHaveURL(targetPath);
   };
 
-  test.beforeEach(async ({ page }) => {
-    // ルートへ移動しておく
-    await page.goto("/");
+  /** ダミーデータ */
+  const DUMMY_TODO_STORAGE: TodoStorage = {
+    version: 1,
+    todos: [
+      {
+        id: "dummy-todo",
+        name: "dummy",
+        order: 0,
+        categoryId: DEFAULT_CATEGORY_ID,
+        completed: false,
+      },
+    ],
+  };
 
-    // テストの Assert 範囲を設定
+  test.beforeEach(async ({ page }) => {
+    await page.goto("/");
     assertScope = page.locator('[data-testid="todo"]');
   });
 
-  test.describe("TodoApp のテスト", () => {
-    const DUMMY_TODO_STORAGE: TodoStorage = {
-      version: 1,
-      todos: [
-        {
-          id: "dummy-todo",
-          name: "dummy",
-          order: 0,
-          categoryId: DEFAULT_CATEGORY_ID,
-          completed: false,
-        },
-      ],
-    };
+  test.beforeEach(async ({ page }) => {
+    await page.evaluate(
+      ([key, value]) => {
+        localStorage.setItem(key, value);
+      },
+      [TODO_STORAGE_KEY, JSON.stringify(DUMMY_TODO_STORAGE)],
+    );
+  });
 
-    test.beforeEach(async ({ page }) => {
-      // ダミーデータのセット
-      await page.evaluate(
-        ([key, value]) => {
-          localStorage.setItem(key, value);
-        },
-        [TODO_STORAGE_KEY, JSON.stringify(DUMMY_TODO_STORAGE)],
-      );
-    });
+  test.afterEach(async ({ page }) => {
+    await page.evaluate(
+      ([key, value]) => {
+        localStorage.setItem(key, value);
+      },
+      [TODO_STORAGE_KEY, JSON.stringify(DUMMY_TODO_STORAGE)],
+    );
+  });
 
-    test.afterEach(async ({ page }) => {
-      // ダミーデータで再度上書き
-      await page.evaluate(
-        ([key, value]) => {
-          localStorage.setItem(key, value);
-        },
-        [TODO_STORAGE_KEY, JSON.stringify(DUMMY_TODO_STORAGE)],
-      );
-    });
-
+  test.describe("Todo の操作", () => {
     test.describe("初期表示のテスト", () => {
       test("Todo が登録済みの状態で、画面が初期表示された時、登録済み Todo の各種情報が表示されること", async ({
         page,
@@ -94,45 +90,6 @@ test.describe("Todo ページのテスト", () => {
         await expect(
           assertScope.getByText("家の鍵", { exact: true }),
         ).toBeVisible();
-      });
-
-      test.describe("カテゴリ初期化のテスト", () => {
-        test("localStorage が空のときデフォルトカテゴリが作成されること", async ({
-          page,
-        }) => {
-          // Arrange
-          await page.evaluate(() => localStorage.clear());
-
-          // Act
-          await navigateToTodo(page);
-
-          // Assert
-          await expect
-            .poll(
-              async () =>
-                await page.evaluate(
-                  (key) => localStorage.getItem(key),
-                  TODO_STORAGE_KEY,
-                ),
-              { timeout: 5000 },
-            )
-            .not.toBeNull();
-
-          const raw = await page.evaluate(
-            (key) => localStorage.getItem(key),
-            TODO_STORAGE_KEY,
-          );
-          const storage = JSON.parse(raw!);
-          expect(storage.categories[DEFAULT_CATEGORY_ID]).toBeDefined();
-          expect(storage.categories[DEFAULT_CATEGORY_ID].name).toBe(
-            DEFAULT_CATEGORY_NAME,
-          );
-
-          const legacyCategoriesKeyValue = await page.evaluate(() =>
-            localStorage.getItem("categories"),
-          );
-          expect(legacyCategoriesKeyValue).toBeNull();
-        });
       });
 
       test("Todo とカテゴリが 1 つのストレージオブジェクトとして保存されること", async ({
@@ -201,9 +158,8 @@ test.describe("Todo ページのテスト", () => {
         await navigateToTodo(page);
         const nameInput = page.getByRole("textbox", { name: "財布" });
 
-        await nameInput.fill("カギ");
-
         // Act
+        await nameInput.fill("カギ");
         await page.getByRole("button", { name: "追加" }).click();
 
         // Assert (表示が正しいこと)
@@ -217,38 +173,6 @@ test.describe("Todo ページのテスト", () => {
           TODO_STORAGE_KEY,
         );
         expect(todoStorage.todos[0].name).toBe("カギ");
-      });
-
-      test("選択中のカテゴリに Todo が登録されること", async ({ page }) => {
-        // Arrange
-        const todoStorage: TodoStorage = {
-          version: 1,
-          todos: [],
-          categories: {
-            [DEFAULT_CATEGORY_ID]: { name: DEFAULT_CATEGORY_NAME },
-            work: { name: "仕事" },
-          },
-        };
-        await page.evaluate(
-          ([key, value]) => {
-            localStorage.setItem(key, value);
-          },
-          [TODO_STORAGE_KEY, JSON.stringify(todoStorage)],
-        );
-        await navigateToTodo(page);
-
-        // Act
-        await page.getByRole("button", { name: "仕事" }).click();
-        await page.getByRole("textbox", { name: "財布" }).fill("会議資料");
-        await page.getByRole("button", { name: "追加" }).click();
-
-        // Assert
-        const persisted: TodoStorage = await page.evaluate(
-          (key) => JSON.parse(localStorage.getItem(key)!),
-          TODO_STORAGE_KEY,
-        );
-        expect(persisted.todos[0].name).toBe("会議資料");
-        expect(persisted.todos[0].categoryId).toBe("work");
       });
     });
 
@@ -304,6 +228,7 @@ test.describe("Todo ページのテスト", () => {
           [TODO_STORAGE_KEY, JSON.stringify(todoStorage)],
         );
         await navigateToTodo(page);
+        await page.getByRole("button", { name: "仕事" }).click();
 
         // Act
         await page.getByRole("button", { name: "編集: 資料作成" }).click();
@@ -549,7 +474,6 @@ test.describe("Todo ページのテスト", () => {
               order: 0,
               categoryId: DEFAULT_CATEGORY_ID,
               memo: "家の鍵",
-
               undefinedKey: "★ TodoStorage 型に一致しないキー",
             },
           ],
@@ -587,60 +511,127 @@ test.describe("Todo ページのテスト", () => {
     });
   });
 
-  test.describe("カテゴリのテスト", () => {
-    test.beforeEach(async ({ page }) => {
-      // ルートへ移動しておく
-      await page.goto("/");
-
-      // テストの Assert 範囲を設定
-      assertScope = page.locator('[data-testid="todo"]');
-    });
-
-    test.describe("TodoApp のテスト", () => {
-      const DUMMY_TODO_STORAGE: TodoStorage = {
-        version: 1,
-        todos: [
-          {
-            id: "dummy-todo",
-            name: "dummy",
-            order: 0,
-            categoryId: DEFAULT_CATEGORY_ID,
-            completed: false,
-          },
-        ],
-      };
-
-      test.beforeEach(async ({ page }) => {
-        // ダミーデータのセット
-        await page.evaluate(
-          ([key, value]) => {
-            localStorage.setItem(key, value);
-          },
-          [TODO_STORAGE_KEY, JSON.stringify(DUMMY_TODO_STORAGE)],
-        );
-      });
-
-      test("Todo を登録できること", async ({ page }) => {
+  test.describe("カテゴリの操作", () => {
+    test.describe("初期表示時のテスト", () => {
+      test("localStorage が空のときデフォルトカテゴリが作成されること", async ({
+        page,
+      }) => {
         // Arrange
-        await navigateToTodo(page);
-        const nameInput = page.getByRole("textbox", { name: "財布" });
-        await nameInput.fill("カギ");
+        await page.evaluate(() => localStorage.clear());
 
         // Act
-        await page.getByRole("button", { name: "追加" }).click();
+        await navigateToTodo(page);
 
-        // Assert (表示が正しいこと)
-        await expect(
-          assertScope.getByText("カギ", { exact: true }),
-        ).toBeVisible();
+        // Assert
+        await expect
+          .poll(
+            async () =>
+              await page.evaluate(
+                (key) => localStorage.getItem(key),
+                TODO_STORAGE_KEY,
+              ),
+            { timeout: 5000 },
+          )
+          .not.toBeNull();
 
-        // Assert (データストアへ登録されていること)
+        const raw = await page.evaluate(
+          (key) => localStorage.getItem(key),
+          TODO_STORAGE_KEY,
+        );
+        const storage = JSON.parse(raw!);
+        expect(storage.categories[DEFAULT_CATEGORY_ID]).toBeDefined();
+        expect(storage.categories[DEFAULT_CATEGORY_ID].name).toBe(
+          DEFAULT_CATEGORY_NAME,
+        );
+
+        const legacyCategoriesKeyValue = await page.evaluate(() =>
+          localStorage.getItem("categories"),
+        );
+        expect(legacyCategoriesKeyValue).toBeNull();
+      });
+    });
+
+    test.describe("作成時のテスト", () => {
+      test("カテゴリを追加した時、そのカテゴリが選択状態になること", async ({
+        page,
+      }) => {
+        // Arrange
+        await navigateToTodo(page);
+
+        // Act
+        await page.getByLabel("カテゴリ名").fill("朝活");
+        await page.getByRole("button", { name: "カテゴリ作成" }).click();
+
+        // Assert
+        const categoryButton = page.getByRole("button", { name: "朝活" });
+        await expect(categoryButton).toHaveAttribute("aria-pressed", "true");
+
         const todoStorage: TodoStorage = await page.evaluate(
           (key) => JSON.parse(localStorage.getItem(key)!),
           TODO_STORAGE_KEY,
         );
-        expect(todoStorage.todos[0].name).toBe("カギ");
-        expect(todoStorage.todos[0].categoryId).toBe(DEFAULT_CATEGORY_ID);
+        const createdCategoryId = Object.keys(
+          todoStorage.categories ?? {},
+        ).find((id) => todoStorage.categories?.[id]?.name === "朝活");
+        expect(createdCategoryId).toBeTruthy();
+
+        await page.getByRole("textbox", { name: "財布" }).fill("ランニング");
+        await page.getByRole("button", { name: "追加" }).click();
+
+        const persisted: TodoStorage = await page.evaluate(
+          (key) => JSON.parse(localStorage.getItem(key)!),
+          TODO_STORAGE_KEY,
+        );
+        expect(persisted.todos[0].categoryId).toBe(createdCategoryId);
+      });
+    });
+
+    test.describe("表示時のテスト", () => {
+      test("選択中のカテゴリに属する Todo だけが表示されること", async ({
+        page,
+      }) => {
+        // Arrange
+        const todoStorage: TodoStorage = {
+          version: 1,
+          todos: [
+            {
+              id: "todo-unclassified",
+              name: "財布",
+              order: 0,
+              categoryId: DEFAULT_CATEGORY_ID,
+              completed: false,
+            },
+            {
+              id: "todo-work",
+              name: "資料作成",
+              order: 1,
+              categoryId: "work",
+              completed: false,
+            },
+          ],
+          categories: {
+            [DEFAULT_CATEGORY_ID]: { name: DEFAULT_CATEGORY_NAME },
+            work: { name: "仕事" },
+          },
+        };
+        await page.evaluate(
+          ([key, value]) => {
+            localStorage.setItem(key, value);
+          },
+          [TODO_STORAGE_KEY, JSON.stringify(todoStorage)],
+        );
+        await navigateToTodo(page);
+
+        // Act
+        await page.getByRole("button", { name: "仕事" }).click();
+
+        // Assert
+        await expect(
+          assertScope.getByText("資料作成", { exact: true }),
+        ).toBeVisible();
+        await expect(
+          assertScope.getByText("財布", { exact: true }),
+        ).not.toBeVisible();
       });
     });
   });
