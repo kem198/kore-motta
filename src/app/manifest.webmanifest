@@ -1,6 +1,6 @@
 {
   "name": "Kore Motta?",
-  "display": "standalone",
+  "display": "minimal-ui",
   "start_url": "/",
   "background_color": "#323539",
   "theme_color": "#323539",
