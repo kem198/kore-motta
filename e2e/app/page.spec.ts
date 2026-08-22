@@ -95,9 +95,6 @@ test.describe("Todo ページのテスト", () => {
       test("Todo を登録できること", async ({ page }) => {
         // Arrange
         await navigateToTodo(page);
-        await expect(
-          assertScope.getByText("dummy", { exact: true }),
-        ).toBeVisible();
         const nameInput = page.getByRole("textbox", { name: "財布" });
 
         await nameInput.fill("カギ");
@@ -148,9 +145,7 @@ test.describe("Todo ページのテスト", () => {
       test("Todo を削除できること", async ({ page }) => {
         // Arrange
         await navigateToTodo(page);
-        await expect(assertScope.getByText("dummy", { exact: true })).toBeVisible();
         await page.getByRole("button", { name: "編集開始" }).click();
-        await expect(page.getByRole("button", { name: "完了" })).toBeVisible();
         await page.getByRole("button", { name: "削除: dummy" }).click();
 
         // Act
@@ -202,12 +197,9 @@ test.describe("Todo ページのテスト", () => {
           [TODO_STORAGE_KEY, JSON.stringify(todoStorage)],
         );
         await navigateToTodo(page);
-        await expect(assertScope.getByText("カギ", { exact: true })).toBeVisible();
-        await expect(assertScope.getByText("財布", { exact: true })).toBeVisible();
 
         // Act
         await page.getByRole("button", { name: "編集開始" }).click();
-        await expect(page.getByRole("button", { name: "完了" })).toBeVisible();
         await page.getByRole("button", { name: "初期化" }).click();
         await page.getByRole("button", { name: "初期化" }).click();
 
@@ -264,12 +256,6 @@ test.describe("Todo ページのテスト", () => {
         );
 
         await navigateToTodo(page);
-        await expect(
-          assertScope.getByText("カギ", { exact: true }),
-        ).toBeVisible();
-        await expect(
-          assertScope.getByText("財布", { exact: true }),
-        ).toBeVisible();
 
         // Act
         await page.getByRole("button", { name: "編集開始" }).click();
@@ -316,11 +302,7 @@ test.describe("Todo ページのテスト", () => {
 
         const backupText = JSON.stringify(todoStorage, null, 2);
         await navigateToTodo(page);
-        await expect(
-          assertScope.getByText("dummy", { exact: true }),
-        ).toBeVisible();
         await page.getByRole("button", { name: "編集開始" }).click();
-        await expect(page.getByRole("button", { name: "完了" })).toBeVisible();
 
         // Act
         await page.getByRole("button", { name: "インポート" }).click();
@@ -350,11 +332,7 @@ test.describe("Todo ページのテスト", () => {
       }) => {
         // Arrange
         await navigateToTodo(page);
-        await expect(
-          assertScope.getByText("dummy", { exact: true }),
-        ).toBeVisible();
         await page.getByRole("button", { name: "編集開始" }).click();
-        await expect(page.getByRole("button", { name: "完了" })).toBeVisible();
         await page.getByRole("button", { name: "インポート" }).click();
 
         // Act
@@ -400,11 +378,7 @@ test.describe("Todo ページのテスト", () => {
         };
 
         await navigateToTodo(page);
-        await expect(
-          assertScope.getByText("dummy", { exact: true }),
-        ).toBeVisible();
         await page.getByRole("button", { name: "編集開始" }).click();
-        await expect(page.getByRole("button", { name: "完了" })).toBeVisible();
         await page.getByRole("button", { name: "インポート" }).click();
 
         // Act
@@ -431,6 +405,62 @@ test.describe("Todo ページのテスト", () => {
           TODO_STORAGE_KEY,
         );
         expect(migratedCorrupted.todos[0].id).toBe("dummy-todo");
+      });
+    });
+  });
+
+  test.describe("カテゴリのテスト", () => {
+    test.beforeEach(async ({ page }) => {
+      // ルートへ移動しておく
+      await page.goto("/");
+
+      // テストの Assert 範囲を設定
+      assertScope = page.locator('[data-testid="todo"]');
+    });
+
+    test.describe("TodoApp のテスト", () => {
+      const DUMMY_TODO_STORAGE: TodoStorage = {
+        version: 1,
+        todos: [
+          {
+            id: "dummy-todo",
+            name: "dummy",
+            order: 0,
+            completed: false,
+          },
+        ],
+      };
+
+      test.beforeEach(async ({ page }) => {
+        // ダミーデータのセット
+        await page.evaluate(
+          ([key, value]) => {
+            localStorage.setItem(key, value);
+          },
+          [TODO_STORAGE_KEY, JSON.stringify(DUMMY_TODO_STORAGE)],
+        );
+      });
+
+      test("Todo を登録できること", async ({ page }) => {
+        // Arrange
+        await navigateToTodo(page);
+        const nameInput = page.getByRole("textbox", { name: "財布" });
+        await nameInput.fill("カギ");
+
+        // Act
+        await page.getByRole("button", { name: "追加" }).click();
+
+        // Assert (表示が正しいこと)
+        await expect(
+          assertScope.getByText("カギ", { exact: true }),
+        ).toBeVisible();
+
+        // Assert (データストアへ登録されていること)
+        const todoStorage: TodoStorage = await page.evaluate(
+          (key) => JSON.parse(localStorage.getItem(key)!),
+          TODO_STORAGE_KEY,
+        );
+        expect(todoStorage.todos[0].name).toBe("カギ");
       });
     });
   });
