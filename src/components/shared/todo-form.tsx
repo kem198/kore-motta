@@ -23,6 +23,8 @@ export function TodoForm({ onSubmit, isEditing }: TodoFormProps) {
     },
   });
 
+  const nameValue = form.watch("name") ?? "";
+
   const handleSubmit = (values: TodoFormValues) => {
     onSubmit(values);
     form.reset();
@@ -48,7 +50,11 @@ export function TodoForm({ onSubmit, isEditing }: TodoFormProps) {
             </Field>
           )}
         />
-        <Button type="submit" form="todoadd" disabled={isEditing}>
+        <Button
+          type="submit"
+          form="todoadd"
+          disabled={isEditing || !nameValue.trim()}
+        >
           <PlusIcon />
           {MESSAGES.actions.add}
         </Button>

@@ -7,6 +7,7 @@ import { TodoForm } from "@/components/shared/todo-form";
 import { TodoList } from "@/components/shared/todo-list";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/toast";
 import {
   DEFAULT_CATEGORIES_STORAGE,
@@ -21,6 +22,7 @@ import {
   AlertCircleIcon,
   DownloadIcon,
   PencilIcon,
+  PlusIcon,
   UploadIcon,
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
@@ -38,25 +40,25 @@ export function TodoApp() {
   } = useTodos();
 
   const [isEditing, setIsEditing] = useState(false);
-  const [categories, setCategories] = useState<Record<string, { name: string }>>(
-    () => {
-      try {
-        if (typeof window === "undefined") return DEFAULT_CATEGORIES_STORAGE;
-        const raw = window.localStorage.getItem(TODO_STORAGE_KEY);
-        if (!raw) return DEFAULT_CATEGORIES_STORAGE;
+  const [categories, setCategories] = useState<
+    Record<string, { name: string }>
+  >(() => {
+    try {
+      if (typeof window === "undefined") return DEFAULT_CATEGORIES_STORAGE;
+      const raw = window.localStorage.getItem(TODO_STORAGE_KEY);
+      if (!raw) return DEFAULT_CATEGORIES_STORAGE;
 
-        const parsed = JSON.parse(raw) as { categories?: unknown };
-        const value = parsed.categories;
-        if (!value || typeof value !== "object" || Array.isArray(value)) {
-          return DEFAULT_CATEGORIES_STORAGE;
-        }
-
-        return value as Record<string, { name: string }>;
-      } catch {
+      const parsed = JSON.parse(raw) as { categories?: unknown };
+      const value = parsed.categories;
+      if (!value || typeof value !== "object" || Array.isArray(value)) {
         return DEFAULT_CATEGORIES_STORAGE;
       }
-    },
-  );
+
+      return value as Record<string, { name: string }>;
+    } catch {
+      return DEFAULT_CATEGORIES_STORAGE;
+    }
+  });
 
   const [categoryName, setCategoryName] = useState("");
   const [activeCategoryId, setActiveCategoryId] = useState<string>(
@@ -130,7 +132,7 @@ export function TodoApp() {
     setActiveCategoryId(id);
     setCategoryName("");
     toast.add({
-      title: "カテゴリを追加しました",
+      title: MESSAGES.toast.categoryCreated,
       description: name,
       type: "success",
     });
@@ -149,7 +151,7 @@ export function TodoApp() {
         name: trimmedName,
         order: 0,
         memo: values.memo?.trim() || undefined,
-        categoryId: DEFAULT_CATEGORY_ID,
+        categoryId: activeCategoryId,
         completed: false,
       };
 
@@ -161,7 +163,7 @@ export function TodoApp() {
         type: "success",
       });
     },
-    [addTodo],
+    [activeCategoryId, addTodo],
   );
 
   const handleDelete = useCallback(
@@ -255,40 +257,54 @@ export function TodoApp() {
   return (
     <div className="flex flex-col gap-4">
       <div className="not-prose flex w-full flex-col gap-6">
-        <div className="flex flex-col gap-2">
-          <label className="flex flex-col">
-            <span className="text-sm font-medium">カテゴリ名</span>
-            <input
-              aria-label="カテゴリ名"
-              value={categoryName}
-              onChange={(e) => setCategoryName(e.target.value)}
-              className="input"
-            />
-          </label>
-          <div>
-            <button
+        <div className="flex flex-col gap-3">
+          <div className="flex gap-2">
+            <label className="flex flex-1 flex-col gap-1">
+              <Input
+                aria-label={MESSAGES.labels.categoryName}
+                value={categoryName}
+                onChange={(e) => setCategoryName(e.target.value)}
+                placeholder={MESSAGES.placeholders.categoryName}
+              />
+            </label>
+
+            <Button
               type="button"
               onClick={handleAddCategory}
-              className="inline-flex items-center rounded bg-gray-100 px-3 py-1"
+              disabled={!categoryName.trim()}
             >
-              カテゴリ作成
-            </button>
+              <PlusIcon />
+              {MESSAGES.actions.createCategory}
+            </Button>
           </div>
 
           {isLoaded && (
-            <div className="flex flex-wrap gap-2" aria-label="カテゴリ一覧">
-              {Object.entries(categories).map(([id, c]) => (
-                <div
-                  key={id}
-                  className={
-                    id === activeCategoryId
-                      ? "bg-primary text-primary-foreground inline-flex items-center rounded px-2 py-1"
-                      : "bg-muted rounded px-2 py-1"
-                  }
-                >
-                  {c.name}
-                </div>
-              ))}
+            <div
+              className="flex flex-wrap gap-2"
+              aria-label={MESSAGES.labels.categoryList}
+            >
+              {Object.entries(categories).map(([id, c]) => {
+                const isSelected = id === activeCategoryId;
+
+                return (
+                  <Button
+                    key={id}
+                    type="button"
+                    variant={isSelected ? "default" : "secondary"}
+                    size="sm"
+                    aria-label={c.name}
+                    aria-pressed={isSelected}
+                    onClick={() => setActiveCategoryId(id)}
+                    className={
+                      isSelected
+                        ? "rounded-full"
+                        : "border-border/60 bg-background rounded-full border"
+                    }
+                  >
+                    {c.name}
+                  </Button>
+                );
+              })}
             </div>
           )}
         </div>
@@ -370,7 +386,9 @@ export function TodoApp() {
             variant={isEditing ? "default" : "secondary"}
             onClick={() => setIsEditing((prev) => !prev)}
             aria-label={
-              isEditing ? MESSAGES.actions.done : `${MESSAGES.actions.edit}開始`
+              isEditing
+                ? MESSAGES.actions.done
+                : `${MESSAGES.actions.editStart}`
             }
           >
             <PencilIcon />
