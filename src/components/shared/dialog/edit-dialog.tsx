@@ -28,7 +28,6 @@ import { TODO_STORAGE_KEY } from "@/hooks/use-todos";
 import { TodoFormValues, todoFormSchema } from "@/schemas/todo-form-schema";
 import { Todo } from "@/types/todo";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SaveCheckIcon } from "lucide-react";
 import {
   ComponentProps,
   ReactElement,
@@ -195,7 +194,6 @@ export function EditDialog({
             }
           />
           <Button type="submit" form="todo-edit">
-            <SaveCheckIcon />
             {MESSAGES.actions.update}
           </Button>
         </DialogFooter>

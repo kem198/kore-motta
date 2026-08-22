@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MESSAGES } from "@/constants/messages";
-import { AlertCircleIcon, PlusIcon, SaveCheckIcon } from "lucide-react";
+import { AlertCircleIcon } from "lucide-react";
 import { useState } from "react";
 
 export type CategoryDialogMode = "create" | "edit";
@@ -41,7 +41,7 @@ export function CategorySettingDialog({
 }: CategorySettingDialogProps) {
   const [categoryName, setCategoryName] = useState(category?.name ?? "");
   const isCreateMode = mode === "create";
-const inputLabel = MESSAGES.labels.categoryName;
+  const inputLabel = MESSAGES.labels.categoryName;
 
   const handleSave = () => {
     const trimmedName = categoryName.trim();
@@ -125,7 +125,6 @@ const inputLabel = MESSAGES.labels.categoryName;
                   (!isCreateMode && isDefaultCategory) || !categoryName.trim()
                 }
               >
-                {isCreateMode ? <PlusIcon /> : <SaveCheckIcon />}
                 {isCreateMode ? MESSAGES.actions.add : MESSAGES.actions.update}
               </Button>
             </DialogFooter>
