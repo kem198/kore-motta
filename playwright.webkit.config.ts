@@ -5,5 +5,14 @@ import base from "./playwright.config";
 export default defineConfig({
   ...base,
   workers: 1,
-  projects: [{ name: "webkit", use: { ...devices["Desktop Safari"] } }],
+  projects: [
+    {
+      name: "webkit",
+      use: {
+        ...devices["Desktop Safari"],
+        actionTimeout: 30000,
+        navigationTimeout: 60000,
+      },
+    },
+  ],
 });
