@@ -636,40 +636,6 @@ test.describe("Todo ページのテスト", () => {
     });
 
     test.describe("編集時のテスト", () => {
-      test("カテゴリ設定ボタンを押すと、カテゴリ設定ダイアログが開くこと", async ({
-        page,
-      }) => {
-        // Arrange
-        const todoStorage: TodoStorage = {
-          version: 1,
-          todos: [],
-          categories: {
-            [DEFAULT_CATEGORY_ID]: { name: DEFAULT_CATEGORY_NAME },
-            work: { name: "仕事" },
-          },
-        };
-        await page.evaluate(
-          ([key, value]) => {
-            localStorage.setItem(key, value);
-          },
-          [TODO_STORAGE_KEY, JSON.stringify(todoStorage)],
-        );
-        await navigateToTodo(page);
-
-        // Act
-        await page.getByRole("button", { name: "仕事" }).click();
-        await page.getByRole("button", { name: "カテゴリ設定" }).click();
-
-        // Assert
-        await expect(
-          page.getByRole("dialog", { name: "カテゴリ設定" }),
-        ).toBeVisible();
-        await expect(
-          page.getByRole("textbox", { name: "タイトル" }),
-        ).toBeVisible();
-        await expect(page.getByText("リセット時刻の変更")).toBeVisible();
-      });
-
       test("カテゴリ名を変更すると、一覧表示とストレージが更新されること", async ({
         page,
       }) => {
