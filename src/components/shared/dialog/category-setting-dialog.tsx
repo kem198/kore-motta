@@ -85,13 +85,12 @@ export function CategorySettingDialog({
               )}
             </div>
 
-            <DialogFooter className="flex items-center justify-between gap-y-2">
+            <DialogFooter>
               {!isDefaultCategory && (
                 <Button
                   type="button"
                   variant="destructive"
                   onClick={() => onDelete(category)}
-                  className="mr-auto"
                 >
                   カテゴリを削除
                 </Button>
