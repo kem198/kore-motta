@@ -74,10 +74,4 @@ export const MESSAGES = {
     importError: "アイテム情報の形式が不正なため、インポートできませんでした。",
     clipboardCopied: "アイテム情報をクリップボードにコピーしました",
   },
-
-  sample: {
-    item1: "窓の鍵",
-    item2: "財布",
-    item2Memo: "鞄のポケットに入れる",
-  },
 } as const;

@@ -421,7 +421,9 @@ test.describe("Todo ページのテスト", () => {
         ).toBeVisible();
 
         // Assert (表示がダミーデータのままであること)
-        await expect(assertScope.getByText("dummy")).toBeVisible();
+        await expect(
+          assertScope.getByText("dummy", { exact: true }),
+        ).toBeVisible();
 
         // Assert (データストアが更新されていないこと)
         const migratedCorrupted: TodoStorage = await page.evaluate(
