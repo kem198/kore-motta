@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MESSAGES } from "@/constants/messages";
-import { AlertCircleIcon, SaveCheckIcon } from "lucide-react";
+import { AlertCircleIcon, PlusIcon, SaveCheckIcon } from "lucide-react";
 import { useState } from "react";
 
 export type CategoryDialogMode = "create" | "edit";
@@ -127,7 +127,7 @@ export function CategorySettingDialog({
                   (!isCreateMode && isDefaultCategory) || !categoryName.trim()
                 }
               >
-                <SaveCheckIcon />
+                {isCreateMode ? <PlusIcon /> : <SaveCheckIcon />}
                 {isCreateMode ? MESSAGES.actions.add : MESSAGES.actions.update}
               </Button>
             </DialogFooter>
