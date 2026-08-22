@@ -9,7 +9,6 @@ import { TodoForm } from "@/components/shared/todo-form";
 import { TodoList } from "@/components/shared/todo-list";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/toast";
 import {
   DEFAULT_CATEGORIES_STORAGE,
@@ -63,7 +62,6 @@ export function TodoApp() {
     }
   });
 
-  const [categoryName, setCategoryName] = useState("");
   const [activeCategoryId, setActiveCategoryId] = useState<string>(
     () => DEFAULT_CATEGORY_ID,
   );
@@ -71,10 +69,11 @@ export function TodoApp() {
     id: string;
     name: string;
   } | null>(null);
-  const [categoryToEdit, setCategoryToEdit] = useState<{
-    id: string;
-    name: string;
-  } | null>(null);
+  const [categoryDialog, setCategoryDialog] = useState<
+    | { mode: "create"; category: null }
+    | { mode: "edit"; category: { id: string; name: string } }
+    | null
+  >(null);
 
   const visibleTodos = todos.filter(
     (todo) => todo.categoryId === activeCategoryId,
@@ -115,14 +114,11 @@ export function TodoApp() {
       // ignore
     }
   }, []);
-  const handleAddCategory = useCallback(() => {
-    const name = categoryName.trim();
-    if (!name) return;
-
+  const handleCreateCategory = useCallback((name: string) => {
     const id = crypto.randomUUID();
 
     setCategories((prev) => {
-      const next = { [id]: { name }, ...prev };
+      const next = { ...prev, [id]: { name } };
       try {
         const raw = window.localStorage.getItem(TODO_STORAGE_KEY);
         const currentStorage = raw
@@ -145,13 +141,12 @@ export function TodoApp() {
     });
 
     setActiveCategoryId(id);
-    setCategoryName("");
     toast.add({
       title: MESSAGES.toast.categoryCreated,
       description: name,
       type: "success",
     });
-  }, [categoryName]);
+  }, []);
 
   const handleCreate = useCallback(
     (values: TodoFormValues) => {
@@ -273,9 +268,12 @@ export function TodoApp() {
     const selectedCategory = categories[activeCategoryId];
     if (!selectedCategory) return;
 
-    setCategoryToEdit({
-      id: activeCategoryId,
-      name: selectedCategory.name,
+    setCategoryDialog({
+      mode: "edit",
+      category: {
+        id: activeCategoryId,
+        name: selectedCategory.name,
+      },
     });
   }, [activeCategoryId, categories]);
 
@@ -385,26 +383,6 @@ export function TodoApp() {
     <div className="flex flex-col gap-4">
       <div className="not-prose flex w-full flex-col gap-6">
         <div className="flex flex-col gap-3">
-          <div className="flex gap-2">
-            <label className="flex flex-1 flex-col gap-1">
-              <Input
-                aria-label={MESSAGES.labels.categoryName}
-                value={categoryName}
-                onChange={(e) => setCategoryName(e.target.value)}
-                placeholder={MESSAGES.placeholders.categoryName}
-              />
-            </label>
-
-            <Button
-              type="button"
-              onClick={handleAddCategory}
-              disabled={!categoryName.trim()}
-            >
-              <PlusIcon />
-              {MESSAGES.actions.createCategory}
-            </Button>
-          </div>
-
           {isLoaded && (
             <div
               className="flex flex-wrap gap-2"
@@ -432,6 +410,19 @@ export function TodoApp() {
                   </Button>
                 );
               })}
+
+              <Button
+                type="button"
+                variant="secondary"
+                size="icon"
+                aria-label={MESSAGES.actions.createCategory}
+                onClick={() =>
+                  setCategoryDialog({ mode: "create", category: null })
+                }
+                className="border-border/60 bg-background rounded-full border"
+              >
+                <PlusIcon />
+              </Button>
             </div>
           )}
         </div>
@@ -538,19 +529,27 @@ export function TodoApp() {
       </div>
 
       <CategorySettingDialog
-        key={categoryToEdit?.id ?? "category-setting"}
-        open={!!categoryToEdit}
-        category={categoryToEdit}
+        key={
+          categoryDialog
+            ? `${categoryDialog.mode}-${categoryDialog.category?.id ?? "new"}`
+            : "category-setting-closed"
+        }
+        open={!!categoryDialog}
+        mode={categoryDialog?.mode ?? "create"}
+        category={
+          categoryDialog?.mode === "edit" ? categoryDialog.category : null
+        }
         isDefaultCategory={isDefaultCategorySelected}
         onOpenChange={(open) => {
           if (!open) {
-            setCategoryToEdit(null);
+            setCategoryDialog(null);
           }
         }}
+        onCreate={handleCreateCategory}
         onRename={handleRenameCategory}
         onDelete={(selectedCategory) => {
           setCategoryToDelete(selectedCategory);
-          setCategoryToEdit(null);
+          setCategoryDialog(null);
         }}
       />
 

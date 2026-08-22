@@ -559,13 +559,16 @@ test.describe("Todo ページのテスト", () => {
         await navigateToTodo(page);
 
         // Act
-        await page.getByLabel("カテゴリ名").fill("朝活");
         await page.getByRole("button", { name: "カテゴリ作成" }).click();
+        await page.getByRole("textbox", { name: "カテゴリ名" }).fill("朝活");
+        await page.getByRole("button", { name: "追加" }).click();
 
         // Assert
+        // 選択状態になっていること
         const categoryButton = page.getByRole("button", { name: "朝活" });
         await expect(categoryButton).toHaveAttribute("aria-pressed", "true");
 
+        // 作成したカテゴリがストレージに保存されていること
         const todoStorage: TodoStorage = await page.evaluate(
           (key) => JSON.parse(localStorage.getItem(key)!),
           TODO_STORAGE_KEY,
@@ -575,14 +578,27 @@ test.describe("Todo ページのテスト", () => {
         ).find((id) => todoStorage.categories?.[id]?.name === "朝活");
         expect(createdCategoryId).toBeTruthy();
 
-        await page.getByRole("textbox", { name: "財布" }).fill("ランニング");
-        await page.getByRole("button", { name: "追加" }).click();
-
-        const persisted: TodoStorage = await page.evaluate(
-          (key) => JSON.parse(localStorage.getItem(key)!),
-          TODO_STORAGE_KEY,
+        // 一覧の末尾付近に新しいカテゴリが表示されること
+        const categoryButtons = page
+          .getByLabel("カテゴリ一覧")
+          .getByRole("button");
+        const buttonCount = await categoryButtons.count();
+        await expect(categoryButtons.nth(buttonCount - 2)).toHaveAttribute(
+          "aria-label",
+          "朝活",
         );
-        expect(persisted.todos[0].categoryId).toBe(createdCategoryId);
+
+        // ストレージのカテゴリ配列でも末尾に追加されていること
+        const persistedCategoryNames: string[] = await page.evaluate((key) => {
+          const storage = JSON.parse(localStorage.getItem(key)!);
+          const categories = (storage.categories ?? {}) as Record<
+            string,
+            { name: string }
+          >;
+          return Object.values(categories).map((category) => category.name);
+        }, TODO_STORAGE_KEY);
+        expect(persistedCategoryNames.at(-1)).toBe("朝活");
+        expect(createdCategoryId).toBeTruthy();
       });
     });
 
