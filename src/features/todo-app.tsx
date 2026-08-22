@@ -38,20 +38,25 @@ export function TodoApp() {
   } = useTodos();
 
   const [isEditing, setIsEditing] = useState(false);
-  const [categories, setCategories] = useState<
-    Record<string, { name: string }>
-  >(() => {
-    try {
-      if (typeof window === "undefined") return DEFAULT_CATEGORIES_STORAGE;
-      const raw = window.localStorage.getItem(TODO_STORAGE_KEY);
-      if (!raw) return DEFAULT_CATEGORIES_STORAGE;
+  const [categories, setCategories] = useState<Record<string, { name: string }>>(
+    () => {
+      try {
+        if (typeof window === "undefined") return DEFAULT_CATEGORIES_STORAGE;
+        const raw = window.localStorage.getItem(TODO_STORAGE_KEY);
+        if (!raw) return DEFAULT_CATEGORIES_STORAGE;
 
-      const parsed = JSON.parse(raw);
-      return parsed.categories ?? DEFAULT_CATEGORIES_STORAGE;
-    } catch {
-      return DEFAULT_CATEGORIES_STORAGE;
-    }
-  });
+        const parsed = JSON.parse(raw) as { categories?: unknown };
+        const value = parsed.categories;
+        if (!value || typeof value !== "object" || Array.isArray(value)) {
+          return DEFAULT_CATEGORIES_STORAGE;
+        }
+
+        return value as Record<string, { name: string }>;
+      } catch {
+        return DEFAULT_CATEGORIES_STORAGE;
+      }
+    },
+  );
 
   const [categoryName, setCategoryName] = useState("");
   const [activeCategoryId, setActiveCategoryId] = useState<string>(
