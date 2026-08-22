@@ -149,7 +149,7 @@ export function TodoApp() {
         name: trimmedName,
         order: 0,
         memo: values.memo?.trim() || undefined,
-        categoryId: DEFAULT_CATEGORY_ID,
+        categoryId: activeCategoryId,
         completed: false,
       };
 
@@ -161,7 +161,7 @@ export function TodoApp() {
         type: "success",
       });
     },
-    [addTodo],
+    [activeCategoryId, addTodo],
   );
 
   const handleDelete = useCallback(
@@ -278,16 +278,20 @@ export function TodoApp() {
           {isLoaded && (
             <div className="flex flex-wrap gap-2" aria-label="カテゴリ一覧">
               {Object.entries(categories).map(([id, c]) => (
-                <div
+                <button
                   key={id}
+                  type="button"
+                  aria-label={c.name}
+                  aria-pressed={id === activeCategoryId}
+                  onClick={() => setActiveCategoryId(id)}
                   className={
                     id === activeCategoryId
                       ? "bg-primary text-primary-foreground inline-flex items-center rounded px-2 py-1"
-                      : "bg-muted rounded px-2 py-1"
+                      : "bg-muted inline-flex items-center rounded px-2 py-1"
                   }
                 >
                   {c.name}
-                </div>
+                </button>
               ))}
             </div>
           )}

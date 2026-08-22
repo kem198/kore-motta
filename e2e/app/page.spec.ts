@@ -218,6 +218,38 @@ test.describe("Todo ページのテスト", () => {
         );
         expect(todoStorage.todos[0].name).toBe("カギ");
       });
+
+      test("選択中のカテゴリに Todo が登録されること", async ({ page }) => {
+        // Arrange
+        const todoStorage: TodoStorage = {
+          version: 1,
+          todos: [],
+          categories: {
+            [DEFAULT_CATEGORY_ID]: { name: DEFAULT_CATEGORY_NAME },
+            work: { name: "仕事" },
+          },
+        };
+        await page.evaluate(
+          ([key, value]) => {
+            localStorage.setItem(key, value);
+          },
+          [TODO_STORAGE_KEY, JSON.stringify(todoStorage)],
+        );
+        await navigateToTodo(page);
+
+        // Act
+        await page.getByRole("button", { name: "仕事" }).click();
+        await page.getByRole("textbox", { name: "財布" }).fill("会議資料");
+        await page.getByRole("button", { name: "追加" }).click();
+
+        // Assert
+        const persisted: TodoStorage = await page.evaluate(
+          (key) => JSON.parse(localStorage.getItem(key)!),
+          TODO_STORAGE_KEY,
+        );
+        expect(persisted.todos[0].name).toBe("会議資料");
+        expect(persisted.todos[0].categoryId).toBe("work");
+      });
     });
 
     test.describe("更新時のテスト", () => {
