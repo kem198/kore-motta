@@ -1,3 +1,4 @@
+import { DEFAULT_CATEGORY_ID } from "@/constants/categories";
 import { TODO_STORAGE_KEY } from "@/hooks/use-todos";
 import { TodoStorage } from "@/types/todo";
 import { expect, Locator, Page, test } from "@playwright/test";
@@ -29,6 +30,7 @@ test.describe("Todo ページのテスト", () => {
           id: "dummy-todo",
           name: "dummy",
           order: 0,
+          categoryId: DEFAULT_CATEGORY_ID,
           completed: false,
         },
       ],
@@ -66,6 +68,7 @@ test.describe("Todo ページのテスト", () => {
               id: "test-todo",
               name: "カギ",
               order: 0,
+              categoryId: DEFAULT_CATEGORY_ID,
               memo: "家の鍵",
               completed: false,
             },
@@ -177,6 +180,7 @@ test.describe("Todo ページのテスト", () => {
               id: "reset-todo-01",
               name: "カギ",
               order: 0,
+              categoryId: DEFAULT_CATEGORY_ID,
               memo: "家の鍵",
               completed: true,
             },
@@ -184,6 +188,7 @@ test.describe("Todo ページのテスト", () => {
               id: "reset-todo-02",
               name: "財布",
               order: 1,
+              categoryId: DEFAULT_CATEGORY_ID,
               memo: "白い財布",
               completed: false,
             },
@@ -235,6 +240,7 @@ test.describe("Todo ページのテスト", () => {
               id: "test-todo-01",
               name: "カギ",
               order: 0,
+              categoryId: DEFAULT_CATEGORY_ID,
               memo: "家の鍵",
               completed: false,
             },
@@ -242,6 +248,7 @@ test.describe("Todo ページのテスト", () => {
               id: "test-todo-02",
               name: "財布",
               order: 1,
+              categoryId: DEFAULT_CATEGORY_ID,
               memo: "白い財布",
               completed: false,
             },
@@ -294,6 +301,7 @@ test.describe("Todo ページのテスト", () => {
               id: "import-todo",
               name: "カギ",
               order: 0,
+              categoryId: DEFAULT_CATEGORY_ID,
               memo: "家の鍵",
               completed: false,
             },
@@ -370,6 +378,7 @@ test.describe("Todo ページのテスト", () => {
               id: "import-todo",
               name: "カギ",
               order: 0,
+              categoryId: DEFAULT_CATEGORY_ID,
               memo: "家の鍵",
 
               undefinedKey: "★ TodoStorage 型に一致しないキー",
@@ -426,6 +435,7 @@ test.describe("Todo ページのテスト", () => {
             id: "dummy-todo",
             name: "dummy",
             order: 0,
+            categoryId: DEFAULT_CATEGORY_ID,
             completed: false,
           },
         ],
@@ -461,6 +471,7 @@ test.describe("Todo ページのテスト", () => {
           TODO_STORAGE_KEY,
         );
         expect(todoStorage.todos[0].name).toBe("カギ");
+        expect(todoStorage.todos[0].categoryId).toBe(DEFAULT_CATEGORY_ID);
       });
     });
   });
