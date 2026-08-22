@@ -82,13 +82,9 @@ function TodoItem({
         {isEditing && (
           <>
             <ConfirmDialog
-              title={MESSAGES.dialogs.deleteItem.title}
-              description={MESSAGES.dialogs.deleteItem.description}
+              title={`アイテム「${todo.name}」を削除しますか？`}
               content={
                 <>
-                  <p>
-                    アイテム: <span className="font-semibold">{todo.name}</span>
-                  </p>
                   <Alert variant="destructive">
                     <AlertCircleIcon size={16} />
                     <AlertTitle>{MESSAGES.warnings.irreversible}</AlertTitle>
