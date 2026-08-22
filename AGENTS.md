@@ -109,3 +109,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - テスト結果
 
 テストが失敗した場合は、失敗したテストと原因を説明する。
+
+## コマンド実行
+
+テスト実行などのコマンドを実行する場合、まずプロジェクトの `package.json` を確認し、定義済みであればそのスクリプトを優先して実行すること。
