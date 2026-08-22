@@ -74,7 +74,6 @@ export function TodoApp() {
           TODO_STORAGE_KEY,
           JSON.stringify(initialStorage),
         );
-        setCategories(DEFAULT_CATEGORIES_STORAGE);
         return;
       }
 
@@ -89,7 +88,6 @@ export function TodoApp() {
           TODO_STORAGE_KEY,
           JSON.stringify(nextStorage),
         );
-        setCategories(DEFAULT_CATEGORIES_STORAGE);
       }
     } catch {
       // ignore
