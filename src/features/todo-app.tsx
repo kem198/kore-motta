@@ -14,7 +14,7 @@ import {
 } from "@/constants/categories";
 import { MESSAGES } from "@/constants/messages";
 import { CURRENT_TODO_STORAGE_VERSION } from "@/constants/version";
-import { useTodos } from "@/hooks/use-todos";
+import { TODO_STORAGE_KEY, useTodos } from "@/hooks/use-todos";
 import { TodoFormValues } from "@/schemas/todo-form-schema";
 import { Todo } from "@/types/todo";
 import {
@@ -43,8 +43,11 @@ export function TodoApp() {
   >(() => {
     try {
       if (typeof window === "undefined") return DEFAULT_CATEGORIES_STORAGE;
-      const raw = window.localStorage.getItem("categories");
-      return raw ? JSON.parse(raw) : DEFAULT_CATEGORIES_STORAGE;
+      const raw = window.localStorage.getItem(TODO_STORAGE_KEY);
+      if (!raw) return DEFAULT_CATEGORIES_STORAGE;
+
+      const parsed = JSON.parse(raw);
+      return parsed.categories ?? DEFAULT_CATEGORIES_STORAGE;
     } catch {
       return DEFAULT_CATEGORIES_STORAGE;
     }
@@ -55,16 +58,38 @@ export function TodoApp() {
     () => DEFAULT_CATEGORY_ID,
   );
 
-  // 初回ロード時に localStorage に categories がなければ初期値を保存する
+  // 初回ロード時にストレージに categories がなければ初期値を保存する
   useEffect(() => {
     try {
       if (typeof window === "undefined") return;
-      const raw = window.localStorage.getItem("categories");
+
+      const raw = window.localStorage.getItem(TODO_STORAGE_KEY);
       if (!raw) {
+        const initialStorage = {
+          version: CURRENT_TODO_STORAGE_VERSION,
+          todos: [],
+          categories: DEFAULT_CATEGORIES_STORAGE,
+        };
         window.localStorage.setItem(
-          "categories",
-          JSON.stringify(DEFAULT_CATEGORIES_STORAGE),
+          TODO_STORAGE_KEY,
+          JSON.stringify(initialStorage),
         );
+        setCategories(DEFAULT_CATEGORIES_STORAGE);
+        return;
+      }
+
+      const parsed = JSON.parse(raw);
+      if (!parsed.categories || Object.keys(parsed.categories).length === 0) {
+        const nextStorage = {
+          ...parsed,
+          version: CURRENT_TODO_STORAGE_VERSION,
+          categories: DEFAULT_CATEGORIES_STORAGE,
+        };
+        window.localStorage.setItem(
+          TODO_STORAGE_KEY,
+          JSON.stringify(nextStorage),
+        );
+        setCategories(DEFAULT_CATEGORIES_STORAGE);
       }
     } catch {
       // ignore
@@ -79,7 +104,20 @@ export function TodoApp() {
     setCategories((prev) => {
       const next = { [id]: { name }, ...prev };
       try {
-        window.localStorage.setItem("categories", JSON.stringify(next));
+        const raw = window.localStorage.getItem(TODO_STORAGE_KEY);
+        const currentStorage = raw
+          ? JSON.parse(raw)
+          : {
+              version: CURRENT_TODO_STORAGE_VERSION,
+              todos: [],
+              categories: DEFAULT_CATEGORIES_STORAGE,
+            };
+
+        currentStorage.categories = next;
+        window.localStorage.setItem(
+          TODO_STORAGE_KEY,
+          JSON.stringify(currentStorage),
+        );
       } catch {
         // ignore
       }

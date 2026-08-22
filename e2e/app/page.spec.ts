@@ -107,17 +107,91 @@ test.describe("Todo ページのテスト", () => {
           await navigateToTodo(page);
 
           // Assert
-          const raw = await page.evaluate(() =>
-            localStorage.getItem("categories"),
-          );
-          expect(raw).not.toBeNull();
+          await expect
+            .poll(
+              async () =>
+                await page.evaluate(
+                  (key) => localStorage.getItem(key),
+                  TODO_STORAGE_KEY,
+                ),
+              { timeout: 5000 },
+            )
+            .not.toBeNull();
 
-          const categories = JSON.parse(raw!);
-          expect(categories[DEFAULT_CATEGORY_ID]).toBeDefined();
-          expect(categories[DEFAULT_CATEGORY_ID].name).toBe(
+          const raw = await page.evaluate(
+            (key) => localStorage.getItem(key),
+            TODO_STORAGE_KEY,
+          );
+          const storage = JSON.parse(raw!);
+          expect(storage.categories[DEFAULT_CATEGORY_ID]).toBeDefined();
+          expect(storage.categories[DEFAULT_CATEGORY_ID].name).toBe(
             DEFAULT_CATEGORY_NAME,
           );
+
+          const legacyCategoriesKeyValue = await page.evaluate(() =>
+            localStorage.getItem("categories"),
+          );
+          expect(legacyCategoriesKeyValue).toBeNull();
         });
+      });
+
+      test("Todo とカテゴリが 1 つのストレージオブジェクトとして保存されること", async ({
+        page,
+      }) => {
+        // Arrange
+        const storage: TodoStorage = {
+          version: 1,
+          todos: [
+            {
+              id: "single-storage-todo",
+              name: "資料作成",
+              order: 0,
+              categoryId: DEFAULT_CATEGORY_ID,
+              completed: false,
+            },
+          ],
+          categories: {
+            [DEFAULT_CATEGORY_ID]: {
+              name: DEFAULT_CATEGORY_NAME,
+            },
+          },
+        };
+
+        await page.evaluate(
+          ([key, value]) => {
+            localStorage.setItem(key, value);
+          },
+          [TODO_STORAGE_KEY, JSON.stringify(storage)],
+        );
+
+        // Act
+        await navigateToTodo(page);
+
+        // Assert
+        await expect
+          .poll(
+            async () =>
+              await page.evaluate(
+                (key) => localStorage.getItem(key),
+                TODO_STORAGE_KEY,
+              ),
+            { timeout: 5000 },
+          )
+          .not.toBeNull();
+
+        const raw = await page.evaluate(
+          (key) => localStorage.getItem(key),
+          TODO_STORAGE_KEY,
+        );
+        const persisted = JSON.parse(raw!);
+        expect(persisted.categories[DEFAULT_CATEGORY_ID].name).toBe(
+          DEFAULT_CATEGORY_NAME,
+        );
+
+        const legacyCategoriesKeyValue = await page.evaluate(() =>
+          localStorage.getItem("categories"),
+        );
+        expect(legacyCategoriesKeyValue).toBeNull();
       });
     });
 

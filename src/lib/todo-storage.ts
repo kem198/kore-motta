@@ -2,7 +2,7 @@ import { CURRENT_TODO_STORAGE_VERSION } from "@/constants/version";
 import { parseTodoStorage } from "@/schemas/todo-storage-schema";
 import { Todo, TodoStorage } from "@/types/todo";
 
-export const TODO_STORAGE_KEY = "todos";
+export const TODO_STORAGE_KEY = "todoStorage";
 
 const TODO_STORAGE_EVENT = "todo-storage-change";
 

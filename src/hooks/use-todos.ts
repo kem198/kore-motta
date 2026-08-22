@@ -5,7 +5,7 @@ import { CURRENT_TODO_STORAGE_VERSION } from "@/constants/version";
 import { parseTodoStorage } from "@/schemas/todo-storage-schema";
 import { Todo, TodoStorage } from "@/types/todo";
 
-export const TODO_STORAGE_KEY = "todos";
+export const TODO_STORAGE_KEY = "todoStorage";
 
 type UseTodosOptions = {
   storageKey?: string;
@@ -53,6 +53,12 @@ export function useTodos(options: UseTodosOptions = {}): UseTodosReturn {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setTodos(parsedTodoStorage.todos);
       } else {
+        const initialStorage: TodoStorage = {
+          version: CURRENT_TODO_STORAGE_VERSION,
+          todos: [],
+          categories: DEFAULT_CATEGORIES_STORAGE,
+        };
+        window.localStorage.setItem(storageKey, JSON.stringify(initialStorage));
         setTodos([]);
       }
     } catch {
@@ -68,15 +74,20 @@ export function useTodos(options: UseTodosOptions = {}): UseTodosReturn {
       return;
     }
 
-    const rawCats = window.localStorage.getItem("categories");
-    const categories = rawCats
-      ? JSON.parse(rawCats)
-      : DEFAULT_CATEGORIES_STORAGE;
+    const rawStorage = window.localStorage.getItem(storageKey);
+    const currentStorage: TodoStorage = rawStorage
+      ? parseTodoStorage(JSON.parse(rawStorage))
+      : {
+          version: CURRENT_TODO_STORAGE_VERSION,
+          todos: [],
+          categories: DEFAULT_CATEGORIES_STORAGE,
+        };
 
     const todoStorage: TodoStorage = {
+      ...currentStorage,
       version: CURRENT_TODO_STORAGE_VERSION,
       todos,
-      categories,
+      categories: currentStorage.categories ?? DEFAULT_CATEGORIES_STORAGE,
     };
 
     window.localStorage.setItem(storageKey, JSON.stringify(todoStorage));
@@ -111,21 +122,24 @@ export function useTodos(options: UseTodosOptions = {}): UseTodosReturn {
     });
   }, []);
 
-  const importTodoStorage = useCallback((data: string) => {
-    const parsedTodoStorage = parseTodoStorage(JSON.parse(data));
+  const importTodoStorage = useCallback(
+    (data: string) => {
+      const parsedTodoStorage = parseTodoStorage(JSON.parse(data));
 
-    setTodos(parsedTodoStorage.todos);
-    try {
-      if (typeof window !== "undefined" && parsedTodoStorage.categories) {
-        window.localStorage.setItem(
-          "categories",
-          JSON.stringify(parsedTodoStorage.categories),
-        );
+      setTodos(parsedTodoStorage.todos);
+      try {
+        if (typeof window !== "undefined") {
+          window.localStorage.setItem(
+            storageKey,
+            JSON.stringify(parsedTodoStorage),
+          );
+        }
+      } catch {
+        // ignore
       }
-    } catch {
-      // ignore
-    }
-  }, []);
+    },
+    [storageKey],
+  );
 
   return {
     todos,
