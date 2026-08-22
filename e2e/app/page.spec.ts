@@ -243,6 +243,42 @@ test.describe("Todo ページのテスト", () => {
         expect(migrated.version).toBe(1);
         expect(migrated.todos[0].name).toBe("カギ");
       });
+
+      test("Todo の編集画面に現在のカテゴリ名が表示されること", async ({
+        page,
+      }) => {
+        // Arrange
+        const todoStorage: TodoStorage = {
+          version: 1,
+          todos: [
+            {
+              id: "category-edit-todo",
+              name: "資料作成",
+              order: 0,
+              categoryId: "work",
+              memo: "資料の下書きを作る",
+              completed: false,
+            },
+          ],
+          categories: {
+            uncategorized: { name: "未分類" },
+            work: { name: "仕事" },
+          },
+        };
+        await page.evaluate(
+          ([key, value]) => {
+            localStorage.setItem(key, value);
+          },
+          [TODO_STORAGE_KEY, JSON.stringify(todoStorage)],
+        );
+        await navigateToTodo(page);
+
+        // Act
+        await page.getByRole("button", { name: "編集: 資料作成" }).click();
+
+        // Assert
+        await expect(page.getByText("カテゴリ: 仕事")).toBeVisible();
+      });
     });
 
     test.describe("削除時のテスト", () => {

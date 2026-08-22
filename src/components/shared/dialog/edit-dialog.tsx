@@ -22,7 +22,9 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { DEFAULT_CATEGORY_NAME } from "@/constants/categories";
 import { MESSAGES } from "@/constants/messages";
+import { TODO_STORAGE_KEY } from "@/hooks/use-todos";
 import { TodoFormValues, todoFormSchema } from "@/schemas/todo-form-schema";
 import { Todo } from "@/types/todo";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -50,6 +52,7 @@ export function EditDialog({
 }: EditDialogProps) {
   const [open, setOpen] = useState(false);
   const [completed, setCompleted] = useState(todo.completed);
+  const [categoryName, setCategoryName] = useState(DEFAULT_CATEGORY_NAME);
 
   const form = useForm<TodoFormValues>({
     resolver: zodResolver(todoFormSchema),
@@ -71,6 +74,22 @@ export function EditDialog({
     setOpen(nextOpen);
 
     if (nextOpen) {
+      try {
+        const raw = window.localStorage.getItem(TODO_STORAGE_KEY);
+        if (!raw) {
+          setCategoryName(DEFAULT_CATEGORY_NAME);
+        } else {
+          const parsed = JSON.parse(raw) as {
+            categories?: Record<string, { name?: string }>;
+          };
+          const resolvedCategoryName =
+            parsed.categories?.[todo.categoryId]?.name ?? DEFAULT_CATEGORY_NAME;
+          setCategoryName(resolvedCategoryName);
+        }
+      } catch {
+        setCategoryName(DEFAULT_CATEGORY_NAME);
+      }
+
       resetFormValues();
     }
   };
@@ -111,6 +130,11 @@ export function EditDialog({
                   onChange={(updated) => setCompleted(updated.completed)}
                   aria-label={`${todo.name} の完了状態`}
                 />
+              </Field>
+
+              <Field>
+                <FieldLabel htmlFor="todo-category-name">カテゴリ</FieldLabel>
+                カテゴリ: {categoryName}
               </Field>
 
               <Controller
