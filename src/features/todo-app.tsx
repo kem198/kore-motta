@@ -1,5 +1,7 @@
 "use client";
 
+import { CategoryDeleteDialog } from "@/components/shared/dialog/category-delete-dialog";
+import { CategorySettingDialog } from "@/components/shared/dialog/category-setting-dialog";
 import { ConfirmDialog } from "@/components/shared/dialog/confirm-dialog";
 import { ExportDialog } from "@/components/shared/dialog/export-dialog";
 import { ImportDialog } from "@/components/shared/dialog/import-dialog";
@@ -21,6 +23,7 @@ import { Todo } from "@/types/todo";
 import {
   AlertCircleIcon,
   DownloadIcon,
+  FolderPenIcon,
   PencilIcon,
   PlusIcon,
   UploadIcon,
@@ -64,6 +67,14 @@ export function TodoApp() {
   const [activeCategoryId, setActiveCategoryId] = useState<string>(
     () => DEFAULT_CATEGORY_ID,
   );
+  const [categoryToDelete, setCategoryToDelete] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
+  const [categoryToEdit, setCategoryToEdit] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
   const visibleTodos = todos.filter(
     (todo) => todo.categoryId === activeCategoryId,
@@ -258,6 +269,77 @@ export function TodoApp() {
     [importTodoStorage],
   );
 
+  const handleOpenCategoryEditDialog = useCallback(() => {
+    const selectedCategory = categories[activeCategoryId];
+    if (!selectedCategory) return;
+
+    setCategoryToEdit({
+      id: activeCategoryId,
+      name: selectedCategory.name,
+    });
+  }, [activeCategoryId, categories]);
+
+  const isDefaultCategorySelected = activeCategoryId === DEFAULT_CATEGORY_ID;
+
+  const handleDeleteCategory = useCallback(() => {
+    if (!categoryToDelete) return;
+
+    const categoryId = categoryToDelete.id;
+
+    // デフォルトカテゴリは削除できない
+    if (categoryId === DEFAULT_CATEGORY_ID) {
+      toast.add({
+        title: MESSAGES.toast.error,
+        description: "デフォルトカテゴリは削除できません",
+        type: "error",
+      });
+      setCategoryToDelete(null);
+      return;
+    }
+
+    // 削除されたカテゴリに属する Todo をデフォルトカテゴリに移行
+    const migratedTodos = todos.map((todo) =>
+      todo.categoryId === categoryId
+        ? { ...todo, categoryId: DEFAULT_CATEGORY_ID }
+        : todo,
+    );
+
+    updateTodos(migratedTodos);
+
+    // カテゴリを削除
+    setCategories((prev) => {
+      const next = { ...prev };
+      delete next[categoryId];
+
+      try {
+        const raw = window.localStorage.getItem(TODO_STORAGE_KEY);
+        const currentStorage = raw ? JSON.parse(raw) : {};
+        currentStorage.categories = next;
+        window.localStorage.setItem(
+          TODO_STORAGE_KEY,
+          JSON.stringify(currentStorage),
+        );
+      } catch {
+        // ignore
+      }
+
+      return next;
+    });
+
+    // 削除されたカテゴリが選択中だった場合、デフォルトカテゴリに切り替え
+    if (activeCategoryId === categoryId) {
+      setActiveCategoryId(DEFAULT_CATEGORY_ID);
+    }
+
+    toast.add({
+      title: MESSAGES.toast.categoryDeleted,
+      description: categoryToDelete.name,
+      type: "success",
+    });
+
+    setCategoryToDelete(null);
+  }, [categoryToDelete, todos, updateTodos, activeCategoryId]);
+
   return (
     <div className="flex flex-col gap-4">
       <div className="not-prose flex w-full flex-col gap-6">
@@ -386,20 +468,59 @@ export function TodoApp() {
             )}
           </div>
 
-          <Button
-            variant={isEditing ? "default" : "secondary"}
-            onClick={() => setIsEditing((prev) => !prev)}
-            aria-label={
-              isEditing
-                ? MESSAGES.actions.done
-                : `${MESSAGES.actions.editStart}`
-            }
-          >
-            <PencilIcon />
-            {isEditing ? MESSAGES.actions.done : MESSAGES.actions.edit}
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              variant="secondary"
+              aria-label="カテゴリ設定"
+              onClick={handleOpenCategoryEditDialog}
+              className="inline-flex items-center gap-2"
+            >
+              <FolderPenIcon />
+              <span>カテゴリ設定</span>
+            </Button>
+
+            <Button
+              variant={isEditing ? "default" : "secondary"}
+              onClick={() => setIsEditing((prev) => !prev)}
+              aria-label={
+                isEditing
+                  ? MESSAGES.actions.done
+                  : `${MESSAGES.actions.editStart}`
+              }
+            >
+              <PencilIcon />
+              {isEditing ? MESSAGES.actions.done : MESSAGES.actions.edit}
+            </Button>
+          </div>
         </div>
       </div>
+
+      <CategorySettingDialog
+        open={!!categoryToEdit}
+        category={categoryToEdit}
+        isDefaultCategory={isDefaultCategorySelected}
+        onOpenChange={(open) => {
+          if (!open) {
+            setCategoryToEdit(null);
+          }
+        }}
+        onDelete={(selectedCategory) => {
+          setCategoryToDelete(selectedCategory);
+          setCategoryToEdit(null);
+        }}
+      />
+
+      <CategoryDeleteDialog
+        open={!!categoryToDelete}
+        category={categoryToDelete}
+        onOpenChange={(open) => {
+          if (!open) {
+            setCategoryToDelete(null);
+          }
+        }}
+        onConfirm={handleDeleteCategory}
+      />
     </div>
   );
 }

@@ -634,5 +634,149 @@ test.describe("Todo ページのテスト", () => {
         ).not.toBeVisible();
       });
     });
+
+    test.describe("編集時のテスト", () => {
+      test("カテゴリ設定ボタンを押すと、カテゴリ設定ダイアログが開くこと", async ({
+        page,
+      }) => {
+        // Arrange
+        const todoStorage: TodoStorage = {
+          version: 1,
+          todos: [],
+          categories: {
+            [DEFAULT_CATEGORY_ID]: { name: DEFAULT_CATEGORY_NAME },
+            work: { name: "仕事" },
+          },
+        };
+        await page.evaluate(
+          ([key, value]) => {
+            localStorage.setItem(key, value);
+          },
+          [TODO_STORAGE_KEY, JSON.stringify(todoStorage)],
+        );
+        await navigateToTodo(page);
+
+        // Act
+        await page.getByRole("button", { name: "仕事" }).click();
+        await page.getByRole("button", { name: "カテゴリ設定" }).click();
+
+        // Assert
+        await expect(
+          page.getByRole("dialog", { name: "カテゴリ設定" }),
+        ).toBeVisible();
+        await expect(page.getByText("タイトルの変更")).toBeVisible();
+        await expect(page.getByText("リセット時刻の変更")).toBeVisible();
+      });
+    });
+
+    test.describe("削除時のテスト", () => {
+      test("カテゴリを削除できること", async ({ page }) => {
+        // Arrange
+        const todoStorage: TodoStorage = {
+          version: 1,
+          todos: [
+            {
+              id: "todo-work",
+              name: "資料作成",
+              order: 0,
+              categoryId: "work",
+              completed: false,
+            },
+            {
+              id: "todo-personal",
+              name: "買い物",
+              order: 1,
+              categoryId: "personal",
+              completed: false,
+            },
+          ],
+          categories: {
+            [DEFAULT_CATEGORY_ID]: { name: DEFAULT_CATEGORY_NAME },
+            work: { name: "仕事" },
+            personal: { name: "個人" },
+          },
+        };
+        await page.evaluate(
+          ([key, value]) => {
+            localStorage.setItem(key, value);
+          },
+          [TODO_STORAGE_KEY, JSON.stringify(todoStorage)],
+        );
+        await navigateToTodo(page);
+
+        // Act
+        await page.getByRole("button", { name: "個人" }).click();
+        await page.getByRole("button", { name: "カテゴリ設定" }).click();
+        await page.getByRole("button", { name: "カテゴリを削除" }).click();
+        await page.getByRole("button", { name: "削除" }).click();
+
+        // Assert
+        // UI から削除されたカテゴリが消える
+        await expect(
+          page.getByRole("button", { name: "個人" }),
+        ).not.toBeVisible();
+
+        // ストレージから削除されたカテゴリが消える
+        const migrated: TodoStorage = await page.evaluate(
+          (key) => JSON.parse(localStorage.getItem(key)!),
+          TODO_STORAGE_KEY,
+        );
+        expect(migrated.categories?.personal).toBeUndefined();
+
+        // 削除されたカテゴリの Todo が未分類に移行される
+        expect(
+          migrated.todos.find((t) => t.id === "todo-personal")?.categoryId,
+        ).toBe(DEFAULT_CATEGORY_ID);
+      });
+
+      test("削除されたカテゴリが選択中だった場合、デフォルトカテゴリに切り替わること", async ({
+        page,
+      }) => {
+        // Arrange
+        const todoStorage: TodoStorage = {
+          version: 1,
+          todos: [
+            {
+              id: "todo-work",
+              name: "資料作成",
+              order: 0,
+              categoryId: "work",
+              completed: false,
+            },
+          ],
+          categories: {
+            [DEFAULT_CATEGORY_ID]: { name: DEFAULT_CATEGORY_NAME },
+            work: { name: "仕事" },
+          },
+        };
+        await page.evaluate(
+          ([key, value]) => {
+            localStorage.setItem(key, value);
+          },
+          [TODO_STORAGE_KEY, JSON.stringify(todoStorage)],
+        );
+        await navigateToTodo(page);
+
+        // Act
+        // 仕事カテゴリを選択
+        await page.getByRole("button", { name: "仕事" }).click();
+        await expect(
+          page.getByRole("button", { name: "仕事" }),
+        ).toHaveAttribute("aria-pressed", "true");
+
+        // 編集モードを有効にする
+        await page.getByRole("button", { name: "編集開始" }).click();
+        // 仕事カテゴリを設定ダイアログから削除
+        await page.getByRole("button", { name: "カテゴリ設定" }).click();
+        await page.getByRole("button", { name: "カテゴリを削除" }).click();
+        await page.getByRole("button", { name: "削除" }).click();
+
+        // Assert
+        // デフォルトカテゴリが選択状態になる
+        await expect(
+          page.getByRole("button", { name: DEFAULT_CATEGORY_NAME }),
+        ).toHaveAttribute("aria-pressed", "true");
+      });
+    });
   });
 });
