@@ -13,32 +13,48 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MESSAGES } from "@/constants/messages";
-import { AlertCircleIcon, SaveCheckIcon } from "lucide-react";
+import { AlertCircleIcon, PlusIcon, SaveCheckIcon } from "lucide-react";
 import { useState } from "react";
+
+export type CategoryDialogMode = "create" | "edit";
 
 export type CategorySettingDialogProps = {
   open: boolean;
+  mode: CategoryDialogMode;
   category: { id: string; name: string } | null;
   isDefaultCategory: boolean;
   onOpenChange: (open: boolean) => void;
+  onCreate: (name: string) => void;
   onRename: (category: { id: string; name: string }, name: string) => void;
   onDelete: (category: { id: string; name: string }) => void;
 };
 
 export function CategorySettingDialog({
   open,
+  mode,
   category,
   isDefaultCategory,
   onOpenChange,
+  onCreate,
   onRename,
   onDelete,
 }: CategorySettingDialogProps) {
   const [categoryName, setCategoryName] = useState(category?.name ?? "");
+  const isCreateMode = mode === "create";
+const inputLabel = MESSAGES.labels.categoryName;
 
   const handleSave = () => {
-    if (!category || isDefaultCategory) return;
-
     const trimmedName = categoryName.trim();
+
+    if (isCreateMode) {
+      if (!trimmedName) return;
+
+      onCreate(trimmedName);
+      onOpenChange(false);
+      return;
+    }
+
+    if (!category || isDefaultCategory) return;
     if (!trimmedName || trimmedName === category.name) return;
 
     onRename(category, trimmedName);
@@ -51,21 +67,27 @@ export function CategorySettingDialog({
         <DialogHeader>
           <DialogTitle>カテゴリ設定</DialogTitle>
           <DialogDescription>
-            対象カテゴリ: {category?.name ?? ""}
+            {isCreateMode
+              ? "新しいカテゴリを追加します。"
+              : `対象カテゴリ: ${category?.name ?? ""}`}
           </DialogDescription>
         </DialogHeader>
 
-        {category && (
+        {(isCreateMode || category) && (
           <>
             <div className="space-y-3">
-              {!isDefaultCategory && (
+              {(isCreateMode || !isDefaultCategory) && (
                 <Label className="flex flex-col items-start gap-2">
-                  {MESSAGES.labels.title}
+                  {inputLabel}
                   <Input
                     value={categoryName}
                     onChange={(e) => setCategoryName(e.target.value)}
-                    aria-label={MESSAGES.labels.title}
-                    placeholder={category.name}
+                    aria-label={inputLabel}
+                    placeholder={
+                      isCreateMode
+                        ? MESSAGES.placeholders.categoryName
+                        : (category?.name ?? "")
+                    }
                   />
                 </Label>
               )}
@@ -75,7 +97,7 @@ export function CategorySettingDialog({
                 <p className="text-muted-foreground text-sm">（将来対応）</p>
               </Label>
 
-              {isDefaultCategory && (
+              {!isCreateMode && isDefaultCategory && (
                 <Alert variant="default">
                   <AlertCircleIcon size={16} />
                   <AlertTitle>
@@ -86,7 +108,7 @@ export function CategorySettingDialog({
             </div>
 
             <DialogFooter>
-              {!isDefaultCategory && (
+              {!isCreateMode && !isDefaultCategory && category && (
                 <Button
                   type="button"
                   variant="destructive"
@@ -99,9 +121,12 @@ export function CategorySettingDialog({
               <Button
                 type="button"
                 onClick={handleSave}
-                disabled={isDefaultCategory || !categoryName.trim()}
+                disabled={
+                  (!isCreateMode && isDefaultCategory) || !categoryName.trim()
+                }
               >
-                <SaveCheckIcon /> {MESSAGES.actions.update}
+                {isCreateMode ? <PlusIcon /> : <SaveCheckIcon />}
+                {isCreateMode ? MESSAGES.actions.add : MESSAGES.actions.update}
               </Button>
             </DialogFooter>
           </>
