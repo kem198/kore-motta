@@ -4,20 +4,24 @@ import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { MESSAGES } from "@/constants/messages";
 import { AlertCircleIcon, SaveCheckIcon } from "lucide-react";
+import { useState } from "react";
 
 export type CategorySettingDialogProps = {
   open: boolean;
   category: { id: string; name: string } | null;
   isDefaultCategory: boolean;
   onOpenChange: (open: boolean) => void;
+  onRename: (category: { id: string; name: string }, name: string) => void;
   onDelete: (category: { id: string; name: string }) => void;
 };
 
@@ -26,8 +30,21 @@ export function CategorySettingDialog({
   category,
   isDefaultCategory,
   onOpenChange,
+  onRename,
   onDelete,
 }: CategorySettingDialogProps) {
+  const [categoryName, setCategoryName] = useState(category?.name ?? "");
+
+  const handleSave = () => {
+    if (!category || isDefaultCategory) return;
+
+    const trimmedName = categoryName.trim();
+    if (!trimmedName || trimmedName === category.name) return;
+
+    onRename(category, trimmedName);
+    onOpenChange(false);
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -42,16 +59,21 @@ export function CategorySettingDialog({
           <>
             <div className="space-y-3">
               {!isDefaultCategory && (
-                <div className="rounded-md border p-3">
-                  <p className="text-sm font-medium">タイトルの変更</p>
-                  <p className="text-muted-foreground text-sm">（将来対応）</p>
-                </div>
+                <Label className="flex flex-col items-start gap-2">
+                  {MESSAGES.labels.title}
+                  <Input
+                    value={categoryName}
+                    onChange={(e) => setCategoryName(e.target.value)}
+                    aria-label={MESSAGES.labels.title}
+                    placeholder={category.name}
+                  />
+                </Label>
               )}
 
-              <div className="rounded-md border p-3">
+              <Label className="flex flex-col items-start gap-2">
                 <p className="text-sm font-medium">リセット時刻の変更</p>
                 <p className="text-muted-foreground text-sm">（将来対応）</p>
-              </div>
+              </Label>
 
               {isDefaultCategory && (
                 <Alert variant="default">
@@ -69,19 +91,18 @@ export function CategorySettingDialog({
                   type="button"
                   variant="destructive"
                   onClick={() => onDelete(category)}
-                  className="mr-auto"
                 >
                   カテゴリを削除
                 </Button>
               )}
 
-              <DialogClose
-                render={
-                  <Button type="button">
-                    <SaveCheckIcon /> 更新
-                  </Button>
-                }
-              />
+              <Button
+                type="button"
+                onClick={handleSave}
+                disabled={isDefaultCategory || !categoryName.trim()}
+              >
+                <SaveCheckIcon /> {MESSAGES.actions.update}
+              </Button>
             </DialogFooter>
           </>
         )}

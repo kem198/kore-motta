@@ -279,6 +279,47 @@ export function TodoApp() {
     });
   }, [activeCategoryId, categories]);
 
+  const handleRenameCategory = useCallback(
+    (category: { id: string; name: string }, name: string) => {
+      const trimmedName = name.trim();
+      if (!trimmedName) return;
+
+      setCategories((prev) => {
+        const currentCategory = prev[category.id];
+        if (!currentCategory) return prev;
+
+        const next = {
+          ...prev,
+          [category.id]: {
+            ...currentCategory,
+            name: trimmedName,
+          },
+        };
+
+        try {
+          const raw = window.localStorage.getItem(TODO_STORAGE_KEY);
+          const currentStorage = raw ? JSON.parse(raw) : {};
+          currentStorage.categories = next;
+          window.localStorage.setItem(
+            TODO_STORAGE_KEY,
+            JSON.stringify(currentStorage),
+          );
+        } catch {
+          // ignore
+        }
+
+        return next;
+      });
+
+      toast.add({
+        title: MESSAGES.toast.categoryUpdated,
+        description: trimmedName,
+        type: "success",
+      });
+    },
+    [],
+  );
+
   const isDefaultCategorySelected = activeCategoryId === DEFAULT_CATEGORY_ID;
 
   const handleDeleteCategory = useCallback(() => {
@@ -497,6 +538,7 @@ export function TodoApp() {
       </div>
 
       <CategorySettingDialog
+        key={categoryToEdit?.id ?? "category-setting"}
         open={!!categoryToEdit}
         category={categoryToEdit}
         isDefaultCategory={isDefaultCategorySelected}
@@ -505,6 +547,7 @@ export function TodoApp() {
             setCategoryToEdit(null);
           }
         }}
+        onRename={handleRenameCategory}
         onDelete={(selectedCategory) => {
           setCategoryToDelete(selectedCategory);
           setCategoryToEdit(null);

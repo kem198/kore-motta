@@ -75,6 +75,7 @@ export const MESSAGES = {
     deleted: "アイテムを削除しました",
     imported: "アイテムをインポートしました",
     categoryCreated: "カテゴリを追加しました",
+    categoryUpdated: "カテゴリを更新しました",
     categoryDeleted: "カテゴリを削除しました",
     reordered: "並び順を更新しました",
     reset: "登録内容を初期化しました",
