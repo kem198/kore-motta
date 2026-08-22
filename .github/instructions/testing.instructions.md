@@ -112,6 +112,47 @@ it("リセット時刻を過ぎてアクセスすると、Todo が未完了に�
 - When: リセット時刻を過ぎてアクセスする
 - Then: Todo が未完了になる
 
+## コメント
+
+各テスト用の処理について、`// Arrange`、 `// Act`、`// Assert` のコメントをつけること。
+
+```ts
+test.describe("初期表示のテスト", () => {
+  test("Todo が登録済みの状態で、画面が初期表示された時、登録済み Todo の各種情報が表示されること", async ({
+    page,
+  }) => {
+    // Arrange
+    const todoStorage: TodoStorage = {
+      version: 1,
+      todos: [
+        {
+          id: "test-todo",
+          name: "カギ",
+          order: 0,
+          memo: "家の鍵",
+          completed: false,
+        },
+      ],
+    };
+    await page.evaluate(
+      ([key, value]) => {
+        localStorage.setItem(key, value);
+      },
+      [TODO_STORAGE_KEY, JSON.stringify(todoStorage)],
+    );
+
+    // Act
+    await navigateToTodo(page);
+
+    // Assert
+    await expect(assertScope.getByText("カギ", { exact: true })).toBeVisible();
+    await expect(
+      assertScope.getByText("家の鍵", { exact: true }),
+    ).toBeVisible();
+  });
+});
+```
+
 ## Vitest
 
 ※現在の方針では Vitest は採用していない。テストが肥大化してきた際に環境構築を検討する。

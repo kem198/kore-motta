@@ -76,6 +76,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 - TypeScript の型安全性を優先する。
 - `any` は原則として使用しない。
+- ファイルの編集後、TypeScript や Lint のエラーを確認して適宜修正すること。放置して次の実装に進まないこと。
 - Server Component をデフォルトとする。
 - Client Component が必要な場合のみ `"use client"` を使用する。
 - 既存のコンポーネントを優先して再利用する。
