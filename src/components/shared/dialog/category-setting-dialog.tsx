@@ -41,9 +41,7 @@ export function CategorySettingDialog({
 }: CategorySettingDialogProps) {
   const [categoryName, setCategoryName] = useState(category?.name ?? "");
   const isCreateMode = mode === "create";
-  const inputLabel = isCreateMode
-    ? MESSAGES.labels.categoryName
-    : MESSAGES.labels.title;
+const inputLabel = MESSAGES.labels.categoryName;
 
   const handleSave = () => {
     const trimmedName = categoryName.trim();
