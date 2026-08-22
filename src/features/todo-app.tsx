@@ -9,7 +9,6 @@ import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
 import { MESSAGES } from "@/constants/messages";
-import { sampleTodos } from "@/constants/sample";
 import { CURRENT_TODO_STORAGE_VERSION } from "@/constants/version";
 import { useTodos } from "@/hooks/use-todos";
 import { TodoFormValues } from "@/schemas/todo-form-schema";
@@ -20,7 +19,7 @@ import {
   PencilIcon,
   UploadIcon,
 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 export function TodoApp() {
   const {
@@ -91,7 +90,6 @@ export function TodoApp() {
 
   const handleReset = useCallback(() => {
     resetTodos();
-    localStorage.removeItem("todoSampleInitialized");
     setIsEditing(false);
 
     toast.add({
@@ -151,22 +149,6 @@ export function TodoApp() {
     },
     [importTodoStorage],
   );
-
-  // サンプルデータ投入
-  useEffect(() => {
-    const hasInitialized = localStorage.getItem("todoSampleInitialized");
-
-    if (!hasInitialized && isLoaded && todos.length === 0) {
-      const sortedSamples = [...sampleTodos]
-        .sort((a, b) => a.order - b.order)
-        .reverse();
-
-      sortedSamples.forEach(addTodo);
-
-      // 初期化しない限りサンプルデータが投入されないようにする
-      localStorage.setItem("todoSampleInitialized", "true");
-    }
-  }, [isLoaded, todos, addTodo]);
 
   return (
     <div className="flex flex-col gap-4">

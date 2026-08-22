@@ -82,8 +82,12 @@ test.describe("Todo ページのテスト", () => {
         await navigateToTodo(page);
 
         // Assert
-        await expect(assertScope.getByText("カギ")).toBeVisible();
-        await expect(assertScope.getByText("家の鍵")).toBeVisible();
+        await expect(
+          assertScope.getByText("カギ", { exact: true }),
+        ).toBeVisible();
+        await expect(
+          assertScope.getByText("家の鍵", { exact: true }),
+        ).toBeVisible();
       });
     });
 
@@ -91,7 +95,12 @@ test.describe("Todo ページのテスト", () => {
       test("Todo を登録できること", async ({ page }) => {
         // Arrange
         await navigateToTodo(page);
-        await page.getByRole("textbox", { name: "財布" }).fill("カギ");
+        await expect(
+          assertScope.getByText("dummy", { exact: true }),
+        ).toBeVisible();
+        const nameInput = page.getByRole("textbox", { name: "財布" });
+
+        await nameInput.fill("カギ");
 
         // Act
         await page.getByRole("button", { name: "追加" }).click();
@@ -139,7 +148,9 @@ test.describe("Todo ページのテスト", () => {
       test("Todo を削除できること", async ({ page }) => {
         // Arrange
         await navigateToTodo(page);
+        await expect(assertScope.getByText("dummy", { exact: true })).toBeVisible();
         await page.getByRole("button", { name: "編集開始" }).click();
+        await expect(page.getByRole("button", { name: "完了" })).toBeVisible();
         await page.getByRole("button", { name: "削除: dummy" }).click();
 
         // Act
@@ -155,7 +166,7 @@ test.describe("Todo ページのテスト", () => {
           (key) => JSON.parse(localStorage.getItem(key)!),
           TODO_STORAGE_KEY,
         );
-        expect(migrated.todos[0].name).not.toBe("dummy");
+        expect(migrated.todos).toHaveLength(0);
       });
     });
 
@@ -191,9 +202,12 @@ test.describe("Todo ページのテスト", () => {
           [TODO_STORAGE_KEY, JSON.stringify(todoStorage)],
         );
         await navigateToTodo(page);
+        await expect(assertScope.getByText("カギ", { exact: true })).toBeVisible();
+        await expect(assertScope.getByText("財布", { exact: true })).toBeVisible();
 
         // Act
         await page.getByRole("button", { name: "編集開始" }).click();
+        await expect(page.getByRole("button", { name: "完了" })).toBeVisible();
         await page.getByRole("button", { name: "初期化" }).click();
         await page.getByRole("button", { name: "初期化" }).click();
 
@@ -250,9 +264,16 @@ test.describe("Todo ページのテスト", () => {
         );
 
         await navigateToTodo(page);
+        await expect(
+          assertScope.getByText("カギ", { exact: true }),
+        ).toBeVisible();
+        await expect(
+          assertScope.getByText("財布", { exact: true }),
+        ).toBeVisible();
 
         // Act
         await page.getByRole("button", { name: "編集開始" }).click();
+        await expect(page.getByRole("button", { name: "完了" })).toBeVisible();
         await page.getByRole("button", { name: "エクスポート" }).click();
 
         // Assert
@@ -295,7 +316,11 @@ test.describe("Todo ページのテスト", () => {
 
         const backupText = JSON.stringify(todoStorage, null, 2);
         await navigateToTodo(page);
+        await expect(
+          assertScope.getByText("dummy", { exact: true }),
+        ).toBeVisible();
         await page.getByRole("button", { name: "編集開始" }).click();
+        await expect(page.getByRole("button", { name: "完了" })).toBeVisible();
 
         // Act
         await page.getByRole("button", { name: "インポート" }).click();
@@ -303,8 +328,12 @@ test.describe("Todo ページのテスト", () => {
         await page.getByRole("button", { name: "インポート" }).click();
 
         // Assert (表示が復元されること)
-        await expect(assertScope.getByText("カギ")).toBeVisible();
-        await expect(assertScope.getByText("家の鍵")).toBeVisible();
+        await expect(
+          assertScope.getByText("カギ", { exact: true }),
+        ).toBeVisible();
+        await expect(
+          assertScope.getByText("家の鍵", { exact: true }),
+        ).toBeVisible();
 
         // Assert (データストアへ保存されていること)
         const migrated: TodoStorage = await page.evaluate(
@@ -321,7 +350,11 @@ test.describe("Todo ページのテスト", () => {
       }) => {
         // Arrange
         await navigateToTodo(page);
+        await expect(
+          assertScope.getByText("dummy", { exact: true }),
+        ).toBeVisible();
         await page.getByRole("button", { name: "編集開始" }).click();
+        await expect(page.getByRole("button", { name: "完了" })).toBeVisible();
         await page.getByRole("button", { name: "インポート" }).click();
 
         // Act
@@ -336,7 +369,9 @@ test.describe("Todo ページのテスト", () => {
         ).toBeVisible();
 
         // Assert (表示がダミーデータのままであること)
-        await expect(assertScope.getByText("dummy")).toBeVisible();
+        await expect(
+          assertScope.getByText("dummy", { exact: true }),
+        ).toBeVisible();
 
         // Assert (データストアが更新されていないこと)
         const migratedInvalidJson: TodoStorage = await page.evaluate(
@@ -365,7 +400,11 @@ test.describe("Todo ページのテスト", () => {
         };
 
         await navigateToTodo(page);
+        await expect(
+          assertScope.getByText("dummy", { exact: true }),
+        ).toBeVisible();
         await page.getByRole("button", { name: "編集開始" }).click();
+        await expect(page.getByRole("button", { name: "完了" })).toBeVisible();
         await page.getByRole("button", { name: "インポート" }).click();
 
         // Act
