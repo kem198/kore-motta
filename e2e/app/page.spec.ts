@@ -8,7 +8,9 @@ test.describe("Todo ページのテスト", () => {
 
   /** テスト対象のページへ遷移する */
   const navigateToTodo = async (page: Page) => {
-    await expect(page).toHaveURL("/");
+    const targetPath = "/";
+    await page.goto(targetPath);
+    await expect(page).toHaveURL(targetPath);
   };
 
   test.beforeEach(async ({ page }) => {
