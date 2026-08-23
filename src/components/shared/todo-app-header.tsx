@@ -1,6 +1,8 @@
 import { HelpDialog } from "@/components/shared/dialog/help-dialog";
+import { Button } from "@/components/ui/button";
 import { SITE_NAME } from "@/constants/site";
 import { cn } from "@/lib/utils";
+import { EllipsisVerticalIcon } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 
@@ -21,7 +23,19 @@ export function TodoAppHeader({ className, ...props }: TodoAppHeaderProps) {
       >
         {SITE_NAME}
       </Link>
-      <HelpDialog />
+      <div className="flex gap-1">
+        <HelpDialog />
+
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-lg"
+          aria-label="アプリの使い方・利用規約"
+          className="rounded-full text-white hover:bg-white/10 hover:text-white"
+        >
+          <EllipsisVerticalIcon className="size-5" />
+        </Button>
+      </div>
     </header>
   );
 }
