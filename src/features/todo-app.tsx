@@ -1,11 +1,20 @@
 "use client";
 
 import { CategoryList } from "@/components/shared/category-list";
-import { CategoryDeleteDialog } from "@/components/shared/dialog/category-delete-dialog";
 import { CategorySettingDialog } from "@/components/shared/dialog/category-setting-dialog";
 import { TodoAppNavigation } from "@/components/shared/todo-app-navigation";
 import { TodoFormFooter } from "@/components/shared/todo-form-footer";
 import { TodoList } from "@/components/shared/todo-list";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { toast } from "@/components/ui/toast";
 import {
   DEFAULT_CATEGORY_ID,
@@ -341,16 +350,37 @@ export function TodoApp() {
         }}
       />
 
-      <CategoryDeleteDialog
+      <AlertDialog
         open={!!categoryToDelete}
-        category={categoryToDelete}
         onOpenChange={(open) => {
           if (!open) {
             setCategoryToDelete(null);
           }
         }}
-        onConfirm={handleDeleteCategory}
-      />
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              カテゴリ「{categoryToDelete?.name ?? ""}」を削除しますか？
+            </AlertDialogTitle>
+
+            <AlertDialogDescription>
+              このカテゴリに属する Todo は未分類に移動します。
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel>{MESSAGES.actions.cancel}</AlertDialogCancel>
+
+            <AlertDialogAction
+              variant="destructive"
+              onClick={handleDeleteCategory}
+            >
+              {MESSAGES.actions.delete}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

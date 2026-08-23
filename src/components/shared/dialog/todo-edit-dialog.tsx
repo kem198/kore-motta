@@ -48,18 +48,18 @@ import {
 } from "react";
 import { Controller, useForm } from "react-hook-form";
 
-type EditDialogProps = {
+type TodoEditDialogProps = {
   todo: Todo;
   onSave: (updated: Todo) => void;
   children: ReactNode;
 } & ComponentProps<typeof DialogTrigger>;
 
-export function EditDialog({
+export function TodoEditDialog({
   todo,
   onSave,
   children,
   ...props
-}: EditDialogProps) {
+}: TodoEditDialogProps) {
   const [open, setOpen] = useState(false);
   const [completed, setCompleted] = useState(todo.completed);
   const [categoryName, setCategoryName] = useState(DEFAULT_CATEGORY_NAME);
@@ -129,16 +129,15 @@ export function EditDialog({
   ];
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger render={children as ReactElement} {...props} />
+    <Dialog open={open} onOpenChange={handleOpenChange} {...props}>
+      <DialogTrigger render={children as ReactElement} />
 
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{MESSAGES.dialogs.editItem}</DialogTitle>
+
           <DialogDescription>
-            <>
-              <Required /> {MESSAGES.validation.requiredNote}
-            </>
+            <Required /> {MESSAGES.validation.requiredNote}
           </DialogDescription>
         </DialogHeader>
 
@@ -223,7 +222,7 @@ export function EditDialog({
           </FieldGroup>
         </form>
 
-        <DialogFooter className="gap-y-2">
+        <DialogFooter>
           <DialogClose
             render={
               <Button type="button" variant="outline">

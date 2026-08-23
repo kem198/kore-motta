@@ -44,21 +44,15 @@ export function ImportDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={children as ReactElement} {...props} />
+    <Dialog open={open} onOpenChange={setOpen} {...props}>
+      <DialogTrigger render={children as ReactElement} />
 
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{MESSAGES.dialogs.import.title}</DialogTitle>
+
           <DialogDescription>
-            {MESSAGES.dialogs.import.description
-              .split("\n")
-              .map((line: string, i: number) => (
-                <span key={i}>
-                  {line}
-                  <br />
-                </span>
-              ))}
+            {MESSAGES.dialogs.import.description}
           </DialogDescription>
         </DialogHeader>
 
