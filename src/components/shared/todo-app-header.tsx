@@ -10,7 +10,7 @@ export function TodoAppHeader({ className, ...props }: TodoAppHeaderProps) {
   return (
     <header
       className={cn(
-        "bg-primary flex items-center justify-between gap-2 px-6 py-3 font-normal text-white max-md:px-3",
+        "bg-primary flex items-center justify-between gap-2 px-6 py-2 font-normal text-white max-md:px-3",
         className,
       )}
       {...props}

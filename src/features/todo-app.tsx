@@ -2,9 +2,11 @@
 
 import { CategoryList } from "@/components/shared/category-list";
 import { CategorySettingDialog } from "@/components/shared/dialog/category-setting-dialog";
+import { TodoAppHeader } from "@/components/shared/todo-app-header";
 import { TodoAppNavigation } from "@/components/shared/todo-app-navigation";
 import { TodoFormFooter } from "@/components/shared/todo-form-footer";
 import { TodoList } from "@/components/shared/todo-list";
+import { Separator } from "@/components/ui/separator";
 import {
   DEFAULT_CATEGORY_ID,
   DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
@@ -305,31 +307,38 @@ export function TodoApp() {
   );
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="not-prose flex w-full flex-col gap-6">
-        <TodoAppNavigation
-          isEditing={isEditing}
-          appStorage={appStorage}
-          onMarkAllIncomplete={handleMarkAllIncomplete}
-          onImport={handleImport}
-          onOpenCategorySettings={handleOpenCategoryEditDialog}
-          onToggleEditing={() => setIsEditing((prev) => !prev)}
-        />
+    <div className="not-prose flex w-full flex-col">
+      <div className="bg-background sticky top-0 z-50">
+        <TodoAppHeader />
 
-        {isLoaded && (
-          <CategoryList
-            categories={categories}
-            activeCategoryId={activeCategoryId}
-            onSelect={setActiveCategoryId}
-            onCreate={() =>
-              setCategoryDialog({
-                mode: "create",
-                category: null,
-              })
-            }
+        <div className="p-4">
+          <TodoAppNavigation
+            isEditing={isEditing}
+            appStorage={appStorage}
+            onMarkAllIncomplete={handleMarkAllIncomplete}
+            onImport={handleImport}
+            onOpenCategorySettings={handleOpenCategoryEditDialog}
+            onToggleEditing={() => setIsEditing((prev) => !prev)}
           />
-        )}
 
+          {isLoaded && (
+            <CategoryList
+              categories={categories}
+              activeCategoryId={activeCategoryId}
+              onSelect={setActiveCategoryId}
+              onCreate={() =>
+                setCategoryDialog({
+                  mode: "create",
+                  category: null,
+                })
+              }
+            />
+          )}
+        </div>
+        <Separator />
+      </div>
+
+      <div className="p-4">
         <TodoList
           todos={visibleTodos}
           isLoaded={isLoaded}
@@ -338,7 +347,6 @@ export function TodoApp() {
           onUpdate={handleUpdate}
           onReorder={handleReorder}
         />
-
         <TodoFormFooter onSubmit={handleCreate} isEditing={isEditing} />
       </div>
 
