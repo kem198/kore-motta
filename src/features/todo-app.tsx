@@ -3,12 +3,9 @@
 import { CategoryList } from "@/components/shared/category-list";
 import { CategoryDeleteDialog } from "@/components/shared/dialog/category-delete-dialog";
 import { CategorySettingDialog } from "@/components/shared/dialog/category-setting-dialog";
-import { ConfirmDialog } from "@/components/shared/dialog/confirm-dialog";
-import { ExportDialog } from "@/components/shared/dialog/export-dialog";
-import { ImportDialog } from "@/components/shared/dialog/import-dialog";
+import { TodoEditActions } from "@/components/shared/todo-edit-actions";
 import { TodoForm } from "@/components/shared/todo-form";
 import { TodoList } from "@/components/shared/todo-list";
-import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
 import {
@@ -22,13 +19,7 @@ import { useTodos } from "@/hooks/use-todos";
 import { TodoFormValues } from "@/schemas/todo-form-schema";
 import { Category } from "@/types/category";
 import { Todo } from "@/types/todo";
-import {
-  AlertCircleIcon,
-  DownloadIcon,
-  FolderPenIcon,
-  PencilIcon,
-  UploadIcon,
-} from "lucide-react";
+import { FolderPenIcon, PencilIcon } from "lucide-react";
 import { useCallback, useState } from "react";
 
 export function TodoApp() {
@@ -320,56 +311,12 @@ export function TodoApp() {
 
         <div className="bg-background/70 sticky bottom-0 z-50 flex justify-between gap-2 border-t py-4">
           <div className="flex gap-2">
-            {isEditing && (
-              <>
-                <ConfirmDialog
-                  title={MESSAGES.dialogs.reset.title}
-                  description={MESSAGES.dialogs.reset.description}
-                  content={
-                    <Alert variant="destructive">
-                      <AlertCircleIcon size={16} />
-                      <AlertTitle>{MESSAGES.warnings.overwrite}</AlertTitle>
-                    </Alert>
-                  }
-                  confirmButtonLabel={MESSAGES.actions.reset}
-                  confirmButtonVariant="destructive"
-                  onConfirm={handleReset}
-                  className="w-fit"
-                >
-                  <Button
-                    variant="destructive"
-                    aria-label={MESSAGES.actions.reset}
-                  >
-                    {MESSAGES.actions.reset}
-                  </Button>
-                </ConfirmDialog>
-
-                <ExportDialog appStorage={appStorage} className="w-fit">
-                  <Button
-                    variant="secondary"
-                    aria-label={MESSAGES.actions.export}
-                    className="inline-flex items-center gap-2"
-                  >
-                    <UploadIcon className="sm:hidden" />
-                    <span className="hidden sm:inline">
-                      {MESSAGES.actions.export}
-                    </span>
-                  </Button>
-                </ExportDialog>
-
-                <ImportDialog onImport={handleImport}>
-                  <Button
-                    variant="secondary"
-                    aria-label={MESSAGES.actions.import}
-                    className="inline-flex items-center gap-2"
-                  >
-                    <DownloadIcon className="sm:hidden" />
-                    <span className="hidden sm:inline">
-                      {MESSAGES.actions.import}
-                    </span>
-                  </Button>
-                </ImportDialog>
-              </>
+            {isLoaded && isEditing && (
+              <TodoEditActions
+                appStorage={appStorage}
+                onReset={handleReset}
+                onImport={handleImport}
+              />
             )}
           </div>
 
