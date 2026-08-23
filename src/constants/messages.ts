@@ -14,7 +14,7 @@ export const MESSAGES = {
     export: "エクスポート",
     delete: "削除",
     unset: "未設定",
-    markAllIncomplete: "未完了に戻す",
+    markAllIncomplete: "すべて未完了に戻す",
   },
 
   dialogs: {

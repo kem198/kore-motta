@@ -1,6 +1,16 @@
 "use client";
 
 import { Alert, AlertTitle } from "@/components/ui/alert";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -28,6 +38,7 @@ export type CategorySettingDialogProps = {
   onCreate: (name: string) => void;
   onRename: (category: { id: string; name: string }, name: string) => void;
   onDelete: (category: { id: string; name: string }) => void;
+  onMarkAllIncomplete: () => void;
 };
 
 export function CategorySettingDialog({
@@ -39,8 +50,13 @@ export function CategorySettingDialog({
   onCreate,
   onRename,
   onDelete,
+  onMarkAllIncomplete,
 }: CategorySettingDialogProps) {
   const [categoryName, setCategoryName] = useState(category?.name ?? "");
+  const [isMarkAllIncompleteConfirmOpen, setIsMarkAllIncompleteConfirmOpen] =
+    useState(false);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+
   const isCreateMode = mode === "create";
   const inputLabel = MESSAGES.labels.categoryName;
 
@@ -62,83 +78,173 @@ export function CategorySettingDialog({
     onOpenChange(false);
   };
 
+  const handleMarkAllIncompleteConfirm = () => {
+    onMarkAllIncomplete();
+    setIsMarkAllIncompleteConfirmOpen(false);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (!category) return;
+
+    onDelete(category);
+    setIsDeleteConfirmOpen(false);
+    onOpenChange(false);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>カテゴリ設定</DialogTitle>
-          <DialogDescription>
-            {isCreateMode
-              ? "新しいカテゴリを追加します。"
-              : `対象カテゴリ: ${category?.name ?? ""}`}
-          </DialogDescription>
-        </DialogHeader>
+    <>
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>カテゴリ設定</DialogTitle>
 
-        {(isCreateMode || category) && (
-          <>
-            <div className="space-y-3">
-              {(isCreateMode || !isDefaultCategory) && (
+            <DialogDescription>
+              {isCreateMode
+                ? "新しいカテゴリを追加します。"
+                : `対象カテゴリ: ${category?.name ?? ""}`}
+            </DialogDescription>
+          </DialogHeader>
+
+          {(isCreateMode || category) && (
+            <>
+              <div className="space-y-3">
+                {(isCreateMode || !isDefaultCategory) && (
+                  <Label className="flex flex-col items-start gap-2">
+                    {inputLabel}
+
+                    <Input
+                      value={categoryName}
+                      onChange={(e) => setCategoryName(e.target.value)}
+                      aria-label={inputLabel}
+                      placeholder={
+                        isCreateMode
+                          ? MESSAGES.placeholders.categoryName
+                          : (category?.name ?? "")
+                      }
+                    />
+                  </Label>
+                )}
+
                 <Label className="flex flex-col items-start gap-2">
-                  {inputLabel}
-                  <Input
-                    value={categoryName}
-                    onChange={(e) => setCategoryName(e.target.value)}
-                    aria-label={inputLabel}
-                    placeholder={
-                      isCreateMode
-                        ? MESSAGES.placeholders.categoryName
-                        : (category?.name ?? "")
-                    }
-                  />
+                  <p className="text-sm font-medium">リセット時刻の変更</p>
+                  <p className="text-muted-foreground text-sm">（将来対応）</p>
                 </Label>
-              )}
 
-              <Label className="flex flex-col items-start gap-2">
-                <p className="text-sm font-medium">リセット時刻の変更</p>
-                <p className="text-muted-foreground text-sm">（将来対応）</p>
-              </Label>
+                {!isCreateMode && isDefaultCategory && (
+                  <Alert variant="default">
+                    <AlertCircleIcon size={16} />
 
-              {!isCreateMode && isDefaultCategory && (
-                <Alert variant="default">
-                  <AlertCircleIcon size={16} />
-                  <AlertTitle>
-                    未分類カテゴリはタイトル変更・削除できません。
-                  </AlertTitle>
-                </Alert>
-              )}
-            </div>
+                    <AlertTitle>
+                      未分類カテゴリはタイトル変更・削除できません。
+                    </AlertTitle>
+                  </Alert>
+                )}
+              </div>
 
-            {!isCreateMode && !isDefaultCategory && category && (
-              <Button
-                type="button"
-                variant="destructive"
-                onClick={() => onDelete(category)}
-              >
-                カテゴリを削除
-              </Button>
-            )}
+              <div className="flex gap-2">
+                {!isCreateMode && !isDefaultCategory && category && (
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      onClick={() => setIsDeleteConfirmOpen(true)}
+                    >
+                      カテゴリを削除
+                    </Button>
+                  </div>
+                )}
 
-            <DialogFooter>
-              <DialogClose
-                render={
-                  <Button type="button" variant="outline">
-                    キャンセル
-                  </Button>
-                }
-              />
-              <Button
-                type="button"
-                onClick={handleSave}
-                disabled={
-                  (!isCreateMode && isDefaultCategory) || !categoryName.trim()
-                }
-              >
-                {isCreateMode ? MESSAGES.actions.add : MESSAGES.actions.update}
-              </Button>
-            </DialogFooter>
-          </>
-        )}
-      </DialogContent>
-    </Dialog>
+                {!isCreateMode && category && (
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={() => setIsMarkAllIncompleteConfirmOpen(true)}
+                    >
+                      {MESSAGES.actions.markAllIncomplete}
+                    </Button>
+                  </div>
+                )}
+              </div>
+
+              <DialogFooter>
+                <DialogClose
+                  render={
+                    <Button type="button" variant="outline">
+                      キャンセル
+                    </Button>
+                  }
+                />
+
+                <Button
+                  type="button"
+                  onClick={handleSave}
+                  disabled={
+                    (!isCreateMode && isDefaultCategory) || !categoryName.trim()
+                  }
+                >
+                  {isCreateMode
+                    ? MESSAGES.actions.add
+                    : MESSAGES.actions.update}
+                </Button>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <AlertDialog
+        open={isMarkAllIncompleteConfirmOpen}
+        onOpenChange={setIsMarkAllIncompleteConfirmOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              アイテムをすべて未完了に戻しますか？
+            </AlertDialogTitle>
+
+            <AlertDialogDescription>
+              このカテゴリ内のアイテムをすべて未完了に戻します。
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel>{MESSAGES.actions.cancel}</AlertDialogCancel>
+
+            <AlertDialogAction onClick={handleMarkAllIncompleteConfirm}>
+              {MESSAGES.actions.markAllIncomplete}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog
+        open={isDeleteConfirmOpen}
+        onOpenChange={setIsDeleteConfirmOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              カテゴリ「{category?.name ?? ""}」を削除しますか？
+            </AlertDialogTitle>
+
+            <AlertDialogDescription>
+              このカテゴリに属する Todo は未分類に移動します。
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel>{MESSAGES.actions.cancel}</AlertDialogCancel>
+
+            <AlertDialogAction
+              variant="destructive"
+              onClick={handleDeleteConfirm}
+            >
+              {MESSAGES.actions.delete}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }

@@ -300,7 +300,7 @@ test.describe("Todo ページのテスト", () => {
             settings: {},
             todos: [
               {
-                id: "reset-todo-01",
+                id: "mark-todo-01",
                 name: "カギ",
                 order: 0,
                 categoryId: DEFAULT_CATEGORY_ID,
@@ -308,7 +308,7 @@ test.describe("Todo ページのテスト", () => {
                 completed: true,
               },
               {
-                id: "reset-todo-02",
+                id: "mark-todo-02",
                 name: "財布",
                 order: 1,
                 categoryId: DEFAULT_CATEGORY_ID,
@@ -329,9 +329,9 @@ test.describe("Todo ページのテスト", () => {
         await navigateToTodo(page);
 
         // Act
-        await page.getByRole("button", { name: "編集開始" }).click();
-        await page.getByRole("button", { name: "未完了に戻す" }).click();
-        await page.getByRole("button", { name: "未完了に戻す" }).click();
+        await page.getByRole("button", { name: "カテゴリ設定" }).click();
+        await page.getByRole("button", { name: "すべて未完了に戻す" }).click();
+        await page.getByRole("button", { name: "すべて未完了に戻す" }).click();
 
         // Assert (表示が残ること)
         await expect(
