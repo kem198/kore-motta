@@ -347,7 +347,7 @@ export function TodoApp() {
           onUpdate={handleUpdate}
           onReorder={handleReorder}
         />
-        <TodoFormFooter onSubmit={handleCreate} isEditing={isEditing} />
+        <TodoFormFooter onSubmit={handleCreate} />
       </div>
 
       <CategorySettingDialog
