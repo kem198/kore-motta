@@ -41,6 +41,98 @@ function TodoListSkeleton() {
   );
 }
 
+type TodoItemActionsProps = {
+  todo: Todo;
+  index: number;
+  length: number;
+  isEditing: boolean;
+  onDelete: (todo: Todo) => void;
+  onUpdate: (todo: Todo) => void;
+  onReorder: (startIndex: number, endIndex: number) => void;
+};
+
+function TodoItemActions({
+  todo,
+  index,
+  length,
+  isEditing,
+  onDelete,
+  onUpdate,
+  onReorder,
+}: TodoItemActionsProps) {
+  return (
+    <ItemActions className="flex shrink-0 items-center justify-end gap-2">
+      {isEditing && (
+        <>
+          <ConfirmDialog
+            title={`アイテム「${todo.name}」を削除しますか？`}
+            content={
+              <Alert variant="destructive">
+                <AlertCircleIcon size={16} />
+                <AlertTitle>{MESSAGES.warnings.irreversible}</AlertTitle>
+              </Alert>
+            }
+            confirmButtonLabel={MESSAGES.actions.delete}
+            confirmButtonVariant="destructive"
+            onConfirm={() => onDelete(todo)}
+          >
+            <Button
+              variant="destructive"
+              size="icon"
+              aria-label={`${MESSAGES.actions.delete}: ${todo.name}`}
+            >
+              <Trash2 />
+            </Button>
+          </ConfirmDialog>
+
+          <ButtonGroup>
+            <Button
+              variant="secondary"
+              size="icon"
+              onClick={() => onReorder(index, index - 1)}
+              disabled={index === 0}
+              aria-label={`${MESSAGES.aria.moveUp}: ${todo.name}`}
+            >
+              <ChevronUp />
+            </Button>
+
+            <Button
+              variant="secondary"
+              size="icon"
+              onClick={() => onReorder(index, index + 1)}
+              disabled={index === length - 1}
+              aria-label={`${MESSAGES.aria.moveDown}: ${todo.name}`}
+            >
+              <ChevronDown />
+            </Button>
+            <EditDialog todo={todo} onSave={onUpdate}>
+              <Button
+                variant="secondary"
+                size="icon"
+                className="rounded-full"
+                aria-label={`${MESSAGES.actions.edit}: ${todo.name}`}
+              >
+                <Pencil />
+              </Button>
+            </EditDialog>
+          </ButtonGroup>
+        </>
+      )}
+      {!isEditing && (
+        <EditDialog todo={todo} onSave={onUpdate}>
+          <Button
+            variant="secondary"
+            size="icon"
+            aria-label={`${MESSAGES.actions.edit}: ${todo.name}`}
+          >
+            <Pencil />
+          </Button>
+        </EditDialog>
+      )}
+    </ItemActions>
+  );
+}
+
 type TodoItemProps = {
   todo: Todo;
   index: number;
@@ -64,10 +156,6 @@ function TodoItem({
     <Item className="justify-end px-0 md:flex-row">
       <ItemMedia>
         <TodoToggle aria-label="Toggle todo" todo={todo} onChange={onUpdate} />
-        {/* <Avatar>
-          <AvatarImage className="grayscale" />
-          <AvatarFallback>{todo.name.charAt(0)}</AvatarFallback>
-        </Avatar> */}
       </ItemMedia>
 
       <ItemContent>
@@ -78,79 +166,15 @@ function TodoItem({
         {todo.memo ? <ItemDescription>{todo.memo}</ItemDescription> : null}
       </ItemContent>
 
-      <ItemActions className="flex w-full items-center justify-end gap-2 md:w-auto">
-        {isEditing && (
-          <>
-            <ConfirmDialog
-              title={`アイテム「${todo.name}」を削除しますか？`}
-              content={
-                <>
-                  <Alert variant="destructive">
-                    <AlertCircleIcon size={16} />
-                    <AlertTitle>{MESSAGES.warnings.irreversible}</AlertTitle>
-                  </Alert>
-                </>
-              }
-              confirmButtonLabel={MESSAGES.actions.delete}
-              confirmButtonVariant="destructive"
-              onConfirm={() => onDelete(todo)}
-            >
-              <Button
-                variant="destructive"
-                size="icon"
-                aria-label={`${MESSAGES.actions.delete}: ${todo.name}`}
-              >
-                <Trash2 />
-              </Button>
-            </ConfirmDialog>
-
-            <ButtonGroup>
-              <Button
-                variant="secondary"
-                size="icon"
-                onClick={() => onReorder(index, index - 1)}
-                disabled={index === 0}
-                aria-label={`${MESSAGES.aria.moveUp}: ${todo.name}`}
-              >
-                <ChevronUp />
-              </Button>
-
-              <Button
-                variant="secondary"
-                size="icon"
-                onClick={() => onReorder(index, index + 1)}
-                disabled={index === length - 1}
-                aria-label={`${MESSAGES.aria.moveDown}: ${todo.name}`}
-              >
-                <ChevronDown />
-              </Button>
-
-              <EditDialog todo={todo} onSave={onUpdate}>
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  className="rounded-full"
-                  aria-label={`${MESSAGES.actions.edit}: ${todo.name}`}
-                >
-                  <Pencil />
-                </Button>
-              </EditDialog>
-            </ButtonGroup>
-          </>
-        )}
-
-        {!isEditing && (
-          <EditDialog todo={todo} onSave={onUpdate}>
-            <Button
-              variant="secondary"
-              size="icon"
-              aria-label={`${MESSAGES.actions.edit}: ${todo.name}`}
-            >
-              <Pencil />
-            </Button>
-          </EditDialog>
-        )}
-      </ItemActions>
+      <TodoItemActions
+        todo={todo}
+        index={index}
+        length={length}
+        isEditing={isEditing}
+        onDelete={onDelete}
+        onUpdate={onUpdate}
+        onReorder={onReorder}
+      />
     </Item>
   );
 }
@@ -164,28 +188,31 @@ type TodoListProps = {
   onReorder: (startIndex: number, endIndex: number) => void;
 };
 
-export function TodoList({
+function TodoListLoading() {
+  return (
+    <ItemGroup>
+      <TodoListSkeleton />
+      <TodoListSkeleton />
+      <TodoListSkeleton />
+    </ItemGroup>
+  );
+}
+
+type TodoListContentProps = {
+  todos: Todo[];
+  isEditing: boolean;
+  onDelete: (todo: Todo) => void;
+  onUpdate: (todo: Todo) => void;
+  onReorder: (startIndex: number, endIndex: number) => void;
+};
+
+function TodoListContent({
   todos,
-  isLoaded,
   isEditing,
   onDelete,
   onUpdate,
   onReorder,
-}: TodoListProps) {
-  if (!isLoaded) {
-    return (
-      <ItemGroup>
-        <TodoListSkeleton />
-        <TodoListSkeleton />
-        <TodoListSkeleton />
-      </ItemGroup>
-    );
-  }
-
-  if (todos.length === 0) {
-    return <ItemGroup />;
-  }
-
+}: TodoListContentProps) {
   return (
     <ItemGroup>
       {todos.map((todo, index) => (
@@ -203,5 +230,32 @@ export function TodoList({
         </Fragment>
       ))}
     </ItemGroup>
+  );
+}
+
+export function TodoList({
+  todos,
+  isLoaded,
+  isEditing,
+  onDelete,
+  onUpdate,
+  onReorder,
+}: TodoListProps) {
+  if (!isLoaded) {
+    return <TodoListLoading />;
+  }
+
+  if (todos.length === 0) {
+    return <ItemGroup />;
+  }
+
+  return (
+    <TodoListContent
+      todos={todos}
+      isEditing={isEditing}
+      onDelete={onDelete}
+      onUpdate={onUpdate}
+      onReorder={onReorder}
+    />
   );
 }

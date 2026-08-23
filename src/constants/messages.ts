@@ -55,7 +55,7 @@ export const MESSAGES = {
   validation: {
     requiredNote: "は必須項目です。",
     minName: "1 文字以上入力してください。",
-    maxName: "20 文字以下で入力してください。",
+    maxName: "50 文字以下で入力してください。",
     maxMemo: "100 文字以下で入力してください。",
   },
 

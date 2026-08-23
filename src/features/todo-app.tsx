@@ -1,14 +1,11 @@
 "use client";
 
+import { CategoryList } from "@/components/shared/category-list";
 import { CategoryDeleteDialog } from "@/components/shared/dialog/category-delete-dialog";
 import { CategorySettingDialog } from "@/components/shared/dialog/category-setting-dialog";
-import { ConfirmDialog } from "@/components/shared/dialog/confirm-dialog";
-import { ExportDialog } from "@/components/shared/dialog/export-dialog";
-import { ImportDialog } from "@/components/shared/dialog/import-dialog";
-import { TodoForm } from "@/components/shared/todo-form";
+import { TodoAppNavigation } from "@/components/shared/todo-app-navigation";
+import { TodoFormFooter } from "@/components/shared/todo-form-footer";
 import { TodoList } from "@/components/shared/todo-list";
-import { Alert, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
 import {
   DEFAULT_CATEGORY_ID,
@@ -21,14 +18,6 @@ import { useTodos } from "@/hooks/use-todos";
 import { TodoFormValues } from "@/schemas/todo-form-schema";
 import { Category } from "@/types/category";
 import { Todo } from "@/types/todo";
-import {
-  AlertCircleIcon,
-  DownloadIcon,
-  FolderPenIcon,
-  PencilIcon,
-  PlusIcon,
-  UploadIcon,
-} from "lucide-react";
 import { useCallback, useState } from "react";
 
 export function TodoApp() {
@@ -294,47 +283,27 @@ export function TodoApp() {
   return (
     <div className="flex flex-col gap-4">
       <div className="not-prose flex w-full flex-col gap-6">
-        <div className="flex flex-col gap-3">
-          {isLoaded && (
-            <div
-              className="flex flex-wrap gap-2"
-              aria-label={MESSAGES.labels.categoryList}
-            >
-              {categories.map((category) => {
-                const isSelected = category.id === activeCategoryId;
+        <div className="flex flex-col gap-3"></div>
 
-                return (
-                  <Button
-                    key={category.id}
-                    type="button"
-                    variant={isSelected ? "default" : "secondary"}
-                    size="sm"
-                    aria-label={category.name}
-                    aria-pressed={isSelected}
-                    onClick={() => setActiveCategoryId(category.id)}
-                  >
-                    {category.name}
-                  </Button>
-                );
-              })}
+        <TodoAppNavigation
+          isEditing={isEditing}
+          appStorage={appStorage}
+          onReset={handleReset}
+          onImport={handleImport}
+          onOpenCategorySettings={handleOpenCategoryEditDialog}
+          onToggleEditing={() => setIsEditing((prev) => !prev)}
+        />
 
-              <Button
-                type="button"
-                variant="secondary"
-                size="icon"
-                aria-label={MESSAGES.actions.createCategory}
-                onClick={() =>
-                  setCategoryDialog({ mode: "create", category: null })
-                }
-                className="border-border/60 bg-background rounded-full border"
-              >
-                <PlusIcon />
-              </Button>
-            </div>
-          )}
-        </div>
-
-        <TodoForm onSubmit={handleCreate} isEditing={isEditing} />
+        {isLoaded && (
+          <CategoryList
+            categories={categories}
+            activeCategoryId={activeCategoryId}
+            onSelect={setActiveCategoryId}
+            onCreate={() =>
+              setCategoryDialog({ mode: "create", category: null })
+            }
+          />
+        )}
 
         <TodoList
           todos={visibleTodos}
@@ -345,87 +314,7 @@ export function TodoApp() {
           onReorder={handleReorder}
         />
 
-        <div className="bg-background/70 sticky bottom-0 z-50 flex justify-between gap-2 border-t py-4">
-          <div className="flex gap-2">
-            {isEditing && (
-              <>
-                <ConfirmDialog
-                  title={MESSAGES.dialogs.reset.title}
-                  description={MESSAGES.dialogs.reset.description}
-                  content={
-                    <Alert variant="destructive">
-                      <AlertCircleIcon size={16} />
-                      <AlertTitle>{MESSAGES.warnings.overwrite}</AlertTitle>
-                    </Alert>
-                  }
-                  confirmButtonLabel={MESSAGES.actions.reset}
-                  confirmButtonVariant="destructive"
-                  onConfirm={handleReset}
-                  className="w-fit"
-                >
-                  <Button
-                    variant="destructive"
-                    aria-label={MESSAGES.actions.reset}
-                  >
-                    {MESSAGES.actions.reset}
-                  </Button>
-                </ConfirmDialog>
-
-                <ExportDialog appStorage={appStorage} className="w-fit">
-                  <Button
-                    variant="secondary"
-                    aria-label={MESSAGES.actions.export}
-                    className="inline-flex items-center gap-2"
-                  >
-                    <UploadIcon className="sm:hidden" />
-                    <span className="hidden sm:inline">
-                      {MESSAGES.actions.export}
-                    </span>
-                  </Button>
-                </ExportDialog>
-
-                <ImportDialog onImport={handleImport}>
-                  <Button
-                    variant="secondary"
-                    aria-label={MESSAGES.actions.import}
-                    className="inline-flex items-center gap-2"
-                  >
-                    <DownloadIcon className="sm:hidden" />
-                    <span className="hidden sm:inline">
-                      {MESSAGES.actions.import}
-                    </span>
-                  </Button>
-                </ImportDialog>
-              </>
-            )}
-          </div>
-
-          <div className="flex gap-2">
-            <Button
-              type="button"
-              variant="secondary"
-              aria-label="カテゴリ設定"
-              onClick={handleOpenCategoryEditDialog}
-              className="inline-flex items-center gap-2"
-            >
-              <FolderPenIcon />
-              <span>カテゴリ設定</span>
-            </Button>
-
-            <Button
-              variant={isEditing ? "default" : "secondary"}
-              onClick={() => setIsEditing((prev) => !prev)}
-              aria-label={
-                isEditing
-                  ? MESSAGES.actions.done
-                  : `${MESSAGES.actions.editStart}`
-              }
-            >
-              <PencilIcon />
-              {isEditing ? MESSAGES.actions.done : MESSAGES.actions.edit}
-            </Button>
-          </div>
-        </div>
+        <TodoFormFooter onSubmit={handleCreate} isEditing={isEditing} />
       </div>
 
       <CategorySettingDialog
