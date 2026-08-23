@@ -3,10 +3,10 @@
 import { CategoryList } from "@/components/shared/category-list";
 import { CategoryDeleteDialog } from "@/components/shared/dialog/category-delete-dialog";
 import { CategorySettingDialog } from "@/components/shared/dialog/category-setting-dialog";
+import { TodoAppActions } from "@/components/shared/todo-app-actions";
 import { TodoEditActions } from "@/components/shared/todo-edit-actions";
 import { TodoForm } from "@/components/shared/todo-form";
 import { TodoList } from "@/components/shared/todo-list";
-import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
 import {
   DEFAULT_CATEGORY_ID,
@@ -19,7 +19,6 @@ import { useTodos } from "@/hooks/use-todos";
 import { TodoFormValues } from "@/schemas/todo-form-schema";
 import { Category } from "@/types/category";
 import { Todo } from "@/types/todo";
-import { FolderPenIcon, PencilIcon } from "lucide-react";
 import { useCallback, useState } from "react";
 
 export function TodoApp() {
@@ -320,31 +319,11 @@ export function TodoApp() {
             )}
           </div>
 
-          <div className="flex gap-2">
-            <Button
-              type="button"
-              variant="secondary"
-              aria-label="カテゴリ設定"
-              onClick={handleOpenCategoryEditDialog}
-              className="inline-flex items-center gap-2"
-            >
-              <FolderPenIcon />
-              <span>カテゴリ設定</span>
-            </Button>
-
-            <Button
-              variant={isEditing ? "default" : "secondary"}
-              onClick={() => setIsEditing((prev) => !prev)}
-              aria-label={
-                isEditing
-                  ? MESSAGES.actions.done
-                  : `${MESSAGES.actions.editStart}`
-              }
-            >
-              <PencilIcon />
-              {isEditing ? MESSAGES.actions.done : MESSAGES.actions.edit}
-            </Button>
-          </div>
+          <TodoAppActions
+            isEditing={isEditing}
+            onOpenCategorySettings={handleOpenCategoryEditDialog}
+            onToggleEditing={() => setIsEditing((prev) => !prev)}
+          />
         </div>
       </div>
 
