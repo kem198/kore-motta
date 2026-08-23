@@ -21,8 +21,7 @@ import { Todo } from "@/types/todo";
 import { useCallback, useState } from "react";
 
 export function TodoApp() {
-  const { appStorage, isLoaded, updateAppStorage, replaceAppStorage } =
-    useAppStorage();
+  const { appStorage, isLoaded, updateAppStorage } = useAppStorage();
 
   const {
     todos,
@@ -140,7 +139,7 @@ export function TodoApp() {
     setIsEditing(false);
 
     toast.add({
-      title: MESSAGES.toast.reset,
+      title: MESSAGES.toast.markAllIncomplete,
       type: "success",
     });
   }, [resetTodos]);
