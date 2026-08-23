@@ -3,8 +3,7 @@
 import { CategoryList } from "@/components/shared/category-list";
 import { CategoryDeleteDialog } from "@/components/shared/dialog/category-delete-dialog";
 import { CategorySettingDialog } from "@/components/shared/dialog/category-setting-dialog";
-import { TodoAppActions } from "@/components/shared/todo-app-actions";
-import { TodoEditActions } from "@/components/shared/todo-edit-actions";
+import { TodoAppFooter } from "@/components/shared/todo-app-footer";
 import { TodoForm } from "@/components/shared/todo-form";
 import { TodoList } from "@/components/shared/todo-list";
 import { toast } from "@/components/ui/toast";
@@ -308,23 +307,14 @@ export function TodoApp() {
           onReorder={handleReorder}
         />
 
-        <div className="bg-background/70 sticky bottom-0 z-50 flex justify-between gap-2 border-t py-4">
-          <div className="flex gap-2">
-            {isLoaded && isEditing && (
-              <TodoEditActions
-                appStorage={appStorage}
-                onReset={handleReset}
-                onImport={handleImport}
-              />
-            )}
-          </div>
-
-          <TodoAppActions
-            isEditing={isEditing}
-            onOpenCategorySettings={handleOpenCategoryEditDialog}
-            onToggleEditing={() => setIsEditing((prev) => !prev)}
-          />
-        </div>
+        <TodoAppFooter
+          isEditing={isEditing}
+          appStorage={appStorage}
+          onReset={handleReset}
+          onImport={handleImport}
+          onOpenCategorySettings={handleOpenCategoryEditDialog}
+          onToggleEditing={() => setIsEditing((prev) => !prev)}
+        />
       </div>
 
       <CategorySettingDialog
