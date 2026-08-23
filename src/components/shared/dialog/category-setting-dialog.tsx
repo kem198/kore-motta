@@ -95,7 +95,9 @@ export function CategorySettingDialog({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>カテゴリ設定</DialogTitle>
+            <DialogTitle>
+              {isCreateMode ? "新規カテゴリの追加" : "カテゴリ設定"}
+            </DialogTitle>
 
             <DialogDescription>
               {isCreateMode
