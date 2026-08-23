@@ -12,9 +12,9 @@ import { Controller, useForm } from "react-hook-form";
 type TodoFormProps = {
   onSubmit: (values: TodoFormValues) => void;
   isEditing: boolean;
-};
+} & Omit<React.ComponentProps<"form">, "onSubmit">;
 
-export function TodoForm({ onSubmit, isEditing }: TodoFormProps) {
+export function TodoForm({ onSubmit, isEditing, ...props }: TodoFormProps) {
   const form = useForm<TodoFormValues>({
     resolver: zodResolver(todoFormSchema),
     defaultValues: {
@@ -31,7 +31,7 @@ export function TodoForm({ onSubmit, isEditing }: TodoFormProps) {
   };
 
   return (
-    <form id="todoadd" onSubmit={form.handleSubmit(handleSubmit)}>
+    <form id="todoadd" onSubmit={form.handleSubmit(handleSubmit)} {...props}>
       <div className="flex gap-2">
         <Controller
           name="name"

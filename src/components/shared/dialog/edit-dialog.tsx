@@ -28,7 +28,6 @@ import { TODO_STORAGE_KEY } from "@/hooks/use-todos";
 import { TodoFormValues, todoFormSchema } from "@/schemas/todo-form-schema";
 import { Todo } from "@/types/todo";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SaveCheckIcon } from "lucide-react";
 import {
   ComponentProps,
   ReactElement,
@@ -76,14 +75,19 @@ export function EditDialog({
     if (nextOpen) {
       try {
         const raw = window.localStorage.getItem(TODO_STORAGE_KEY);
+
         if (!raw) {
           setCategoryName(DEFAULT_CATEGORY_NAME);
         } else {
           const parsed = JSON.parse(raw) as {
-            categories?: Record<string, { name?: string }>;
+            categories?: Array<{ id: string; name?: string }>;
           };
+
           const resolvedCategoryName =
-            parsed.categories?.[todo.categoryId]?.name ?? DEFAULT_CATEGORY_NAME;
+            parsed.categories?.find(
+              (category) => category.id === todo.categoryId,
+            )?.name ?? DEFAULT_CATEGORY_NAME;
+
           setCategoryName(resolvedCategoryName);
         }
       } catch {
@@ -195,7 +199,6 @@ export function EditDialog({
             }
           />
           <Button type="submit" form="todo-edit">
-            <SaveCheckIcon />
             {MESSAGES.actions.update}
           </Button>
         </DialogFooter>

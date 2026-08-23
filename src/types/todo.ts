@@ -15,5 +15,5 @@ export type TodoStorageVersion = typeof CURRENT_TODO_STORAGE_VERSION | 1;
 export type TodoStorage = {
   version: TodoStorageVersion;
   todos: Todo[];
-  categories?: Record<string, Category>;
+  categories: Category[];
 };
