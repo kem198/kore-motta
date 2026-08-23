@@ -119,7 +119,7 @@ export function CategorySettingDialog({
                         ? MESSAGES.placeholders.categoryName
                         : (category?.name ?? "")
                     }
-                    disabled={isDefaultCategory}
+                    disabled={!isCreateMode && isDefaultCategory}
                   />
                 </Label>
 
