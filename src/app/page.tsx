@@ -7,7 +7,7 @@ export default function Home() {
       <TodoAppHeader />
 
       <main className="bg-background mx-auto min-h-screen w-full max-w-2xl">
-        <section data-testid="todo" className="p-8">
+        <section data-testid="todo" className="p-4">
           <TodoApp />
         </section>
       </main>
