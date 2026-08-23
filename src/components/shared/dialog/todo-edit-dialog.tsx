@@ -21,8 +21,19 @@ import {
   FieldSet,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { DEFAULT_CATEGORY_NAME } from "@/constants/categories";
+import {
+  DEFAULT_CATEGORY_ID,
+  DEFAULT_CATEGORY_NAME,
+} from "@/constants/categories";
 import { MESSAGES } from "@/constants/messages";
 import { APP_STORAGE_KEY } from "@/lib/storage/app-storage";
 import { TodoFormValues, todoFormSchema } from "@/schemas/todo-form-schema";
@@ -37,18 +48,18 @@ import {
 } from "react";
 import { Controller, useForm } from "react-hook-form";
 
-type EditDialogProps = {
+type TodoEditDialogProps = {
   todo: Todo;
   onSave: (updated: Todo) => void;
   children: ReactNode;
 } & ComponentProps<typeof DialogTrigger>;
 
-export function EditDialog({
+export function TodoEditDialog({
   todo,
   onSave,
   children,
   ...props
-}: EditDialogProps) {
+}: TodoEditDialogProps) {
   const [open, setOpen] = useState(false);
   const [completed, setCompleted] = useState(todo.completed);
   const [categoryName, setCategoryName] = useState(DEFAULT_CATEGORY_NAME);
@@ -111,17 +122,22 @@ export function EditDialog({
     setOpen(false);
   };
 
+  const dummyItems = [
+    { label: DEFAULT_CATEGORY_NAME, value: DEFAULT_CATEGORY_ID },
+    { label: "仕事", value: "work" },
+    { label: "毎日", value: "daily" },
+  ];
+
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger render={children as ReactElement} {...props} />
+    <Dialog open={open} onOpenChange={handleOpenChange} {...props}>
+      <DialogTrigger render={children as ReactElement} />
 
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{MESSAGES.dialogs.editItem}</DialogTitle>
+
           <DialogDescription>
-            <>
-              <Required /> {MESSAGES.validation.requiredNote}
-            </>
+            <Required /> {MESSAGES.validation.requiredNote}
           </DialogDescription>
         </DialogHeader>
 
@@ -129,17 +145,32 @@ export function EditDialog({
           <FieldGroup>
             <FieldSet>
               <Field>
+                <div className="flex items-center gap-2">
+                  <div id="todo-category-name">カテゴリ: </div>
+                  <Select items={dummyItems} defaultValue={categoryName}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {dummyItems.map((item) => (
+                          <SelectItem key={item.value} value={item.value}>
+                            {item.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </Field>
+
+              <Field>
                 {/* TODO: ボタンの見た目を整える */}
                 <TodoToggle
                   todo={{ ...todo, completed }}
                   onChange={(updated) => setCompleted(updated.completed)}
                   aria-label={`${todo.name} の完了状態`}
                 />
-              </Field>
-
-              <Field>
-                <FieldLabel>カテゴリ</FieldLabel>
-                <div id="todo-category-name">カテゴリ: {categoryName}</div>
               </Field>
 
               <Controller
@@ -191,7 +222,7 @@ export function EditDialog({
           </FieldGroup>
         </form>
 
-        <DialogFooter className="gap-y-2">
+        <DialogFooter>
           <DialogClose
             render={
               <Button type="button" variant="outline">

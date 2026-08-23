@@ -4,7 +4,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -24,47 +23,44 @@ export function ExportDialog({
   children,
   ...props
 }: ExportDialogProps) {
-  const lines = MESSAGES.dialogs.export.description.split("\n");
+  const handleCopy = () => {
+    try {
+      const json = JSON.stringify(appStorage, null, 2);
+      void navigator.clipboard.writeText(json);
+
+      toast.add({
+        title: MESSAGES.toast.clipboardCopied,
+        type: "success",
+      });
+    } catch {
+      toast.add({
+        title: MESSAGES.toast.clipboardCopied,
+        type: "error",
+      });
+    }
+  };
+
   return (
     <Dialog>
       <DialogTrigger render={children as ReactElement} {...props} />
+
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{MESSAGES.dialogs.export.title}</DialogTitle>
+
           <DialogDescription>
-            {lines.map((line: string, i: number) => (
-              <span key={i}>
-                {line}
-                <br />
-              </span>
-            ))}
+            {MESSAGES.dialogs.export.description}
           </DialogDescription>
         </DialogHeader>
-        <Button
-          onClick={() => {
-            try {
-              const json = JSON.stringify(appStorage, null, 2);
-              void navigator.clipboard.writeText(json);
-              toast.add({
-                title: MESSAGES.toast.clipboardCopied,
-                type: "success",
-              });
-            } catch {
-              toast.add({
-                title: MESSAGES.toast.clipboardCopied,
-                type: "error",
-              });
-            }
-          }}
-        >
-          {MESSAGES.actions.copy}
-        </Button>
+
+        <Button onClick={handleCopy}>{MESSAGES.actions.copy}</Button>
+
         <JsonDisplay
           data={appStorage}
-          scrollAreaProps={{ className: "max-h-[60vh]" }}
+          scrollAreaProps={{
+            className: "max-h-[60vh]",
+          }}
         />
-
-        <DialogFooter></DialogFooter>
       </DialogContent>
     </Dialog>
   );

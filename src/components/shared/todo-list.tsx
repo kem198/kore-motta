@@ -1,7 +1,15 @@
-import { ConfirmDialog } from "@/components/shared/dialog/confirm-dialog";
-import { EditDialog } from "@/components/shared/dialog/edit-dialog";
+import { TodoEditDialog } from "@/components/shared/dialog/todo-edit-dialog";
 import { TodoToggle } from "@/components/shared/todo-toggle";
-import { Alert, AlertTitle } from "@/components/ui/alert";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import {
@@ -17,13 +25,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { MESSAGES } from "@/constants/messages";
 import { Todo } from "@/types/todo";
-import {
-  AlertCircleIcon,
-  ChevronDown,
-  ChevronUp,
-  Pencil,
-  Trash2,
-} from "lucide-react";
+import { ChevronDown, ChevronUp, Pencil, Trash2 } from "lucide-react";
 import { Fragment } from "react";
 
 function TodoListSkeleton() {
@@ -64,26 +66,37 @@ function TodoItemActions({
     <ItemActions className="flex shrink-0 items-center justify-end gap-2">
       {isEditing && (
         <>
-          <ConfirmDialog
-            title={`アイテム「${todo.name}」を削除しますか？`}
-            content={
-              <Alert variant="destructive">
-                <AlertCircleIcon size={16} />
-                <AlertTitle>{MESSAGES.warnings.irreversible}</AlertTitle>
-              </Alert>
-            }
-            confirmButtonLabel={MESSAGES.actions.delete}
-            confirmButtonVariant="destructive"
-            onConfirm={() => onDelete(todo)}
-          >
-            <Button
-              variant="destructive"
-              size="icon"
-              aria-label={`${MESSAGES.actions.delete}: ${todo.name}`}
+          <AlertDialog>
+            <AlertDialogTrigger
+              render={
+                <Button
+                  variant="destructive"
+                  size="icon"
+                  aria-label={`${MESSAGES.actions.delete}: ${todo.name}`}
+                />
+              }
             >
               <Trash2 />
-            </Button>
-          </ConfirmDialog>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  `アイテム「${todo.name}」を削除しますか？`
+                </AlertDialogTitle>
+              </AlertDialogHeader>
+
+              <AlertDialogFooter>
+                <AlertDialogCancel>{MESSAGES.actions.cancel}</AlertDialogCancel>
+
+                <AlertDialogAction
+                  variant="destructive"
+                  onClick={() => onDelete(todo)}
+                >
+                  {MESSAGES.actions.delete}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
 
           <ButtonGroup>
             <Button
@@ -105,7 +118,7 @@ function TodoItemActions({
             >
               <ChevronDown />
             </Button>
-            <EditDialog todo={todo} onSave={onUpdate}>
+            <TodoEditDialog todo={todo} onSave={onUpdate}>
               <Button
                 variant="secondary"
                 size="icon"
@@ -114,12 +127,12 @@ function TodoItemActions({
               >
                 <Pencil />
               </Button>
-            </EditDialog>
+            </TodoEditDialog>
           </ButtonGroup>
         </>
       )}
       {!isEditing && (
-        <EditDialog todo={todo} onSave={onUpdate}>
+        <TodoEditDialog todo={todo} onSave={onUpdate}>
           <Button
             variant="secondary"
             size="icon"
@@ -127,7 +140,7 @@ function TodoItemActions({
           >
             <Pencil />
           </Button>
-        </EditDialog>
+        </TodoEditDialog>
       )}
     </ItemActions>
   );

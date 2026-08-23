@@ -1,6 +1,16 @@
-import { ConfirmDialog } from "@/components/shared/dialog/confirm-dialog";
 import { ExportDialog } from "@/components/shared/dialog/export-dialog";
 import { ImportDialog } from "@/components/shared/dialog/import-dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { MESSAGES } from "@/constants/messages";
 import { AppStorage } from "@/types/app-storage";
@@ -19,21 +29,35 @@ export function TodoEditActions({
 }: TodoEditActionsProps) {
   return (
     <>
-      <ConfirmDialog
-        title={MESSAGES.dialogs.markAllIncomplete.title}
-        description={MESSAGES.dialogs.markAllIncomplete.description}
-        confirmButtonLabel={MESSAGES.actions.markAllIncomplete}
-        confirmButtonVariant="default"
-        onConfirm={onReset}
-        className="w-fit"
-      >
-        <Button
-          variant="secondary"
-          aria-label={MESSAGES.actions.markAllIncomplete}
-        >
-          {MESSAGES.actions.markAllIncomplete}
-        </Button>
-      </ConfirmDialog>
+      <AlertDialog>
+        <AlertDialogTrigger
+          render={
+            <Button variant="secondary">
+              {MESSAGES.actions.markAllIncomplete}
+            </Button>
+          }
+        />
+
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {MESSAGES.dialogs.markAllIncomplete.title}
+            </AlertDialogTitle>
+
+            <AlertDialogDescription>
+              {MESSAGES.dialogs.markAllIncomplete.description}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel>{MESSAGES.actions.cancel}</AlertDialogCancel>
+
+            <AlertDialogAction onClick={onReset}>
+              {MESSAGES.actions.markAllIncomplete}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <ExportDialog appStorage={appStorage} className="w-fit">
         <Button
