@@ -17,7 +17,7 @@ function Term() {
   return (
     <div
       className="typeset typeset-docs space-y-6"
-      style={{ "--typeset-size": "0.9rem" } as React.CSSProperties}
+      style={{ "--typeset-size": "0.95rem" } as React.CSSProperties}
     >
       <section>
         <h3>このアプリは何？</h3>
