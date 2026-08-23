@@ -5,7 +5,7 @@ export const todoFormSchema = z.object({
   name: z
     .string()
     .min(1, MESSAGES.validation.minName)
-    .max(20, MESSAGES.validation.maxName),
+    .max(50, MESSAGES.validation.maxName),
   memo: z.string().max(100, MESSAGES.validation.maxMemo).optional(),
 });
 
