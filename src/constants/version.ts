@@ -1,1 +1,1 @@
-export const CURRENT_TODO_STORAGE_VERSION = 1 as const;
+export const CURRENT_APP_STORAGE_VERSION = 1 as const;

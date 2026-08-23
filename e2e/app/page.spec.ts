@@ -4,9 +4,9 @@ import {
   DEFAULT_CATEGORY_NAME,
   DEFAULT_CATEGORY_RESET_TIME,
 } from "@/constants/categories";
-import { TODO_STORAGE_KEY } from "@/hooks/use-todos";
+import { APP_STORAGE_KEY } from "@/lib/storage/app-storage";
+import { AppStorage } from "@/types/app-storage";
 import { Category } from "@/types/category";
-import { TodoStorage } from "@/types/todo";
 import { expect, Locator, Page, test } from "@playwright/test";
 
 test.describe("Todo ページのテスト", () => {
@@ -21,18 +21,21 @@ test.describe("Todo ページのテスト", () => {
   };
 
   /** ダミーデータ */
-  const DUMMY_TODO_STORAGE: TodoStorage = {
+  const DUMMY_APP_STORAGE: AppStorage = {
     version: 1,
-    todos: [
-      {
-        id: "dummy-todo",
-        name: "dummy",
-        order: 0,
-        categoryId: DEFAULT_CATEGORY_ID,
-        completed: false,
-      },
-    ],
-    categories: DEFAULT_CATEGORIES_STORAGE,
+    data: {
+      settings: {},
+      todos: [
+        {
+          id: "dummy-todo",
+          name: "dummy",
+          order: 0,
+          categoryId: DEFAULT_CATEGORY_ID,
+          completed: false,
+        },
+      ],
+      categories: DEFAULT_CATEGORIES_STORAGE,
+    },
   };
 
   test.beforeEach(async ({ page }) => {
@@ -45,7 +48,7 @@ test.describe("Todo ページのテスト", () => {
       ([key, value]) => {
         localStorage.setItem(key, value);
       },
-      [TODO_STORAGE_KEY, JSON.stringify(DUMMY_TODO_STORAGE)],
+      [APP_STORAGE_KEY, JSON.stringify(DUMMY_APP_STORAGE)],
     );
   });
 
@@ -54,7 +57,7 @@ test.describe("Todo ページのテスト", () => {
       ([key, value]) => {
         localStorage.setItem(key, value);
       },
-      [TODO_STORAGE_KEY, JSON.stringify(DUMMY_TODO_STORAGE)],
+      [APP_STORAGE_KEY, JSON.stringify(DUMMY_APP_STORAGE)],
     );
   });
 
@@ -64,26 +67,29 @@ test.describe("Todo ページのテスト", () => {
         page,
       }) => {
         // Arrange
-        const todoStorage: TodoStorage = {
+        const todoStorage: AppStorage = {
           version: 1,
-          todos: [
-            {
-              id: "test-todo",
-              name: "カギ",
-              order: 0,
-              categoryId: DEFAULT_CATEGORY_ID,
-              memo: "家の鍵",
-              completed: false,
-            },
-          ],
-          categories: DEFAULT_CATEGORIES_STORAGE,
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "test-todo",
+                name: "カギ",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                memo: "家の鍵",
+                completed: false,
+              },
+            ],
+            categories: DEFAULT_CATEGORIES_STORAGE,
+          },
         };
 
         await page.evaluate(
           ([key, value]) => {
             localStorage.setItem(key, value);
           },
-          [TODO_STORAGE_KEY, JSON.stringify(todoStorage)],
+          [APP_STORAGE_KEY, JSON.stringify(todoStorage)],
         );
 
         // Act
@@ -102,25 +108,28 @@ test.describe("Todo ページのテスト", () => {
         page,
       }) => {
         // Arrange
-        const storage: TodoStorage = {
+        const storage: AppStorage = {
           version: 1,
-          todos: [
-            {
-              id: "single-storage-todo",
-              name: "資料作成",
-              order: 0,
-              categoryId: DEFAULT_CATEGORY_ID,
-              completed: false,
-            },
-          ],
-          categories: DEFAULT_CATEGORIES_STORAGE,
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "single-storage-todo",
+                name: "資料作成",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                completed: false,
+              },
+            ],
+            categories: DEFAULT_CATEGORIES_STORAGE,
+          },
         };
 
         await page.evaluate(
           ([key, value]) => {
             localStorage.setItem(key, value);
           },
-          [TODO_STORAGE_KEY, JSON.stringify(storage)],
+          [APP_STORAGE_KEY, JSON.stringify(storage)],
         );
 
         // Act
@@ -132,7 +141,7 @@ test.describe("Todo ページのテスト", () => {
             async () =>
               await page.evaluate(
                 (key) => localStorage.getItem(key),
-                TODO_STORAGE_KEY,
+                APP_STORAGE_KEY,
               ),
             { timeout: 5000 },
           )
@@ -140,10 +149,10 @@ test.describe("Todo ページのテスト", () => {
 
         const raw = await page.evaluate(
           (key) => localStorage.getItem(key),
-          TODO_STORAGE_KEY,
+          APP_STORAGE_KEY,
         );
-        const persisted = JSON.parse(raw!);
-        const defaultCategory = persisted.categories.find(
+        const persisted: AppStorage = JSON.parse(raw!);
+        const defaultCategory = persisted.data.categories.find(
           (category: Category) => category.id === DEFAULT_CATEGORY_ID,
         );
         expect(defaultCategory).toBeDefined();
@@ -173,11 +182,11 @@ test.describe("Todo ページのテスト", () => {
         ).toBeVisible();
 
         // Assert (データストアへ登録されていること)
-        const todoStorage: TodoStorage = await page.evaluate(
+        const todoStorage: AppStorage = await page.evaluate(
           (key) => JSON.parse(localStorage.getItem(key)!),
-          TODO_STORAGE_KEY,
+          APP_STORAGE_KEY,
         );
-        expect(todoStorage.todos[0].name).toBe("カギ");
+        expect(todoStorage.data.todos[0].name).toBe("カギ");
       });
     });
 
@@ -197,48 +206,51 @@ test.describe("Todo ページのテスト", () => {
         await expect(assertScope.getByText("家の鍵").first()).toBeVisible();
 
         // Assert (データストアへ登録されていること)
-        const migrated: TodoStorage = await page.evaluate(
+        const migrated: AppStorage = await page.evaluate(
           (key) => JSON.parse(localStorage.getItem(key)!),
-          TODO_STORAGE_KEY,
+          APP_STORAGE_KEY,
         );
         expect(migrated.version).toBe(1);
-        expect(migrated.todos[0].name).toBe("カギ");
+        expect(migrated.data.todos[0].name).toBe("カギ");
       });
 
       test("Todo の編集画面に現在のカテゴリ名が表示されること", async ({
         page,
       }) => {
         // Arrange
-        const todoStorage: TodoStorage = {
+        const todoStorage: AppStorage = {
           version: 1,
-          todos: [
-            {
-              id: "category-edit-todo",
-              name: "資料作成",
-              order: 0,
-              categoryId: "work",
-              memo: "資料の下書きを作る",
-              completed: false,
-            },
-          ],
-          categories: [
-            {
-              id: DEFAULT_CATEGORY_ID,
-              name: DEFAULT_CATEGORY_NAME,
-              resetTime: DEFAULT_CATEGORY_RESET_TIME,
-            },
-            {
-              id: "work",
-              name: "仕事",
-              resetTime: "09:00",
-            },
-          ],
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "category-edit-todo",
+                name: "資料作成",
+                order: 0,
+                categoryId: "work",
+                memo: "資料の下書きを作る",
+                completed: false,
+              },
+            ],
+            categories: [
+              {
+                id: DEFAULT_CATEGORY_ID,
+                name: DEFAULT_CATEGORY_NAME,
+                resetTime: DEFAULT_CATEGORY_RESET_TIME,
+              },
+              {
+                id: "work",
+                name: "仕事",
+                resetTime: "09:00",
+              },
+            ],
+          },
         };
         await page.evaluate(
           ([key, value]) => {
             localStorage.setItem(key, value);
           },
-          [TODO_STORAGE_KEY, JSON.stringify(todoStorage)],
+          [APP_STORAGE_KEY, JSON.stringify(todoStorage)],
         );
         await navigateToTodo(page);
         await page.getByRole("button", { name: "仕事" }).click();
@@ -267,11 +279,11 @@ test.describe("Todo ページのテスト", () => {
         ).not.toBeVisible();
 
         // Assert (データストアへ登録されていないこと)
-        const migrated: TodoStorage = await page.evaluate(
+        const migrated: AppStorage = await page.evaluate(
           (key) => JSON.parse(localStorage.getItem(key)!),
-          TODO_STORAGE_KEY,
+          APP_STORAGE_KEY,
         );
-        expect(migrated.todos).toHaveLength(0);
+        expect(migrated.data.todos).toHaveLength(0);
       });
     });
 
@@ -280,34 +292,37 @@ test.describe("Todo ページのテスト", () => {
         page,
       }) => {
         // Arrange
-        const todoStorage: TodoStorage = {
+        const todoStorage: AppStorage = {
           version: 1,
-          todos: [
-            {
-              id: "reset-todo-01",
-              name: "カギ",
-              order: 0,
-              categoryId: DEFAULT_CATEGORY_ID,
-              memo: "家の鍵",
-              completed: true,
-            },
-            {
-              id: "reset-todo-02",
-              name: "財布",
-              order: 1,
-              categoryId: DEFAULT_CATEGORY_ID,
-              memo: "白い財布",
-              completed: false,
-            },
-          ],
-          categories: DEFAULT_CATEGORIES_STORAGE,
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "reset-todo-01",
+                name: "カギ",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                memo: "家の鍵",
+                completed: true,
+              },
+              {
+                id: "reset-todo-02",
+                name: "財布",
+                order: 1,
+                categoryId: DEFAULT_CATEGORY_ID,
+                memo: "白い財布",
+                completed: false,
+              },
+            ],
+            categories: DEFAULT_CATEGORIES_STORAGE,
+          },
         };
 
         await page.evaluate(
           ([key, value]) => {
             localStorage.setItem(key, value);
           },
-          [TODO_STORAGE_KEY, JSON.stringify(todoStorage)],
+          [APP_STORAGE_KEY, JSON.stringify(todoStorage)],
         );
         await navigateToTodo(page);
 
@@ -325,14 +340,14 @@ test.describe("Todo ページのテスト", () => {
         ).toBeVisible();
 
         // Assert (完了状態が未完了に戻ること)
-        const migrated: TodoStorage = await page.evaluate(
+        const migrated: AppStorage = await page.evaluate(
           (key) => JSON.parse(localStorage.getItem(key)!),
-          TODO_STORAGE_KEY,
+          APP_STORAGE_KEY,
         );
-        expect(migrated.todos).toHaveLength(2);
-        expect(migrated.todos.every((todo) => todo.completed === false)).toBe(
-          true,
-        );
+        expect(migrated.data.todos).toHaveLength(2);
+        expect(
+          migrated.data.todos.every((todo) => todo.completed === false),
+        ).toBe(true);
       });
     });
 
@@ -341,34 +356,37 @@ test.describe("Todo ページのテスト", () => {
         page,
       }) => {
         // Arrange
-        const todoStorage: TodoStorage = {
+        const todoStorage: AppStorage = {
           version: 1,
-          todos: [
-            {
-              id: "test-todo-01",
-              name: "カギ",
-              order: 0,
-              categoryId: DEFAULT_CATEGORY_ID,
-              memo: "家の鍵",
-              completed: false,
-            },
-            {
-              id: "test-todo-02",
-              name: "財布",
-              order: 1,
-              categoryId: DEFAULT_CATEGORY_ID,
-              memo: "白い財布",
-              completed: false,
-            },
-          ],
-          categories: DEFAULT_CATEGORIES_STORAGE,
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "test-todo-01",
+                name: "カギ",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                memo: "家の鍵",
+                completed: false,
+              },
+              {
+                id: "test-todo-02",
+                name: "財布",
+                order: 1,
+                categoryId: DEFAULT_CATEGORY_ID,
+                memo: "白い財布",
+                completed: false,
+              },
+            ],
+            categories: DEFAULT_CATEGORIES_STORAGE,
+          },
         };
 
         await page.evaluate(
           ([key, value]) => {
             localStorage.setItem(key, value);
           },
-          [TODO_STORAGE_KEY, JSON.stringify(todoStorage)],
+          [APP_STORAGE_KEY, JSON.stringify(todoStorage)],
         );
 
         await navigateToTodo(page);
@@ -403,19 +421,22 @@ test.describe("Todo ページのテスト", () => {
         page,
       }) => {
         // Arrange
-        const todoStorage: TodoStorage = {
+        const todoStorage: AppStorage = {
           version: 1,
-          todos: [
-            {
-              id: "import-todo",
-              name: "カギ",
-              order: 0,
-              categoryId: DEFAULT_CATEGORY_ID,
-              memo: "家の鍵",
-              completed: false,
-            },
-          ],
-          categories: DEFAULT_CATEGORIES_STORAGE,
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "import-todo",
+                name: "カギ",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                memo: "家の鍵",
+                completed: false,
+              },
+            ],
+            categories: DEFAULT_CATEGORIES_STORAGE,
+          },
         };
 
         const backupText = JSON.stringify(todoStorage, null, 2);
@@ -436,13 +457,13 @@ test.describe("Todo ページのテスト", () => {
         ).toBeVisible();
 
         // Assert (データストアへ保存されていること)
-        const migrated: TodoStorage = await page.evaluate(
+        const migrated: AppStorage = await page.evaluate(
           (key) => JSON.parse(localStorage.getItem(key)!),
-          TODO_STORAGE_KEY,
+          APP_STORAGE_KEY,
         );
         expect(migrated.version).toBe(1);
-        expect(migrated.todos[0].id).toBe("import-todo");
-        expect(migrated.todos[0].name).toBe("カギ");
+        expect(migrated.data.todos[0].id).toBe("import-todo");
+        expect(migrated.data.todos[0].name).toBe("カギ");
       });
 
       test("不正な JSON 文字列をインポートした時、エラーメッセージが表示され、登録済み情報が更新されないこと", async ({
@@ -470,29 +491,33 @@ test.describe("Todo ページのテスト", () => {
         ).toBeVisible();
 
         // Assert (データストアが更新されていないこと)
-        const migratedInvalidJson: TodoStorage = await page.evaluate(
+        const migratedInvalidJson: AppStorage = await page.evaluate(
           (key) => JSON.parse(localStorage.getItem(key)!),
-          TODO_STORAGE_KEY,
+          APP_STORAGE_KEY,
         );
-        expect(migratedInvalidJson.todos[0].id).toBe("dummy-todo");
+        expect(migratedInvalidJson.data.todos[0].id).toBe("dummy-todo");
       });
 
-      test("TodoStorage 型に一致しない JSON 文字列をインポートした時、エラーメッセージが表示され、登録済み情報が更新されないこと", async ({
+      test("AppStorage 型に一致しない JSON 文字列をインポートした時、エラーメッセージが表示され、登録済み情報が更新されないこと", async ({
         page,
       }) => {
         // Arrange
-        const corruptedTodoStorage: unknown = {
+        const corruptedAppStorage: unknown = {
           version: 1,
-          todos: [
-            {
-              id: "import-todo",
-              name: "カギ",
-              order: 0,
-              categoryId: DEFAULT_CATEGORY_ID,
-              memo: "家の鍵",
-              undefinedKey: "★ TodoStorage 型に一致しないキー",
-            },
-          ],
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "import-todo",
+                name: "カギ",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                memo: "家の鍵",
+                undefinedKey: "★ AppStorage 型に一致しないキー",
+              },
+            ],
+            categories: DEFAULT_CATEGORIES_STORAGE,
+          },
         };
 
         await navigateToTodo(page);
@@ -502,7 +527,7 @@ test.describe("Todo ページのテスト", () => {
         // Act
         await page
           .getByRole("textbox")
-          .fill(JSON.stringify(corruptedTodoStorage));
+          .fill(JSON.stringify(corruptedAppStorage));
         await page.getByRole("button", { name: "インポート" }).click();
 
         // Assert
@@ -518,11 +543,11 @@ test.describe("Todo ページのテスト", () => {
         ).toBeVisible();
 
         // Assert (データストアが更新されていないこと)
-        const migratedCorrupted: TodoStorage = await page.evaluate(
+        const migratedCorrupted: AppStorage = await page.evaluate(
           (key) => JSON.parse(localStorage.getItem(key)!),
-          TODO_STORAGE_KEY,
+          APP_STORAGE_KEY,
         );
-        expect(migratedCorrupted.todos[0].id).toBe("dummy-todo");
+        expect(migratedCorrupted.data.todos[0].id).toBe("dummy-todo");
       });
     });
   });
@@ -544,7 +569,7 @@ test.describe("Todo ページのテスト", () => {
             async () =>
               await page.evaluate(
                 (key) => localStorage.getItem(key),
-                TODO_STORAGE_KEY,
+                APP_STORAGE_KEY,
               ),
             { timeout: 5000 },
           )
@@ -552,10 +577,10 @@ test.describe("Todo ページのテスト", () => {
 
         const raw = await page.evaluate(
           (key) => localStorage.getItem(key),
-          TODO_STORAGE_KEY,
+          APP_STORAGE_KEY,
         );
-        const persisted: TodoStorage = JSON.parse(raw!);
-        const defaultCategory = persisted.categories?.find(
+        const persisted: AppStorage = JSON.parse(raw!);
+        const defaultCategory = persisted.data.categories.find(
           (category) => category.id === DEFAULT_CATEGORY_ID,
         );
         expect(defaultCategory).toBeDefined();
@@ -582,11 +607,11 @@ test.describe("Todo ページのテスト", () => {
         await expect(categoryButton).toHaveAttribute("aria-pressed", "true");
 
         // 作成したカテゴリがストレージに保存されていること
-        const todoStorage: TodoStorage = await page.evaluate(
+        const todoStorage: AppStorage = await page.evaluate(
           (key) => JSON.parse(localStorage.getItem(key)!),
-          TODO_STORAGE_KEY,
+          APP_STORAGE_KEY,
         );
-        const createdCategory = todoStorage.categories?.find(
+        const createdCategory = todoStorage.data.categories.find(
           (category) => category.name === "朝活",
         );
         expect(createdCategory).toBeDefined();
@@ -605,7 +630,7 @@ test.describe("Todo ページのテスト", () => {
         );
 
         // ストレージでも末尾に追加されていること
-        expect(todoStorage.categories?.at(-1)?.name).toBe("朝活");
+        expect(todoStorage.data.categories.at(-1)?.name).toBe("朝活");
       });
     });
 
@@ -614,42 +639,45 @@ test.describe("Todo ページのテスト", () => {
         page,
       }) => {
         // Arrange
-        const todoStorage: TodoStorage = {
+        const todoStorage: AppStorage = {
           version: 1,
-          todos: [
-            {
-              id: "todo-unclassified",
-              name: "財布",
-              order: 0,
-              categoryId: DEFAULT_CATEGORY_ID,
-              completed: false,
-            },
-            {
-              id: "todo-work",
-              name: "資料作成",
-              order: 1,
-              categoryId: "work",
-              completed: false,
-            },
-          ],
-          categories: [
-            {
-              id: DEFAULT_CATEGORY_ID,
-              name: DEFAULT_CATEGORY_NAME,
-              resetTime: DEFAULT_CATEGORY_RESET_TIME,
-            },
-            {
-              id: "work",
-              name: "仕事",
-              resetTime: "09:00",
-            },
-          ],
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "todo-unclassified",
+                name: "財布",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                completed: false,
+              },
+              {
+                id: "todo-work",
+                name: "資料作成",
+                order: 1,
+                categoryId: "work",
+                completed: false,
+              },
+            ],
+            categories: [
+              {
+                id: DEFAULT_CATEGORY_ID,
+                name: DEFAULT_CATEGORY_NAME,
+                resetTime: DEFAULT_CATEGORY_RESET_TIME,
+              },
+              {
+                id: "work",
+                name: "仕事",
+                resetTime: "09:00",
+              },
+            ],
+          },
         };
         await page.evaluate(
           ([key, value]) => {
             localStorage.setItem(key, value);
           },
-          [TODO_STORAGE_KEY, JSON.stringify(todoStorage)],
+          [APP_STORAGE_KEY, JSON.stringify(todoStorage)],
         );
         await navigateToTodo(page);
 
@@ -671,27 +699,30 @@ test.describe("Todo ページのテスト", () => {
         page,
       }) => {
         // Arrange
-        const todoStorage: TodoStorage = {
+        const todoStorage: AppStorage = {
           version: 1,
-          todos: [],
-          categories: [
-            {
-              id: DEFAULT_CATEGORY_ID,
-              name: DEFAULT_CATEGORY_NAME,
-              resetTime: DEFAULT_CATEGORY_RESET_TIME,
-            },
-            {
-              id: "work",
-              name: "仕事",
-              resetTime: "09:00",
-            },
-          ],
+          data: {
+            settings: {},
+            todos: [],
+            categories: [
+              {
+                id: DEFAULT_CATEGORY_ID,
+                name: DEFAULT_CATEGORY_NAME,
+                resetTime: DEFAULT_CATEGORY_RESET_TIME,
+              },
+              {
+                id: "work",
+                name: "仕事",
+                resetTime: "09:00",
+              },
+            ],
+          },
         };
         await page.evaluate(
           ([key, value]) => {
             localStorage.setItem(key, value);
           },
-          [TODO_STORAGE_KEY, JSON.stringify(todoStorage)],
+          [APP_STORAGE_KEY, JSON.stringify(todoStorage)],
         );
         await navigateToTodo(page);
 
@@ -704,11 +735,11 @@ test.describe("Todo ページのテスト", () => {
         // Assert
         await expect(page.getByRole("button", { name: "営業" })).toBeVisible();
 
-        const persisted: TodoStorage = await page.evaluate(
+        const persisted: AppStorage = await page.evaluate(
           (key) => JSON.parse(localStorage.getItem(key)!),
-          TODO_STORAGE_KEY,
+          APP_STORAGE_KEY,
         );
-        const updatedCategory = persisted.categories?.find(
+        const updatedCategory = persisted.data.categories.find(
           (category) => category.id === "work",
         );
         expect(updatedCategory).toBeDefined();
@@ -720,47 +751,50 @@ test.describe("Todo ページのテスト", () => {
     test.describe("削除時のテスト", () => {
       test("カテゴリを削除できること", async ({ page }) => {
         // Arrange
-        const todoStorage: TodoStorage = {
+        const todoStorage: AppStorage = {
           version: 1,
-          todos: [
-            {
-              id: "todo-work",
-              name: "資料作成",
-              order: 0,
-              categoryId: "work",
-              completed: false,
-            },
-            {
-              id: "todo-personal",
-              name: "買い物",
-              order: 1,
-              categoryId: "personal",
-              completed: false,
-            },
-          ],
-          categories: [
-            {
-              id: DEFAULT_CATEGORY_ID,
-              name: DEFAULT_CATEGORY_NAME,
-              resetTime: DEFAULT_CATEGORY_RESET_TIME,
-            },
-            {
-              id: "work",
-              name: "仕事",
-              resetTime: "09:00",
-            },
-            {
-              id: "personal",
-              name: "個人",
-              resetTime: "09:00",
-            },
-          ],
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "todo-work",
+                name: "資料作成",
+                order: 0,
+                categoryId: "work",
+                completed: false,
+              },
+              {
+                id: "todo-personal",
+                name: "買い物",
+                order: 1,
+                categoryId: "personal",
+                completed: false,
+              },
+            ],
+            categories: [
+              {
+                id: DEFAULT_CATEGORY_ID,
+                name: DEFAULT_CATEGORY_NAME,
+                resetTime: DEFAULT_CATEGORY_RESET_TIME,
+              },
+              {
+                id: "work",
+                name: "仕事",
+                resetTime: "09:00",
+              },
+              {
+                id: "personal",
+                name: "個人",
+                resetTime: "09:00",
+              },
+            ],
+          },
         };
         await page.evaluate(
           ([key, value]) => {
             localStorage.setItem(key, value);
           },
-          [TODO_STORAGE_KEY, JSON.stringify(todoStorage)],
+          [APP_STORAGE_KEY, JSON.stringify(todoStorage)],
         );
         await navigateToTodo(page);
 
@@ -777,17 +811,17 @@ test.describe("Todo ページのテスト", () => {
         ).not.toBeVisible();
 
         // localStorage から削除されたカテゴリが消える
-        const persisted: TodoStorage = await page.evaluate(
+        const persisted: AppStorage = await page.evaluate(
           (key) => JSON.parse(localStorage.getItem(key)!),
-          TODO_STORAGE_KEY,
+          APP_STORAGE_KEY,
         );
-        const deletedCategory = persisted.categories?.find(
+        const deletedCategory = persisted.data.categories.find(
           (category) => category.id === "personal",
         );
         expect(deletedCategory).toBeUndefined();
 
         // 削除されたカテゴリの Todo が未分類に移行される
-        const migratedTodo = persisted.todos.find(
+        const migratedTodo = persisted.data.todos.find(
           (todo) => todo.id === "todo-personal",
         );
         expect(migratedTodo).toBeDefined();
@@ -798,35 +832,38 @@ test.describe("Todo ページのテスト", () => {
         page,
       }) => {
         // Arrange
-        const todoStorage: TodoStorage = {
+        const todoStorage: AppStorage = {
           version: 1,
-          todos: [
-            {
-              id: "todo-work",
-              name: "資料作成",
-              order: 0,
-              categoryId: "work",
-              completed: false,
-            },
-          ],
-          categories: [
-            {
-              id: DEFAULT_CATEGORY_ID,
-              name: DEFAULT_CATEGORY_NAME,
-              resetTime: DEFAULT_CATEGORY_RESET_TIME,
-            },
-            {
-              id: "work",
-              name: "仕事",
-              resetTime: "09:00",
-            },
-          ],
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "todo-work",
+                name: "資料作成",
+                order: 0,
+                categoryId: "work",
+                completed: false,
+              },
+            ],
+            categories: [
+              {
+                id: DEFAULT_CATEGORY_ID,
+                name: DEFAULT_CATEGORY_NAME,
+                resetTime: DEFAULT_CATEGORY_RESET_TIME,
+              },
+              {
+                id: "work",
+                name: "仕事",
+                resetTime: "09:00",
+              },
+            ],
+          },
         };
         await page.evaluate(
           ([key, value]) => {
             localStorage.setItem(key, value);
           },
-          [TODO_STORAGE_KEY, JSON.stringify(todoStorage)],
+          [APP_STORAGE_KEY, JSON.stringify(todoStorage)],
         );
         await navigateToTodo(page);
 
@@ -851,18 +888,18 @@ test.describe("Todo ページのテスト", () => {
         ).toHaveAttribute("aria-pressed", "true");
 
         // 削除されたカテゴリが localStorage から削除されていること
-        const persisted: TodoStorage = await page.evaluate(
+        const persisted: AppStorage = await page.evaluate(
           (key) => JSON.parse(localStorage.getItem(key)!),
-          TODO_STORAGE_KEY,
+          APP_STORAGE_KEY,
         );
 
-        const deletedCategory = persisted.categories?.find(
+        const deletedCategory = persisted.data.categories.find(
           (category) => category.id === "work",
         );
         expect(deletedCategory).toBeUndefined();
 
         // デフォルトカテゴリが localStorage に残っていること
-        const defaultCategory = persisted.categories?.find(
+        const defaultCategory = persisted.data.categories.find(
           (category) => category.id === DEFAULT_CATEGORY_ID,
         );
         expect(defaultCategory).toBeDefined();

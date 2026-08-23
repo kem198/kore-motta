@@ -1,156 +1,115 @@
-import { useCallback, useEffect, useState } from "react";
+"use client";
 
-import { DEFAULT_CATEGORIES_STORAGE } from "@/constants/categories";
-import { CURRENT_TODO_STORAGE_VERSION } from "@/constants/version";
-import { parseTodoStorage } from "@/schemas/todo-storage-schema";
-import { Todo, TodoStorage } from "@/types/todo";
+import { useCallback } from "react";
 
-export const TODO_STORAGE_KEY = "todoStorage";
+import { parseAppStorage } from "@/schemas/app-storage-schema";
+import { AppStorage } from "@/types/app-storage";
+import { Todo } from "@/types/todo";
 
 type UseTodosOptions = {
-  storageKey?: string;
+  appStorage: AppStorage;
+  updateAppStorage: (updater: (current: AppStorage) => AppStorage) => void;
 };
 
 type UseTodosReturn = {
   todos: Todo[];
-  isLoaded: boolean;
-  migrationError: {
-    hasError: boolean;
-    originalData: string | null;
-  };
   addTodo: (todo: Todo) => void;
   updateTodo: (todo: Todo) => void;
   updateTodos: (todos: Todo[]) => void;
   deleteTodoById: (id: string) => void;
   resetTodos: () => void;
   importTodoStorage: (data: string) => void;
-  clearMigrationError: () => void;
 };
 
-export function useTodos(options: UseTodosOptions = {}): UseTodosReturn {
-  const { storageKey = TODO_STORAGE_KEY } = options;
+export function useTodos({
+  appStorage,
+  updateAppStorage,
+}: UseTodosOptions): UseTodosReturn {
+  const todos = appStorage.data.todos;
 
-  const [todos, setTodos] = useState<Todo[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [migrationError, setMigrationError] = useState<{
-    hasError: boolean;
-    originalData: string | null;
-  }>({
-    hasError: false,
-    originalData: null,
-  });
+  const addTodo = useCallback(
+    (todo: Todo) => {
+      updateAppStorage((current) => ({
+        ...current,
+        data: {
+          ...current.data,
+          todos: [todo, ...current.data.todos],
+        },
+      }));
+    },
+    [updateAppStorage],
+  );
 
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
+  const updateTodo = useCallback(
+    (updated: Todo) => {
+      updateAppStorage((current) => ({
+        ...current,
+        data: {
+          ...current.data,
+          todos: current.data.todos.map((todo) =>
+            todo.id === updated.id ? updated : todo,
+          ),
+        },
+      }));
+    },
+    [updateAppStorage],
+  );
 
-    const data = window.localStorage.getItem(storageKey);
+  const updateTodos = useCallback(
+    (updatedTodos: Todo[]) => {
+      updateAppStorage((current) => ({
+        ...current,
+        data: {
+          ...current.data,
+          todos: updatedTodos,
+        },
+      }));
+    },
+    [updateAppStorage],
+  );
 
-    try {
-      if (data) {
-        const parsedTodoStorage = parseTodoStorage(JSON.parse(data));
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setTodos(parsedTodoStorage.todos);
-      } else {
-        const initialStorage: TodoStorage = {
-          version: CURRENT_TODO_STORAGE_VERSION,
-          todos: [],
-          categories: DEFAULT_CATEGORIES_STORAGE,
-        };
-        window.localStorage.setItem(storageKey, JSON.stringify(initialStorage));
-        setTodos([]);
-      }
-    } catch {
-      // validation error
-      setTodos([]);
-    } finally {
-      setIsLoaded(true);
-    }
-  }, [storageKey]);
-
-  useEffect(() => {
-    if (!isLoaded || typeof window === "undefined") {
-      return;
-    }
-
-    const rawStorage = window.localStorage.getItem(storageKey);
-    const currentStorage: TodoStorage = rawStorage
-      ? parseTodoStorage(JSON.parse(rawStorage))
-      : {
-          version: CURRENT_TODO_STORAGE_VERSION,
-          todos: [],
-          categories: DEFAULT_CATEGORIES_STORAGE,
-        };
-
-    const todoStorage: TodoStorage = {
-      ...currentStorage,
-      version: CURRENT_TODO_STORAGE_VERSION,
-      todos,
-      categories: currentStorage.categories ?? DEFAULT_CATEGORIES_STORAGE,
-    };
-
-    window.localStorage.setItem(storageKey, JSON.stringify(todoStorage));
-  }, [todos, isLoaded, storageKey]);
-
-  const addTodo = useCallback((todo: Todo) => {
-    setTodos((prev) => [todo, ...prev]);
-  }, []);
-
-  const updateTodo = useCallback((updated: Todo) => {
-    setTodos((prev) =>
-      prev.map((current) => (current.id === updated.id ? updated : current)),
-    );
-  }, []);
-
-  const updateTodos = useCallback((updatedTodos: Todo[]) => {
-    setTodos(updatedTodos);
-  }, []);
-
-  const deleteTodoById = useCallback((id: string) => {
-    setTodos((prev) => prev.filter((todo) => todo.id !== id));
-  }, []);
+  const deleteTodoById = useCallback(
+    (id: string) => {
+      updateAppStorage((current) => ({
+        ...current,
+        data: {
+          ...current.data,
+          todos: current.data.todos.filter((todo) => todo.id !== id),
+        },
+      }));
+    },
+    [updateAppStorage],
+  );
 
   const resetTodos = useCallback(() => {
-    setTodos((prev) => prev.map((todo) => ({ ...todo, completed: false })));
-  }, []);
-
-  const clearMigrationError = useCallback(() => {
-    setMigrationError({
-      hasError: false,
-      originalData: null,
-    });
-  }, []);
+    updateAppStorage((current) => ({
+      ...current,
+      data: {
+        ...current.data,
+        todos: current.data.todos.map((todo) => ({
+          ...todo,
+          completed: false,
+        })),
+      },
+    }));
+  }, [updateAppStorage]);
 
   const importTodoStorage = useCallback(
     (data: string) => {
-      const parsedTodoStorage = parseTodoStorage(JSON.parse(data));
+      const parsed = parseAppStorage(JSON.parse(data));
 
-      setTodos(parsedTodoStorage.todos);
-      try {
-        if (typeof window !== "undefined") {
-          window.localStorage.setItem(
-            storageKey,
-            JSON.stringify(parsedTodoStorage),
-          );
-        }
-      } catch {
-        // ignore
-      }
+      updateAppStorage(() => parsed);
     },
-    [storageKey],
+    [updateAppStorage],
   );
 
   return {
     todos,
-    isLoaded,
-    migrationError,
     addTodo,
     updateTodo,
     updateTodos,
     deleteTodoById,
     resetTodos,
     importTodoStorage,
-    clearMigrationError,
   };
 }

@@ -24,7 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { DEFAULT_CATEGORY_NAME } from "@/constants/categories";
 import { MESSAGES } from "@/constants/messages";
-import { TODO_STORAGE_KEY } from "@/hooks/use-todos";
+import { APP_STORAGE_KEY } from "@/lib/storage/app-storage";
 import { TodoFormValues, todoFormSchema } from "@/schemas/todo-form-schema";
 import { Todo } from "@/types/todo";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -74,17 +74,18 @@ export function EditDialog({
 
     if (nextOpen) {
       try {
-        const raw = window.localStorage.getItem(TODO_STORAGE_KEY);
+        const raw = window.localStorage.getItem(APP_STORAGE_KEY);
 
         if (!raw) {
           setCategoryName(DEFAULT_CATEGORY_NAME);
         } else {
           const parsed = JSON.parse(raw) as {
-            categories?: Array<{ id: string; name?: string }>;
+            data?: {
+              categories?: Array<{ id: string; name?: string }>;
+            };
           };
-
           const resolvedCategoryName =
-            parsed.categories?.find(
+            parsed.data?.categories?.find(
               (category) => category.id === todo.categoryId,
             )?.name ?? DEFAULT_CATEGORY_NAME;
 

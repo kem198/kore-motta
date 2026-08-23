@@ -1,41 +1,33 @@
-import { DEFAULT_CATEGORIES_STORAGE } from "@/constants/categories";
-import { CURRENT_TODO_STORAGE_VERSION } from "@/constants/version";
-import { parseTodoStorage } from "@/schemas/todo-storage-schema";
-import { Todo, TodoStorage } from "@/types/todo";
+import { createInitialAppStorage } from "@/lib/storage/app-storage";
+import { parseAppStorage } from "@/schemas/app-storage-schema";
+import { AppStorage } from "@/types/app-storage";
+import { Todo } from "@/types/todo";
 
 export const TODO_STORAGE_KEY = "todoStorage";
 
 const TODO_STORAGE_EVENT = "todo-storage-change";
 
-function getStorageData(storageKey: string): TodoStorage {
+function getStorageData(storageKey: string): AppStorage {
   if (typeof window === "undefined") {
-    return {
-      version: CURRENT_TODO_STORAGE_VERSION,
-      todos: [],
-      categories: DEFAULT_CATEGORIES_STORAGE,
-    };
+    return createInitialAppStorage();
   }
 
-  const data = window.localStorage.getItem(storageKey);
+  const raw = window.localStorage.getItem(storageKey);
 
-  if (!data) {
-    return {
-      version: CURRENT_TODO_STORAGE_VERSION,
-      todos: [],
-      categories: DEFAULT_CATEGORIES_STORAGE,
-    };
+  if (!raw) {
+    return createInitialAppStorage();
   }
 
-  return parseTodoStorage(JSON.parse(data));
+  return parseAppStorage(JSON.parse(raw));
 }
 
-function setStorageData(storageKey: string, storage: TodoStorage): void {
+function setStorageData(storageKey: string, storage: AppStorage): void {
   window.localStorage.setItem(storageKey, JSON.stringify(storage));
 
   window.dispatchEvent(new Event(TODO_STORAGE_EVENT));
 }
 
-export function subscribeTodoStorage(callback: () => void): () => void {
+export function subscribeAppStorage(callback: () => void): () => void {
   window.addEventListener("storage", callback);
   window.addEventListener(TODO_STORAGE_EVENT, callback);
 
@@ -45,16 +37,12 @@ export function subscribeTodoStorage(callback: () => void): () => void {
   };
 }
 
-export function getTodoStorage(storageKey: string): TodoStorage {
+export function getAppStorage(storageKey: string): AppStorage {
   return getStorageData(storageKey);
 }
 
-export function getServerTodoStorage(): TodoStorage {
-  return {
-    version: CURRENT_TODO_STORAGE_VERSION,
-    todos: [],
-    categories: DEFAULT_CATEGORIES_STORAGE,
-  };
+export function getServerAppStorage(): AppStorage {
+  return createInitialAppStorage();
 }
 
 export function setTodos(storageKey: string, todos: Todo[]): void {
@@ -62,15 +50,17 @@ export function setTodos(storageKey: string, todos: Todo[]): void {
 
   setStorageData(storageKey, {
     ...storage,
-    version: CURRENT_TODO_STORAGE_VERSION,
-    todos,
+    data: {
+      ...storage.data,
+      todos,
+    },
   });
 }
 
 export function addTodo(storageKey: string, todo: Todo): void {
   const storage = getStorageData(storageKey);
 
-  setTodos(storageKey, [todo, ...storage.todos]);
+  setTodos(storageKey, [todo, ...storage.data.todos]);
 }
 
 export function updateTodo(storageKey: string, updated: Todo): void {
@@ -78,7 +68,7 @@ export function updateTodo(storageKey: string, updated: Todo): void {
 
   setTodos(
     storageKey,
-    storage.todos.map((todo) => (todo.id === updated.id ? updated : todo)),
+    storage.data.todos.map((todo) => (todo.id === updated.id ? updated : todo)),
   );
 }
 
@@ -87,7 +77,7 @@ export function deleteTodoById(storageKey: string, id: string): void {
 
   setTodos(
     storageKey,
-    storage.todos.filter((todo) => todo.id !== id),
+    storage.data.todos.filter((todo) => todo.id !== id),
   );
 }
 
@@ -96,7 +86,7 @@ export function resetTodos(storageKey: string): void {
 
   setTodos(
     storageKey,
-    storage.todos.map((todo) => ({
+    storage.data.todos.map((todo) => ({
       ...todo,
       completed: false,
     })),
