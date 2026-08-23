@@ -18,7 +18,7 @@ export const MESSAGES = {
   },
 
   dialogs: {
-    editItem: "アイテムを編集",
+    editItem: "アイテム設定",
     deleteItem: {
       title: "アイテムの削除",
       description: "下記のアイテムを削除します。",
