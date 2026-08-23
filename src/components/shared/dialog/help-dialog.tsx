@@ -25,18 +25,18 @@ function Term() {
   return (
     <div
       className="typeset typeset-docs space-y-6"
-      style={{ "--typeset-size": "0.95rem" } as React.CSSProperties}
+      style={{ "--typeset-size": "0.9rem" } as React.CSSProperties}
     >
       <section>
         <h3>このアプリは何？</h3>
 
         <p>
-          <strong>Kore Motta?</strong>{" "}
+          <span className="font-ubuntu-sans font-medium">Kore Motta?</span>{" "}
           は、毎日の「これ持った？」を確認するシンプルな Todo アプリです。
         </p>
 
         <p>
-          持ち物や毎日行う作業を登録しておけば、毎日のチェックリストとして繰り返し利用できます。
+          持ち物や毎日行う作業を登録しておけば、その日限りのチェックリストとして利用できます。
         </p>
       </section>
 
@@ -45,10 +45,10 @@ function Term() {
 
         <ul>
           <li>
-            設定した時刻になると、登録したアイテムがすべて未完了に戻ります。
+            設定した時刻を過ぎると、登録したアイテムがすべて未完了に戻ります。
           </li>
           <li>
-            繰り返しのアイテムや期限切れのアイテムが溜まらないため、必要なタイミングで使えます。
+            繰り返しのアイテムや期限切れのアイテムとして溜まらないため、必要なタイミングで使えます。
           </li>
         </ul>
       </section>
@@ -141,21 +141,21 @@ export function HelpDialog() {
           <Button
             type="button"
             variant="ghost"
-            size="icon"
+            size="icon-lg"
             aria-label="アプリの使い方・利用規約"
-            className="text-white hover:bg-white/10 hover:text-white"
+            className="rounded-full text-white hover:bg-white/10 hover:text-white"
           />
         }
       >
-        <CircleHelpIcon size={20} />
+        <CircleHelpIcon className="size-5" />
       </DialogTrigger>
 
-      <DialogContent className="flex h-[90vh] max-h-[90vh] w-[calc(100%-2rem)] !max-w-xl flex-col">
+      <DialogContent className="flex h-[90vh] max-h-[75vh] w-[calc(100%-1rem)] !max-w-xl flex-col">
         <DialogHeader>
           <DialogTitle>使い方・利用規約</DialogTitle>
         </DialogHeader>
 
-        <ScrollArea className="min-h-0 flex-1 p-4">
+        <ScrollArea className="min-h-0 flex-1 p-2">
           <Term />
         </ScrollArea>
         <DialogFooter>
