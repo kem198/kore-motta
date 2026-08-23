@@ -75,14 +75,19 @@ export function EditDialog({
     if (nextOpen) {
       try {
         const raw = window.localStorage.getItem(TODO_STORAGE_KEY);
+
         if (!raw) {
           setCategoryName(DEFAULT_CATEGORY_NAME);
         } else {
           const parsed = JSON.parse(raw) as {
-            categories?: Record<string, { name?: string }>;
+            categories?: Array<{ id: string; name?: string }>;
           };
+
           const resolvedCategoryName =
-            parsed.categories?.[todo.categoryId]?.name ?? DEFAULT_CATEGORY_NAME;
+            parsed.categories?.find(
+              (category) => category.id === todo.categoryId,
+            )?.name ?? DEFAULT_CATEGORY_NAME;
+
           setCategoryName(resolvedCategoryName);
         }
       } catch {

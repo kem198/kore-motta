@@ -1,3 +1,4 @@
+import { DEFAULT_CATEGORIES_STORAGE } from "@/constants/categories";
 import { CURRENT_TODO_STORAGE_VERSION } from "@/constants/version";
 import { parseTodoStorage } from "@/schemas/todo-storage-schema";
 import { Todo, TodoStorage } from "@/types/todo";
@@ -11,6 +12,7 @@ function getStorageData(storageKey: string): TodoStorage {
     return {
       version: CURRENT_TODO_STORAGE_VERSION,
       todos: [],
+      categories: DEFAULT_CATEGORIES_STORAGE,
     };
   }
 
@@ -20,6 +22,7 @@ function getStorageData(storageKey: string): TodoStorage {
     return {
       version: CURRENT_TODO_STORAGE_VERSION,
       todos: [],
+      categories: DEFAULT_CATEGORIES_STORAGE,
     };
   }
 
@@ -50,11 +53,15 @@ export function getServerTodoStorage(): TodoStorage {
   return {
     version: CURRENT_TODO_STORAGE_VERSION,
     todos: [],
+    categories: DEFAULT_CATEGORIES_STORAGE,
   };
 }
 
 export function setTodos(storageKey: string, todos: Todo[]): void {
+  const storage = getStorageData(storageKey);
+
   setStorageData(storageKey, {
+    ...storage,
     version: CURRENT_TODO_STORAGE_VERSION,
     todos,
   });

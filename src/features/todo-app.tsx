@@ -43,7 +43,7 @@ export function TodoApp() {
   } = useTodos();
 
   const [isEditing, setIsEditing] = useState(false);
-  const [categories, setCategories] = useState<Record<string, Category>>(() => {
+  const [categories, setCategories] = useState<Category[]>(() => {
     try {
       if (typeof window === "undefined") return DEFAULT_CATEGORIES_STORAGE;
       const raw = window.localStorage.getItem(TODO_STORAGE_KEY);
@@ -51,11 +51,10 @@ export function TodoApp() {
 
       const parsed = JSON.parse(raw) as { categories?: unknown };
       const value = parsed.categories;
-      if (!value || typeof value !== "object" || Array.isArray(value)) {
+      if (!Array.isArray(value)) {
         return DEFAULT_CATEGORIES_STORAGE;
       }
-
-      return value as Record<string, Category>;
+      return value as Category[];
     } catch {
       return DEFAULT_CATEGORIES_STORAGE;
     }
@@ -113,25 +112,25 @@ export function TodoApp() {
       // ignore
     }
   }, []);
+
   const handleCreateCategory = useCallback((name: string) => {
     const id = crypto.randomUUID();
 
+    const newCategory: Category = {
+      id,
+      name,
+      resetTime: "00:00",
+    };
+
     setCategories((prev) => {
-      const next = {
-        ...prev,
-        [id]: { name, resetTime: prev[DEFAULT_CATEGORY_ID].resetTime },
-      };
+      const next = [...prev, newCategory];
+
       try {
         const raw = window.localStorage.getItem(TODO_STORAGE_KEY);
-        const currentStorage = raw
-          ? JSON.parse(raw)
-          : {
-              version: CURRENT_TODO_STORAGE_VERSION,
-              todos: [],
-              categories: DEFAULT_CATEGORIES_STORAGE,
-            };
+        const currentStorage = raw ? JSON.parse(raw) : {};
 
         currentStorage.categories = next;
+
         window.localStorage.setItem(
           TODO_STORAGE_KEY,
           JSON.stringify(currentStorage),
@@ -139,10 +138,12 @@ export function TodoApp() {
       } catch {
         // ignore
       }
+
       return next;
     });
 
     setActiveCategoryId(id);
+
     toast.add({
       title: MESSAGES.toast.categoryCreated,
       description: name,
@@ -267,7 +268,9 @@ export function TodoApp() {
   );
 
   const handleOpenCategoryEditDialog = useCallback(() => {
-    const selectedCategory = categories[activeCategoryId];
+    const selectedCategory = categories.find(
+      (category) => category.id === activeCategoryId,
+    );
     if (!selectedCategory) return;
 
     setCategoryDialog({
@@ -285,21 +288,25 @@ export function TodoApp() {
       if (!trimmedName) return;
 
       setCategories((prev) => {
-        const currentCategory = prev[category.id];
+        const currentCategory = prev.find((item) => item.id === category.id);
+
         if (!currentCategory) return prev;
 
-        const next = {
-          ...prev,
-          [category.id]: {
-            ...currentCategory,
-            name: trimmedName,
-          },
-        };
+        const next = prev.map((item) =>
+          item.id === category.id
+            ? {
+                ...item,
+                name: trimmedName,
+              }
+            : item,
+        );
 
         try {
           const raw = window.localStorage.getItem(TODO_STORAGE_KEY);
           const currentStorage = raw ? JSON.parse(raw) : {};
+
           currentStorage.categories = next;
+
           window.localStorage.setItem(
             TODO_STORAGE_KEY,
             JSON.stringify(currentStorage),
@@ -324,7 +331,6 @@ export function TodoApp() {
 
   const handleDeleteCategory = useCallback(() => {
     if (!categoryToDelete) return;
-
     const categoryId = categoryToDelete.id;
 
     // デフォルトカテゴリは削除できない
@@ -349,8 +355,7 @@ export function TodoApp() {
 
     // カテゴリを削除
     setCategories((prev) => {
-      const next = { ...prev };
-      delete next[categoryId];
+      const next = prev.filter((category) => category.id !== categoryId);
 
       try {
         const raw = window.localStorage.getItem(TODO_STORAGE_KEY);
@@ -390,25 +395,20 @@ export function TodoApp() {
               className="flex flex-wrap gap-2"
               aria-label={MESSAGES.labels.categoryList}
             >
-              {Object.entries(categories).map(([id, c]) => {
-                const isSelected = id === activeCategoryId;
+              {categories.map((category) => {
+                const isSelected = category.id === activeCategoryId;
 
                 return (
                   <Button
-                    key={id}
+                    key={category.id}
                     type="button"
                     variant={isSelected ? "default" : "secondary"}
                     size="sm"
-                    aria-label={c.name}
+                    aria-label={category.name}
                     aria-pressed={isSelected}
-                    onClick={() => setActiveCategoryId(id)}
-                    className={
-                      isSelected
-                        ? "rounded-full"
-                        : "border-border/60 bg-background rounded-full border"
-                    }
+                    onClick={() => setActiveCategoryId(category.id)}
                   >
-                    {c.name}
+                    {category.name}
                   </Button>
                 );
               })}
