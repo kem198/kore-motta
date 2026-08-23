@@ -18,6 +18,7 @@ import { MESSAGES } from "@/constants/messages";
 import { CURRENT_TODO_STORAGE_VERSION } from "@/constants/version";
 import { TODO_STORAGE_KEY, useTodos } from "@/hooks/use-todos";
 import { TodoFormValues } from "@/schemas/todo-form-schema";
+import { Category } from "@/types/category";
 import { Todo } from "@/types/todo";
 import {
   AlertCircleIcon,
@@ -42,9 +43,7 @@ export function TodoApp() {
   } = useTodos();
 
   const [isEditing, setIsEditing] = useState(false);
-  const [categories, setCategories] = useState<
-    Record<string, { name: string }>
-  >(() => {
+  const [categories, setCategories] = useState<Record<string, Category>>(() => {
     try {
       if (typeof window === "undefined") return DEFAULT_CATEGORIES_STORAGE;
       const raw = window.localStorage.getItem(TODO_STORAGE_KEY);
@@ -56,7 +55,7 @@ export function TodoApp() {
         return DEFAULT_CATEGORIES_STORAGE;
       }
 
-      return value as Record<string, { name: string }>;
+      return value as Record<string, Category>;
     } catch {
       return DEFAULT_CATEGORIES_STORAGE;
     }
@@ -118,7 +117,10 @@ export function TodoApp() {
     const id = crypto.randomUUID();
 
     setCategories((prev) => {
-      const next = { ...prev, [id]: { name } };
+      const next = {
+        ...prev,
+        [id]: { name, resetTime: prev[DEFAULT_CATEGORY_ID].resetTime },
+      };
       try {
         const raw = window.localStorage.getItem(TODO_STORAGE_KEY);
         const currentStorage = raw

@@ -1,8 +1,10 @@
 import {
   DEFAULT_CATEGORY_ID,
   DEFAULT_CATEGORY_NAME,
+  DEFAULT_CATEGORY_RESET_TIME,
 } from "@/constants/categories";
 import { TODO_STORAGE_KEY } from "@/hooks/use-todos";
+import { Category } from "@/types/category";
 import { TodoStorage } from "@/types/todo";
 import { expect, Locator, Page, test } from "@playwright/test";
 
@@ -110,6 +112,7 @@ test.describe("Todo ページのテスト", () => {
           categories: {
             [DEFAULT_CATEGORY_ID]: {
               name: DEFAULT_CATEGORY_NAME,
+              resetTime: DEFAULT_CATEGORY_RESET_TIME,
             },
           },
         };
@@ -217,8 +220,11 @@ test.describe("Todo ページのテスト", () => {
             },
           ],
           categories: {
-            uncategorized: { name: "未分類" },
-            work: { name: "仕事" },
+            uncategorized: {
+              name: DEFAULT_CATEGORY_NAME,
+              resetTime: DEFAULT_CATEGORY_RESET_TIME,
+            },
+            work: { name: "仕事", resetTime: "09:00" },
           },
         };
         await page.evaluate(
@@ -543,6 +549,9 @@ test.describe("Todo ページのテスト", () => {
         expect(storage.categories[DEFAULT_CATEGORY_ID].name).toBe(
           DEFAULT_CATEGORY_NAME,
         );
+        expect(storage.categories[DEFAULT_CATEGORY_ID].resetTime).toBe(
+          DEFAULT_CATEGORY_RESET_TIME,
+        );
 
         const legacyCategoriesKeyValue = await page.evaluate(() =>
           localStorage.getItem("categories"),
@@ -593,7 +602,7 @@ test.describe("Todo ページのテスト", () => {
           const storage = JSON.parse(localStorage.getItem(key)!);
           const categories = (storage.categories ?? {}) as Record<
             string,
-            { name: string }
+            Category
           >;
           return Object.values(categories).map((category) => category.name);
         }, TODO_STORAGE_KEY);
@@ -625,8 +634,11 @@ test.describe("Todo ページのテスト", () => {
             },
           ],
           categories: {
-            [DEFAULT_CATEGORY_ID]: { name: DEFAULT_CATEGORY_NAME },
-            work: { name: "仕事" },
+            [DEFAULT_CATEGORY_ID]: {
+              name: DEFAULT_CATEGORY_NAME,
+              resetTime: DEFAULT_CATEGORY_RESET_TIME,
+            },
+            work: { name: "仕事", resetTime: "09:00" },
           },
         };
         await page.evaluate(
@@ -659,8 +671,11 @@ test.describe("Todo ページのテスト", () => {
           version: 1,
           todos: [],
           categories: {
-            [DEFAULT_CATEGORY_ID]: { name: DEFAULT_CATEGORY_NAME },
-            work: { name: "仕事" },
+            [DEFAULT_CATEGORY_ID]: {
+              name: DEFAULT_CATEGORY_NAME,
+              resetTime: DEFAULT_CATEGORY_RESET_TIME,
+            },
+            work: { name: "仕事", resetTime: "09:00" },
           },
         };
         await page.evaluate(
@@ -710,9 +725,12 @@ test.describe("Todo ページのテスト", () => {
             },
           ],
           categories: {
-            [DEFAULT_CATEGORY_ID]: { name: DEFAULT_CATEGORY_NAME },
-            work: { name: "仕事" },
-            personal: { name: "個人" },
+            [DEFAULT_CATEGORY_ID]: {
+              name: DEFAULT_CATEGORY_NAME,
+              resetTime: DEFAULT_CATEGORY_RESET_TIME,
+            },
+            work: { name: "仕事", resetTime: "09:00" },
+            personal: { name: "個人", resetTime: "09:00" },
           },
         };
         await page.evaluate(
@@ -764,8 +782,11 @@ test.describe("Todo ページのテスト", () => {
             },
           ],
           categories: {
-            [DEFAULT_CATEGORY_ID]: { name: DEFAULT_CATEGORY_NAME },
-            work: { name: "仕事" },
+            [DEFAULT_CATEGORY_ID]: {
+              name: DEFAULT_CATEGORY_NAME,
+              resetTime: DEFAULT_CATEGORY_RESET_TIME,
+            },
+            work: { name: "仕事", resetTime: "09:00" },
           },
         };
         await page.evaluate(

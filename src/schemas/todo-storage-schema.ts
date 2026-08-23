@@ -1,9 +1,14 @@
-import { DEFAULT_CATEGORIES_STORAGE, DEFAULT_CATEGORY_ID } from "@/constants/categories";
+import {
+  DEFAULT_CATEGORIES_STORAGE,
+  DEFAULT_CATEGORY_ID,
+} from "@/constants/categories";
 import { CURRENT_TODO_STORAGE_VERSION } from "@/constants/version";
 import { TodoStorage } from "@/types/todo";
 import * as z from "zod";
 
-const categoryValueSchema = z.object({ name: z.string() }).strict();
+const categoryValueSchema = z
+  .object({ name: z.string(), resetTime: z.string().regex(/^\d{2}:\d{2}$/) })
+  .strict();
 
 const todoSchema = z
   .object({
