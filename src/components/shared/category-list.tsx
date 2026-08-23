@@ -1,7 +1,16 @@
 import { Button } from "@/components/ui/button";
+import { DEFAULT_CATEGORY_ID } from "@/constants/categories";
 import { MESSAGES } from "@/constants/messages";
 import { Category } from "@/types/category";
 import { PlusIcon } from "lucide-react";
+
+const sortCategories = (categories: Category[]) =>
+  [...categories].sort((a, b) => {
+    if (a.id === DEFAULT_CATEGORY_ID) return 1;
+    if (b.id === DEFAULT_CATEGORY_ID) return -1;
+
+    return a.name.localeCompare(b.name);
+  });
 
 type CategoryListProps = {
   categories: Category[];
@@ -16,12 +25,14 @@ export function CategoryList({
   onSelect,
   onCreate,
 }: CategoryListProps) {
+  const sortedCategories = sortCategories(categories);
+
   return (
     <div
       className="flex flex-wrap gap-2"
       aria-label={MESSAGES.labels.categoryList}
     >
-      {categories.map((category) => {
+      {sortedCategories.map((category) => {
         const isSelected = category.id === activeCategoryId;
 
         return (
