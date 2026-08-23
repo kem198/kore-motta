@@ -14,6 +14,14 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { CircleHelpIcon } from "lucide-react";
 
 function Term() {
+  const CHANGELOG = [
+    {
+      version: "v0.1.0",
+      date: "2026-08-23",
+      changes: ["初回リリース"],
+    },
+  ];
+
   return (
     <div
       className="typeset typeset-docs space-y-6"
@@ -100,41 +108,27 @@ function Term() {
         </p>
       </section>
 
-      <Changelog />
+      <section>
+        <h3>変更履歴</h3>
+
+        <ul>
+          {CHANGELOG.map((release) => (
+            <li key={release.version}>
+              <p>
+                {release.version}
+                <span> | {release.date}</span>
+              </p>
+
+              <ul>
+                {release.changes.map((change) => (
+                  <li key={change}>{change}</li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ul>
+      </section>
     </div>
-  );
-}
-
-function Changelog() {
-  const CHANGELOG = [
-    {
-      version: "v0.1.0",
-      date: "2026-08-23",
-      changes: ["初回リリース"],
-    },
-  ];
-
-  return (
-    <section>
-      <h3>変更履歴</h3>
-
-      <ul>
-        {CHANGELOG.map((release) => (
-          <li key={release.version}>
-            <p>
-              {release.version}
-              <span> | {release.date}</span>
-            </p>
-
-            <ul>
-              {release.changes.map((change) => (
-                <li key={change}>{change}</li>
-              ))}
-            </ul>
-          </li>
-        ))}
-      </ul>
-    </section>
   );
 }
 
