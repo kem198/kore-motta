@@ -31,7 +31,7 @@ function Term() {
         <h3>このアプリは何？</h3>
 
         <p>
-          <strong>Kore Motta?</strong>
+          <strong>Kore Motta?</strong>{" "}
           は、毎日の「これ持った？」を確認するシンプルな Todo アプリです。
         </p>
 
