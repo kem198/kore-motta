@@ -17,7 +17,13 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { MESSAGES } from "@/constants/messages";
 import { Todo } from "@/types/todo";
-import { AlertCircleIcon, ChevronDown, ChevronUp, Trash2 } from "lucide-react";
+import {
+  AlertCircleIcon,
+  ChevronDown,
+  ChevronUp,
+  Pencil,
+  Trash2,
+} from "lucide-react";
 import { Fragment } from "react";
 
 function TodoListSkeleton() {
@@ -114,14 +120,39 @@ function TodoItem({
               <Button
                 variant="secondary"
                 size="icon"
+                className="rounded-full"
                 onClick={() => onReorder(index, index + 1)}
                 disabled={index === length - 1}
                 aria-label={`${MESSAGES.aria.moveDown}: ${todo.name}`}
               >
                 <ChevronDown />
               </Button>
+
+              <EditDialog todo={todo} onSave={onUpdate}>
+                <Button
+                  variant="secondary"
+                  size="icon"
+                  className="rounded-full"
+                  aria-label={`${MESSAGES.actions.edit}: ${todo.name}`}
+                >
+                  <Pencil />
+                </Button>
+              </EditDialog>
             </ButtonGroup>
           </>
+        )}
+
+        {!isEditing && (
+          <EditDialog todo={todo} onSave={onUpdate}>
+            <Button
+              variant="secondary"
+              size="icon"
+              className="rounded-full"
+              aria-label={`${MESSAGES.actions.edit}: ${todo.name}`}
+            >
+              <Pencil />
+            </Button>
+          </EditDialog>
         )}
       </ItemActions>
     </Item>
