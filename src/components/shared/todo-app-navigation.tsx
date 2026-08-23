@@ -19,7 +19,7 @@ export function TodoAppNavigation({
   onToggleEditing,
 }: TodoAppNavigationProps) {
   return (
-    <div className="bg-background/70 sticky bottom-0 z-50 flex justify-between gap-2 border-b py-4">
+    <div className="bg-background/70 sticky bottom-0 z-50 flex justify-between gap-2 border-b pb-4">
       <div className="flex gap-2">
         {isEditing && (
           <TodoEditActions appStorage={appStorage} onImport={onImport} />

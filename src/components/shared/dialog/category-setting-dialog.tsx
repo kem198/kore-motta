@@ -58,7 +58,6 @@ export function CategorySettingDialog({
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
 
   const isCreateMode = mode === "create";
-  const inputLabel = MESSAGES.labels.categoryName;
 
   const handleSave = () => {
     const trimmedName = categoryName.trim();
@@ -108,37 +107,26 @@ export function CategorySettingDialog({
           {(isCreateMode || category) && (
             <>
               <div className="space-y-3">
-                {(isCreateMode || !isDefaultCategory) && (
-                  <Label className="flex flex-col items-start gap-2">
-                    {inputLabel}
-
-                    <Input
-                      value={categoryName}
-                      onChange={(e) => setCategoryName(e.target.value)}
-                      aria-label={inputLabel}
-                      placeholder={
-                        isCreateMode
-                          ? MESSAGES.placeholders.categoryName
-                          : (category?.name ?? "")
-                      }
-                    />
-                  </Label>
-                )}
-
                 <Label className="flex flex-col items-start gap-2">
-                  <p className="text-sm font-medium">リセット時刻の変更</p>
-                  <p className="text-muted-foreground text-sm">（将来対応）</p>
+                  {MESSAGES.labels.categoryName}
+
+                  <Input
+                    value={categoryName}
+                    onChange={(e) => setCategoryName(e.target.value)}
+                    aria-label={MESSAGES.labels.categoryName}
+                    placeholder={
+                      isCreateMode
+                        ? MESSAGES.placeholders.categoryName
+                        : (category?.name ?? "")
+                    }
+                    disabled={isDefaultCategory}
+                  />
                 </Label>
 
-                {!isCreateMode && isDefaultCategory && (
-                  <Alert variant="default">
-                    <AlertCircleIcon size={16} />
-
-                    <AlertTitle>
-                      未分類カテゴリはタイトル変更・削除できません。
-                    </AlertTitle>
-                  </Alert>
-                )}
+                <Label className="flex flex-col items-start gap-2">
+                  <p className="text-sm font-medium">未完了に戻す時刻</p>
+                  <p className="text-muted-foreground text-sm">（将来対応）</p>
+                </Label>
               </div>
 
               <div className="flex gap-2">
@@ -166,6 +154,16 @@ export function CategorySettingDialog({
                   </div>
                 )}
               </div>
+
+              {!isCreateMode && isDefaultCategory && (
+                <Alert variant="default">
+                  <AlertCircleIcon size={16} />
+
+                  <AlertTitle>
+                    未分類カテゴリはタイトル変更・削除できません。
+                  </AlertTitle>
+                </Alert>
+              )}
 
               <DialogFooter>
                 <DialogClose
