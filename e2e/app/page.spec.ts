@@ -640,6 +640,32 @@ test.describe("Todo ページのテスト", () => {
         // ストレージでも末尾に追加されていること
         expect(todoStorage.data.categories.at(-1)?.name).toBe("朝活");
       });
+
+      test("カテゴリを追加した時、カテゴリの名前順 -> 未分類 の順で並ぶこと", async ({
+        page,
+      }) => {
+        // Arrange
+        await navigateToTodo(page);
+
+        // Act
+        await page.getByRole("button", { name: "カテゴリ作成" }).click();
+        await page.getByRole("textbox", { name: "カテゴリ名" }).fill("03_朝活");
+        await page.getByRole("button", { name: "追加" }).click();
+
+        await page.getByRole("button", { name: "カテゴリ作成" }).click();
+        await page.getByRole("textbox", { name: "カテゴリ名" }).fill("01_仕事");
+        await page.getByRole("button", { name: "追加" }).click();
+
+        await page.getByRole("button", { name: "カテゴリ作成" }).click();
+        await page.getByRole("textbox", { name: "カテゴリ名" }).fill("02_趣味");
+        await page.getByRole("button", { name: "追加" }).click();
+
+        // Assert
+        const categoryList = page.getByLabel("カテゴリ一覧");
+        await expect(categoryList).toHaveText(
+          /01_仕事.*02_趣味.*03_朝活.*未分類/,
+        );
+      });
     });
 
     test.describe("表示時のテスト", () => {
