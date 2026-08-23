@@ -130,12 +130,13 @@ export function CategorySettingDialog({
               </div>
 
               <div className="flex gap-2">
-                {!isCreateMode && !isDefaultCategory && category && (
+                {!isCreateMode && category && (
                   <div className="flex gap-2">
                     <Button
                       type="button"
                       variant="destructive"
                       onClick={() => setIsDeleteConfirmOpen(true)}
+                      disabled={isDefaultCategory}
                     >
                       カテゴリを削除
                     </Button>
