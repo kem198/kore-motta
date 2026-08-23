@@ -1,5 +1,6 @@
 "use client";
 
+import { CategoryList } from "@/components/shared/category-list";
 import { CategoryDeleteDialog } from "@/components/shared/dialog/category-delete-dialog";
 import { CategorySettingDialog } from "@/components/shared/dialog/category-setting-dialog";
 import { ConfirmDialog } from "@/components/shared/dialog/confirm-dialog";
@@ -26,7 +27,6 @@ import {
   DownloadIcon,
   FolderPenIcon,
   PencilIcon,
-  PlusIcon,
   UploadIcon,
 } from "lucide-react";
 import { useCallback, useState } from "react";
@@ -296,41 +296,14 @@ export function TodoApp() {
       <div className="not-prose flex w-full flex-col gap-6">
         <div className="flex flex-col gap-3">
           {isLoaded && (
-            <div
-              className="flex flex-wrap gap-2"
-              aria-label={MESSAGES.labels.categoryList}
-            >
-              {categories.map((category) => {
-                const isSelected = category.id === activeCategoryId;
-
-                return (
-                  <Button
-                    key={category.id}
-                    type="button"
-                    variant={isSelected ? "default" : "secondary"}
-                    size="sm"
-                    aria-label={category.name}
-                    aria-pressed={isSelected}
-                    onClick={() => setActiveCategoryId(category.id)}
-                  >
-                    {category.name}
-                  </Button>
-                );
-              })}
-
-              <Button
-                type="button"
-                variant="secondary"
-                size="icon"
-                aria-label={MESSAGES.actions.createCategory}
-                onClick={() =>
-                  setCategoryDialog({ mode: "create", category: null })
-                }
-                className="border-border/60 bg-background rounded-full border"
-              >
-                <PlusIcon />
-              </Button>
-            </div>
+            <CategoryList
+              categories={categories}
+              activeCategoryId={activeCategoryId}
+              onSelect={setActiveCategoryId}
+              onCreate={() =>
+                setCategoryDialog({ mode: "create", category: null })
+              }
+            />
           )}
         </div>
 
