@@ -34,8 +34,8 @@ function TodoListSkeleton() {
       </ItemMedia>
 
       <ItemContent className="flex flex-col gap-1">
-        <Skeleton className="h-4 max-w-[10rem] rounded-full" />
-        <Skeleton className="h-4 max-w-[16rem] rounded-full" />
+        <Skeleton className="h-4 max-w-40" />
+        <Skeleton className="h-4 max-w-[16rem]" />
       </ItemContent>
     </Item>
   );
@@ -98,7 +98,6 @@ function TodoItem({
               <Button
                 variant="destructive"
                 size="icon"
-                className="rounded-full"
                 aria-label={`${MESSAGES.actions.delete}: ${todo.name}`}
               >
                 <Trash2 />
@@ -109,7 +108,6 @@ function TodoItem({
               <Button
                 variant="secondary"
                 size="icon"
-                className="rounded-full"
                 onClick={() => onReorder(index, index - 1)}
                 disabled={index === 0}
                 aria-label={`${MESSAGES.aria.moveUp}: ${todo.name}`}
@@ -120,7 +118,6 @@ function TodoItem({
               <Button
                 variant="secondary"
                 size="icon"
-                className="rounded-full"
                 onClick={() => onReorder(index, index + 1)}
                 disabled={index === length - 1}
                 aria-label={`${MESSAGES.aria.moveDown}: ${todo.name}`}
@@ -147,7 +144,6 @@ function TodoItem({
             <Button
               variant="secondary"
               size="icon"
-              className="rounded-full"
               aria-label={`${MESSAGES.actions.edit}: ${todo.name}`}
             >
               <Pencil />
