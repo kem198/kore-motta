@@ -15,24 +15,40 @@ import { CircleHelpIcon } from "lucide-react";
 
 function Term() {
   return (
-    <div className="space-y-6">
-      <section className="space-y-3">
-        <h3 className="text-base font-semibold">Kore Motta? について</h3>
+    <div
+      className="typeset typeset-docs space-y-6"
+      style={{ "--typeset-size": "0.9rem" } as React.CSSProperties}
+    >
+      <section>
+        <h3>このアプリは何？</h3>
 
-        <p className="text-muted-foreground text-sm">
-          Kore Motta? は、毎日の「これ持った？」を確認するシンプルな Todo
-          アプリです。
+        <p>
+          <strong>Kore Motta?</strong>
+          は、毎日の「これ持った？」を確認するシンプルな Todo アプリです。
         </p>
 
-        <p className="text-muted-foreground text-sm">
-          設定した時刻になると、登録したタスクがすべて未完了に戻ります。
+        <p>
+          持ち物や毎日行う作業を登録しておけば、毎日のチェックリストとして繰り返し利用できます。
         </p>
       </section>
 
-      <section className="space-y-3">
-        <h3 className="text-base font-semibold">登録内容の取り扱い</h3>
+      <section>
+        <h3>このアプリの特徴</h3>
 
-        <ul className="text-muted-foreground list-disc space-y-2 pl-5 text-sm">
+        <ul>
+          <li>
+            設定した時刻になると、登録したタスクがすべて未完了に戻ります。
+          </li>
+          <li>
+            繰り返しのタスクや期限切れのタスクが溜まらないため、必要なときに気軽に使えます。
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>情報の取り扱い</h3>
+
+        <ul>
           <li>登録した内容は、お使いのブラウザ内に保存されます。</li>
           <li>登録した内容を外部サービスへ送信・保存することはありません。</li>
           <li>
@@ -42,10 +58,10 @@ function Term() {
         </ul>
       </section>
 
-      <section className="space-y-3">
-        <h3 className="text-base font-semibold">登録内容のバックアップ</h3>
+      <section>
+        <h3>登録内容のバックアップ</h3>
 
-        <ul className="text-muted-foreground list-disc space-y-2 pl-5 text-sm">
+        <ul>
           <li>登録した内容は、エクスポートしてバックアップできます。</li>
           <li>バックアップした内容は、インポートして復元できます。</li>
           <li>
@@ -54,10 +70,10 @@ function Term() {
         </ul>
       </section>
 
-      <section className="space-y-3">
-        <h3 className="text-base font-semibold">利用規約</h3>
+      <section>
+        <h3>利用規約</h3>
 
-        <ul className="text-muted-foreground list-disc space-y-2 pl-5 text-sm">
+        <ul>
           <li>
             本サービスは、予告なく内容の変更、停止、または終了する場合があります。
           </li>
@@ -67,22 +83,24 @@ function Term() {
         </ul>
       </section>
 
-      <section className="space-y-3">
-        <h3 className="text-base font-semibold">お問い合わせ</h3>
+      <section>
+        <h3>お問い合わせ</h3>
 
-        <p className="text-muted-foreground text-sm">
+        <p>
           ご不明な点やお問い合わせは{" "}
           <a
-            href="https://x.com/Kem198_tw"
+            href="https://x.com/Kem198_x"
             target="_blank"
             rel="noopener noreferrer"
             className="underline underline-offset-4"
           >
-            @Kem198_tw
+            @Kem198_x
           </a>{" "}
           までご連絡ください。
         </p>
       </section>
+
+      <Changelog />
     </div>
   );
 }
@@ -97,25 +115,25 @@ function Changelog() {
   ];
 
   return (
-    <section className="space-y-3">
-      <h3 className="text-base font-semibold">変更履歴</h3>
+    <section>
+      <h3>変更履歴</h3>
 
-      <div className="space-y-4 text-sm">
+      <ul>
         {CHANGELOG.map((release) => (
-          <div key={release.version}>
-            <p className="font-medium">
+          <li key={release.version}>
+            <p>
               {release.version}
-              <span className="text-muted-foreground"> | {release.date}</span>
+              <span> | {release.date}</span>
             </p>
 
-            <ul className="text-muted-foreground list-none space-y-1 pl-4">
+            <ul>
               {release.changes.map((change) => (
-                <li key={change}>└ {change}</li>
+                <li key={change}>{change}</li>
               ))}
             </ul>
-          </div>
+          </li>
         ))}
-      </div>
+      </ul>
     </section>
   );
 }
@@ -137,14 +155,13 @@ export function HelpDialog() {
         <CircleHelpIcon size={20} />
       </DialogTrigger>
 
-      <DialogContent className="flex h-[90vh] max-h-[90vh] flex-col">
+      <DialogContent className="flex h-[90vh] max-h-[90vh] w-[calc(100%-2rem)] !max-w-xl flex-col">
         <DialogHeader>
           <DialogTitle>使い方・利用規約</DialogTitle>
         </DialogHeader>
 
-        <ScrollArea className="min-h-0 flex-1">
+        <ScrollArea className="min-h-0 flex-1 p-4">
           <Term />
-          <Changelog />
         </ScrollArea>
         <DialogFooter>
           <DialogClose
