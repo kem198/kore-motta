@@ -2,7 +2,7 @@ import { TodoAppActions } from "@/components/shared/todo-app-actions";
 import { TodoEditActions } from "@/components/shared/todo-edit-actions";
 import { AppStorage } from "@/types/app-storage";
 
-type TodoAppFooterProps = {
+type TodoAppNavigationProps = {
   isEditing: boolean;
   appStorage: AppStorage;
   onReset: () => void;
@@ -11,16 +11,16 @@ type TodoAppFooterProps = {
   onToggleEditing: () => void;
 };
 
-export function TodoAppFooter({
+export function TodoAppNavigation({
   isEditing,
   appStorage,
   onReset,
   onImport,
   onOpenCategorySettings,
   onToggleEditing,
-}: TodoAppFooterProps) {
+}: TodoAppNavigationProps) {
   return (
-    <div className="bg-background/70 sticky bottom-0 z-50 flex justify-between gap-2 border-t py-4">
+    <div className="bg-background/70 sticky bottom-0 z-50 flex justify-between gap-2 border-b py-4">
       <div className="flex gap-2">
         {isEditing && (
           <TodoEditActions

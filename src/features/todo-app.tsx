@@ -3,8 +3,8 @@
 import { CategoryList } from "@/components/shared/category-list";
 import { CategoryDeleteDialog } from "@/components/shared/dialog/category-delete-dialog";
 import { CategorySettingDialog } from "@/components/shared/dialog/category-setting-dialog";
-import { TodoAppFooter } from "@/components/shared/todo-app-footer";
-import { TodoForm } from "@/components/shared/todo-form";
+import { TodoAppNavigation } from "@/components/shared/todo-app-navigation";
+import { TodoFormFooter } from "@/components/shared/todo-form-footer";
 import { TodoList } from "@/components/shared/todo-list";
 import { toast } from "@/components/ui/toast";
 import {
@@ -283,20 +283,27 @@ export function TodoApp() {
   return (
     <div className="flex flex-col gap-4">
       <div className="not-prose flex w-full flex-col gap-6">
-        <div className="flex flex-col gap-3">
-          {isLoaded && (
-            <CategoryList
-              categories={categories}
-              activeCategoryId={activeCategoryId}
-              onSelect={setActiveCategoryId}
-              onCreate={() =>
-                setCategoryDialog({ mode: "create", category: null })
-              }
-            />
-          )}
-        </div>
+        <div className="flex flex-col gap-3"></div>
 
-        <TodoForm onSubmit={handleCreate} isEditing={isEditing} />
+        <TodoAppNavigation
+          isEditing={isEditing}
+          appStorage={appStorage}
+          onReset={handleReset}
+          onImport={handleImport}
+          onOpenCategorySettings={handleOpenCategoryEditDialog}
+          onToggleEditing={() => setIsEditing((prev) => !prev)}
+        />
+
+        {isLoaded && (
+          <CategoryList
+            categories={categories}
+            activeCategoryId={activeCategoryId}
+            onSelect={setActiveCategoryId}
+            onCreate={() =>
+              setCategoryDialog({ mode: "create", category: null })
+            }
+          />
+        )}
 
         <TodoList
           todos={visibleTodos}
@@ -307,14 +314,7 @@ export function TodoApp() {
           onReorder={handleReorder}
         />
 
-        <TodoAppFooter
-          isEditing={isEditing}
-          appStorage={appStorage}
-          onReset={handleReset}
-          onImport={handleImport}
-          onOpenCategorySettings={handleOpenCategoryEditDialog}
-          onToggleEditing={() => setIsEditing((prev) => !prev)}
-        />
+        <TodoFormFooter onSubmit={handleCreate} isEditing={isEditing} />
       </div>
 
       <CategorySettingDialog
