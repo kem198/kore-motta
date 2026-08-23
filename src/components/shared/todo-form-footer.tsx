@@ -8,8 +8,8 @@ type TodoFormFooterProps = {
 
 export function TodoFormFooter({ isEditing, onSubmit }: TodoFormFooterProps) {
   return (
-    <div className="bg-background/70 fixed bottom-0 left-0 z-50 w-full border-t py-4">
-      <div className="mx-auto w-full max-w-3xl px-4">
+    <div className="fixed inset-x-0 bottom-0 z-50">
+      <div className="bg-background mx-auto w-full max-w-2xl border-t px-8 py-4">
         <TodoForm onSubmit={onSubmit} isEditing={isEditing} />
       </div>
     </div>

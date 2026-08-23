@@ -1,11 +1,10 @@
 import { ConfirmDialog } from "@/components/shared/dialog/confirm-dialog";
 import { ExportDialog } from "@/components/shared/dialog/export-dialog";
 import { ImportDialog } from "@/components/shared/dialog/import-dialog";
-import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { MESSAGES } from "@/constants/messages";
 import { AppStorage } from "@/types/app-storage";
-import { AlertCircleIcon, DownloadIcon, UploadIcon } from "lucide-react";
+import { DownloadIcon, UploadIcon } from "lucide-react";
 
 type TodoEditActionsProps = {
   appStorage: AppStorage;
@@ -21,21 +20,18 @@ export function TodoEditActions({
   return (
     <>
       <ConfirmDialog
-        title={MESSAGES.dialogs.reset.title}
-        description={MESSAGES.dialogs.reset.description}
-        content={
-          <Alert variant="destructive">
-            <AlertCircleIcon size={16} />
-            <AlertTitle>{MESSAGES.warnings.overwrite}</AlertTitle>
-          </Alert>
-        }
-        confirmButtonLabel={MESSAGES.actions.reset}
-        confirmButtonVariant="destructive"
+        title={MESSAGES.dialogs.markAllIncomplete.title}
+        description={MESSAGES.dialogs.markAllIncomplete.description}
+        confirmButtonLabel={MESSAGES.actions.markAllIncomplete}
+        confirmButtonVariant="default"
         onConfirm={onReset}
         className="w-fit"
       >
-        <Button variant="destructive" aria-label={MESSAGES.actions.reset}>
-          {MESSAGES.actions.reset}
+        <Button
+          variant="secondary"
+          aria-label={MESSAGES.actions.markAllIncomplete}
+        >
+          {MESSAGES.actions.markAllIncomplete}
         </Button>
       </ConfirmDialog>
 
