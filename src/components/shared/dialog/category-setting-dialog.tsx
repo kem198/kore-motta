@@ -4,6 +4,7 @@ import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -107,17 +108,24 @@ export function CategorySettingDialog({
               )}
             </div>
 
-            <DialogFooter>
-              {!isCreateMode && !isDefaultCategory && category && (
-                <Button
-                  type="button"
-                  variant="destructive"
-                  onClick={() => onDelete(category)}
-                >
-                  カテゴリを削除
-                </Button>
-              )}
+            {!isCreateMode && !isDefaultCategory && category && (
+              <Button
+                type="button"
+                variant="destructive"
+                onClick={() => onDelete(category)}
+              >
+                カテゴリを削除
+              </Button>
+            )}
 
+            <DialogFooter>
+              <DialogClose
+                render={
+                  <Button type="button" variant="outline">
+                    キャンセル
+                  </Button>
+                }
+              />
               <Button
                 type="button"
                 onClick={handleSave}
