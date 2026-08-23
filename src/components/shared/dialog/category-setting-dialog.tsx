@@ -224,7 +224,7 @@ export function CategorySettingDialog({
             </AlertDialogTitle>
 
             <AlertDialogDescription>
-              このカテゴリに属する Todo は未分類に移動します。
+              このカテゴリに属するアイテムは「未分類」カテゴリに移動します。
             </AlertDialogDescription>
           </AlertDialogHeader>
 
