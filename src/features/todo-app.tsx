@@ -10,7 +10,10 @@ import { TodoList } from "@/components/shared/todo-list";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
-import { DEFAULT_CATEGORY_ID } from "@/constants/categories";
+import {
+  DEFAULT_CATEGORY_ID,
+  DEFAULT_CATEGORY_RESET_TIME,
+} from "@/constants/categories";
 import { MESSAGES } from "@/constants/messages";
 import { useAppStorage } from "@/hooks/use-app-storage";
 import { useCategories } from "@/hooks/use-categories";
@@ -76,7 +79,7 @@ export function TodoApp() {
     const newCategory: Category = {
       id,
       name,
-      resetTime: "00:00",
+      resetTime: DEFAULT_CATEGORY_RESET_TIME,
     };
 
     addCategory(newCategory);
