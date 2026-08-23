@@ -81,7 +81,7 @@ function TodoItemActions({
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>
-                  `アイテム「${todo.name}」を削除しますか？`
+                  {`アイテム「${todo.name}」を削除しますか？`}
                 </AlertDialogTitle>
               </AlertDialogHeader>
 
@@ -166,15 +166,13 @@ function TodoItem({
   onReorder,
 }: TodoItemProps) {
   return (
-    <Item className="justify-end px-0 md:flex-row">
+    <Item className="px-0">
       <ItemMedia>
         <TodoToggle aria-label="Toggle todo" todo={todo} onChange={onUpdate} />
       </ItemMedia>
 
       <ItemContent>
-        <ItemTitle className="flex flex-col items-start gap-0">
-          {todo.name}
-        </ItemTitle>
+        <ItemTitle>{todo.name}</ItemTitle>
 
         {todo.memo ? <ItemDescription>{todo.memo}</ItemDescription> : null}
       </ItemContent>
@@ -227,7 +225,7 @@ function TodoListContent({
   onReorder,
 }: TodoListContentProps) {
   return (
-    <ItemGroup>
+    <ItemGroup className="gap-0">
       {todos.map((todo, index) => (
         <Fragment key={todo.id}>
           <TodoItem
