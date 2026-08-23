@@ -9,7 +9,7 @@ import { TodoList } from "@/components/shared/todo-list";
 import { toast } from "@/components/ui/toast";
 import {
   DEFAULT_CATEGORY_ID,
-  DEFAULT_CATEGORY_RESET_TIME,
+  DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
 } from "@/constants/categories";
 import { MESSAGES } from "@/constants/messages";
 import { useAppStorage } from "@/hooks/use-app-storage";
@@ -21,8 +21,7 @@ import { Todo } from "@/types/todo";
 import { useCallback, useState } from "react";
 
 export function TodoApp() {
-  const { appStorage, isLoaded, updateAppStorage, replaceAppStorage } =
-    useAppStorage();
+  const { appStorage, isLoaded, updateAppStorage } = useAppStorage();
 
   const {
     todos,
@@ -68,7 +67,7 @@ export function TodoApp() {
     const newCategory: Category = {
       id,
       name,
-      resetTime: DEFAULT_CATEGORY_RESET_TIME,
+      markAllIncompleteAt: DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
     };
 
     addCategory(newCategory);
@@ -140,7 +139,7 @@ export function TodoApp() {
     setIsEditing(false);
 
     toast.add({
-      title: MESSAGES.toast.reset,
+      title: MESSAGES.toast.markAllIncomplete,
       type: "success",
     });
   }, [resetTodos]);

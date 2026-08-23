@@ -7,7 +7,7 @@ const categorySchema = z
   .object({
     id: z.string(),
     name: z.string(),
-    resetTime: z.string().regex(/^\d{2}:\d{2}$/),
+    markAllIncompleteAt: z.string().regex(/^\d{2}:\d{2}$/),
   })
   .strict();
 
