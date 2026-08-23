@@ -17,7 +17,7 @@ type UseTodosReturn = {
   updateTodo: (todo: Todo) => void;
   updateTodos: (todos: Todo[]) => void;
   deleteTodoById: (id: string) => void;
-  resetTodos: () => void;
+  markAllIncompleteTodos: () => void;
   importTodoStorage: (data: string) => void;
 };
 
@@ -81,7 +81,7 @@ export function useTodos({
     [updateAppStorage],
   );
 
-  const resetTodos = useCallback(() => {
+  const markAllIncomplete = useCallback(() => {
     updateAppStorage((current) => ({
       ...current,
       data: {
@@ -109,7 +109,7 @@ export function useTodos({
     updateTodo,
     updateTodos,
     deleteTodoById,
-    resetTodos,
+    markAllIncompleteTodos: markAllIncomplete,
     importTodoStorage,
   };
 }

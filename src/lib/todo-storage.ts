@@ -81,7 +81,7 @@ export function deleteTodoById(storageKey: string, id: string): void {
   );
 }
 
-export function resetTodos(storageKey: string): void {
+export function markAllIncompleteTodos(storageKey: string): void {
   const storage = getStorageData(storageKey);
 
   setTodos(

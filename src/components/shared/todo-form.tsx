@@ -11,19 +11,17 @@ import { Controller, useForm } from "react-hook-form";
 
 type TodoFormProps = {
   onSubmit: (values: TodoFormValues) => void;
-  isEditing: boolean;
 } & Omit<React.ComponentProps<"form">, "onSubmit">;
 
-export function TodoForm({ onSubmit, isEditing, ...props }: TodoFormProps) {
+export function TodoForm({ onSubmit, ...props }: TodoFormProps) {
   const form = useForm<TodoFormValues>({
     resolver: zodResolver(todoFormSchema),
+    mode: "onChange",
     defaultValues: {
       name: "",
       memo: "",
     },
   });
-
-  const nameValue = form.watch("name") ?? "";
 
   const handleSubmit = (values: TodoFormValues) => {
     onSubmit(values);
@@ -32,29 +30,25 @@ export function TodoForm({ onSubmit, isEditing, ...props }: TodoFormProps) {
 
   return (
     <form id="todoadd" onSubmit={form.handleSubmit(handleSubmit)} {...props}>
-      <div className="flex gap-2">
+      <div className="flex items-end gap-2">
         <Controller
           name="name"
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               <Input
                 {...field}
                 id="todoname"
                 aria-invalid={fieldState.invalid}
                 placeholder={MESSAGES.placeholders.newItem}
                 autoComplete="off"
-                disabled={isEditing}
               />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />
-        <Button
-          type="submit"
-          form="todoadd"
-          disabled={isEditing || !nameValue.trim()}
-        >
+
+        <Button type="submit" form="todoadd" disabled={!form.formState.isValid}>
           <PlusIcon />
           {MESSAGES.actions.add}
         </Button>

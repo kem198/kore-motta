@@ -30,6 +30,7 @@ export function CategoryList({
             type="button"
             variant={isSelected ? "default" : "secondary"}
             size="sm"
+            className="rounded-full"
             aria-label={category.name}
             aria-pressed={isSelected}
             onClick={() => onSelect(category.id)}

@@ -2,20 +2,11 @@
 
 import { CategoryList } from "@/components/shared/category-list";
 import { CategorySettingDialog } from "@/components/shared/dialog/category-setting-dialog";
+import { TodoAppHeader } from "@/components/shared/todo-app-header";
 import { TodoAppNavigation } from "@/components/shared/todo-app-navigation";
 import { TodoFormFooter } from "@/components/shared/todo-form-footer";
 import { TodoList } from "@/components/shared/todo-list";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { toast } from "@/components/ui/toast";
+import { Separator } from "@/components/ui/separator";
 import {
   DEFAULT_CATEGORY_ID,
   DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
@@ -28,6 +19,7 @@ import { TodoFormValues } from "@/schemas/todo-form-schema";
 import { Category } from "@/types/category";
 import { Todo } from "@/types/todo";
 import { useCallback, useState } from "react";
+import { toast } from "sonner";
 
 export function TodoApp() {
   const { appStorage, isLoaded, updateAppStorage } = useAppStorage();
@@ -38,7 +30,7 @@ export function TodoApp() {
     updateTodo,
     updateTodos,
     deleteTodoById,
-    resetTodos,
+    markAllIncompleteTodos: markAllIncomplete,
     importTodoStorage,
   } = useTodos({
     appStorage,
@@ -56,10 +48,7 @@ export function TodoApp() {
   const [activeCategoryId, setActiveCategoryId] = useState<string>(
     () => DEFAULT_CATEGORY_ID,
   );
-  const [categoryToDelete, setCategoryToDelete] = useState<{
-    id: string;
-    name: string;
-  } | null>(null);
+
   const [categoryDialog, setCategoryDialog] = useState<
     | { mode: "create"; category: null }
     | { mode: "edit"; category: { id: string; name: string } }
@@ -70,24 +59,27 @@ export function TodoApp() {
     (todo) => todo.categoryId === activeCategoryId,
   );
 
-  const handleCreateCategory = useCallback((name: string) => {
-    const id = crypto.randomUUID();
+  const handleCreateCategory = useCallback(
+    (name: string) => {
+      const id = crypto.randomUUID();
 
-    const newCategory: Category = {
-      id,
-      name,
-      markAllIncompleteAt: DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
-    };
+      const newCategory: Category = {
+        id,
+        name,
+        markAllIncompleteAt: DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
+      };
 
-    addCategory(newCategory);
-    setActiveCategoryId(id);
+      addCategory(newCategory);
+      setActiveCategoryId(id);
 
-    toast.add({
-      title: MESSAGES.toast.categoryCreated,
-      description: name,
-      type: "success",
-    });
-  }, []);
+      // toast.add({
+      //   title: MESSAGES.toast.categoryCreated,
+      //   description: name,
+      //   type: "success",
+      // });
+    },
+    [addCategory],
+  );
 
   const handleCreate = useCallback(
     (values: TodoFormValues) => {
@@ -108,11 +100,11 @@ export function TodoApp() {
 
       addTodo(newTodo);
 
-      toast.add({
-        title: MESSAGES.toast.created,
-        description: trimmedName,
-        type: "success",
-      });
+      // toast.add({
+      //   title: MESSAGES.toast.created,
+      //   description: trimmedName,
+      //   type: "success",
+      // });
     },
     [activeCategoryId, addTodo],
   );
@@ -121,11 +113,11 @@ export function TodoApp() {
     (todo: Todo) => {
       deleteTodoById(todo.id);
 
-      toast.add({
-        title: MESSAGES.toast.deleted,
-        description: todo.name,
-        type: "success",
-      });
+      // toast.add({
+      //   title: MESSAGES.toast.deleted,
+      //   description: todo.name,
+      //   type: "success",
+      // });
     },
     [deleteTodoById],
   );
@@ -134,24 +126,25 @@ export function TodoApp() {
     (todo: Todo) => {
       updateTodo(todo);
 
-      toast.add({
-        title: MESSAGES.toast.updated,
-        description: todo.name,
-        type: "success",
-      });
+      // toast.add({
+      //   title: MESSAGES.toast.updated,
+      //   description: todo.name,
+      //   type: "success",
+      // });
     },
     [updateTodo],
   );
 
-  const handleReset = useCallback(() => {
-    resetTodos();
+  const handleMarkAllIncomplete = useCallback(() => {
+    markAllIncomplete();
     setIsEditing(false);
 
-    toast.add({
-      title: MESSAGES.toast.markAllIncomplete,
-      type: "success",
-    });
-  }, [resetTodos]);
+    toast.success(MESSAGES.toast.markAllIncomplete);
+    // toast.add({
+    //   title: MESSAGES.toast.markAllIncomplete,
+    //   type: "success",
+    // });
+  }, [markAllIncomplete]);
 
   function reorderTodos(
     todos: Todo[],
@@ -179,10 +172,10 @@ export function TodoApp() {
 
       updateTodos(reordered);
 
-      toast.add({
-        title: MESSAGES.toast.reordered,
-        type: "success",
-      });
+      // toast.add({
+      //   title: MESSAGES.toast.reordered,
+      //   type: "success",
+      // });
     },
     [isLoaded, todos, updateTodos],
   );
@@ -192,10 +185,12 @@ export function TodoApp() {
       try {
         importTodoStorage(data);
 
-        toast.add({
-          title: MESSAGES.toast.imported,
-          type: "success",
-        });
+        toast.success(MESSAGES.toast.imported);
+
+        // toast.add({
+        //   title: MESSAGES.toast.imported,
+        //   type: "success",
+        // });
 
         return true;
       } catch {
@@ -209,7 +204,10 @@ export function TodoApp() {
     const selectedCategory = categories.find(
       (category) => category.id === activeCategoryId,
     );
-    if (!selectedCategory) return;
+
+    if (!selectedCategory) {
+      return;
+    }
 
     setCategoryDialog({
       mode: "edit",
@@ -223,96 +221,124 @@ export function TodoApp() {
   const handleRenameCategory = useCallback(
     (category: { id: string; name: string }, name: string) => {
       const trimmedName = name.trim();
-      if (!trimmedName) return;
+
+      if (!trimmedName) {
+        return;
+      }
 
       const currentCategory = categories.find(
         (item) => item.id === category.id,
       );
 
-      if (!currentCategory) return;
+      if (!currentCategory) {
+        return;
+      }
 
       updateCategory({
         ...currentCategory,
         name: trimmedName,
       });
 
-      toast.add({
-        title: MESSAGES.toast.categoryUpdated,
-        description: trimmedName,
-        type: "success",
-      });
+      // toast.add({
+      //   title: MESSAGES.toast.categoryUpdated,
+      //   description: trimmedName,
+      //   type: "success",
+      // });
     },
     [categories, updateCategory],
   );
 
   const isDefaultCategorySelected = activeCategoryId === DEFAULT_CATEGORY_ID;
 
-  const handleDeleteCategory = useCallback(() => {
-    if (!categoryToDelete) return;
-    const categoryId = categoryToDelete.id;
+  const handleDeleteCategory = useCallback(
+    (category: { id: string; name: string }) => {
+      const categoryId = category.id;
 
-    // デフォルトカテゴリは削除できない
-    if (categoryId === DEFAULT_CATEGORY_ID) {
-      toast.add({
-        title: MESSAGES.toast.error,
-        description: "デフォルトカテゴリは削除できません",
-        type: "error",
+      // デフォルトカテゴリは削除できない
+      if (categoryId === DEFAULT_CATEGORY_ID) {
+        toast.error(MESSAGES.toast.imported, {
+          description: "デフォルトカテゴリは削除できません",
+        });
+
+        toast.error(MESSAGES.toast.error, {
+          description: "デフォルトカテゴリは削除できません",
+        });
+
+        // toast.add({
+        //   title: MESSAGES.toast.error,
+        //   description: "デフォルトカテゴリは削除できません",
+        //   type: "error",
+        // });
+
+        return;
+      }
+
+      // 削除されたカテゴリに属する Todo をデフォルトカテゴリに移行
+      const migratedTodos = todos.map((todo) =>
+        todo.categoryId === categoryId
+          ? {
+              ...todo,
+              categoryId: DEFAULT_CATEGORY_ID,
+            }
+          : todo,
+      );
+
+      updateTodos(migratedTodos);
+
+      // カテゴリを削除
+      deleteCategoryById(categoryId);
+
+      // 削除されたカテゴリが選択中だった場合、デフォルトカテゴリに切り替え
+      if (activeCategoryId === categoryId) {
+        setActiveCategoryId(DEFAULT_CATEGORY_ID);
+      }
+
+      toast.success(MESSAGES.toast.categoryDeleted, {
+        description: category.name,
       });
-      setCategoryToDelete(null);
-      return;
-    }
 
-    // 削除されたカテゴリに属する Todo をデフォルトカテゴリに移行
-    const migratedTodos = todos.map((todo) =>
-      todo.categoryId === categoryId
-        ? { ...todo, categoryId: DEFAULT_CATEGORY_ID }
-        : todo,
-    );
-
-    updateTodos(migratedTodos);
-
-    // カテゴリを削除
-    deleteCategoryById(categoryId);
-
-    // 削除されたカテゴリが選択中だった場合、デフォルトカテゴリに切り替え
-    if (activeCategoryId === categoryId) {
-      setActiveCategoryId(DEFAULT_CATEGORY_ID);
-    }
-
-    toast.add({
-      title: MESSAGES.toast.categoryDeleted,
-      description: categoryToDelete.name,
-      type: "success",
-    });
-
-    setCategoryToDelete(null);
-  }, [categoryToDelete, todos, updateTodos, activeCategoryId]);
+      // toast.add({
+      //   title: MESSAGES.toast.categoryDeleted,
+      //   description: category.name,
+      //   type: "success",
+      // });
+    },
+    [todos, updateTodos, deleteCategoryById, activeCategoryId],
+  );
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="not-prose flex w-full flex-col gap-6">
-        <div className="flex flex-col gap-3"></div>
+    <div className="not-prose flex w-full flex-col">
+      <div className="bg-background sticky top-0 z-50">
+        <TodoAppHeader />
 
-        <TodoAppNavigation
-          isEditing={isEditing}
-          appStorage={appStorage}
-          onReset={handleReset}
-          onImport={handleImport}
-          onOpenCategorySettings={handleOpenCategoryEditDialog}
-          onToggleEditing={() => setIsEditing((prev) => !prev)}
-        />
-
-        {isLoaded && (
-          <CategoryList
-            categories={categories}
-            activeCategoryId={activeCategoryId}
-            onSelect={setActiveCategoryId}
-            onCreate={() =>
-              setCategoryDialog({ mode: "create", category: null })
-            }
+        <div className="flex flex-col gap-2 p-4">
+          <TodoAppNavigation
+            isEditing={isEditing}
+            appStorage={appStorage}
+            onMarkAllIncomplete={handleMarkAllIncomplete}
+            onImport={handleImport}
+            onOpenCategorySettings={handleOpenCategoryEditDialog}
+            onToggleEditing={() => setIsEditing((prev) => !prev)}
           />
-        )}
 
+          {isLoaded && (
+            <CategoryList
+              categories={categories}
+              activeCategoryId={activeCategoryId}
+              onSelect={setActiveCategoryId}
+              onCreate={() =>
+                setCategoryDialog({
+                  mode: "create",
+                  category: null,
+                })
+              }
+            />
+          )}
+        </div>
+        <Separator />
+      </div>
+
+      <div className="p-4">
         <TodoList
           todos={visibleTodos}
           isLoaded={isLoaded}
@@ -321,8 +347,7 @@ export function TodoApp() {
           onUpdate={handleUpdate}
           onReorder={handleReorder}
         />
-
-        <TodoFormFooter onSubmit={handleCreate} isEditing={isEditing} />
+        <TodoFormFooter onSubmit={handleCreate} />
       </div>
 
       <CategorySettingDialog
@@ -344,43 +369,9 @@ export function TodoApp() {
         }}
         onCreate={handleCreateCategory}
         onRename={handleRenameCategory}
-        onDelete={(selectedCategory) => {
-          setCategoryToDelete(selectedCategory);
-          setCategoryDialog(null);
-        }}
+        onDelete={handleDeleteCategory}
+        onMarkAllIncomplete={handleMarkAllIncomplete}
       />
-
-      <AlertDialog
-        open={!!categoryToDelete}
-        onOpenChange={(open) => {
-          if (!open) {
-            setCategoryToDelete(null);
-          }
-        }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              カテゴリ「{categoryToDelete?.name ?? ""}」を削除しますか？
-            </AlertDialogTitle>
-
-            <AlertDialogDescription>
-              このカテゴリに属する Todo は未分類に移動します。
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-
-          <AlertDialogFooter>
-            <AlertDialogCancel>{MESSAGES.actions.cancel}</AlertDialogCancel>
-
-            <AlertDialogAction
-              variant="destructive"
-              onClick={handleDeleteCategory}
-            >
-              {MESSAGES.actions.delete}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 }
