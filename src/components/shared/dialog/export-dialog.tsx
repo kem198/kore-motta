@@ -8,10 +8,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { toast } from "@/components/ui/toast";
 import { MESSAGES } from "@/constants/messages";
 import { AppStorage } from "@/types/app-storage";
 import { ComponentProps, ReactElement, ReactNode } from "react";
+import { toast } from "sonner";
 
 type ExportDialogProps = {
   appStorage: AppStorage;
@@ -28,15 +28,18 @@ export function ExportDialog({
       const json = JSON.stringify(appStorage, null, 2);
       void navigator.clipboard.writeText(json);
 
-      toast.add({
-        title: MESSAGES.toast.clipboardCopied,
-        type: "success",
-      });
+      toast.success(MESSAGES.toast.clipboardCopied);
+
+      // toast.add({
+      //   title: MESSAGES.toast.clipboardCopied,
+      //   type: "success",
+      // });
     } catch {
-      toast.add({
-        title: MESSAGES.toast.clipboardCopied,
-        type: "error",
-      });
+      toast.error(MESSAGES.toast.clipboardCopied);
+      //   toast.add({
+      //     title: MESSAGES.toast.clipboardCopied,
+      //     type: "error",
+      //   });
     }
   };
 

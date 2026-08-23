@@ -5,7 +5,6 @@ import { CategorySettingDialog } from "@/components/shared/dialog/category-setti
 import { TodoAppNavigation } from "@/components/shared/todo-app-navigation";
 import { TodoFormFooter } from "@/components/shared/todo-form-footer";
 import { TodoList } from "@/components/shared/todo-list";
-import { toast } from "@/components/ui/toast";
 import {
   DEFAULT_CATEGORY_ID,
   DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
@@ -18,6 +17,7 @@ import { TodoFormValues } from "@/schemas/todo-form-schema";
 import { Category } from "@/types/category";
 import { Todo } from "@/types/todo";
 import { useCallback, useState } from "react";
+import { toast } from "sonner";
 
 export function TodoApp() {
   const { appStorage, isLoaded, updateAppStorage } = useAppStorage();
@@ -137,10 +137,11 @@ export function TodoApp() {
     markAllIncomplete();
     setIsEditing(false);
 
-    toast.add({
-      title: MESSAGES.toast.markAllIncomplete,
-      type: "success",
-    });
+    toast.success(MESSAGES.toast.markAllIncomplete);
+    // toast.add({
+    //   title: MESSAGES.toast.markAllIncomplete,
+    //   type: "success",
+    // });
   }, [markAllIncomplete]);
 
   function reorderTodos(
@@ -182,10 +183,12 @@ export function TodoApp() {
       try {
         importTodoStorage(data);
 
-        toast.add({
-          title: MESSAGES.toast.imported,
-          type: "success",
-        });
+        toast.success(MESSAGES.toast.imported);
+
+        // toast.add({
+        //   title: MESSAGES.toast.imported,
+        //   type: "success",
+        // });
 
         return true;
       } catch {
@@ -251,11 +254,19 @@ export function TodoApp() {
 
       // デフォルトカテゴリは削除できない
       if (categoryId === DEFAULT_CATEGORY_ID) {
-        toast.add({
-          title: MESSAGES.toast.error,
+        toast.error(MESSAGES.toast.imported, {
           description: "デフォルトカテゴリは削除できません",
-          type: "error",
         });
+
+        toast.error(MESSAGES.toast.error, {
+          description: "デフォルトカテゴリは削除できません",
+        });
+
+        // toast.add({
+        //   title: MESSAGES.toast.error,
+        //   description: "デフォルトカテゴリは削除できません",
+        //   type: "error",
+        // });
 
         return;
       }
@@ -280,11 +291,15 @@ export function TodoApp() {
         setActiveCategoryId(DEFAULT_CATEGORY_ID);
       }
 
-      toast.add({
-        title: MESSAGES.toast.categoryDeleted,
+      toast.success(MESSAGES.toast.categoryDeleted, {
         description: category.name,
-        type: "success",
       });
+
+      // toast.add({
+      //   title: MESSAGES.toast.categoryDeleted,
+      //   description: category.name,
+      //   type: "success",
+      // });
     },
     [todos, updateTodos, deleteCategoryById, activeCategoryId],
   );
