@@ -10,13 +10,11 @@ import { TodoList } from "@/components/shared/todo-list";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
-import {
-  DEFAULT_CATEGORIES_STORAGE,
-  DEFAULT_CATEGORY_ID,
-} from "@/constants/categories";
+import { DEFAULT_CATEGORY_ID } from "@/constants/categories";
 import { MESSAGES } from "@/constants/messages";
-import { CURRENT_TODO_STORAGE_VERSION } from "@/constants/version";
-import { TODO_STORAGE_KEY, useTodos } from "@/hooks/use-todos";
+import { useAppStorage } from "@/hooks/use-app-storage";
+import { useCategories } from "@/hooks/use-categories";
+import { useTodos } from "@/hooks/use-todos";
 import { TodoFormValues } from "@/schemas/todo-form-schema";
 import { Category } from "@/types/category";
 import { Todo } from "@/types/todo";
@@ -28,37 +26,32 @@ import {
   PlusIcon,
   UploadIcon,
 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 export function TodoApp() {
+  const { appStorage, isLoaded, updateAppStorage, replaceAppStorage } =
+    useAppStorage();
+
   const {
     todos,
-    isLoaded,
     addTodo,
     updateTodo,
     updateTodos,
     deleteTodoById,
     resetTodos,
     importTodoStorage,
-  } = useTodos();
+  } = useTodos({
+    appStorage,
+    updateAppStorage,
+  });
+
+  const { categories, addCategory, updateCategory, deleteCategoryById } =
+    useCategories({
+      appStorage,
+      updateAppStorage,
+    });
 
   const [isEditing, setIsEditing] = useState(false);
-  const [categories, setCategories] = useState<Category[]>(() => {
-    try {
-      if (typeof window === "undefined") return DEFAULT_CATEGORIES_STORAGE;
-      const raw = window.localStorage.getItem(TODO_STORAGE_KEY);
-      if (!raw) return DEFAULT_CATEGORIES_STORAGE;
-
-      const parsed = JSON.parse(raw) as { categories?: unknown };
-      const value = parsed.categories;
-      if (!Array.isArray(value)) {
-        return DEFAULT_CATEGORIES_STORAGE;
-      }
-      return value as Category[];
-    } catch {
-      return DEFAULT_CATEGORIES_STORAGE;
-    }
-  });
 
   const [activeCategoryId, setActiveCategoryId] = useState<string>(
     () => DEFAULT_CATEGORY_ID,
@@ -77,42 +70,6 @@ export function TodoApp() {
     (todo) => todo.categoryId === activeCategoryId,
   );
 
-  // 初回ロード時にストレージに categories がなければ初期値を保存する
-  useEffect(() => {
-    try {
-      if (typeof window === "undefined") return;
-
-      const raw = window.localStorage.getItem(TODO_STORAGE_KEY);
-      if (!raw) {
-        const initialStorage = {
-          version: CURRENT_TODO_STORAGE_VERSION,
-          todos: [],
-          categories: DEFAULT_CATEGORIES_STORAGE,
-        };
-        window.localStorage.setItem(
-          TODO_STORAGE_KEY,
-          JSON.stringify(initialStorage),
-        );
-        return;
-      }
-
-      const parsed = JSON.parse(raw);
-      if (!parsed.categories || Object.keys(parsed.categories).length === 0) {
-        const nextStorage = {
-          ...parsed,
-          version: CURRENT_TODO_STORAGE_VERSION,
-          categories: DEFAULT_CATEGORIES_STORAGE,
-        };
-        window.localStorage.setItem(
-          TODO_STORAGE_KEY,
-          JSON.stringify(nextStorage),
-        );
-      }
-    } catch {
-      // ignore
-    }
-  }, []);
-
   const handleCreateCategory = useCallback((name: string) => {
     const id = crypto.randomUUID();
 
@@ -122,26 +79,7 @@ export function TodoApp() {
       resetTime: "00:00",
     };
 
-    setCategories((prev) => {
-      const next = [...prev, newCategory];
-
-      try {
-        const raw = window.localStorage.getItem(TODO_STORAGE_KEY);
-        const currentStorage = raw ? JSON.parse(raw) : {};
-
-        currentStorage.categories = next;
-
-        window.localStorage.setItem(
-          TODO_STORAGE_KEY,
-          JSON.stringify(currentStorage),
-        );
-      } catch {
-        // ignore
-      }
-
-      return next;
-    });
-
+    addCategory(newCategory);
     setActiveCategoryId(id);
 
     toast.add({
@@ -287,35 +225,15 @@ export function TodoApp() {
       const trimmedName = name.trim();
       if (!trimmedName) return;
 
-      setCategories((prev) => {
-        const currentCategory = prev.find((item) => item.id === category.id);
+      const currentCategory = categories.find(
+        (item) => item.id === category.id,
+      );
 
-        if (!currentCategory) return prev;
+      if (!currentCategory) return;
 
-        const next = prev.map((item) =>
-          item.id === category.id
-            ? {
-                ...item,
-                name: trimmedName,
-              }
-            : item,
-        );
-
-        try {
-          const raw = window.localStorage.getItem(TODO_STORAGE_KEY);
-          const currentStorage = raw ? JSON.parse(raw) : {};
-
-          currentStorage.categories = next;
-
-          window.localStorage.setItem(
-            TODO_STORAGE_KEY,
-            JSON.stringify(currentStorage),
-          );
-        } catch {
-          // ignore
-        }
-
-        return next;
+      updateCategory({
+        ...currentCategory,
+        name: trimmedName,
       });
 
       toast.add({
@@ -324,7 +242,7 @@ export function TodoApp() {
         type: "success",
       });
     },
-    [],
+    [categories, updateCategory],
   );
 
   const isDefaultCategorySelected = activeCategoryId === DEFAULT_CATEGORY_ID;
@@ -354,23 +272,7 @@ export function TodoApp() {
     updateTodos(migratedTodos);
 
     // カテゴリを削除
-    setCategories((prev) => {
-      const next = prev.filter((category) => category.id !== categoryId);
-
-      try {
-        const raw = window.localStorage.getItem(TODO_STORAGE_KEY);
-        const currentStorage = raw ? JSON.parse(raw) : {};
-        currentStorage.categories = next;
-        window.localStorage.setItem(
-          TODO_STORAGE_KEY,
-          JSON.stringify(currentStorage),
-        );
-      } catch {
-        // ignore
-      }
-
-      return next;
-    });
+    deleteCategoryById(categoryId);
 
     // 削除されたカテゴリが選択中だった場合、デフォルトカテゴリに切り替え
     if (activeCategoryId === categoryId) {
@@ -466,14 +368,7 @@ export function TodoApp() {
                   </Button>
                 </ConfirmDialog>
 
-                <ExportDialog
-                  todoStorage={{
-                    version: CURRENT_TODO_STORAGE_VERSION,
-                    todos,
-                    categories,
-                  }}
-                  className="w-fit"
-                >
+                <ExportDialog appStorage={appStorage} className="w-fit">
                   <Button
                     variant="secondary"
                     aria-label={MESSAGES.actions.export}

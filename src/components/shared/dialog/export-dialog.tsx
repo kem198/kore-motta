@@ -11,16 +11,16 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "@/components/ui/toast";
 import { MESSAGES } from "@/constants/messages";
-import { TodoStorage } from "@/types/todo";
+import { AppStorage } from "@/types/app-storage";
 import { ComponentProps, ReactElement, ReactNode } from "react";
 
 type ExportDialogProps = {
-  todoStorage: TodoStorage;
+  appStorage: AppStorage;
   children: ReactNode;
 } & ComponentProps<typeof DialogTrigger>;
 
 export function ExportDialog({
-  todoStorage: todoStorage,
+  appStorage,
   children,
   ...props
 }: ExportDialogProps) {
@@ -43,7 +43,7 @@ export function ExportDialog({
         <Button
           onClick={() => {
             try {
-              const json = JSON.stringify(todoStorage, null, 2);
+              const json = JSON.stringify(appStorage, null, 2);
               void navigator.clipboard.writeText(json);
               toast.add({
                 title: MESSAGES.toast.clipboardCopied,
@@ -60,7 +60,7 @@ export function ExportDialog({
           {MESSAGES.actions.copy}
         </Button>
         <JsonDisplay
-          data={todoStorage}
+          data={appStorage}
           scrollAreaProps={{ className: "max-h-[60vh]" }}
         />
 

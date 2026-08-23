@@ -1,6 +1,6 @@
 import { DEFAULT_CATEGORY_ID } from "@/constants/categories";
-import { CURRENT_TODO_STORAGE_VERSION } from "@/constants/version";
-import { TodoStorage } from "@/types/todo";
+import { CURRENT_APP_STORAGE_VERSION } from "@/constants/version";
+import { AppStorage } from "@/types/app-storage";
 import * as z from "zod";
 
 const categorySchema = z
@@ -22,14 +22,21 @@ const todoSchema = z
   })
   .strict();
 
-const todoStorageSchema = z
+const appStorageDataSchema = z
   .object({
-    version: z.literal(CURRENT_TODO_STORAGE_VERSION),
+    settings: z.record(z.string(), z.unknown()),
     categories: z.array(categorySchema),
     todos: z.array(todoSchema),
   })
   .strict();
 
-export function parseTodoStorage(data: unknown): TodoStorage {
-  return todoStorageSchema.parse(data);
+const appStorageSchema = z
+  .object({
+    version: z.literal(CURRENT_APP_STORAGE_VERSION),
+    data: appStorageDataSchema,
+  })
+  .strict();
+
+export function parseAppStorage(data: unknown): AppStorage {
+  return appStorageSchema.parse(data);
 }
