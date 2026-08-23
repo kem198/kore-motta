@@ -14,6 +14,7 @@ export const MESSAGES = {
     export: "エクスポート",
     delete: "削除",
     unset: "未設定",
+    markAllIncomplete: "未完了に戻す",
   },
 
   dialogs: {
@@ -25,6 +26,10 @@ export const MESSAGES = {
     reset: {
       title: "登録内容の初期化",
       description: "登録内容を初期状態に戻します。",
+    },
+    markAllIncomplete: {
+      title: "すべて未完了に戻す",
+      description: "カテゴリ内のすべてのアイテムを未完了に戻します。",
     },
     export: {
       title: "アイテム情報のエクスポート",
@@ -78,6 +83,7 @@ export const MESSAGES = {
     categoryUpdated: "カテゴリを更新しました",
     categoryDeleted: "カテゴリを削除しました",
     reordered: "並び順を更新しました",
+    markAllIncomplete: "すべてのアイテムを未完了に戻しました",
     reset: "登録内容を初期化しました",
     error: "エラー",
     importError: "アイテム情報の形式が不正なため、インポートできませんでした。",
