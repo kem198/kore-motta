@@ -1,8 +1,8 @@
 import {
   DEFAULT_CATEGORIES_STORAGE,
   DEFAULT_CATEGORY_ID,
+  DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
   DEFAULT_CATEGORY_NAME,
-  DEFAULT_CATEGORY_RESET_TIME,
 } from "@/constants/categories";
 import { APP_STORAGE_KEY } from "@/lib/storage/app-storage";
 import { AppStorage } from "@/types/app-storage";
@@ -157,7 +157,9 @@ test.describe("Todo ページのテスト", () => {
         );
         expect(defaultCategory).toBeDefined();
         expect(defaultCategory?.name).toBe(DEFAULT_CATEGORY_NAME);
-        expect(defaultCategory?.resetTime).toBe(DEFAULT_CATEGORY_RESET_TIME);
+        expect(defaultCategory?.markAllIncompleteAt).toBe(
+          DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
+        );
 
         const legacyCategoriesKeyValue = await page.evaluate(() =>
           localStorage.getItem("categories"),
@@ -236,12 +238,12 @@ test.describe("Todo ページのテスト", () => {
               {
                 id: DEFAULT_CATEGORY_ID,
                 name: DEFAULT_CATEGORY_NAME,
-                resetTime: DEFAULT_CATEGORY_RESET_TIME,
+                markAllIncompleteAt: DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
               },
               {
                 id: "work",
                 name: "仕事",
-                resetTime: "09:00",
+                markAllIncompleteAt: "09:00",
               },
             ],
           },
@@ -288,7 +290,7 @@ test.describe("Todo ページのテスト", () => {
     });
 
     test.describe("初期化時のテスト", () => {
-      test("Todo を初期化すると、登録済み Todo が削除されず、完了状態が未完了に戻ること", async ({
+      test("Todo をすべて未完了に戻す操作を行うと、登録済み Todo が削除されず、完了状態が未完了に戻ること", async ({
         page,
       }) => {
         // Arrange
@@ -328,8 +330,8 @@ test.describe("Todo ページのテスト", () => {
 
         // Act
         await page.getByRole("button", { name: "編集開始" }).click();
-        await page.getByRole("button", { name: "初期化" }).click();
-        await page.getByRole("button", { name: "初期化" }).click();
+        await page.getByRole("button", { name: "未完了に戻す" }).click();
+        await page.getByRole("button", { name: "未完了に戻す" }).click();
 
         // Assert (表示が残ること)
         await expect(
@@ -393,7 +395,9 @@ test.describe("Todo ページのテスト", () => {
 
         // Act
         await page.getByRole("button", { name: "編集開始" }).click();
-        await expect(page.getByRole("button", { name: "完了" })).toBeVisible();
+        await expect(
+          page.getByRole("button", { name: "完了", exact: true }),
+        ).toBeVisible();
         await page.getByRole("button", { name: "エクスポート" }).click();
 
         // Assert
@@ -585,7 +589,9 @@ test.describe("Todo ページのテスト", () => {
         );
         expect(defaultCategory).toBeDefined();
         expect(defaultCategory?.name).toBe(DEFAULT_CATEGORY_NAME);
-        expect(defaultCategory?.resetTime).toBe(DEFAULT_CATEGORY_RESET_TIME);
+        expect(defaultCategory?.markAllIncompleteAt).toBe(
+          DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
+        );
       });
     });
 
@@ -617,7 +623,9 @@ test.describe("Todo ページのテスト", () => {
         expect(createdCategory).toBeDefined();
         expect(createdCategory?.name).toBe("朝活");
         expect(createdCategory?.id).toBeTruthy();
-        expect(createdCategory?.resetTime).toBe(DEFAULT_CATEGORY_RESET_TIME);
+        expect(createdCategory?.markAllIncompleteAt).toBe(
+          DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
+        );
 
         // 一覧の末尾付近に新しいカテゴリが表示されること
         const categoryButtons = page
@@ -663,12 +671,12 @@ test.describe("Todo ページのテスト", () => {
               {
                 id: DEFAULT_CATEGORY_ID,
                 name: DEFAULT_CATEGORY_NAME,
-                resetTime: DEFAULT_CATEGORY_RESET_TIME,
+                markAllIncompleteAt: DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
               },
               {
                 id: "work",
                 name: "仕事",
-                resetTime: "09:00",
+                markAllIncompleteAt: "09:00",
               },
             ],
           },
@@ -708,12 +716,12 @@ test.describe("Todo ページのテスト", () => {
               {
                 id: DEFAULT_CATEGORY_ID,
                 name: DEFAULT_CATEGORY_NAME,
-                resetTime: DEFAULT_CATEGORY_RESET_TIME,
+                markAllIncompleteAt: DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
               },
               {
                 id: "work",
                 name: "仕事",
-                resetTime: "09:00",
+                markAllIncompleteAt: "09:00",
               },
             ],
           },
@@ -744,7 +752,7 @@ test.describe("Todo ページのテスト", () => {
         );
         expect(updatedCategory).toBeDefined();
         expect(updatedCategory?.name).toBe("営業");
-        expect(updatedCategory?.resetTime).toBe("09:00");
+        expect(updatedCategory?.markAllIncompleteAt).toBe("09:00");
       });
     });
 
@@ -775,17 +783,17 @@ test.describe("Todo ページのテスト", () => {
               {
                 id: DEFAULT_CATEGORY_ID,
                 name: DEFAULT_CATEGORY_NAME,
-                resetTime: DEFAULT_CATEGORY_RESET_TIME,
+                markAllIncompleteAt: DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
               },
               {
                 id: "work",
                 name: "仕事",
-                resetTime: "09:00",
+                markAllIncompleteAt: "09:00",
               },
               {
                 id: "personal",
                 name: "個人",
-                resetTime: "09:00",
+                markAllIncompleteAt: "09:00",
               },
             ],
           },
@@ -849,12 +857,12 @@ test.describe("Todo ページのテスト", () => {
               {
                 id: DEFAULT_CATEGORY_ID,
                 name: DEFAULT_CATEGORY_NAME,
-                resetTime: DEFAULT_CATEGORY_RESET_TIME,
+                markAllIncompleteAt: DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
               },
               {
                 id: "work",
                 name: "仕事",
-                resetTime: "09:00",
+                markAllIncompleteAt: "09:00",
               },
             ],
           },
@@ -904,7 +912,9 @@ test.describe("Todo ページのテスト", () => {
         );
         expect(defaultCategory).toBeDefined();
         expect(defaultCategory?.name).toBe(DEFAULT_CATEGORY_NAME);
-        expect(defaultCategory?.resetTime).toBe(DEFAULT_CATEGORY_RESET_TIME);
+        expect(defaultCategory?.markAllIncompleteAt).toBe(
+          DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
+        );
       });
     });
   });
