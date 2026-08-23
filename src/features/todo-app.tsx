@@ -311,7 +311,7 @@ export function TodoApp() {
       <div className="bg-background sticky top-0 z-50">
         <TodoAppHeader />
 
-        <div className="p-4">
+        <div className="flex flex-col gap-2 p-4">
           <TodoAppNavigation
             isEditing={isEditing}
             appStorage={appStorage}
