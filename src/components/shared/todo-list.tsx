@@ -188,28 +188,31 @@ type TodoListProps = {
   onReorder: (startIndex: number, endIndex: number) => void;
 };
 
-export function TodoList({
+function TodoListLoading() {
+  return (
+    <ItemGroup>
+      <TodoListSkeleton />
+      <TodoListSkeleton />
+      <TodoListSkeleton />
+    </ItemGroup>
+  );
+}
+
+type TodoListContentProps = {
+  todos: Todo[];
+  isEditing: boolean;
+  onDelete: (todo: Todo) => void;
+  onUpdate: (todo: Todo) => void;
+  onReorder: (startIndex: number, endIndex: number) => void;
+};
+
+function TodoListContent({
   todos,
-  isLoaded,
   isEditing,
   onDelete,
   onUpdate,
   onReorder,
-}: TodoListProps) {
-  if (!isLoaded) {
-    return (
-      <ItemGroup>
-        <TodoListSkeleton />
-        <TodoListSkeleton />
-        <TodoListSkeleton />
-      </ItemGroup>
-    );
-  }
-
-  if (todos.length === 0) {
-    return <ItemGroup />;
-  }
-
+}: TodoListContentProps) {
   return (
     <ItemGroup>
       {todos.map((todo, index) => (
@@ -227,5 +230,32 @@ export function TodoList({
         </Fragment>
       ))}
     </ItemGroup>
+  );
+}
+
+export function TodoList({
+  todos,
+  isLoaded,
+  isEditing,
+  onDelete,
+  onUpdate,
+  onReorder,
+}: TodoListProps) {
+  if (!isLoaded) {
+    return <TodoListLoading />;
+  }
+
+  if (todos.length === 0) {
+    return <ItemGroup />;
+  }
+
+  return (
+    <TodoListContent
+      todos={todos}
+      isEditing={isEditing}
+      onDelete={onDelete}
+      onUpdate={onUpdate}
+      onReorder={onReorder}
+    />
   );
 }
