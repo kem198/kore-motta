@@ -61,7 +61,7 @@ function TodoItemActions({
   onReorder,
 }: TodoItemActionsProps) {
   return (
-    <ItemActions className="flex w-full items-center justify-end gap-2 md:w-auto">
+    <ItemActions className="flex shrink-0 items-center justify-end gap-2">
       {isEditing && (
         <>
           <ConfirmDialog
