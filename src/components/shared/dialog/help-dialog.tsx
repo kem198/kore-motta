@@ -31,7 +31,7 @@ function Term() {
         <h3>このアプリは何？</h3>
 
         <p>
-          <strong>Kore Motta?</strong>{" "}
+          <span className="font-ubuntu-sans font-medium">Kore Motta?</span>{" "}
           は、毎日の「これ持った？」を確認するシンプルな Todo アプリです。
         </p>
 
@@ -45,7 +45,7 @@ function Term() {
 
         <ul>
           <li>
-            設定した時刻になると、登録したアイテムがすべて未完了に戻ります。
+            設定した時刻を過ぎると、登録したアイテムがすべて未完了に戻ります。
           </li>
           <li>
             繰り返しのアイテムや期限切れのアイテムが溜まらないため、必要なタイミングで使えます。
@@ -141,13 +141,13 @@ export function HelpDialog() {
           <Button
             type="button"
             variant="ghost"
-            size="icon"
+            size="icon-lg"
             aria-label="アプリの使い方・利用規約"
-            className="text-white hover:bg-white/10 hover:text-white"
+            className="rounded-full text-white hover:bg-white/10 hover:text-white"
           />
         }
       >
-        <CircleHelpIcon size={20} />
+        <CircleHelpIcon className="size-5" />
       </DialogTrigger>
 
       <DialogContent className="flex h-[90vh] max-h-[90vh] w-[calc(100%-2rem)] !max-w-xl flex-col">
