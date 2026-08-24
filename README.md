@@ -1,6 +1,6 @@
 # Kore Motta?
 
-Kore Motta? は、毎日の「これ持った？」を確認するためのシンプルな Todo アプリです。
+[Kore Motta?](https://kore-motta.kem198.net) は、毎日の「これ持った？」を確認するためのシンプルな Todo アプリです。
 
 - カテゴリごとに Todo を管理します。
 - 設定した時刻にカテゴリに属するすべての Todo を未完了へリセットします。
