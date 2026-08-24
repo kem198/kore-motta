@@ -4,5 +4,5 @@ export type Todo = {
   memo?: string;
   completed: boolean;
   categoryId: string;
-  order: number;
+  position: number;
 };
