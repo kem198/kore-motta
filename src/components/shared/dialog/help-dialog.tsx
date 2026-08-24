@@ -120,7 +120,7 @@ function Term() {
         <ul>
           {CHANGELOG.map((release) => (
             <li key={release.version}>
-              <p>
+              <p className="font-mono">
                 {release.version}
                 <span> | {release.date}</span>
               </p>
