@@ -80,10 +80,10 @@ npm run start
 
 - [Playwright](https://playwright.dev/)
 
-### ホスティング
-
-- [Vercel](https://vercel.com/)
-
-### ドメイン取得 / DNS 管理
+### ドメイン取得・DNS 管理
 
 - [Xserver Domain](https://www.xdomain.ne.jp/)
+
+### ホスティング・デプロイ
+
+- [Vercel](https://vercel.com/)
