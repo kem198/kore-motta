@@ -209,9 +209,9 @@ test.describe("Todo ページのテスト", () => {
         await expect(assertScope.getByText("家の鍵").first()).toBeVisible();
 
         // Assert (データストアへ登録されていること)
-        const migrated: AppStorage = await getAppStorage(page);
-        expect(migrated.version).toBe(1);
-        expect(migrated.data.todos[0].name).toBe("カギ");
+        const persisted: AppStorage = await getAppStorage(page);
+        expect(persisted.version).toBe(1);
+        expect(persisted.data.todos[0].name).toBe("カギ");
       });
 
       test("Todo の編集画面に現在のカテゴリ名が表示されること", async ({
@@ -349,8 +349,8 @@ test.describe("Todo ページのテスト", () => {
         ).not.toBeVisible();
 
         // Assert (データストアへ登録されていないこと)
-        const migrated: AppStorage = await getAppStorage(page);
-        expect(migrated.data.todos).toHaveLength(0);
+        const persisted: AppStorage = await getAppStorage(page);
+        expect(persisted.data.todos).toHaveLength(0);
       });
     });
 
@@ -402,10 +402,10 @@ test.describe("Todo ページのテスト", () => {
         ).toBeVisible();
 
         // Assert (完了状態が未完了に戻ること)
-        const migrated: AppStorage = await getAppStorage(page);
-        expect(migrated.data.todos).toHaveLength(2);
+        const persisted: AppStorage = await getAppStorage(page);
+        expect(persisted.data.todos).toHaveLength(2);
         expect(
-          migrated.data.todos.every((todo) => todo.completed === false),
+          persisted.data.todos.every((todo) => todo.completed === false),
         ).toBe(true);
       });
     });
@@ -975,10 +975,10 @@ test.describe("Todo ページのテスト", () => {
         ).toBeVisible();
 
         // Assert (データストアへ保存されていること)
-        const migrated: AppStorage = await getAppStorage(page);
-        expect(migrated.version).toBe(1);
-        expect(migrated.data.todos[0].id).toBe("import-todo");
-        expect(migrated.data.todos[0].name).toBe("カギ");
+        const persisted: AppStorage = await getAppStorage(page);
+        expect(persisted.version).toBe(1);
+        expect(persisted.data.todos[0].id).toBe("import-todo");
+        expect(persisted.data.todos[0].name).toBe("カギ");
       });
 
       test("不正な JSON 文字列をインポートした時、エラーメッセージが表示され、登録済み情報が更新されないこと", async ({
@@ -1008,8 +1008,8 @@ test.describe("Todo ページのテスト", () => {
         ).toBeVisible();
 
         // Assert (データストアが更新されていないこと)
-        const migratedInvalidJson: AppStorage = await getAppStorage(page);
-        expect(migratedInvalidJson.data.todos[0].id).toBe("dummy-todo");
+        const persistedInvalidJson: AppStorage = await getAppStorage(page);
+        expect(persistedInvalidJson.data.todos[0].id).toBe("dummy-todo");
       });
 
       test("AppStorage 型に一致しない JSON 文字列をインポートした時、エラーメッセージが表示され、登録済み情報が更新されないこと", async ({
@@ -1057,8 +1057,8 @@ test.describe("Todo ページのテスト", () => {
         ).toBeVisible();
 
         // Assert (データストアが更新されていないこと)
-        const migratedCorrupted: AppStorage = await getAppStorage(page);
-        expect(migratedCorrupted.data.todos[0].id).toBe("dummy-todo");
+        const persistedCorrupted: AppStorage = await getAppStorage(page);
+        expect(persistedCorrupted.data.todos[0].id).toBe("dummy-todo");
       });
     });
   });
