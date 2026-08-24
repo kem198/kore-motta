@@ -1,36 +1,89 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Kore Motta?
 
-## Getting Started
+Kore Motta? は、毎日の「これ持った？」を確認するためのシンプルな Todo アプリです。
 
-First, run the development server:
+- カテゴリごとに Todo を管理します。
+- 設定した時刻にカテゴリに属するすべての Todo を未完了へリセットします。
+- 登録データはブラウザの [localStorage](https://developer.mozilla.org/ja/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API) に保存します。
 
-```bash
+## 公開中の URL
+
+- [Kore Motta?](https://kore-motta.kem198.net)
+
+## 主な機能
+
+- Todo の作成・編集・削除・並び替え
+- カテゴリの作成・編集・削除
+- カテゴリごとの Todo 一括未完了化 (自動・手動)
+- JSON 形式によるエクスポート・インポート
+
+## ローカル環境での実行
+
+### 必須
+
+- [Node.js](https://nodejs.org/ja) ^24.19.0
+
+### 推奨
+
+- [Volta](https://volta.sh/)
+- Unix 系 OS (WSL / Linux / macOS)
+
+### 実行までの手順
+
+```shell
+# リポジトリの Clone
+git clone git@github.com:kem198/kore-motta.git
+cd kore-motta
+
+# パッケージのインストール
+npm install
+
+# ローカルサーバの起動 (開発用)
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# ローカルサーバの起動 (本番用)
+npm run build
+npm run start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 仕様技術
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### フレームワーク
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- [Next.js](https://nextjs.org/)
 
-## Learn More
+### 言語
 
-To learn more about Next.js, take a look at the following resources:
+- [TypeScript](https://www.typescriptlang.org/)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### UI 構築
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- [React](https://react.dev/)
+- [shadcn/ui](https://ui.shadcn.com/)
 
-## Deploy on Vercel
+### スタイリング
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- [Tailwind CSS](https://tailwindcss.com/)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### フォント
+
+- [Google Fonts](https://fonts.google.com/)
+  - [Noto Sans Japanese](https://fonts.google.com/noto/specimen/Noto+Sans+JP)
+  - [Ubuntu Sans](https://fonts.google.com/specimen/Ubuntu+Sans)
+  - [Ubuntu Sans Mono](https://fonts.google.com/specimen/Ubuntu+Sans+Mono)
+
+### アイコン
+
+- [Lucide](https://lucide.dev/)
+
+### テスティング
+
+- [Playwright](https://playwright.dev/)
+
+### ホスティング
+
+- [Vercel](https://vercel.com/)
+
+### ドメイン取得 / DNS 管理
+
+- [Xserver Domain](https://www.xdomain.ne.jp/)
