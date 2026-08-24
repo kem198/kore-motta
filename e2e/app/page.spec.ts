@@ -354,208 +354,6 @@ test.describe("Todo ページのテスト", () => {
         ).toBe(true);
       });
     });
-
-    test.describe("エクスポート時のテスト", () => {
-      test("Todo が登録済みの状態で、「エクスポート」ボタンをクリックした時、登録内容のエクスポート用テキストが表示されること", async ({
-        page,
-      }) => {
-        // Arrange
-        const todoStorage: AppStorage = {
-          version: 1,
-          data: {
-            settings: {},
-            todos: [
-              {
-                id: "test-todo-01",
-                name: "カギ",
-                order: 0,
-                categoryId: DEFAULT_CATEGORY_ID,
-                memo: "家の鍵",
-                completed: false,
-              },
-              {
-                id: "test-todo-02",
-                name: "財布",
-                order: 1,
-                categoryId: DEFAULT_CATEGORY_ID,
-                memo: "白い財布",
-                completed: false,
-              },
-            ],
-            categories: DEFAULT_CATEGORIES_STORAGE,
-          },
-        };
-
-        await page.evaluate(
-          ([key, value]) => {
-            localStorage.setItem(key, value);
-          },
-          [APP_STORAGE_KEY, JSON.stringify(todoStorage)],
-        );
-
-        await navigateToTodo(page);
-
-        // Act
-        await page.getByRole("button", { name: "グローバルメニュー" }).click();
-        await page.getByRole("menuitem", { name: "エクスポート" }).click();
-
-        // Assert
-        // ダイアログは page の範囲外のためページ全体をテスト範囲にする
-        await expect(page.locator("body")).toContainText('"version": 1');
-        await expect(page.locator("body")).toContainText(
-          '"id": "test-todo-01"',
-        );
-        await expect(page.locator("body")).toContainText('"name": "カギ"');
-        await expect(page.locator("body")).toContainText('"order": 0');
-        await expect(page.locator("body")).toContainText('"memo": "家の鍵"');
-        await expect(page.locator("body")).toContainText(
-          '"id": "test-todo-02"',
-        );
-        await expect(page.locator("body")).toContainText('"name": "財布"');
-        await expect(page.locator("body")).toContainText('"order": 1');
-        await expect(page.locator("body")).toContainText('"memo": "白い財布"');
-      });
-    });
-
-    test.describe("インポート時のテスト", () => {
-      test("エクスポート用テキストをインポートした時、既存の登録情報が上書きされること", async ({
-        page,
-      }) => {
-        // Arrange
-        const backupTodoStorage: AppStorage = {
-          version: 1,
-          data: {
-            settings: {},
-            todos: [
-              {
-                id: "import-todo",
-                name: "カギ",
-                order: 0,
-                categoryId: DEFAULT_CATEGORY_ID,
-                memo: "家の鍵",
-                completed: false,
-              },
-            ],
-            categories: DEFAULT_CATEGORIES_STORAGE,
-          },
-        };
-        const backupText = JSON.stringify(backupTodoStorage, null, 2);
-
-        await navigateToTodo(page);
-        await page.getByRole("button", { name: "編集開始" }).click();
-
-        // Act
-        await page.getByRole("button", { name: "グローバルメニュー" }).click();
-        await page.getByRole("menuitem", { name: "インポート" }).click();
-        await page
-          .getByRole("textbox", { name: "インポート用テキストエリア" })
-          .fill(backupText);
-        await page.getByRole("button", { name: "インポート" }).click();
-
-        // Assert (表示が復元されること)
-        await expect(
-          assertScope.getByText("カギ", { exact: true }),
-        ).toBeVisible();
-        await expect(
-          assertScope.getByText("家の鍵", { exact: true }),
-        ).toBeVisible();
-
-        // Assert (データストアへ保存されていること)
-        const migrated: AppStorage = await page.evaluate(
-          (key) => JSON.parse(localStorage.getItem(key)!),
-          APP_STORAGE_KEY,
-        );
-        expect(migrated.version).toBe(1);
-        expect(migrated.data.todos[0].id).toBe("import-todo");
-        expect(migrated.data.todos[0].name).toBe("カギ");
-      });
-
-      test("不正な JSON 文字列をインポートした時、エラーメッセージが表示され、登録済み情報が更新されないこと", async ({
-        page,
-      }) => {
-        // Arrange
-        const corruptedText = "JSON ではない文字列";
-
-        await navigateToTodo(page);
-        await page.getByRole("button", { name: "グローバルメニュー" }).click();
-        await page.getByRole("menuitem", { name: "インポート" }).click();
-
-        // Act
-        await page.getByRole("textbox").fill(corruptedText);
-        await page.getByRole("button", { name: "インポート" }).click();
-
-        // Assert
-        await expect(
-          page.getByText(
-            "アイテム情報の形式が不正なため、インポートできませんでした。",
-          ),
-        ).toBeVisible();
-
-        // Assert (表示がダミーデータのままであること)
-        await expect(
-          assertScope.getByText("dummy", { exact: true }),
-        ).toBeVisible();
-
-        // Assert (データストアが更新されていないこと)
-        const migratedInvalidJson: AppStorage = await page.evaluate(
-          (key) => JSON.parse(localStorage.getItem(key)!),
-          APP_STORAGE_KEY,
-        );
-        expect(migratedInvalidJson.data.todos[0].id).toBe("dummy-todo");
-      });
-
-      test("AppStorage 型に一致しない JSON 文字列をインポートした時、エラーメッセージが表示され、登録済み情報が更新されないこと", async ({
-        page,
-      }) => {
-        // Arrange
-        const corruptedAppStorage: unknown = {
-          version: 1,
-          data: {
-            settings: {},
-            todos: [
-              {
-                id: "import-todo",
-                name: "カギ",
-                order: 0,
-                categoryId: DEFAULT_CATEGORY_ID,
-                memo: "家の鍵",
-                undefinedKey: "★ AppStorage 型に一致しないキー",
-              },
-            ],
-            categories: DEFAULT_CATEGORIES_STORAGE,
-          },
-        };
-
-        await navigateToTodo(page);
-        await page.getByRole("button", { name: "グローバルメニュー" }).click();
-        await page.getByRole("menuitem", { name: "インポート" }).click();
-
-        // Act
-        await page
-          .getByRole("textbox", { name: "インポート用テキストエリア" })
-          .fill(JSON.stringify(corruptedAppStorage));
-        await page.getByRole("button", { name: "インポート" }).click();
-
-        // Assert
-        await expect(
-          page.getByText(
-            "アイテム情報の形式が不正なため、インポートできませんでした。",
-          ),
-        ).toBeVisible();
-
-        // Assert (表示がダミーデータのままであること)
-        await expect(
-          assertScope.getByText("dummy", { exact: true }),
-        ).toBeVisible();
-
-        // Assert (データストアが更新されていないこと)
-        const migratedCorrupted: AppStorage = await page.evaluate(
-          (key) => JSON.parse(localStorage.getItem(key)!),
-          APP_STORAGE_KEY,
-        );
-        expect(migratedCorrupted.data.todos[0].id).toBe("dummy-todo");
-      });
-    });
   });
 
   test.describe("カテゴリの操作", () => {
@@ -984,6 +782,210 @@ test.describe("Todo ページのテスト", () => {
         expect(defaultCategory?.markAllIncompleteAt).toBe(
           DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
         );
+      });
+    });
+  });
+
+  test.describe("共通操作", () => {
+    test.describe("エクスポート時のテスト", () => {
+      test("Todo が登録済みの状態で、「エクスポート」ボタンをクリックした時、登録内容のエクスポート用テキストが表示されること", async ({
+        page,
+      }) => {
+        // Arrange
+        const todoStorage: AppStorage = {
+          version: 1,
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "test-todo-01",
+                name: "カギ",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                memo: "家の鍵",
+                completed: false,
+              },
+              {
+                id: "test-todo-02",
+                name: "財布",
+                order: 1,
+                categoryId: DEFAULT_CATEGORY_ID,
+                memo: "白い財布",
+                completed: false,
+              },
+            ],
+            categories: DEFAULT_CATEGORIES_STORAGE,
+          },
+        };
+
+        await page.evaluate(
+          ([key, value]) => {
+            localStorage.setItem(key, value);
+          },
+          [APP_STORAGE_KEY, JSON.stringify(todoStorage)],
+        );
+
+        await navigateToTodo(page);
+
+        // Act
+        await page.getByRole("button", { name: "グローバルメニュー" }).click();
+        await page.getByRole("menuitem", { name: "エクスポート" }).click();
+
+        // Assert
+        // ダイアログは page の範囲外のためページ全体をテスト範囲にする
+        await expect(page.locator("body")).toContainText('"version": 1');
+        await expect(page.locator("body")).toContainText(
+          '"id": "test-todo-01"',
+        );
+        await expect(page.locator("body")).toContainText('"name": "カギ"');
+        await expect(page.locator("body")).toContainText('"order": 0');
+        await expect(page.locator("body")).toContainText('"memo": "家の鍵"');
+        await expect(page.locator("body")).toContainText(
+          '"id": "test-todo-02"',
+        );
+        await expect(page.locator("body")).toContainText('"name": "財布"');
+        await expect(page.locator("body")).toContainText('"order": 1');
+        await expect(page.locator("body")).toContainText('"memo": "白い財布"');
+      });
+    });
+
+    test.describe("インポート時のテスト", () => {
+      test("エクスポート用テキストをインポートした時、既存の登録情報が上書きされること", async ({
+        page,
+      }) => {
+        // Arrange
+        const backupTodoStorage: AppStorage = {
+          version: 1,
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "import-todo",
+                name: "カギ",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                memo: "家の鍵",
+                completed: false,
+              },
+            ],
+            categories: DEFAULT_CATEGORIES_STORAGE,
+          },
+        };
+        const backupText = JSON.stringify(backupTodoStorage, null, 2);
+
+        await navigateToTodo(page);
+        await page.getByRole("button", { name: "編集開始" }).click();
+
+        // Act
+        await page.getByRole("button", { name: "グローバルメニュー" }).click();
+        await page.getByRole("menuitem", { name: "インポート" }).click();
+        await page
+          .getByRole("textbox", { name: "インポート用テキストエリア" })
+          .fill(backupText);
+        await page.getByRole("button", { name: "インポート" }).click();
+
+        // Assert (表示が復元されること)
+        await expect(
+          assertScope.getByText("カギ", { exact: true }),
+        ).toBeVisible();
+        await expect(
+          assertScope.getByText("家の鍵", { exact: true }),
+        ).toBeVisible();
+
+        // Assert (データストアへ保存されていること)
+        const migrated: AppStorage = await page.evaluate(
+          (key) => JSON.parse(localStorage.getItem(key)!),
+          APP_STORAGE_KEY,
+        );
+        expect(migrated.version).toBe(1);
+        expect(migrated.data.todos[0].id).toBe("import-todo");
+        expect(migrated.data.todos[0].name).toBe("カギ");
+      });
+
+      test("不正な JSON 文字列をインポートした時、エラーメッセージが表示され、登録済み情報が更新されないこと", async ({
+        page,
+      }) => {
+        // Arrange
+        const corruptedText = "JSON ではない文字列";
+
+        await navigateToTodo(page);
+        await page.getByRole("button", { name: "グローバルメニュー" }).click();
+        await page.getByRole("menuitem", { name: "インポート" }).click();
+
+        // Act
+        await page.getByRole("textbox").fill(corruptedText);
+        await page.getByRole("button", { name: "インポート" }).click();
+
+        // Assert
+        await expect(
+          page.getByText(
+            "アイテム情報の形式が不正なため、インポートできませんでした。",
+          ),
+        ).toBeVisible();
+
+        // Assert (表示がダミーデータのままであること)
+        await expect(
+          assertScope.getByText("dummy", { exact: true }),
+        ).toBeVisible();
+
+        // Assert (データストアが更新されていないこと)
+        const migratedInvalidJson: AppStorage = await page.evaluate(
+          (key) => JSON.parse(localStorage.getItem(key)!),
+          APP_STORAGE_KEY,
+        );
+        expect(migratedInvalidJson.data.todos[0].id).toBe("dummy-todo");
+      });
+
+      test("AppStorage 型に一致しない JSON 文字列をインポートした時、エラーメッセージが表示され、登録済み情報が更新されないこと", async ({
+        page,
+      }) => {
+        // Arrange
+        const corruptedAppStorage: unknown = {
+          version: 1,
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "import-todo",
+                name: "カギ",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                memo: "家の鍵",
+                undefinedKey: "★ AppStorage 型に一致しないキー",
+              },
+            ],
+            categories: DEFAULT_CATEGORIES_STORAGE,
+          },
+        };
+
+        await navigateToTodo(page);
+        await page.getByRole("button", { name: "グローバルメニュー" }).click();
+        await page.getByRole("menuitem", { name: "インポート" }).click();
+
+        // Act
+        await page
+          .getByRole("textbox", { name: "インポート用テキストエリア" })
+          .fill(JSON.stringify(corruptedAppStorage));
+        await page.getByRole("button", { name: "インポート" }).click();
+
+        // Assert
+        await expect(
+          page.getByText(
+            "アイテム情報の形式が不正なため、インポートできませんでした。",
+          ),
+        ).toBeVisible();
+
+        // Assert (表示がダミーデータのままであること)
+        await expect(
+          assertScope.getByText("dummy", { exact: true }),
+        ).toBeVisible();
+
+        // Assert (データストアが更新されていないこと)
+        const migratedCorrupted: AppStorage = await page.evaluate(
+          (key) => JSON.parse(localStorage.getItem(key)!),
+          APP_STORAGE_KEY,
+        );
+        expect(migratedCorrupted.data.todos[0].id).toBe("dummy-todo");
       });
     });
   });
