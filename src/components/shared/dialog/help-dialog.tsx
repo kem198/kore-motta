@@ -1,5 +1,6 @@
 "use client";
 
+import { Changelog } from "@/components/shared/changelog";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -102,7 +103,7 @@ function Term() {
       </section>
 
       <section>
-        <h3>お問い合わせ・変更履歴</h3>
+        <h3>お問い合わせ</h3>
 
         <p>
           ご不明な点やお問い合わせは{" "}
@@ -117,22 +118,7 @@ function Term() {
           までご連絡ください。
         </p>
 
-        <ul>
-          {CHANGELOG.map((release) => (
-            <li key={release.version}>
-              <p className="font-mono">
-                {release.version}
-                <span> | {release.date}</span>
-              </p>
-
-              <ul>
-                {release.changes.map((change) => (
-                  <li key={change}>{change}</li>
-                ))}
-              </ul>
-            </li>
-          ))}
-        </ul>
+        <Changelog />
       </section>
     </div>
   );
