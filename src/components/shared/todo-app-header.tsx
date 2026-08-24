@@ -57,7 +57,7 @@ export function TodoAppHeader({
                   variant="ghost"
                   size="icon-lg"
                   aria-label="グローバルメニュー"
-                  className="rounded-full text-white hover:bg-white/10 hover:text-white"
+                  className="rounded-full text-white hover:bg-white/10 hover:text-white aria-expanded:bg-white/10 aria-expanded:text-white"
                 >
                   <EllipsisVerticalIcon className="size-5" />
                 </Button>

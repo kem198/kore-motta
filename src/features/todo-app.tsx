@@ -312,19 +312,18 @@ export function TodoApp() {
         <TodoAppHeader appStorage={appStorage} onImport={handleImport} />
 
         <div className="flex flex-col gap-3 p-4">
-          {isLoaded && (
-            <CategoryList
-              categories={categories}
-              activeCategoryId={activeCategoryId}
-              onSelect={setActiveCategoryId}
-              onCreate={() =>
-                setCategoryDialog({
-                  mode: "create",
-                  category: null,
-                })
-              }
-            />
-          )}
+          <CategoryList
+            categories={categories}
+            activeCategoryId={activeCategoryId}
+            isLoaded={isLoaded}
+            onSelect={setActiveCategoryId}
+            onCreate={() =>
+              setCategoryDialog({
+                mode: "create",
+                category: null,
+              })
+            }
+          />
 
           <TodoAppNavigation
             isEditing={isEditing}
@@ -338,7 +337,7 @@ export function TodoApp() {
         <Separator />
       </div>
 
-      <div className="p-4">
+      <div className="px-4">
         <TodoList
           todos={visibleTodos}
           isLoaded={isLoaded}

@@ -4,6 +4,7 @@ import {
   geistSans,
   notoSansJp,
   ubuntuSans,
+  ubuntuSansMono,
 } from "@/constants/fonts";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/constants/site";
 import { cn } from "@/lib/utils";
@@ -30,6 +31,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         geistMono.variable,
         notoSansJp.variable,
         ubuntuSans.variable,
+        ubuntuSansMono.variable,
         "font-sans",
         inter.variable,
       )}

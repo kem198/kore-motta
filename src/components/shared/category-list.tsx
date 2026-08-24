@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Skeleton } from "@/components/ui/skeleton";
 import { DEFAULT_CATEGORY_ID } from "@/constants/categories";
 import { MESSAGES } from "@/constants/messages";
 import { Category } from "@/types/category";
@@ -13,9 +14,21 @@ const sortCategories = (categories: Category[]) =>
     return a.name.localeCompare(b.name);
   });
 
+function CategoryListSkeleton() {
+  return (
+    <div className="flex gap-2 pb-3">
+      <Skeleton className="h-8 w-16 shrink-0 rounded-full" />
+      <Skeleton className="h-8 w-16 shrink-0 rounded-full" />
+      <Skeleton className="h-8 w-16 shrink-0 rounded-full" />
+      <Skeleton className="size-8 shrink-0 rounded-full" />
+    </div>
+  );
+}
+
 type CategoryListProps = {
   categories: Category[];
   activeCategoryId: string;
+  isLoaded: boolean;
   onSelect: (categoryId: string) => void;
   onCreate: () => void;
 };
@@ -23,9 +36,19 @@ type CategoryListProps = {
 export function CategoryList({
   categories,
   activeCategoryId,
+  isLoaded,
   onSelect,
   onCreate,
 }: CategoryListProps) {
+  if (!isLoaded) {
+    return (
+      <ScrollArea aria-label={MESSAGES.labels.categoryList}>
+        <CategoryListSkeleton />
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
+    );
+  }
+
   const sortedCategories = sortCategories(categories);
 
   return (
@@ -53,7 +76,7 @@ export function CategoryList({
         <Button
           type="button"
           variant="secondary"
-          size="icon"
+          size="icon-sm"
           aria-label={MESSAGES.actions.createCategory}
           onClick={onCreate}
           className="border-border/60 bg-background shrink-0 rounded-full border"
@@ -61,6 +84,7 @@ export function CategoryList({
           <PlusIcon />
         </Button>
       </div>
+
       <ScrollBar orientation="horizontal" />
     </ScrollArea>
   );

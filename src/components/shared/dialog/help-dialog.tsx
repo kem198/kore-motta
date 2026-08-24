@@ -1,5 +1,6 @@
 "use client";
 
+import { Changelog } from "@/components/shared/changelog";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -39,7 +40,7 @@ function Term() {
       </section>
 
       <section>
-        <h3>このアプリの特徴</h3>
+        <h3>アプリの特徴</h3>
 
         <ul>
           <li>
@@ -47,11 +48,11 @@ function Term() {
           </li>
 
           <li>
-            毎日の持ち物や定期的に行う作業を登録しておくと、その日限りのチェックリストとして利用できます。
+            持ち物や定期的な作業を登録しておくと、その日限りのチェックリストとして利用できます。
           </li>
 
           <li>
-            期限切れのアイテムとして溜まらないため、好みのタイミングで使えます。
+            アイテムが期限切れとして溜まらないため、好みのタイミングで使えます。
           </li>
         </ul>
       </section>
@@ -77,9 +78,10 @@ function Term() {
         <h4>注意点</h4>
 
         <ul>
+          <li>個人情報や機密情報など重要な情報は登録しないでください。</li>
           <li>
             ブラウザの「Cookie
-            と他のサイトデータ」を削除すると、登録した内容も削除されます。
+            と他のサイトデータ」を削除すると、登録した内容が削除されます。
           </li>
           <li>
             登録した内容を失いたくない場合は、あらかじめエクスポートしてください。
@@ -101,7 +103,7 @@ function Term() {
       </section>
 
       <section>
-        <h3>お問い合わせ・変更履歴</h3>
+        <h3>お問い合わせ</h3>
 
         <p>
           ご不明な点やお問い合わせは{" "}
@@ -116,22 +118,7 @@ function Term() {
           までご連絡ください。
         </p>
 
-        <ul>
-          {CHANGELOG.map((release) => (
-            <li key={release.version}>
-              <p>
-                {release.version}
-                <span> | {release.date}</span>
-              </p>
-
-              <ul>
-                {release.changes.map((change) => (
-                  <li key={change}>{change}</li>
-                ))}
-              </ul>
-            </li>
-          ))}
-        </ul>
+        <Changelog />
       </section>
     </div>
   );
@@ -147,14 +134,14 @@ export function HelpDialog() {
             variant="ghost"
             size="icon-lg"
             aria-label="アプリの使い方・利用規約"
-            className="rounded-full text-white hover:bg-white/10 hover:text-white"
+            className="rounded-full text-white hover:bg-white/10 hover:text-white aria-expanded:bg-white/10 aria-expanded:text-white"
           />
         }
       >
         <CircleHelpIcon className="size-5" />
       </DialogTrigger>
 
-      <DialogContent className="flex h-[90vh] max-h-[75vh] w-[calc(100%-1rem)] !max-w-xl flex-col">
+      <DialogContent className="flex h-[90vh] max-h-[75vh] w-[calc(100%-1rem)] max-w-xl! flex-col">
         <DialogHeader>
           <DialogTitle>使い方・利用規約</DialogTitle>
         </DialogHeader>
