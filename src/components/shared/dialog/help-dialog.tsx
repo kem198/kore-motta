@@ -148,14 +148,14 @@ export function HelpDialog() {
             variant="ghost"
             size="icon-lg"
             aria-label="アプリの使い方・利用規約"
-            className="rounded-full text-white hover:bg-white/10 hover:text-white"
+            className="rounded-full text-white hover:bg-white/10 hover:text-white aria-expanded:bg-white/10 aria-expanded:text-white"
           />
         }
       >
         <CircleHelpIcon className="size-5" />
       </DialogTrigger>
 
-      <DialogContent className="flex h-[90vh] max-h-[75vh] w-[calc(100%-1rem)] !max-w-xl flex-col">
+      <DialogContent className="flex h-[90vh] max-h-[75vh] w-[calc(100%-1rem)] max-w-xl! flex-col">
         <DialogHeader>
           <DialogTitle>使い方・利用規約</DialogTitle>
         </DialogHeader>
