@@ -60,32 +60,17 @@ npm run start
 
 - [React](https://react.dev/)
 - [shadcn/ui](https://ui.shadcn.com/)
-
-### スタイリング
-
 - [Tailwind CSS](https://tailwindcss.com/)
-
-### フォント
-
 - [Google Fonts](https://fonts.google.com/)
-  - [Noto Sans Japanese](https://fonts.google.com/noto/specimen/Noto+Sans+JP)
-  - [Ubuntu Sans](https://fonts.google.com/specimen/Ubuntu+Sans)
-  - [Ubuntu Sans Mono](https://fonts.google.com/specimen/Ubuntu+Sans+Mono)
-
-### アイコン
-
 - [Lucide](https://lucide.dev/)
 
 ### バリデーション
 
 - [Zod](https://zod.dev/)
 
-### テスティング
+### テスト・CI
 
 - [Playwright](https://playwright.dev/)
-
-### CI
-
 - [GitHub Actions](https://github.co.jp/features/actions)
 
 ### ドメイン取得・DNS 管理
