@@ -191,6 +191,24 @@ test.describe("Todo ページのテスト", () => {
         );
         expect(todoStorage.data.todos[0].name).toBe("カギ");
       });
+
+      test("Todo が登録されている状態で新規 Todo を登録した時、末尾へ追加されること", async ({
+        page,
+      }) => {
+        // Arrange
+        await navigateToTodo(page);
+        const nameInput = page.getByRole("textbox", { name: "新しいアイテム" });
+
+        // Act
+        await nameInput.fill("カギ");
+        await page.getByRole("button", { name: "追加" }).click();
+
+        // Assert (表示順が正しいこと)
+        const todoItems = page.getByRole("listitem");
+        await expect(todoItems).toHaveCount(2);
+        await expect(todoItems.nth(0)).toHaveAccessibleName("Todo: dummy");
+        await expect(todoItems.nth(1)).toHaveAccessibleName("Todo: カギ");
+      });
     });
 
     test.describe("更新時のテスト", () => {
