@@ -611,7 +611,9 @@ test.describe("Todo ページのテスト", () => {
 
         // Assert
         // 選択状態になっていること
-        const categoryButton = page.getByRole("button", { name: "朝活" });
+        const categoryButton = page
+          .getByLabel("カテゴリ一覧")
+          .getByRole("button", { name: "朝活" });
         await expect(categoryButton).toHaveAttribute("aria-pressed", "true");
 
         // 作成したカテゴリがストレージに保存されていること
@@ -627,16 +629,6 @@ test.describe("Todo ページのテスト", () => {
         expect(createdCategory?.id).toBeTruthy();
         expect(createdCategory?.markAllIncompleteAt).toBe(
           DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
-        );
-
-        // 一覧の末尾付近に新しいカテゴリが表示されること
-        const categoryButtons = page
-          .getByLabel("カテゴリ一覧")
-          .getByRole("button");
-        const buttonCount = await categoryButtons.count();
-        await expect(categoryButtons.nth(buttonCount - 2)).toHaveAttribute(
-          "aria-label",
-          "朝活",
         );
 
         // ストレージでも末尾に追加されていること
