@@ -809,7 +809,7 @@ test.describe("Todo ページのテスト", () => {
         expect(migratedTodo?.categoryId).toBe(DEFAULT_CATEGORY_ID);
       });
 
-      test("削除されたカテゴリが選択中だった場合、デフォルトカテゴリに切り替わること", async ({
+      test("削除されたカテゴリが選択中だった場合、未分類カテゴリに切り替わること", async ({
         page,
       }) => {
         // Arrange
@@ -890,6 +890,78 @@ test.describe("Todo ページのテスト", () => {
         expect(defaultCategory?.markAllIncompleteAt).toBe(
           DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
         );
+      });
+
+      test("カテゴリを削除したとき、登録済み Todo が未分類カテゴリの末尾に登録されること", async ({
+        page,
+      }) => {
+        // Arrange
+        const todoStorage: AppStorage = {
+          version: 1,
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "todo-shopping",
+                name: "買い物",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                completed: false,
+              },
+              {
+                id: "todo-cleaning",
+                name: "掃除",
+                order: 1,
+                categoryId: DEFAULT_CATEGORY_ID,
+                completed: false,
+              },
+              {
+                id: "todo-work",
+                name: "資料作成",
+                order: 0,
+                categoryId: "work",
+                completed: false,
+              },
+            ],
+            categories: [
+              {
+                id: DEFAULT_CATEGORY_ID,
+                name: DEFAULT_CATEGORY_NAME,
+                order: DEFAULT_CATEGORY_ORDER,
+                markAllIncompleteAt: DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
+              },
+              {
+                id: "work",
+                name: "仕事",
+                order: 1,
+                markAllIncompleteAt: "09:00",
+              },
+            ],
+          },
+        };
+
+        await page.evaluate(
+          ([key, value]) => {
+            localStorage.setItem(key, value);
+          },
+          [APP_STORAGE_KEY, JSON.stringify(todoStorage)],
+        );
+        await navigateToTodo(page);
+
+        // Act
+        await page.getByRole("button", { name: "仕事" }).click();
+        await page.getByRole("button", { name: "カテゴリ設定" }).click();
+        await page.getByRole("button", { name: "カテゴリを削除" }).click();
+        await page.getByRole("button", { name: "削除" }).click();
+
+        // Assert
+        await page.getByRole("button", { name: DEFAULT_CATEGORY_NAME }).click();
+
+        const todos = page.getByRole("listitem");
+        await expect(todos).toHaveCount(3);
+        await expect(todos.nth(0)).toHaveAccessibleName("Todo: 買い物");
+        await expect(todos.nth(1)).toHaveAccessibleName("Todo: 掃除");
+        await expect(todos.nth(2)).toHaveAccessibleName("Todo: 資料作成");
       });
     });
   });
