@@ -2,7 +2,7 @@
 
 ## Language
 
-- GitHub Pull Request のタイトル、Summary、Description は日本語で生成する。
+- GitHub Pull Request のタイトル、Summary、Description 、レビューコメントは日本語で生成する。
 - コード、変数名、関数名、クラス名、ファイル名などの技術的な識別子は原文のまま使用する。
 - コードコメントについては、既存のプロジェクトの言語・スタイルに従う。
 
