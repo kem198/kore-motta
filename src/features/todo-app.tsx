@@ -338,7 +338,7 @@ export function TodoApp() {
         <Separator />
       </div>
 
-      <div className="p-4">
+      <div className="px-4">
         <TodoList
           todos={visibleTodos}
           isLoaded={isLoaded}
