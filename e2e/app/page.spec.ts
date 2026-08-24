@@ -285,14 +285,14 @@ test.describe("Todo ページのテスト", () => {
               {
                 id: "daily-1",
                 name: "歯磨き",
-                order: 1,
+                order: 0,
                 categoryId: DEFAULT_CATEGORY_ID,
                 completed: false,
               },
               {
                 id: "work-2",
                 name: "メール確認",
-                order: 2,
+                order: 1,
                 categoryId: "work",
                 completed: false,
               },
@@ -330,12 +330,14 @@ test.describe("Todo ページのテスト", () => {
         await page.getByRole("button", { name: "仕事" }).click();
 
         // Act (なし)
+        await page.getByRole("button", { name: "編集開始" }).click();
+        await page.getByRole("button", { name: "下へ移動: 資料作成" }).click();
 
         // Assert (表示順が正しいこと)
         const todoItems = page.getByRole("listitem");
         await expect(todoItems).toHaveCount(2);
-        await expect(todoItems.nth(0)).toHaveAccessibleName("Todo: 資料作成");
-        await expect(todoItems.nth(1)).toHaveAccessibleName("Todo: メール確認");
+        await expect(todoItems.nth(0)).toHaveAccessibleName("Todo: メール確認");
+        await expect(todoItems.nth(1)).toHaveAccessibleName("Todo: 資料作成");
       });
     });
 

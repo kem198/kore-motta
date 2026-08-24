@@ -55,9 +55,9 @@ export function TodoApp() {
     | null
   >(null);
 
-  const visibleTodos = todos.filter(
-    (todo) => todo.categoryId === activeCategoryId,
-  );
+  const visibleTodos = todos
+    .filter((todo) => todo.categoryId === activeCategoryId)
+    .toSorted((a, b) => a.order - b.order);
 
   const handleCreateCategory = useCallback(
     (name: string) => {
@@ -168,16 +168,23 @@ export function TodoApp() {
         return;
       }
 
-      const reordered = reorderTodos(todos, startIndex, endIndex);
+      const reorderedVisibleTodos = reorderTodos(
+        visibleTodos,
+        startIndex,
+        endIndex,
+      );
 
-      updateTodos(reordered);
+      const reorderedTodoMap = new Map(
+        reorderedVisibleTodos.map((todo) => [todo.id, todo]),
+      );
 
-      // toast.add({
-      //   title: MESSAGES.toast.reordered,
-      //   type: "success",
-      // });
+      const reorderedTodos = todos.map(
+        (todo) => reorderedTodoMap.get(todo.id) ?? todo,
+      );
+
+      updateTodos(reorderedTodos);
     },
-    [isLoaded, todos, updateTodos],
+    [isLoaded, todos, visibleTodos, updateTodos],
   );
 
   const handleImport = useCallback(
