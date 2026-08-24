@@ -76,6 +76,10 @@ npm run start
 
 - [Lucide](https://lucide.dev/)
 
+### バリデーション
+
+- [Zod](https://zod.dev/)
+
 ### テスティング
 
 - [Playwright](https://playwright.dev/)
