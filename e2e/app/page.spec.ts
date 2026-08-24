@@ -15,26 +15,8 @@ test.describe("Todo ページのテスト", () => {
   let assertScope: Locator;
 
   /** テスト対象のページへ遷移する */
-  const navigateToTodo = async (page: Page) => {
+  const navigateToTodoPage = async (page: Page) => {
     await page.goto("/");
-  };
-
-  /** ダミーデータ */
-  const DUMMY_APP_STORAGE: AppStorage = {
-    version: 1,
-    data: {
-      settings: {},
-      todos: [
-        {
-          id: "dummy-todo",
-          name: "dummy",
-          order: 0,
-          categoryId: DEFAULT_CATEGORY_ID,
-          completed: false,
-        },
-      ],
-      categories: DEFAULT_CATEGORIES_STORAGE,
-    },
   };
 
   /** localStorage の appStorage キーへ値をセットするヘルパー */
@@ -58,8 +40,29 @@ test.describe("Todo ページのテスト", () => {
     );
 
   test.beforeEach(async ({ page }) => {
-    await page.goto("/");
+    // アプリケーションのページへ遷移しておく
+    await navigateToTodoPage(page);
+
+    // テスト対象の範囲を指定する
     assertScope = page.locator('[data-testid="todo"]');
+
+    // ダミーデータを初期投入しておく
+    const DUMMY_APP_STORAGE: AppStorage = {
+      version: 1,
+      data: {
+        settings: {},
+        todos: [
+          {
+            id: "dummy-todo",
+            name: "dummy",
+            order: 0,
+            categoryId: DEFAULT_CATEGORY_ID,
+            completed: false,
+          },
+        ],
+        categories: DEFAULT_CATEGORIES_STORAGE,
+      },
+    };
     await setAppStorage(page, DUMMY_APP_STORAGE);
   });
 
@@ -90,7 +93,7 @@ test.describe("Todo ページのテスト", () => {
         await setAppStorage(page, todoStorage);
 
         // Act
-        await navigateToTodo(page);
+        await navigateToTodoPage(page);
 
         // Assert
         await expect(
@@ -121,19 +124,14 @@ test.describe("Todo ページのテスト", () => {
             categories: DEFAULT_CATEGORIES_STORAGE,
           },
         };
-        await setAppStorage(page, storage);
 
         // Act
-        await navigateToTodo(page);
+        await setAppStorage(page, storage);
 
         // Assert
-        await expect(async () => await getAppStorage(page)).not.toBeNull();
+        const persisted = await getAppStorage(page);
+        expect(persisted).not.toBeNull();
 
-        const raw = await page.evaluate(
-          (key) => localStorage.getItem(key),
-          APP_STORAGE_KEY,
-        );
-        const persisted: AppStorage = JSON.parse(raw!);
         const defaultCategory = persisted.data.categories.find(
           (category: Category) => category.id === DEFAULT_CATEGORY_ID,
         );
@@ -153,7 +151,6 @@ test.describe("Todo ページのテスト", () => {
     test.describe("作成時のテスト", () => {
       test("Todo を登録できること", async ({ page }) => {
         // Arrange
-        await navigateToTodo(page);
         const nameInput = page.getByRole("textbox", { name: "新しいアイテム" });
 
         // Act
@@ -174,7 +171,6 @@ test.describe("Todo ページのテスト", () => {
         page,
       }) => {
         // Arrange
-        await navigateToTodo(page);
         const nameInput = page.getByRole("textbox", { name: "新しいアイテム" });
 
         // Act
@@ -192,7 +188,6 @@ test.describe("Todo ページのテスト", () => {
     test.describe("更新時のテスト", () => {
       test("Todo を編集できること", async ({ page }) => {
         // Arrange
-        await navigateToTodo(page);
         await page.getByRole("button", { name: "編集: dummy" }).click();
         await page.getByRole("textbox", { name: "タイトル *" }).fill("カギ");
         await page.getByRole("textbox", { name: "メモ" }).fill("家の鍵");
@@ -245,8 +240,6 @@ test.describe("Todo ページのテスト", () => {
           },
         };
         await setAppStorage(page, todoStorage);
-
-        await navigateToTodo(page);
         await page.getByRole("button", { name: "仕事" }).click();
 
         // Act
@@ -313,11 +306,9 @@ test.describe("Todo ページのテスト", () => {
           },
         };
         await setAppStorage(page, todoStorage);
-
-        await navigateToTodo(page);
         await page.getByRole("button", { name: "仕事" }).click();
 
-        // Act (なし)
+        // Act
         await page.getByRole("button", { name: "編集開始" }).click();
         await page.getByRole("button", { name: "下へ移動: 資料作成" }).click();
 
@@ -332,7 +323,6 @@ test.describe("Todo ページのテスト", () => {
     test.describe("削除時のテスト", () => {
       test("Todo を削除できること", async ({ page }) => {
         // Arrange
-        await navigateToTodo(page);
         await page.getByRole("button", { name: "編集開始" }).click();
         await page.getByRole("button", { name: "削除: dummy" }).click();
 
@@ -382,8 +372,6 @@ test.describe("Todo ページのテスト", () => {
         };
         await setAppStorage(page, todoStorage);
 
-        await navigateToTodo(page);
-
         // Act
         await page.getByRole("button", { name: "カテゴリ設定" }).click();
         await page.getByRole("button", { name: "すべて未完了に戻す" }).click();
@@ -416,7 +404,7 @@ test.describe("Todo ページのテスト", () => {
         await page.evaluate(() => localStorage.clear());
 
         // Act
-        await navigateToTodo(page);
+        await navigateToTodoPage(page);
 
         // Assert
         await expect(await getAppStorage(page)).not.toBeNull();
@@ -442,7 +430,6 @@ test.describe("Todo ページのテスト", () => {
         page,
       }) => {
         // Arrange
-        await navigateToTodo(page);
 
         // Act
         await page.getByRole("button", { name: "カテゴリ作成" }).click();
@@ -467,7 +454,6 @@ test.describe("Todo ページのテスト", () => {
         page,
       }) => {
         // Arrange
-        await navigateToTodo(page);
 
         // Act
         await page.getByRole("button", { name: "カテゴリ作成" }).click();
@@ -485,8 +471,6 @@ test.describe("Todo ページのテスト", () => {
         page,
       }) => {
         // Arrange
-        await navigateToTodo(page);
-
         await page.getByRole("button", { name: "カテゴリ作成" }).click();
         await page.getByRole("textbox", { name: "カテゴリ名" }).fill("朝活");
         await page.getByRole("button", { name: "追加" }).click();
@@ -525,7 +509,6 @@ test.describe("Todo ページのテスト", () => {
       page,
     }) => {
       // Arrange
-      await navigateToTodo(page);
 
       // Act
       await page.getByRole("button", { name: "カテゴリ作成" }).click();
@@ -589,7 +572,6 @@ test.describe("Todo ページのテスト", () => {
           },
         };
         await setAppStorage(page, todoStorage);
-        await navigateToTodo(page);
 
         // Act
         await page.getByRole("button", { name: "仕事" }).click();
@@ -631,7 +613,6 @@ test.describe("Todo ページのテスト", () => {
           },
         };
         await setAppStorage(page, todoStorage);
-        await navigateToTodo(page);
 
         // Act
         await page.getByRole("button", { name: "仕事" }).click();
@@ -698,7 +679,6 @@ test.describe("Todo ページのテスト", () => {
           },
         };
         await setAppStorage(page, todoStorage);
-        await navigateToTodo(page);
 
         // Act
         await page.getByRole("button", { name: "個人" }).click();
@@ -761,7 +741,6 @@ test.describe("Todo ページのテスト", () => {
           },
         };
         await setAppStorage(page, todoStorage);
-        await navigateToTodo(page);
 
         // Act
         // 仕事カテゴリを選択
@@ -851,7 +830,6 @@ test.describe("Todo ページのテスト", () => {
         };
 
         await setAppStorage(page, todoStorage);
-        await navigateToTodo(page);
 
         // Act
         await page.getByRole("button", { name: "仕事" }).click();
@@ -903,7 +881,6 @@ test.describe("Todo ページのテスト", () => {
           },
         };
         await setAppStorage(page, todoStorage);
-        await navigateToTodo(page);
 
         // Act
         await page.getByRole("button", { name: "グローバルメニュー" }).click();
@@ -950,8 +927,6 @@ test.describe("Todo ページのテスト", () => {
           },
         };
         const backupText = JSON.stringify(backupTodoStorage, null, 2);
-
-        await navigateToTodo(page);
         await page.getByRole("button", { name: "編集開始" }).click();
 
         // Act
@@ -982,8 +957,6 @@ test.describe("Todo ページのテスト", () => {
       }) => {
         // Arrange
         const corruptedText = "JSON ではない文字列";
-
-        await navigateToTodo(page);
         await page.getByRole("button", { name: "グローバルメニュー" }).click();
         await page.getByRole("menuitem", { name: "インポート" }).click();
 
@@ -1030,7 +1003,6 @@ test.describe("Todo ページのテスト", () => {
           },
         };
 
-        await navigateToTodo(page);
         await page.getByRole("button", { name: "グローバルメニュー" }).click();
         await page.getByRole("menuitem", { name: "インポート" }).click();
 
