@@ -71,12 +71,9 @@ npm run start
 ### テスト・CI
 
 - [Playwright](https://playwright.dev/)
-- [GitHub Actions](https://github.co.jp/features/actions)
+- [GitHub Actions](https://github.com/features/actions)
 
-### ドメイン取得・DNS 管理
+### ドメイン管理・ホスティング
 
 - [Xserver Domain](https://www.xdomain.ne.jp/)
-
-### ホスティング・デプロイ
-
 - [Vercel](https://vercel.com/)
