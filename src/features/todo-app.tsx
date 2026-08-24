@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import {
   DEFAULT_CATEGORY_ID,
   DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
+  DEFAULT_CATEGORY_ORDER,
 } from "@/constants/categories";
 import { MESSAGES } from "@/constants/messages";
 import { useAppStorage } from "@/hooks/use-app-storage";
@@ -62,10 +63,13 @@ export function TodoApp() {
   const handleCreateCategory = useCallback(
     (name: string) => {
       const id = crypto.randomUUID();
+      // TODO: カテゴリ並び替え機能を実装時に変更必要
+      const order = DEFAULT_CATEGORY_ORDER;
 
       const newCategory: Category = {
         id,
         name,
+        order,
         markAllIncompleteAt: DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
       };
 
