@@ -144,7 +144,7 @@ export function TodoEditDialog({
         <form id="todo-edit" onSubmit={form.handleSubmit(handleSubmit)}>
           <FieldSet>
             <FieldGroup>
-              <Field>
+              <Field orientation="horizontal">
                 <div className="flex items-center gap-2">
                   <FieldLabel htmlFor="todo-category">カテゴリ:</FieldLabel>
 
@@ -230,21 +230,21 @@ export function TodoEditDialog({
               />
             </FieldGroup>
           </FieldSet>
-
-          <DialogFooter>
-            <DialogClose
-              render={
-                <Button type="button" variant="outline">
-                  {MESSAGES.actions.cancel}
-                </Button>
-              }
-            />
-
-            <Button type="submit" form="todo-edit">
-              {MESSAGES.actions.update}
-            </Button>
-          </DialogFooter>
         </form>
+
+        <DialogFooter>
+          <DialogClose
+            render={
+              <Button type="button" variant="outline">
+                {MESSAGES.actions.cancel}
+              </Button>
+            }
+          />
+
+          <Button type="submit" form="todo-edit">
+            {MESSAGES.actions.update}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
