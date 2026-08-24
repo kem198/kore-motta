@@ -46,7 +46,7 @@ npm run build
 npm run start
 ```
 
-## 仕様技術
+## 使用技術
 
 ### フレームワーク
 
