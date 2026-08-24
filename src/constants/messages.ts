@@ -54,7 +54,7 @@ export const MESSAGES = {
   placeholders: {
     title: "財布",
     memo: "カバンのポケットに入れる",
-    newItem: "財布",
+    newItem: "新しいアイテム",
     categoryName: "出かける前",
   },
 
