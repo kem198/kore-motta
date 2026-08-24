@@ -261,7 +261,9 @@ test.describe("Todo ページのテスト", () => {
         await page.getByRole("button", { name: "編集: 資料作成" }).click();
 
         // Assert
-        await expect(page.getByText("カテゴリ: 仕事")).toBeVisible();
+        await expect(
+          page.getByRole("combobox", { name: "カテゴリ" }),
+        ).toContainText("仕事");
       });
     });
 

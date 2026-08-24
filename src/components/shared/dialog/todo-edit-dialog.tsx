@@ -153,7 +153,7 @@ export function TodoEditDialog({
                     items={dummyItems}
                     defaultValue={categoryName}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger aria-label="カテゴリ">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
