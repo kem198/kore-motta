@@ -30,11 +30,13 @@ export function TodoAppActions({
         variant={isEditing ? "default" : "secondary"}
         onClick={onToggleEditing}
         aria-label={
-          isEditing ? MESSAGES.actions.done : `${MESSAGES.actions.editStart}`
+          isEditing
+            ? MESSAGES.actions.editDone
+            : `${MESSAGES.actions.editStart}`
         }
       >
         <PencilIcon />
-        {isEditing ? MESSAGES.actions.done : MESSAGES.actions.edit}
+        {isEditing ? MESSAGES.actions.editDone : MESSAGES.actions.edit}
       </Button>
     </div>
   );

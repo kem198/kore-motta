@@ -8,7 +8,7 @@ export const MESSAGES = {
     createCategory: "カテゴリ作成",
     edit: "編集",
     editStart: "編集開始",
-    done: "完了",
+    editDone: "編集完了",
     reset: "初期化",
     import: "インポート",
     export: "エクスポート",
