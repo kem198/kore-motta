@@ -53,7 +53,7 @@ export function CategoryList({
         <Button
           type="button"
           variant="secondary"
-          size="icon"
+          size="icon-sm"
           aria-label={MESSAGES.actions.createCategory}
           onClick={onCreate}
           className="border-border/60 bg-background shrink-0 rounded-full border"
