@@ -63,35 +63,53 @@ it("useEffect が実行される", () => {});
 
 `describe` はテスト対象となる機能や仕様を表す。
 
-`it` は、その機能において保証する具体的な振る舞いを表す。
+`test` は、その機能において保証する具体的な振る舞いを表す。
+
+アプリケーションの仕様や CRUD の分類に応じて、適切にカテゴライズする。
 
 例:
 
 ```ts
-describe("Todo のリセット", () => {
-  it("リセット時刻を過ぎてアクセスすると、Todo が未完了に戻る", () => {
-    // ...
-  });
-
-  it("リセット時刻前にアクセスすると、Todo の完了状態が維持される", () => {
-    // ...
+test.describe("Todo ページのテスト", () => {
+  test.describe("Todo の操作", () => {
+    test.describe("初期表示のテスト", () => {
+      test("Todo が登録済みの状態で、画面が初期表示された時、登録済み Todo の各種情報が表示されること", async ({
+        ...
+      });
+      ...
+    });
+    test.describe("作成時のテスト", () => {
+      ...
+    });
+    test.describe("更新時のテスト", () => {
+      ...
+    });
+    test.describe("削除時のテスト", () => {
+      ...
+    });
   });
 });
 ```
 
-必要に応じて `describe` をネストし、条件を明確にする。
+アプリケーションの仕様や CRUD の分類に応じて、適切にカテゴライズし、条件を明確にする。
 
 ```ts
-describe("Todo のリセット", () => {
-  describe("リセット時刻前の場合", () => {
-    it("Todo の完了状態が維持される", () => {
-      // ...
+test.describe("Todo ページのテスト", () => {
+  test.describe("Todo の操作", () => {
+    test.describe("初期表示のテスト", () => {
+      test("Todo が登録済みの状態で、画面が初期表示された時、登録済み Todo の各種情報が表示されること", async ({
+        ...
+      });
+      ...
     });
-  });
-
-  describe("リセット時刻を過ぎた場合", () => {
-    it("Todo が未完了に戻る", () => {
-      // ...
+    test.describe("作成時のテスト", () => {
+      ...
+    });
+    test.describe("更新時のテスト", () => {
+      ...
+    });
+    test.describe("削除時のテスト", () => {
+      ...
     });
   });
 });
@@ -99,9 +117,9 @@ describe("Todo のリセット", () => {
 
 ## Given / When / Then
 
-テストタイトルでは `Given`、`When`、`Then` を明示しなくてもよい。
+テストタイトルでは `Given`、`When`、`Then` を可能な限り明示する。
 
-自然な日本語で振る舞いを表現する。
+タイトルが長くなる場合は、自然な日本語で振る舞いを表現する。
 
 ```ts
 it("リセット時刻を過ぎてアクセスすると、Todo が未完了に戻る", () => {});
@@ -115,42 +133,27 @@ it("リセット時刻を過ぎてアクセスすると、Todo が未完了に�
 
 ## コメント
 
-各テスト用の処理について、`// Arrange`、 `// Act`、`// Assert` のコメントをつけること。
+各テスト用の処理について、`// Arrange`、 `// Act`、`// Assert` のコメントをつける。
 
 ```ts
-test.describe("初期表示のテスト", () => {
-  test("Todo が登録済みの状態で、画面が初期表示された時、登録済み Todo の各種情報が表示されること", async ({
-    page,
-  }) => {
-    // Arrange
-    const todoStorage: TodoStorage = {
-      version: 1,
-      todos: [
-        {
-          id: "test-todo",
-          name: "カギ",
-          order: 0,
-          memo: "家の鍵",
-          completed: false,
-        },
-      ],
-    };
-    await page.evaluate(
-      ([key, value]) => {
-        localStorage.setItem(key, value);
-      },
-      [TODO_STORAGE_KEY, JSON.stringify(todoStorage)],
-    );
+test("Todo を登録できること", async ({ page }) => {
+  // Arrange
+  await navigateToTodo(page);
+  const nameInput = page.getByRole("textbox", { name: "新しいアイテム" });
 
-    // Act
-    await navigateToTodo(page);
+  // Act
+  await nameInput.fill("カギ");
+  await page.getByRole("button", { name: "追加" }).click();
 
-    // Assert
-    await expect(assertScope.getByText("カギ", { exact: true })).toBeVisible();
-    await expect(
-      assertScope.getByText("家の鍵", { exact: true }),
-    ).toBeVisible();
-  });
+  // Assert (表示が正しいこと)
+  await expect(assertScope.getByText("カギ", { exact: true })).toBeVisible();
+
+  // Assert (データストアへ登録されていること)
+  const todoStorage: AppStorage = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key)!),
+    APP_STORAGE_KEY,
+  );
+  expect(todoStorage.data.todos[0].name).toBe("カギ");
 });
 ```
 
@@ -266,3 +269,4 @@ let area: Locator;
 - テスト同士で状態を共有しない。
 - テストの実行順序に依存しない。
 - 既存のテスト構造を優先する。
+- ロジック (正規表現や条件分岐など) はなるべく利用せず、手続き的に検証する。

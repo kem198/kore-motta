@@ -29,12 +29,13 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - React
 - TypeScript
 - Tailwind CSS
-- Vitest
 - Playwright
 
-## TDD
+## テストファースト
 
-機能追加や仕様変更では、原則としてテスト駆動開発 (TDD) で進める。
+機能追加や仕様変更では、原則としてテストファーストで進める。
+
+具体的な作業では、TDD（Red → Green → Refactor）のサイクルを使用する。
 
 1. 関連する既存コードとテストを確認する。
 2. 要求を受け入れ条件に分解する。
@@ -64,13 +65,6 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 3. テスト自体が誤っているのか。
 
 原因を判断してから変更する。
-
-## テストの使い分け
-
-- 純粋なロジックや関数のテストには Vitest を使用する。
-- ブラウザを必要とするユーザー操作や UI の振る舞いには Playwright を使用する。
-- ブラウザを必要としない処理を Playwright だけでテストしない。
-- Vitest と Playwright で同じ振る舞いを不必要に重複してテストしない。
 
 ## 実装方針
 
@@ -112,4 +106,4 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## コマンド実行
 
-テスト実行などのコマンドを実行する場合、まずプロジェクトの `package.json` を確認し、定義済みであればそのスクリプトを優先して実行すること。
+テスト実行などのコマンドを実行する場合、まずプロジェクトの `package.json` を確認し、定義済みであればそのスクリプトを優先して実行する。
