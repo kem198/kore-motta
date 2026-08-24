@@ -8,7 +8,7 @@ Kore Motta? は、毎日の「これ持った？」を確認するためのシ�
 
 ## 公開中の URL
 
-- [Kore Motta?](https://kore-motta.kem198.net)
+- <https://kore-motta.kem198.net>
 
 ## 主な機能
 
