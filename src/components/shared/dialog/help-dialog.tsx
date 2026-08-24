@@ -39,7 +39,7 @@ function Term() {
       </section>
 
       <section>
-        <h3>このアプリの特徴</h3>
+        <h3>アプリの特徴</h3>
 
         <ul>
           <li>
