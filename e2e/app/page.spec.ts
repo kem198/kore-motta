@@ -63,10 +63,6 @@ test.describe("Todo ページのテスト", () => {
     await setAppStorage(page, DUMMY_APP_STORAGE);
   });
 
-  test.afterEach(async ({ page }) => {
-    await setAppStorage(page, DUMMY_APP_STORAGE);
-  });
-
   test.describe("Todo の操作", () => {
     test.describe("初期表示のテスト", () => {
       test("Todo が登録済みの状態で、画面が初期表示された時、登録済み Todo の各種情報が表示されること", async ({
