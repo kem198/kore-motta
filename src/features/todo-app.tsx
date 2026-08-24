@@ -96,7 +96,7 @@ export function TodoApp() {
       const newTodo: Todo = {
         id: crypto.randomUUID(),
         name: trimmedName,
-        order: 0,
+        order: visibleTodos.length,
         memo: values.memo?.trim() || undefined,
         categoryId: activeCategoryId,
         completed: false,
