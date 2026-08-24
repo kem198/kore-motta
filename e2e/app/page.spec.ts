@@ -29,7 +29,7 @@ test.describe("Todo ページのテスト", () => {
         {
           id: "dummy-todo",
           name: "dummy",
-          position: 0,
+          order: 0,
           categoryId: DEFAULT_CATEGORY_ID,
           completed: false,
         },
@@ -75,7 +75,7 @@ test.describe("Todo ページのテスト", () => {
               {
                 id: "test-todo",
                 name: "カギ",
-                position: 0,
+                order: 0,
                 categoryId: DEFAULT_CATEGORY_ID,
                 memo: "家の鍵",
                 completed: false,
@@ -116,7 +116,7 @@ test.describe("Todo ページのテスト", () => {
               {
                 id: "single-storage-todo",
                 name: "資料作成",
-                position: 0,
+                order: 0,
                 categoryId: DEFAULT_CATEGORY_ID,
                 completed: false,
               },
@@ -228,7 +228,7 @@ test.describe("Todo ページのテスト", () => {
               {
                 id: "category-edit-todo",
                 name: "資料作成",
-                position: 0,
+                order: 0,
                 categoryId: "work",
                 memo: "資料の下書きを作る",
                 completed: false,
@@ -278,28 +278,28 @@ test.describe("Todo ページのテスト", () => {
               {
                 id: "work-1",
                 name: "資料作成",
-                position: 0,
+                order: 0,
                 categoryId: "work",
                 completed: false,
               },
               {
                 id: "daily-1",
                 name: "歯磨き",
-                position: 0,
+                order: 0,
                 categoryId: DEFAULT_CATEGORY_ID,
                 completed: false,
               },
               {
                 id: "work-2",
                 name: "メール確認",
-                position: 1,
+                order: 1,
                 categoryId: "work",
                 completed: false,
               },
               {
                 id: "daily-2",
                 name: "薬を飲む",
-                position: 3,
+                order: 3,
                 categoryId: DEFAULT_CATEGORY_ID,
                 completed: false,
               },
@@ -378,7 +378,7 @@ test.describe("Todo ページのテスト", () => {
               {
                 id: "mark-todo-01",
                 name: "カギ",
-                position: 0,
+                order: 0,
                 categoryId: DEFAULT_CATEGORY_ID,
                 memo: "家の鍵",
                 completed: true,
@@ -386,7 +386,7 @@ test.describe("Todo ページのテスト", () => {
               {
                 id: "mark-todo-02",
                 name: "財布",
-                position: 1,
+                order: 1,
                 categoryId: DEFAULT_CATEGORY_ID,
                 memo: "白い財布",
                 completed: false,
@@ -596,14 +596,14 @@ test.describe("Todo ページのテスト", () => {
               {
                 id: "todo-unclassified",
                 name: "財布",
-                position: 0,
+                order: 0,
                 categoryId: DEFAULT_CATEGORY_ID,
                 completed: false,
               },
               {
                 id: "todo-work",
                 name: "資料作成",
-                position: 1,
+                order: 1,
                 categoryId: "work",
                 completed: false,
               },
@@ -708,14 +708,14 @@ test.describe("Todo ページのテスト", () => {
               {
                 id: "todo-work",
                 name: "資料作成",
-                position: 0,
+                order: 0,
                 categoryId: "work",
                 completed: false,
               },
               {
                 id: "todo-personal",
                 name: "買い物",
-                position: 1,
+                order: 1,
                 categoryId: "personal",
                 completed: false,
               },
@@ -789,7 +789,7 @@ test.describe("Todo ページのテスト", () => {
               {
                 id: "todo-work",
                 name: "資料作成",
-                position: 0,
+                order: 0,
                 categoryId: "work",
                 completed: false,
               },
@@ -874,7 +874,7 @@ test.describe("Todo ページのテスト", () => {
               {
                 id: "test-todo-01",
                 name: "カギ",
-                position: 0,
+                order: 0,
                 categoryId: DEFAULT_CATEGORY_ID,
                 memo: "家の鍵",
                 completed: false,
@@ -882,7 +882,7 @@ test.describe("Todo ページのテスト", () => {
               {
                 id: "test-todo-02",
                 name: "財布",
-                position: 1,
+                order: 1,
                 categoryId: DEFAULT_CATEGORY_ID,
                 memo: "白い財布",
                 completed: false,
@@ -912,13 +912,13 @@ test.describe("Todo ページのテスト", () => {
           '"id": "test-todo-01"',
         );
         await expect(page.locator("body")).toContainText('"name": "カギ"');
-        await expect(page.locator("body")).toContainText('"position": 0');
+        await expect(page.locator("body")).toContainText('"order": 0');
         await expect(page.locator("body")).toContainText('"memo": "家の鍵"');
         await expect(page.locator("body")).toContainText(
           '"id": "test-todo-02"',
         );
         await expect(page.locator("body")).toContainText('"name": "財布"');
-        await expect(page.locator("body")).toContainText('"position": 1');
+        await expect(page.locator("body")).toContainText('"order": 1');
         await expect(page.locator("body")).toContainText('"memo": "白い財布"');
       });
     });
@@ -936,7 +936,7 @@ test.describe("Todo ページのテスト", () => {
               {
                 id: "import-todo",
                 name: "カギ",
-                position: 0,
+                order: 0,
                 categoryId: DEFAULT_CATEGORY_ID,
                 memo: "家の鍵",
                 completed: false,
@@ -1022,7 +1022,7 @@ test.describe("Todo ページのテスト", () => {
               {
                 id: "import-todo",
                 name: "カギ",
-                position: 0,
+                order: 0,
                 categoryId: DEFAULT_CATEGORY_ID,
                 memo: "家の鍵",
                 undefinedKey: "★ AppStorage 型に一致しないキー",

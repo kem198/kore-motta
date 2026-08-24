@@ -57,7 +57,7 @@ export function TodoApp() {
 
   const visibleTodos = todos
     .filter((todo) => todo.categoryId === activeCategoryId)
-    .toSorted((a, b) => a.position - b.position);
+    .toSorted((a, b) => a.order - b.order);
 
   const handleCreateCategory = useCallback(
     (name: string) => {
@@ -92,7 +92,7 @@ export function TodoApp() {
       const newTodo: Todo = {
         id: crypto.randomUUID(),
         name: trimmedName,
-        position: 0,
+        order: 0,
         memo: values.memo?.trim() || undefined,
         categoryId: activeCategoryId,
         completed: false,
