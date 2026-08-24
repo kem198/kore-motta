@@ -184,21 +184,21 @@ export function CategorySettingDialog({
                       <div className="flex gap-2">
                         <Button
                           type="button"
+                          variant="destructive"
+                          onClick={() => setIsDeleteConfirmOpen(true)}
+                          disabled={isDefaultCategory}
+                        >
+                          カテゴリを削除
+                        </Button>
+
+                        <Button
+                          type="button"
                           variant="secondary"
                           onClick={() =>
                             setIsMarkAllIncompleteConfirmOpen(true)
                           }
                         >
                           {MESSAGES.actions.markAllIncomplete}
-                        </Button>
-
-                        <Button
-                          type="button"
-                          variant="destructive"
-                          onClick={() => setIsDeleteConfirmOpen(true)}
-                          disabled={isDefaultCategory}
-                        >
-                          カテゴリを削除
                         </Button>
                       </div>
                     )}

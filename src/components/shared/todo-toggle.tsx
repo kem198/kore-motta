@@ -32,12 +32,19 @@ export function TodoToggle({
       onPressedChange={handleChange}
       variant="outline"
       className={cn(
-        "aria-pressed:bg-primary size-9 cursor-pointer rounded-full",
+        "group aria-pressed:bg-primary size-9 cursor-pointer rounded-full transition-colors",
         className,
       )}
       {...rest}
     >
-      {checked && <CheckIcon className="text-primary-foreground" />}
+      <CheckIcon
+        className={cn(
+          "transition-opacity",
+          checked
+            ? "text-primary-foreground opacity-100"
+            : "text-muted-foreground opacity-0 group-hover:opacity-75",
+        )}
+      />
     </Toggle>
   );
 }
