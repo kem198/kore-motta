@@ -32,7 +32,7 @@ export function TodoToggle({
       onPressedChange={handleChange}
       variant="outline"
       className={cn(
-        "group aria-pressed:bg-primary size-9 cursor-pointer rounded-full",
+        "group aria-pressed:bg-primary size-9 cursor-pointer rounded-full transition-colors",
         className,
       )}
       {...rest}
