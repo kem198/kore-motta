@@ -598,7 +598,7 @@ test.describe("Todo ページのテスト", () => {
     });
 
     test.describe("作成時のテスト", () => {
-      test("カテゴリを追加した時、そのカテゴリが選択状態になること", async ({
+      test("カテゴリを追加すると、そのカテゴリが保存されること", async ({
         page,
       }) => {
         // Arrange
@@ -610,32 +610,23 @@ test.describe("Todo ページのテスト", () => {
         await page.getByRole("button", { name: "追加" }).click();
 
         // Assert
-        // 選択状態になっていること
-        const categoryButton = page
-          .getByLabel("カテゴリ一覧")
-          .getByRole("button", { name: "朝活" });
-        await expect(categoryButton).toHaveAttribute("aria-pressed", "true");
-
-        // 作成したカテゴリがストレージに保存されていること
         const todoStorage: AppStorage = await page.evaluate(
           (key) => JSON.parse(localStorage.getItem(key)!),
           APP_STORAGE_KEY,
         );
+
         const createdCategory = todoStorage.data.categories.find(
           (category) => category.name === "朝活",
         );
         expect(createdCategory).toBeDefined();
-        expect(createdCategory?.name).toBe("朝活");
         expect(createdCategory?.id).toBeTruthy();
         expect(createdCategory?.markAllIncompleteAt).toBe(
           DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
         );
-
-        // ストレージでも末尾に追加されていること
         expect(todoStorage.data.categories.at(-1)?.name).toBe("朝活");
       });
 
-      test("カテゴリを追加した時、カテゴリの名前順 -> 未分類 の順で並ぶこと", async ({
+      test("カテゴリを追加すると、そのカテゴリが選択状態になること", async ({
         page,
       }) => {
         // Arrange
@@ -643,23 +634,81 @@ test.describe("Todo ページのテスト", () => {
 
         // Act
         await page.getByRole("button", { name: "カテゴリ作成" }).click();
-        await page.getByRole("textbox", { name: "カテゴリ名" }).fill("03_朝活");
-        await page.getByRole("button", { name: "追加" }).click();
-
-        await page.getByRole("button", { name: "カテゴリ作成" }).click();
-        await page.getByRole("textbox", { name: "カテゴリ名" }).fill("01_仕事");
-        await page.getByRole("button", { name: "追加" }).click();
-
-        await page.getByRole("button", { name: "カテゴリ作成" }).click();
-        await page.getByRole("textbox", { name: "カテゴリ名" }).fill("02_趣味");
+        await page.getByRole("textbox", { name: "カテゴリ名" }).fill("朝活");
         await page.getByRole("button", { name: "追加" }).click();
 
         // Assert
-        const categoryList = page.getByLabel("カテゴリ一覧");
-        await expect(categoryList).toHaveText(
-          /01_仕事.*02_趣味.*03_朝活.*未分類/,
-        );
+        const categoryButton = page
+          .getByLabel("カテゴリ一覧")
+          .getByRole("button", { name: "朝活" });
+        await expect(categoryButton).toHaveAttribute("aria-pressed", "true");
       });
+
+      test("作成したカテゴリが選択された状態で Todo を作成すると、そのカテゴリに Todo が登録されること", async ({
+        page,
+      }) => {
+        // Arrange
+        await navigateToTodo(page);
+
+        await page.getByRole("button", { name: "カテゴリ作成" }).click();
+        await page.getByRole("textbox", { name: "カテゴリ名" }).fill("朝活");
+        await page.getByRole("button", { name: "追加" }).click();
+
+        const categoryButton = page
+          .getByLabel("カテゴリ一覧")
+          .getByRole("button", { name: "朝活" });
+        await expect(categoryButton).toHaveAttribute("aria-pressed", "true");
+
+        // Act
+        await page.getByRole("textbox", { name: "財布" }).fill("ランニング");
+        await page.getByRole("button", { name: "追加" }).click();
+
+        // Assert (Todo が表示されていること)
+        await expect(
+          assertScope.getByText("ランニング", { exact: true }),
+        ).toBeVisible();
+
+        // Assert (Todo がカテゴリと紐づいた状態でデータストアに登録されていていること)
+        const todoStorage: AppStorage = await page.evaluate(
+          (key) => JSON.parse(localStorage.getItem(key)!),
+          APP_STORAGE_KEY,
+        );
+        const createdCategory = todoStorage.data.categories.find(
+          (category) => category.name === "朝活",
+        );
+        const createdTodo = todoStorage.data.todos.find(
+          (todo) => todo.name === "ランニング",
+        );
+        expect(createdCategory).toBeDefined();
+        expect(createdTodo).toBeDefined();
+        expect(createdTodo?.categoryId).toBe(createdCategory?.id);
+      });
+    });
+
+    test("カテゴリを追加した時、カテゴリの名前順 -> 未分類 の順で並ぶこと", async ({
+      page,
+    }) => {
+      // Arrange
+      await navigateToTodo(page);
+
+      // Act
+      await page.getByRole("button", { name: "カテゴリ作成" }).click();
+      await page.getByRole("textbox", { name: "カテゴリ名" }).fill("03_朝活");
+      await page.getByRole("button", { name: "追加" }).click();
+
+      await page.getByRole("button", { name: "カテゴリ作成" }).click();
+      await page.getByRole("textbox", { name: "カテゴリ名" }).fill("01_仕事");
+      await page.getByRole("button", { name: "追加" }).click();
+
+      await page.getByRole("button", { name: "カテゴリ作成" }).click();
+      await page.getByRole("textbox", { name: "カテゴリ名" }).fill("02_趣味");
+      await page.getByRole("button", { name: "追加" }).click();
+
+      // Assert
+      const categoryList = page.getByLabel("カテゴリ一覧");
+      await expect(categoryList).toHaveText(
+        /01_仕事.*02_趣味.*03_朝活.*未分類/,
+      );
     });
 
     test.describe("表示時のテスト", () => {
