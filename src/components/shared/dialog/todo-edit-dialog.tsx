@@ -142,13 +142,18 @@ export function TodoEditDialog({
         </DialogHeader>
 
         <form id="todo-edit" onSubmit={form.handleSubmit(handleSubmit)}>
-          <FieldGroup>
-            <FieldSet>
-              <Field>
+          <FieldSet>
+            <FieldGroup>
+              <Field orientation="horizontal">
                 <div className="flex items-center gap-2">
-                  <div id="todo-category-name">カテゴリ: </div>
-                  <Select items={dummyItems} defaultValue={categoryName}>
-                    <SelectTrigger>
+                  <FieldLabel htmlFor="todo-category">カテゴリ:</FieldLabel>
+
+                  <Select
+                    id="todo-category"
+                    items={dummyItems}
+                    defaultValue={categoryName}
+                  >
+                    <SelectTrigger aria-label="カテゴリ">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -166,6 +171,7 @@ export function TodoEditDialog({
 
               <Field>
                 {/* TODO: ボタンの見た目を整える */}
+                <FieldLabel>完了</FieldLabel>
                 <TodoToggle
                   todo={{ ...todo, completed }}
                   onChange={(updated) => setCompleted(updated.completed)}
@@ -182,6 +188,7 @@ export function TodoEditDialog({
                       {MESSAGES.labels.title}
                       <Required />
                     </FieldLabel>
+
                     <Input
                       {...field}
                       id="todo-name-edit"
@@ -189,6 +196,7 @@ export function TodoEditDialog({
                       placeholder={MESSAGES.placeholders.title}
                       autoComplete="off"
                     />
+
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
@@ -200,10 +208,11 @@ export function TodoEditDialog({
                 name="memo"
                 control={form.control}
                 render={({ field, fieldState }) => (
-                  <Field>
+                  <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor="todo-memo">
                       {MESSAGES.labels.memo}
                     </FieldLabel>
+
                     <Textarea
                       {...field}
                       id="todo-memo"
@@ -212,14 +221,15 @@ export function TodoEditDialog({
                       className="resize-none"
                       aria-invalid={fieldState.invalid}
                     />
+
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
                   </Field>
                 )}
               />
-            </FieldSet>
-          </FieldGroup>
+            </FieldGroup>
+          </FieldSet>
         </form>
 
         <DialogFooter>
@@ -230,6 +240,7 @@ export function TodoEditDialog({
               </Button>
             }
           />
+
           <Button type="submit" form="todo-edit">
             {MESSAGES.actions.update}
           </Button>

@@ -309,18 +309,9 @@ export function TodoApp() {
   return (
     <div className="not-prose flex w-full flex-col">
       <div className="bg-background sticky top-0 z-50">
-        <TodoAppHeader />
+        <TodoAppHeader appStorage={appStorage} onImport={handleImport} />
 
-        <div className="flex flex-col gap-2 p-4">
-          <TodoAppNavigation
-            isEditing={isEditing}
-            appStorage={appStorage}
-            onMarkAllIncomplete={handleMarkAllIncomplete}
-            onImport={handleImport}
-            onOpenCategorySettings={handleOpenCategoryEditDialog}
-            onToggleEditing={() => setIsEditing((prev) => !prev)}
-          />
-
+        <div className="flex flex-col gap-3 p-4">
           {isLoaded && (
             <CategoryList
               categories={categories}
@@ -334,6 +325,15 @@ export function TodoApp() {
               }
             />
           )}
+
+          <TodoAppNavigation
+            isEditing={isEditing}
+            appStorage={appStorage}
+            onMarkAllIncomplete={handleMarkAllIncomplete}
+            onImport={handleImport}
+            onOpenCategorySettings={handleOpenCategoryEditDialog}
+            onToggleEditing={() => setIsEditing((prev) => !prev)}
+          />
         </div>
         <Separator />
       </div>

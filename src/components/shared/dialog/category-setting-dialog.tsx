@@ -16,16 +16,27 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldSet,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { MESSAGES } from "@/constants/messages";
+import {
+  CategoryFormValues,
+  categoryFormSchema,
+} from "@/schemas/category-form-schema";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircleIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 
 export type CategoryDialogMode = "create" | "edit";
 
@@ -52,28 +63,39 @@ export function CategorySettingDialog({
   onDelete,
   onMarkAllIncomplete,
 }: CategorySettingDialogProps) {
-  const [categoryName, setCategoryName] = useState(category?.name ?? "");
   const [isMarkAllIncompleteConfirmOpen, setIsMarkAllIncompleteConfirmOpen] =
     useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
 
   const isCreateMode = mode === "create";
 
-  const handleSave = () => {
-    const trimmedName = categoryName.trim();
+  const form = useForm<CategoryFormValues>({
+    resolver: zodResolver(categoryFormSchema),
+    defaultValues: {
+      name: category?.name ?? "",
+    },
+  });
 
+  useEffect(() => {
+    if (open) {
+      form.reset({
+        name: category?.name ?? "",
+      });
+    }
+  }, [open, category, form]);
+
+  const handleSubmit = (data: CategoryFormValues) => {
     if (isCreateMode) {
-      if (!trimmedName) return;
-
-      onCreate(trimmedName);
+      onCreate(data.name);
       onOpenChange(false);
       return;
     }
 
-    if (!category || isDefaultCategory) return;
-    if (!trimmedName || trimmedName === category.name) return;
+    if (!category || isDefaultCategory) {
+      return;
+    }
 
-    onRename(category, trimmedName);
+    onRename(category, data.name);
     onOpenChange(false);
   };
 
@@ -95,96 +117,126 @@ export function CategorySettingDialog({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>カテゴリ設定</DialogTitle>
-
-            <DialogDescription>
+            <DialogTitle className="min-w-0 break-all">
               {isCreateMode
-                ? "新しいカテゴリを追加します。"
-                : `対象カテゴリ: ${category?.name ?? ""}`}
-            </DialogDescription>
+                ? "新規カテゴリの追加"
+                : `カテゴリ設定: ${category?.name ?? ""}`}
+            </DialogTitle>
           </DialogHeader>
 
           {(isCreateMode || category) && (
-            <>
-              <div className="space-y-3">
-                <Label className="flex flex-col items-start gap-2">
-                  {MESSAGES.labels.categoryName}
+            <form
+              id="category-setting"
+              onSubmit={form.handleSubmit(handleSubmit)}
+            >
+              <FieldSet>
+                <FieldGroup>
+                  <Controller
+                    name="name"
+                    control={form.control}
+                    render={({ field, fieldState }) => (
+                      <Field data-invalid={fieldState.invalid}>
+                        <FieldLabel htmlFor="category-name">
+                          {MESSAGES.labels.categoryName}
+                        </FieldLabel>
 
-                  <Input
-                    value={categoryName}
-                    onChange={(e) => setCategoryName(e.target.value)}
-                    aria-label={MESSAGES.labels.categoryName}
-                    placeholder={
-                      isCreateMode
-                        ? MESSAGES.placeholders.categoryName
-                        : (category?.name ?? "")
-                    }
-                    disabled={!isCreateMode && isDefaultCategory}
+                        <Input
+                          {...field}
+                          id="category-name"
+                          aria-label={MESSAGES.labels.categoryName}
+                          aria-invalid={fieldState.invalid}
+                          placeholder={
+                            isCreateMode
+                              ? MESSAGES.placeholders.categoryName
+                              : (category?.name ?? "")
+                          }
+                          disabled={!isCreateMode && isDefaultCategory}
+                        />
+
+                        {fieldState.invalid && (
+                          <FieldError errors={[fieldState.error]} />
+                        )}
+                      </Field>
+                    )}
                   />
-                </Label>
 
-                <Label className="flex flex-col items-start gap-2">
-                  <p className="text-sm font-medium">未完了に戻す時刻</p>
-                  <p className="text-muted-foreground text-sm">（将来対応）</p>
-                </Label>
-              </div>
+                  <Field>
+                    <FieldLabel htmlFor="category-reset-time">
+                      未完了に戻す時刻
+                    </FieldLabel>
+                    <Input
+                      // {...field}
+                      id="category-reset-time"
+                      // aria-label={MESSAGES.labels.categoryName}
+                      // aria-invalid={fieldState.invalid}
+                      placeholder={
+                        "将来対応"
+                        // isCreateMode
+                        //   ? MESSAGES.placeholders.categoryName
+                        //   : (category?.name ?? "")
+                      }
+                      disabled={!isCreateMode && isDefaultCategory}
+                    />
+                  </Field>
 
-              <div className="flex gap-2">
-                {!isCreateMode && category && (
-                  <div className="flex gap-2">
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      onClick={() => setIsMarkAllIncompleteConfirmOpen(true)}
-                    >
-                      {MESSAGES.actions.markAllIncomplete}
-                    </Button>
+                  <Field className="flex gap-2">
+                    {!isCreateMode && category && (
+                      <div className="flex gap-2">
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          onClick={() =>
+                            setIsMarkAllIncompleteConfirmOpen(true)
+                          }
+                        >
+                          {MESSAGES.actions.markAllIncomplete}
+                        </Button>
 
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      onClick={() => setIsDeleteConfirmOpen(true)}
-                      disabled={isDefaultCategory}
-                    >
-                      カテゴリを削除
-                    </Button>
-                  </div>
-                )}
-              </div>
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          onClick={() => setIsDeleteConfirmOpen(true)}
+                          disabled={isDefaultCategory}
+                        >
+                          カテゴリを削除
+                        </Button>
+                      </div>
+                    )}
+                  </Field>
 
-              {!isCreateMode && isDefaultCategory && (
-                <Alert variant="default">
-                  <AlertCircleIcon size={16} />
+                  {!isCreateMode && isDefaultCategory && (
+                    <Field>
+                      <Alert variant="default">
+                        <AlertCircleIcon size={16} />
 
-                  <AlertTitle>
-                    未分類カテゴリはタイトル変更・削除できません。
-                  </AlertTitle>
-                </Alert>
-              )}
-
-              <DialogFooter>
-                <DialogClose
-                  render={
-                    <Button type="button" variant="outline">
-                      キャンセル
-                    </Button>
-                  }
-                />
-
-                <Button
-                  type="button"
-                  onClick={handleSave}
-                  disabled={
-                    (!isCreateMode && isDefaultCategory) || !categoryName.trim()
-                  }
-                >
-                  {isCreateMode
-                    ? MESSAGES.actions.add
-                    : MESSAGES.actions.update}
-                </Button>
-              </DialogFooter>
-            </>
+                        <AlertTitle>
+                          未分類カテゴリはタイトル変更・削除できません。
+                        </AlertTitle>
+                      </Alert>
+                    </Field>
+                  )}
+                </FieldGroup>
+              </FieldSet>
+            </form>
           )}
+
+          <DialogFooter>
+            <DialogClose
+              render={
+                <Button type="button" variant="outline">
+                  {MESSAGES.actions.cancel}
+                </Button>
+              }
+            />
+
+            <Button
+              type="submit"
+              form="category-setting"
+              disabled={!isCreateMode && isDefaultCategory}
+            >
+              {isCreateMode ? MESSAGES.actions.add : MESSAGES.actions.update}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
@@ -199,7 +251,7 @@ export function CategorySettingDialog({
             </AlertDialogTitle>
 
             <AlertDialogDescription>
-              このカテゴリ内のアイテムをすべて未完了に戻します。
+              {`「${category?.name}」内のアイテムのみが対象です。`}
             </AlertDialogDescription>
           </AlertDialogHeader>
 

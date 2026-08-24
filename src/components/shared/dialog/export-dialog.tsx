@@ -6,22 +6,21 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { MESSAGES } from "@/constants/messages";
 import { AppStorage } from "@/types/app-storage";
-import { ComponentProps, ReactElement, ReactNode } from "react";
 import { toast } from "sonner";
 
 type ExportDialogProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   appStorage: AppStorage;
-  children: ReactNode;
-} & ComponentProps<typeof DialogTrigger>;
+};
 
 export function ExportDialog({
   appStorage,
-  children,
-  ...props
+  open,
+  onOpenChange,
 }: ExportDialogProps) {
   const handleCopy = () => {
     try {
@@ -29,24 +28,13 @@ export function ExportDialog({
       void navigator.clipboard.writeText(json);
 
       toast.success(MESSAGES.toast.clipboardCopied);
-
-      // toast.add({
-      //   title: MESSAGES.toast.clipboardCopied,
-      //   type: "success",
-      // });
     } catch {
       toast.error(MESSAGES.toast.clipboardCopied);
-      //   toast.add({
-      //     title: MESSAGES.toast.clipboardCopied,
-      //     type: "error",
-      //   });
     }
   };
 
   return (
-    <Dialog>
-      <DialogTrigger render={children as ReactElement} {...props} />
-
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{MESSAGES.dialogs.export.title}</DialogTitle>

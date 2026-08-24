@@ -2,9 +2,9 @@ import { TodoApp } from "@/features/todo-app";
 
 export default function Home() {
   return (
-    <div className="md:bg-muted min-h-screen">
+    <div className="bg-muted min-h-screen">
       <main
-        className="bg-background mx-auto min-h-screen w-full max-w-2xl"
+        className="bg-background mx-auto min-h-screen w-full max-w-3xl"
         data-testid="todo"
       >
         <TodoApp />

@@ -8,7 +8,7 @@ type TodoFormFooterProps = {
 export function TodoFormFooter({ onSubmit }: TodoFormFooterProps) {
   return (
     <div className="fixed inset-x-0 bottom-0 z-50">
-      <div className="bg-background mx-auto w-full max-w-2xl border-t px-8 py-4">
+      <div className="bg-background mx-auto w-full max-w-3xl border-t px-4 py-4">
         <TodoForm onSubmit={onSubmit} />
       </div>
     </div>
