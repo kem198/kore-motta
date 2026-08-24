@@ -56,7 +56,7 @@ function TodoItemActions({
   }
 
   return (
-    <div className="flex shrink-0 items-center justify-end gap-2">
+    <div className="flex shrink-0 items-center justify-end gap-2 p-2">
       <AlertDialog>
         <AlertDialogTrigger
           render={
@@ -138,9 +138,9 @@ function TodoItem({
     <div
       role="listitem"
       aria-label={`Todo: ${todo.name}`}
-      className="flex w-full items-center gap-4 rounded-md border border-transparent text-sm transition-colors duration-100 outline-none"
+      className="hover:bg-accent flex w-full items-center gap-4 rounded-md border border-transparent text-sm transition-colors duration-100 outline-none"
     >
-      <div className="flex shrink-0 items-center justify-center py-3.5">
+      <div className="flex shrink-0 items-center justify-center p-2">
         <TodoToggle aria-label="Toggle todo" todo={todo} onChange={onUpdate} />
       </div>
 
@@ -200,7 +200,8 @@ function TodoListContent({
   onReorder,
 }: TodoListContentProps) {
   return (
-    <div className="flex w-full flex-col">
+    <div className="flex w-full flex-col gap-2">
+      <div>{/* 上部の隙間用 */}</div>
       {todos.map((todo, index) => (
         <Fragment key={todo.id}>
           <TodoItem
@@ -213,7 +214,7 @@ function TodoListContent({
             onReorder={onReorder}
           />
 
-          {index !== todos.length - 1 && <Separator className="my-2" />}
+          {index !== todos.length - 1 && <Separator />}
         </Fragment>
       ))}
     </div>
