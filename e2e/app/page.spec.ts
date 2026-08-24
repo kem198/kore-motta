@@ -16,9 +16,7 @@ test.describe("Todo ページのテスト", () => {
 
   /** テスト対象のページへ遷移する */
   const navigateToTodo = async (page: Page) => {
-    const targetPath = "/";
-    await page.goto(targetPath);
-    await expect(page).toHaveURL(targetPath);
+    await page.goto("/");
   };
 
   /** ダミーデータ */
@@ -51,6 +49,13 @@ test.describe("Todo ページのテスト", () => {
       [APP_STORAGE_KEY, JSON.stringify(storage)],
     );
   };
+
+  /** localStorage の appStorage キーの値を取得するヘルパー */
+  const getAppStorage = async (page: Page): Promise<AppStorage> =>
+    page.evaluate(
+      (key) => JSON.parse(localStorage.getItem(key)!),
+      APP_STORAGE_KEY,
+    );
 
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
@@ -126,16 +131,7 @@ test.describe("Todo ページのテスト", () => {
         await navigateToTodo(page);
 
         // Assert
-        await expect
-          .poll(
-            async () =>
-              await page.evaluate(
-                (key) => localStorage.getItem(key),
-                APP_STORAGE_KEY,
-              ),
-            { timeout: 5000 },
-          )
-          .not.toBeNull();
+        await expect(async () => await getAppStorage(page)).not.toBeNull();
 
         const raw = await page.evaluate(
           (key) => localStorage.getItem(key),
@@ -174,10 +170,7 @@ test.describe("Todo ページのテスト", () => {
         ).toBeVisible();
 
         // Assert (データストアへ登録されていること)
-        const todoStorage: AppStorage = await page.evaluate(
-          (key) => JSON.parse(localStorage.getItem(key)!),
-          APP_STORAGE_KEY,
-        );
+        const todoStorage: AppStorage = await getAppStorage(page);
         expect(todoStorage.data.todos[0].name).toBe("カギ");
       });
 
@@ -216,10 +209,7 @@ test.describe("Todo ページのテスト", () => {
         await expect(assertScope.getByText("家の鍵").first()).toBeVisible();
 
         // Assert (データストアへ登録されていること)
-        const migrated: AppStorage = await page.evaluate(
-          (key) => JSON.parse(localStorage.getItem(key)!),
-          APP_STORAGE_KEY,
-        );
+        const migrated: AppStorage = await getAppStorage(page);
         expect(migrated.version).toBe(1);
         expect(migrated.data.todos[0].name).toBe("カギ");
       });
@@ -359,10 +349,7 @@ test.describe("Todo ページのテスト", () => {
         ).not.toBeVisible();
 
         // Assert (データストアへ登録されていないこと)
-        const migrated: AppStorage = await page.evaluate(
-          (key) => JSON.parse(localStorage.getItem(key)!),
-          APP_STORAGE_KEY,
-        );
+        const migrated: AppStorage = await getAppStorage(page);
         expect(migrated.data.todos).toHaveLength(0);
       });
     });
@@ -415,10 +402,7 @@ test.describe("Todo ページのテスト", () => {
         ).toBeVisible();
 
         // Assert (完了状態が未完了に戻ること)
-        const migrated: AppStorage = await page.evaluate(
-          (key) => JSON.parse(localStorage.getItem(key)!),
-          APP_STORAGE_KEY,
-        );
+        const migrated: AppStorage = await getAppStorage(page);
         expect(migrated.data.todos).toHaveLength(2);
         expect(
           migrated.data.todos.every((todo) => todo.completed === false),
@@ -439,16 +423,7 @@ test.describe("Todo ページのテスト", () => {
         await navigateToTodo(page);
 
         // Assert
-        await expect
-          .poll(
-            async () =>
-              await page.evaluate(
-                (key) => localStorage.getItem(key),
-                APP_STORAGE_KEY,
-              ),
-            { timeout: 5000 },
-          )
-          .not.toBeNull();
+        await expect(await getAppStorage(page)).not.toBeNull();
 
         const raw = await page.evaluate(
           (key) => localStorage.getItem(key),
@@ -479,10 +454,7 @@ test.describe("Todo ページのテスト", () => {
         await page.getByRole("button", { name: "追加" }).click();
 
         // Assert
-        const todoStorage: AppStorage = await page.evaluate(
-          (key) => JSON.parse(localStorage.getItem(key)!),
-          APP_STORAGE_KEY,
-        );
+        const todoStorage: AppStorage = await await getAppStorage(page);
 
         const createdCategory = todoStorage.data.categories.find(
           (category) => category.name === "朝活",
@@ -540,10 +512,7 @@ test.describe("Todo ページのテスト", () => {
         ).toBeVisible();
 
         // Assert (Todo がカテゴリと紐づいた状態でデータストアに登録されていていること)
-        const todoStorage: AppStorage = await page.evaluate(
-          (key) => JSON.parse(localStorage.getItem(key)!),
-          APP_STORAGE_KEY,
-        );
+        const todoStorage: AppStorage = await getAppStorage(page);
         const createdCategory = todoStorage.data.categories.find(
           (category) => category.name === "朝活",
         );
@@ -677,10 +646,7 @@ test.describe("Todo ページのテスト", () => {
         // Assert
         await expect(page.getByRole("button", { name: "営業" })).toBeVisible();
 
-        const persisted: AppStorage = await page.evaluate(
-          (key) => JSON.parse(localStorage.getItem(key)!),
-          APP_STORAGE_KEY,
-        );
+        const persisted: AppStorage = await getAppStorage(page);
         const updatedCategory = persisted.data.categories.find(
           (category) => category.id === "work",
         );
@@ -751,10 +717,7 @@ test.describe("Todo ページのテスト", () => {
         ).not.toBeVisible();
 
         // localStorage から削除されたカテゴリが消える
-        const persisted: AppStorage = await page.evaluate(
-          (key) => JSON.parse(localStorage.getItem(key)!),
-          APP_STORAGE_KEY,
-        );
+        const persisted: AppStorage = await getAppStorage(page);
         const deletedCategory = persisted.data.categories.find(
           (category) => category.id === "personal",
         );
@@ -825,10 +788,7 @@ test.describe("Todo ページのテスト", () => {
         ).toHaveAttribute("aria-pressed", "true");
 
         // 削除されたカテゴリが localStorage から削除されていること
-        const persisted: AppStorage = await page.evaluate(
-          (key) => JSON.parse(localStorage.getItem(key)!),
-          APP_STORAGE_KEY,
-        );
+        const persisted: AppStorage = await getAppStorage(page);
 
         const deletedCategory = persisted.data.categories.find(
           (category) => category.id === "work",
@@ -1015,10 +975,7 @@ test.describe("Todo ページのテスト", () => {
         ).toBeVisible();
 
         // Assert (データストアへ保存されていること)
-        const migrated: AppStorage = await page.evaluate(
-          (key) => JSON.parse(localStorage.getItem(key)!),
-          APP_STORAGE_KEY,
-        );
+        const migrated: AppStorage = await getAppStorage(page);
         expect(migrated.version).toBe(1);
         expect(migrated.data.todos[0].id).toBe("import-todo");
         expect(migrated.data.todos[0].name).toBe("カギ");
@@ -1051,10 +1008,7 @@ test.describe("Todo ページのテスト", () => {
         ).toBeVisible();
 
         // Assert (データストアが更新されていないこと)
-        const migratedInvalidJson: AppStorage = await page.evaluate(
-          (key) => JSON.parse(localStorage.getItem(key)!),
-          APP_STORAGE_KEY,
-        );
+        const migratedInvalidJson: AppStorage = await getAppStorage(page);
         expect(migratedInvalidJson.data.todos[0].id).toBe("dummy-todo");
       });
 
@@ -1103,10 +1057,7 @@ test.describe("Todo ページのテスト", () => {
         ).toBeVisible();
 
         // Assert (データストアが更新されていないこと)
-        const migratedCorrupted: AppStorage = await page.evaluate(
-          (key) => JSON.parse(localStorage.getItem(key)!),
-          APP_STORAGE_KEY,
-        );
+        const migratedCorrupted: AppStorage = await getAppStorage(page);
         expect(migratedCorrupted.data.todos[0].id).toBe("dummy-todo");
       });
     });
