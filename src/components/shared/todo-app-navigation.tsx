@@ -1,5 +1,4 @@
 import { TodoAppActions } from "@/components/shared/todo-app-actions";
-import { TodoEditActions } from "@/components/shared/todo-edit-actions";
 import { AppStorage } from "@/types/app-storage";
 
 type TodoAppNavigationProps = {
@@ -13,19 +12,11 @@ type TodoAppNavigationProps = {
 
 export function TodoAppNavigation({
   isEditing,
-  appStorage,
-  onImport,
   onOpenCategorySettings,
   onToggleEditing,
 }: TodoAppNavigationProps) {
   return (
-    <div className="sticky bottom-0 z-50 flex justify-between gap-2">
-      <div className="flex gap-2">
-        {isEditing && (
-          <TodoEditActions appStorage={appStorage} onImport={onImport} />
-        )}
-      </div>
-
+    <div className="sticky bottom-0 z-50 flex justify-end gap-2">
       <TodoAppActions
         isEditing={isEditing}
         onOpenCategorySettings={onOpenCategorySettings}

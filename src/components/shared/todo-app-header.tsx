@@ -1,41 +1,103 @@
+import { ExportDialog } from "@/components/shared/dialog/export-dialog";
 import { HelpDialog } from "@/components/shared/dialog/help-dialog";
+import { ImportDialog } from "@/components/shared/dialog/import-dialog";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { MESSAGES } from "@/constants/messages";
 import { SITE_NAME } from "@/constants/site";
 import { cn } from "@/lib/utils";
-import { EllipsisVerticalIcon } from "lucide-react";
+import { AppStorage } from "@/types/app-storage";
+import { DownloadIcon, EllipsisVerticalIcon, UploadIcon } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 
-export type TodoAppHeaderProps = React.HTMLAttributes<HTMLElement>;
+export type TodoAppHeaderProps = {
+  appStorage: AppStorage;
+  onImport: (data: string) => boolean;
+} & React.HTMLAttributes<HTMLElement>;
 
-export function TodoAppHeader({ className, ...props }: TodoAppHeaderProps) {
+export function TodoAppHeader({
+  appStorage,
+  onImport,
+  className,
+  ...props
+}: TodoAppHeaderProps) {
+  const [isImportDialogOpen, setIsImportDialogOpen] = React.useState(false);
+  const [isExportDialogOpen, setIsExportDialogOpen] = React.useState(false);
+
   return (
-    <header
-      className={cn(
-        "bg-primary flex items-center justify-between gap-2 px-3 py-1 font-normal text-white",
-        className,
-      )}
-      {...props}
-    >
-      <Link
-        href="/"
-        className="font-ubuntu-sans inline-flex w-auto items-center gap-2 text-xl font-medium"
+    <>
+      <header
+        className={cn(
+          "bg-primary flex items-center justify-between gap-2 px-3 py-1 font-normal text-white",
+          className,
+        )}
+        {...props}
       >
-        {SITE_NAME}
-      </Link>
-      <div className="flex gap-1">
-        <HelpDialog />
-
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-lg"
-          aria-label="アプリの使い方・利用規約"
-          className="rounded-full text-white hover:bg-white/10 hover:text-white"
+        <Link
+          href="/"
+          className="font-ubuntu-sans inline-flex w-auto items-center gap-2 text-xl font-medium"
         >
-          <EllipsisVerticalIcon className="size-5" />
-        </Button>
-      </div>
-    </header>
+          {SITE_NAME}
+        </Link>
+
+        <div className="flex gap-1">
+          <HelpDialog />
+
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon-lg"
+                  aria-label="グローバルメニュー"
+                  className="rounded-full text-white hover:bg-white/10 hover:text-white"
+                >
+                  <EllipsisVerticalIcon className="size-5" />
+                </Button>
+              }
+            />
+
+            <DropdownMenuContent align="end" className="w-40">
+              <DropdownMenuGroup>
+                <DropdownMenuItem
+                  onClick={() => setIsExportDialogOpen(true)}
+                  aria-label="エクスポート"
+                >
+                  <UploadIcon /> {MESSAGES.actions.export}
+                </DropdownMenuItem>
+
+                <DropdownMenuItem
+                  variant="destructive"
+                  onClick={() => setIsImportDialogOpen(true)}
+                  aria-label="インポート"
+                >
+                  <DownloadIcon />
+                  {MESSAGES.actions.import}
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </header>
+
+      <ImportDialog
+        open={isImportDialogOpen}
+        onOpenChange={setIsImportDialogOpen}
+        onImport={onImport}
+      />
+
+      <ExportDialog
+        open={isExportDialogOpen}
+        onOpenChange={setIsExportDialogOpen}
+        appStorage={appStorage}
+      />
+    </>
   );
 }

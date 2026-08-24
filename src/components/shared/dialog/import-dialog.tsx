@@ -9,33 +9,32 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { MESSAGES } from "@/constants/messages";
 import { AlertCircleIcon } from "lucide-react";
-import { ComponentProps, ReactElement, useState } from "react";
+import { useState } from "react";
 
 type ImportDialogProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   onImport: (data: string) => boolean;
-  children: React.ReactNode;
-} & ComponentProps<typeof DialogTrigger>;
+};
 
 export function ImportDialog({
+  open,
+  onOpenChange,
   onImport,
-  children,
-  ...props
 }: ImportDialogProps) {
   const [value, setValue] = useState("");
   const [error, setError] = useState(false);
-  const [open, setOpen] = useState(false);
 
   const handleImport = () => {
     const ok = onImport(value);
 
     if (ok) {
-      setOpen(false);
+      onOpenChange(false);
       setValue("");
       setError(false);
     } else {
@@ -44,9 +43,7 @@ export function ImportDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen} {...props}>
-      <DialogTrigger render={children as ReactElement} />
-
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{MESSAGES.dialogs.import.title}</DialogTitle>
@@ -64,6 +61,7 @@ export function ImportDialog({
               setError(false);
             }}
             className="bg-muted/50 min-h-[160px] w-full cursor-text resize-none p-2 font-mono text-xs break-words whitespace-pre-wrap select-text"
+            aria-label="インポート用テキストエリア"
           />
         </ScrollArea>
 

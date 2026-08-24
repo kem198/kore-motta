@@ -394,23 +394,18 @@ test.describe("Todo ページのテスト", () => {
         await navigateToTodo(page);
 
         // Act
-        await page.getByRole("button", { name: "編集開始" }).click();
-        await expect(
-          page.getByRole("button", { name: "完了", exact: true }),
-        ).toBeVisible();
-        await page.getByRole("button", { name: "エクスポート" }).click();
+        await page.getByRole("button", { name: "グローバルメニュー" }).click();
+        await page.getByRole("menuitem", { name: "エクスポート" }).click();
 
         // Assert
         // ダイアログは page の範囲外のためページ全体をテスト範囲にする
         await expect(page.locator("body")).toContainText('"version": 1');
-
         await expect(page.locator("body")).toContainText(
           '"id": "test-todo-01"',
         );
         await expect(page.locator("body")).toContainText('"name": "カギ"');
         await expect(page.locator("body")).toContainText('"order": 0');
         await expect(page.locator("body")).toContainText('"memo": "家の鍵"');
-
         await expect(page.locator("body")).toContainText(
           '"id": "test-todo-02"',
         );
@@ -425,7 +420,7 @@ test.describe("Todo ページのテスト", () => {
         page,
       }) => {
         // Arrange
-        const todoStorage: AppStorage = {
+        const backupTodoStorage: AppStorage = {
           version: 1,
           data: {
             settings: {},
@@ -442,14 +437,17 @@ test.describe("Todo ページのテスト", () => {
             categories: DEFAULT_CATEGORIES_STORAGE,
           },
         };
+        const backupText = JSON.stringify(backupTodoStorage, null, 2);
 
-        const backupText = JSON.stringify(todoStorage, null, 2);
         await navigateToTodo(page);
         await page.getByRole("button", { name: "編集開始" }).click();
 
         // Act
-        await page.getByRole("button", { name: "インポート" }).click();
-        await page.getByRole("textbox").fill(backupText);
+        await page.getByRole("button", { name: "グローバルメニュー" }).click();
+        await page.getByRole("menuitem", { name: "インポート" }).click();
+        await page
+          .getByRole("textbox", { name: "インポート用テキストエリア" })
+          .fill(backupText);
         await page.getByRole("button", { name: "インポート" }).click();
 
         // Assert (表示が復元されること)
@@ -474,12 +472,14 @@ test.describe("Todo ページのテスト", () => {
         page,
       }) => {
         // Arrange
+        const corruptedText = "JSON ではない文字列";
+
         await navigateToTodo(page);
-        await page.getByRole("button", { name: "編集開始" }).click();
-        await page.getByRole("button", { name: "インポート" }).click();
+        await page.getByRole("button", { name: "グローバルメニュー" }).click();
+        await page.getByRole("menuitem", { name: "インポート" }).click();
 
         // Act
-        await page.getByRole("textbox").fill("JSON ではない文字列");
+        await page.getByRole("textbox").fill(corruptedText);
         await page.getByRole("button", { name: "インポート" }).click();
 
         // Assert
@@ -525,12 +525,12 @@ test.describe("Todo ページのテスト", () => {
         };
 
         await navigateToTodo(page);
-        await page.getByRole("button", { name: "編集開始" }).click();
-        await page.getByRole("button", { name: "インポート" }).click();
+        await page.getByRole("button", { name: "グローバルメニュー" }).click();
+        await page.getByRole("menuitem", { name: "インポート" }).click();
 
         // Act
         await page
-          .getByRole("textbox")
+          .getByRole("textbox", { name: "インポート用テキストエリア" })
           .fill(JSON.stringify(corruptedAppStorage));
         await page.getByRole("button", { name: "インポート" }).click();
 
