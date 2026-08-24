@@ -55,7 +55,7 @@ export const MESSAGES = {
     title: "財布",
     memo: "カバンのポケットに入れる",
     newItem: "新しいアイテム",
-    categoryName: "出かける前",
+    categoryName: "毎朝",
   },
 
   validation: {
