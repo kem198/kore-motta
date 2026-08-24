@@ -173,7 +173,7 @@ test.describe("Todo ページのテスト", () => {
       test("Todo を登録できること", async ({ page }) => {
         // Arrange
         await navigateToTodo(page);
-        const nameInput = page.getByRole("textbox", { name: "財布" });
+        const nameInput = page.getByRole("textbox", { name: "新しいアイテム" });
 
         // Act
         await nameInput.fill("カギ");
@@ -537,7 +537,9 @@ test.describe("Todo ページのテスト", () => {
         await expect(categoryButton).toHaveAttribute("aria-pressed", "true");
 
         // Act
-        await page.getByRole("textbox", { name: "財布" }).fill("ランニング");
+        await page
+          .getByRole("textbox", { name: "新しいアイテム" })
+          .fill("ランニング");
         await page.getByRole("button", { name: "追加" }).click();
 
         // Assert (Todo が表示されていること)
