@@ -16,7 +16,6 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -95,15 +94,11 @@ export function CategorySettingDialog({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>
-              {isCreateMode ? "新規カテゴリの追加" : "カテゴリ設定"}
-            </DialogTitle>
-
-            <DialogDescription>
+            <DialogTitle className="min-w-0 break-all">
               {isCreateMode
-                ? "新しいカテゴリを追加します。"
-                : `対象カテゴリ: ${category?.name ?? ""}`}
-            </DialogDescription>
+                ? "新規カテゴリの追加"
+                : `カテゴリ設定: ${category?.name ?? ""}`}
+            </DialogTitle>
           </DialogHeader>
 
           {(isCreateMode || category) && (
