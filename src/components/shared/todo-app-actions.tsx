@@ -36,7 +36,7 @@ export function TodoAppActions({
         }
       >
         <PencilIcon />
-        {isEditing ? MESSAGES.actions.editDone : MESSAGES.actions.edit}
+        {isEditing ? MESSAGES.actions.done : MESSAGES.actions.edit}
       </Button>
     </div>
   );
