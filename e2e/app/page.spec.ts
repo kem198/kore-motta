@@ -39,27 +39,27 @@ test.describe("Todo ページのテスト", () => {
     },
   };
 
+  /** localStorage の appStorage キーへ値をセットするヘルパー */
+  const setAppStorage = async (
+    page: Page,
+    storage: AppStorage,
+  ): Promise<void> => {
+    await page.evaluate(
+      ([key, value]) => {
+        localStorage.setItem(key, value);
+      },
+      [APP_STORAGE_KEY, JSON.stringify(storage)],
+    );
+  };
+
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
     assertScope = page.locator('[data-testid="todo"]');
-  });
-
-  test.beforeEach(async ({ page }) => {
-    await page.evaluate(
-      ([key, value]) => {
-        localStorage.setItem(key, value);
-      },
-      [APP_STORAGE_KEY, JSON.stringify(DUMMY_APP_STORAGE)],
-    );
+    await setAppStorage(page, DUMMY_APP_STORAGE);
   });
 
   test.afterEach(async ({ page }) => {
-    await page.evaluate(
-      ([key, value]) => {
-        localStorage.setItem(key, value);
-      },
-      [APP_STORAGE_KEY, JSON.stringify(DUMMY_APP_STORAGE)],
-    );
+    await setAppStorage(page, DUMMY_APP_STORAGE);
   });
 
   test.describe("Todo の操作", () => {
@@ -86,12 +86,7 @@ test.describe("Todo ページのテスト", () => {
           },
         };
 
-        await page.evaluate(
-          ([key, value]) => {
-            localStorage.setItem(key, value);
-          },
-          [APP_STORAGE_KEY, JSON.stringify(todoStorage)],
-        );
+        await setAppStorage(page, todoStorage);
 
         // Act
         await navigateToTodo(page);
@@ -125,13 +120,7 @@ test.describe("Todo ページのテスト", () => {
             categories: DEFAULT_CATEGORIES_STORAGE,
           },
         };
-
-        await page.evaluate(
-          ([key, value]) => {
-            localStorage.setItem(key, value);
-          },
-          [APP_STORAGE_KEY, JSON.stringify(storage)],
-        );
+        await setAppStorage(page, storage);
 
         // Act
         await navigateToTodo(page);
@@ -269,12 +258,8 @@ test.describe("Todo ページのテスト", () => {
             ],
           },
         };
-        await page.evaluate(
-          ([key, value]) => {
-            localStorage.setItem(key, value);
-          },
-          [APP_STORAGE_KEY, JSON.stringify(todoStorage)],
-        );
+        await setAppStorage(page, todoStorage);
+
         await navigateToTodo(page);
         await page.getByRole("button", { name: "仕事" }).click();
 
@@ -341,13 +326,7 @@ test.describe("Todo ページのテスト", () => {
             ],
           },
         };
-
-        await page.evaluate(
-          ([key, value]) => {
-            localStorage.setItem(key, value);
-          },
-          [APP_STORAGE_KEY, JSON.stringify(todoStorage)],
-        );
+        await setAppStorage(page, todoStorage);
 
         await navigateToTodo(page);
         await page.getByRole("button", { name: "仕事" }).click();
@@ -418,13 +397,8 @@ test.describe("Todo ページのテスト", () => {
             categories: DEFAULT_CATEGORIES_STORAGE,
           },
         };
+        await setAppStorage(page, todoStorage);
 
-        await page.evaluate(
-          ([key, value]) => {
-            localStorage.setItem(key, value);
-          },
-          [APP_STORAGE_KEY, JSON.stringify(todoStorage)],
-        );
         await navigateToTodo(page);
 
         // Act
@@ -649,12 +623,7 @@ test.describe("Todo ページのテスト", () => {
             ],
           },
         };
-        await page.evaluate(
-          ([key, value]) => {
-            localStorage.setItem(key, value);
-          },
-          [APP_STORAGE_KEY, JSON.stringify(todoStorage)],
-        );
+        await setAppStorage(page, todoStorage);
         await navigateToTodo(page);
 
         // Act
@@ -696,12 +665,7 @@ test.describe("Todo ページのテスト", () => {
             ],
           },
         };
-        await page.evaluate(
-          ([key, value]) => {
-            localStorage.setItem(key, value);
-          },
-          [APP_STORAGE_KEY, JSON.stringify(todoStorage)],
-        );
+        await setAppStorage(page, todoStorage);
         await navigateToTodo(page);
 
         // Act
@@ -771,12 +735,7 @@ test.describe("Todo ページのテスト", () => {
             ],
           },
         };
-        await page.evaluate(
-          ([key, value]) => {
-            localStorage.setItem(key, value);
-          },
-          [APP_STORAGE_KEY, JSON.stringify(todoStorage)],
-        );
+        await setAppStorage(page, todoStorage);
         await navigateToTodo(page);
 
         // Act
@@ -842,12 +801,7 @@ test.describe("Todo ページのテスト", () => {
             ],
           },
         };
-        await page.evaluate(
-          ([key, value]) => {
-            localStorage.setItem(key, value);
-          },
-          [APP_STORAGE_KEY, JSON.stringify(todoStorage)],
-        );
+        await setAppStorage(page, todoStorage);
         await navigateToTodo(page);
 
         // Act
@@ -940,12 +894,7 @@ test.describe("Todo ページのテスト", () => {
           },
         };
 
-        await page.evaluate(
-          ([key, value]) => {
-            localStorage.setItem(key, value);
-          },
-          [APP_STORAGE_KEY, JSON.stringify(todoStorage)],
-        );
+        await setAppStorage(page, todoStorage);
         await navigateToTodo(page);
 
         // Act
@@ -997,14 +946,7 @@ test.describe("Todo ページのテスト", () => {
             categories: DEFAULT_CATEGORIES_STORAGE,
           },
         };
-
-        await page.evaluate(
-          ([key, value]) => {
-            localStorage.setItem(key, value);
-          },
-          [APP_STORAGE_KEY, JSON.stringify(todoStorage)],
-        );
-
+        await setAppStorage(page, todoStorage);
         await navigateToTodo(page);
 
         // Act
