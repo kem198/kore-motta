@@ -29,12 +29,11 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - React
 - TypeScript
 - Tailwind CSS
-- Vitest
 - Playwright
 
 ## TDD
 
-機能追加や仕様変更では、原則としてテスト駆動開発 (TDD) で進める。
+機能追加や仕様変更では、原則としてテストファーストおよびテスト駆動開発 (TDD) で進める。
 
 1. 関連する既存コードとテストを確認する。
 2. 要求を受け入れ条件に分解する。
@@ -112,4 +111,4 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## コマンド実行
 
-テスト実行などのコマンドを実行する場合、まずプロジェクトの `package.json` を確認し、定義済みであればそのスクリプトを優先して実行すること。
+テスト実行などのコマンドを実行する場合、まずプロジェクトの `package.json` を確認し、定義済みであればそのスクリプトを優先して実行する。
