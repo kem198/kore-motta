@@ -93,24 +93,25 @@ export function TodoApp() {
         return;
       }
 
+      // 表示されているカテゴリ内の Todo を元に order を割り振る
+      // 新規 Todo を末尾に追加するため
+      const order =
+        visibleTodos.length === 0
+          ? 0
+          : Math.max(...visibleTodos.map((todo) => todo.order)) + 1;
+
       const newTodo: Todo = {
         id: crypto.randomUUID(),
         name: trimmedName,
-        order: 0,
+        order: order,
         memo: values.memo?.trim() || undefined,
         categoryId: activeCategoryId,
         completed: false,
       };
 
       addTodo(newTodo);
-
-      // toast.add({
-      //   title: MESSAGES.toast.created,
-      //   description: trimmedName,
-      //   type: "success",
-      // });
     },
-    [activeCategoryId, addTodo],
+    [activeCategoryId, addTodo, visibleTodos],
   );
 
   const handleDelete = useCallback(
@@ -267,32 +268,45 @@ export function TodoApp() {
 
       // デフォルトカテゴリは削除できない
       if (categoryId === DEFAULT_CATEGORY_ID) {
-        toast.error(MESSAGES.toast.imported, {
-          description: "デフォルトカテゴリは削除できません",
-        });
-
         toast.error(MESSAGES.toast.error, {
           description: "デフォルトカテゴリは削除できません",
         });
-
-        // toast.add({
-        //   title: MESSAGES.toast.error,
-        //   description: "デフォルトカテゴリは削除できません",
-        //   type: "error",
-        // });
-
         return;
       }
 
-      // 削除されたカテゴリに属する Todo をデフォルトカテゴリに移行
-      const migratedTodos = todos.map((todo) =>
-        todo.categoryId === categoryId
-          ? {
-              ...todo,
-              categoryId: DEFAULT_CATEGORY_ID,
-            }
-          : todo,
+      // 未分類カテゴリの Todo を取得する
+      const defaultCategoryTodos = todos.filter(
+        (todo) => todo.categoryId === DEFAULT_CATEGORY_ID,
       );
+      // 削除対象カテゴリの Todo を現在の並び順で取得する
+      const categoryTodos = todos
+        .filter((todo) => todo.categoryId === categoryId)
+        .toSorted((a, b) => a.order - b.order);
+
+      // 未分類カテゴリの末尾に追加するための order を決める
+      const nextOrder =
+        defaultCategoryTodos.length === 0
+          ? 0
+          : Math.max(...defaultCategoryTodos.map((todo) => todo.order)) + 1;
+
+      // 移行する Todo に未分類カテゴリの末尾から順番に order を割り当てる
+      const migratedTodoOrders = new Map(
+        categoryTodos.map((todo, index) => [todo.id, nextOrder + index]),
+      );
+
+      // 削除対象カテゴリの Todo を未分類カテゴリへ移行する
+      const migratedTodos = todos.map((todo) => {
+        const order = migratedTodoOrders.get(todo.id);
+        if (order === undefined) {
+          return todo;
+        }
+
+        return {
+          ...todo,
+          categoryId: DEFAULT_CATEGORY_ID,
+          order,
+        };
+      });
 
       updateTodos(migratedTodos);
 
@@ -307,12 +321,6 @@ export function TodoApp() {
       toast.success(MESSAGES.toast.categoryDeleted, {
         description: category.name,
       });
-
-      // toast.add({
-      //   title: MESSAGES.toast.categoryDeleted,
-      //   description: category.name,
-      //   type: "success",
-      // });
     },
     [todos, updateTodos, deleteCategoryById, activeCategoryId],
   );
