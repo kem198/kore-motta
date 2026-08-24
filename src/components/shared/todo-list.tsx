@@ -12,34 +12,25 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
-import {
-  Item,
-  ItemActions,
-  ItemContent,
-  ItemDescription,
-  ItemGroup,
-  ItemMedia,
-  ItemSeparator,
-  ItemTitle,
-} from "@/components/ui/item";
+import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MESSAGES } from "@/constants/messages";
 import { Todo } from "@/types/todo";
-import { ChevronDown, ChevronUp, Pencil, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Trash2 } from "lucide-react";
 import { Fragment } from "react";
 
 function TodoListSkeleton() {
   return (
-    <Item className="px-0">
-      <ItemMedia>
+    <div className="flex w-full items-center gap-3.5 rounded-md px-0 py-3.5 text-sm">
+      <div className="flex shrink-0 items-center justify-center">
         <Skeleton className="relative flex aspect-square h-10 w-10 shrink-0 overflow-hidden rounded-full" />
-      </ItemMedia>
+      </div>
 
-      <ItemContent className="flex flex-col gap-1">
+      <div className="flex flex-1 flex-col gap-1">
         <Skeleton className="h-4 max-w-40" />
         <Skeleton className="h-4 max-w-[16rem]" />
-      </ItemContent>
-    </Item>
+      </div>
+    </div>
   );
 }
 
@@ -49,7 +40,6 @@ type TodoItemActionsProps = {
   length: number;
   isEditing: boolean;
   onDelete: (todo: Todo) => void;
-  onUpdate: (todo: Todo) => void;
   onReorder: (startIndex: number, endIndex: number) => void;
 };
 
@@ -59,90 +49,69 @@ function TodoItemActions({
   length,
   isEditing,
   onDelete,
-  onUpdate,
   onReorder,
 }: TodoItemActionsProps) {
+  if (!isEditing) {
+    return null;
+  }
+
   return (
-    <ItemActions className="flex shrink-0 items-center justify-end gap-2">
-      {isEditing && (
-        <>
-          <AlertDialog>
-            <AlertDialogTrigger
-              render={
-                <Button
-                  variant="destructive"
-                  size="icon"
-                  aria-label={`${MESSAGES.actions.delete}: ${todo.name}`}
-                />
-              }
-            >
-              <Trash2 />
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>
-                  {`アイテム「${todo.name}」を削除しますか？`}
-                </AlertDialogTitle>
-              </AlertDialogHeader>
-
-              <AlertDialogFooter>
-                <AlertDialogCancel>{MESSAGES.actions.cancel}</AlertDialogCancel>
-
-                <AlertDialogAction
-                  variant="destructive"
-                  onClick={() => onDelete(todo)}
-                >
-                  {MESSAGES.actions.delete}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-
-          <ButtonGroup>
+    <div className="flex shrink-0 items-center justify-end gap-2">
+      <AlertDialog>
+        <AlertDialogTrigger
+          render={
             <Button
-              variant="secondary"
+              variant="destructive"
               size="icon"
-              onClick={() => onReorder(index, index - 1)}
-              disabled={index === 0}
-              aria-label={`${MESSAGES.aria.moveUp}: ${todo.name}`}
-            >
-              <ChevronUp />
-            </Button>
+              aria-label={`${MESSAGES.actions.delete}: ${todo.name}`}
+            />
+          }
+        >
+          <Trash2 />
+        </AlertDialogTrigger>
 
-            <Button
-              variant="secondary"
-              size="icon"
-              onClick={() => onReorder(index, index + 1)}
-              disabled={index === length - 1}
-              aria-label={`${MESSAGES.aria.moveDown}: ${todo.name}`}
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {`アイテム「${todo.name}」を削除しますか？`}
+            </AlertDialogTitle>
+          </AlertDialogHeader>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel>{MESSAGES.actions.cancel}</AlertDialogCancel>
+
+            <AlertDialogAction
+              variant="destructive"
+              onClick={() => onDelete(todo)}
             >
-              <ChevronDown />
-            </Button>
-            <TodoEditDialog todo={todo} onSave={onUpdate}>
-              <Button
-                variant="secondary"
-                size="icon"
-                className="rounded-full"
-                aria-label={`${MESSAGES.actions.edit}: ${todo.name}`}
-              >
-                <Pencil />
-              </Button>
-            </TodoEditDialog>
-          </ButtonGroup>
-        </>
-      )}
-      {!isEditing && (
-        <TodoEditDialog todo={todo} onSave={onUpdate}>
-          <Button
-            variant="secondary"
-            size="icon"
-            aria-label={`${MESSAGES.actions.edit}: ${todo.name}`}
-          >
-            <Pencil />
-          </Button>
-        </TodoEditDialog>
-      )}
-    </ItemActions>
+              {MESSAGES.actions.delete}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <ButtonGroup>
+        <Button
+          variant="secondary"
+          size="icon"
+          onClick={() => onReorder(index, index - 1)}
+          disabled={index === 0}
+          aria-label={`${MESSAGES.aria.moveUp}: ${todo.name}`}
+        >
+          <ChevronUp />
+        </Button>
+
+        <Button
+          variant="secondary"
+          size="icon"
+          onClick={() => onReorder(index, index + 1)}
+          disabled={index === length - 1}
+          aria-label={`${MESSAGES.aria.moveDown}: ${todo.name}`}
+        >
+          <ChevronDown />
+        </Button>
+      </ButtonGroup>
+    </div>
   );
 }
 
@@ -166,16 +135,28 @@ function TodoItem({
   onReorder,
 }: TodoItemProps) {
   return (
-    <Item className="px-0">
-      <ItemMedia>
+    <div className="flex w-full items-center gap-4 rounded-md border border-transparent text-sm transition-colors duration-100 outline-none">
+      <div className="flex shrink-0 items-center justify-center py-3.5">
         <TodoToggle aria-label="Toggle todo" todo={todo} onChange={onUpdate} />
-      </ItemMedia>
+      </div>
 
-      <ItemContent>
-        <ItemTitle>{todo.name}</ItemTitle>
+      <TodoEditDialog todo={todo} onSave={onUpdate}>
+        <button
+          type="button"
+          aria-label={`編集: ${todo.name}`}
+          className="flex min-w-0 flex-1 cursor-pointer flex-col justify-center gap-1 self-stretch text-left outline-none"
+        >
+          <span className="line-clamp-1 flex w-fit items-center gap-2 text-sm leading-snug font-medium underline-offset-4">
+            {todo.name}
+          </span>
 
-        {todo.memo ? <ItemDescription>{todo.memo}</ItemDescription> : null}
-      </ItemContent>
+          {todo.memo ? (
+            <span className="text-muted-foreground line-clamp-2 text-left text-sm leading-normal font-normal">
+              {todo.memo}
+            </span>
+          ) : null}
+        </button>
+      </TodoEditDialog>
 
       <TodoItemActions
         todo={todo}
@@ -183,29 +164,19 @@ function TodoItem({
         length={length}
         isEditing={isEditing}
         onDelete={onDelete}
-        onUpdate={onUpdate}
         onReorder={onReorder}
       />
-    </Item>
+    </div>
   );
 }
 
-type TodoListProps = {
-  todos: Todo[];
-  isLoaded: boolean;
-  isEditing: boolean;
-  onDelete: (todo: Todo) => void;
-  onUpdate: (todo: Todo) => void;
-  onReorder: (startIndex: number, endIndex: number) => void;
-};
-
 function TodoListLoading() {
   return (
-    <ItemGroup>
+    <div className="flex w-full flex-col gap-4">
       <TodoListSkeleton />
       <TodoListSkeleton />
       <TodoListSkeleton />
-    </ItemGroup>
+    </div>
   );
 }
 
@@ -225,7 +196,7 @@ function TodoListContent({
   onReorder,
 }: TodoListContentProps) {
   return (
-    <ItemGroup className="gap-0">
+    <div className="flex w-full flex-col">
       {todos.map((todo, index) => (
         <Fragment key={todo.id}>
           <TodoItem
@@ -237,12 +208,22 @@ function TodoListContent({
             onUpdate={onUpdate}
             onReorder={onReorder}
           />
-          {index !== todos.length - 1 && <ItemSeparator />}
+
+          {index !== todos.length - 1 && <Separator className="my-2" />}
         </Fragment>
       ))}
-    </ItemGroup>
+    </div>
   );
 }
+
+type TodoListProps = {
+  todos: Todo[];
+  isLoaded: boolean;
+  isEditing: boolean;
+  onDelete: (todo: Todo) => void;
+  onUpdate: (todo: Todo) => void;
+  onReorder: (startIndex: number, endIndex: number) => void;
+};
 
 export function TodoList({
   todos,
@@ -257,7 +238,7 @@ export function TodoList({
   }
 
   if (todos.length === 0) {
-    return <ItemGroup />;
+    return <div />;
   }
 
   return (
