@@ -84,6 +84,10 @@ npm run start
 
 - [Playwright](https://playwright.dev/)
 
+### CI
+
+- [GitHub Actions](https://github.co.jp/features/actions)
+
 ### ドメイン取得・DNS 管理
 
 - [Xserver Domain](https://www.xdomain.ne.jp/)
