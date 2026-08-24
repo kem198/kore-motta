@@ -138,29 +138,35 @@ function TodoItem({
     <div
       role="listitem"
       aria-label={`Todo: ${todo.name}`}
-      className="hover:bg-accent flex w-full items-center gap-4 rounded-md border border-transparent text-sm transition-colors duration-100 outline-none"
+      className="flex w-full items-center"
     >
-      <div className="flex shrink-0 items-center justify-center p-2">
-        <TodoToggle aria-label="Toggle todo" todo={todo} onChange={onUpdate} />
-      </div>
+      <div className="hover:bg-accent flex w-full items-center gap-2 rounded-md border border-transparent text-sm transition-colors duration-100">
+        <div className="flex shrink-0 items-center justify-center p-2">
+          <TodoToggle
+            aria-label="Toggle todo"
+            todo={todo}
+            onChange={onUpdate}
+          />
+        </div>
 
-      <TodoEditDialog todo={todo} onSave={onUpdate}>
-        <button
-          type="button"
-          aria-label={`編集: ${todo.name}`}
-          className="flex min-w-0 flex-1 cursor-pointer flex-col justify-center gap-1 self-stretch text-left outline-none"
-        >
-          <span className="line-clamp-1 flex w-fit items-center gap-2 text-sm leading-snug font-medium underline-offset-4">
-            {todo.name}
-          </span>
-
-          {todo.memo ? (
-            <span className="text-muted-foreground line-clamp-2 text-left text-sm leading-normal font-normal">
-              {todo.memo}
+        <TodoEditDialog todo={todo} onSave={onUpdate}>
+          <button
+            type="button"
+            aria-label={`編集: ${todo.name}`}
+            className="flex min-w-0 flex-1 cursor-pointer flex-col justify-center gap-1 self-stretch text-left outline-none"
+          >
+            <span className="line-clamp-1 flex w-fit items-center gap-2 text-sm leading-snug font-medium underline-offset-4">
+              {todo.name}
             </span>
-          ) : null}
-        </button>
-      </TodoEditDialog>
+
+            {todo.memo ? (
+              <span className="text-muted-foreground line-clamp-2 text-left text-sm leading-normal font-normal">
+                {todo.memo}
+              </span>
+            ) : null}
+          </button>
+        </TodoEditDialog>
+      </div>
 
       <TodoItemActions
         todo={todo}
