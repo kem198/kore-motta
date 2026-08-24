@@ -135,7 +135,11 @@ function TodoItem({
   onReorder,
 }: TodoItemProps) {
   return (
-    <div className="flex w-full items-center gap-4 rounded-md border border-transparent text-sm transition-colors duration-100 outline-none">
+    <div
+      role="listitem"
+      aria-label={`Todo: ${todo.name}`}
+      className="flex w-full items-center gap-4 rounded-md border border-transparent text-sm transition-colors duration-100 outline-none"
+    >
       <div className="flex shrink-0 items-center justify-center py-3.5">
         <TodoToggle aria-label="Toggle todo" todo={todo} onChange={onUpdate} />
       </div>
