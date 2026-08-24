@@ -77,7 +77,9 @@ export function ImportDialog({
         )}
 
         <DialogFooter>
-          <Button onClick={handleImport}>{MESSAGES.actions.import}</Button>
+          <Button variant="destructive" onClick={handleImport}>
+            {MESSAGES.actions.import}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
