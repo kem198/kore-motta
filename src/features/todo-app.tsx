@@ -93,24 +93,25 @@ export function TodoApp() {
         return;
       }
 
+      // 表示されているカテゴリ内の Todo を元に order を割り振る
+      // 新規 Todo を末尾に追加するため
+      const order =
+        visibleTodos.length === 0
+          ? 0
+          : Math.max(...visibleTodos.map((todo) => todo.order)) + 1;
+
       const newTodo: Todo = {
         id: crypto.randomUUID(),
         name: trimmedName,
-        order: visibleTodos.length,
+        order: order,
         memo: values.memo?.trim() || undefined,
         categoryId: activeCategoryId,
         completed: false,
       };
 
       addTodo(newTodo);
-
-      // toast.add({
-      //   title: MESSAGES.toast.created,
-      //   description: trimmedName,
-      //   type: "success",
-      // });
     },
-    [activeCategoryId, addTodo],
+    [activeCategoryId, addTodo, visibleTodos],
   );
 
   const handleDelete = useCallback(
