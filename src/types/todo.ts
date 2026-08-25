@@ -1,8 +1,4 @@
-export type Todo = {
-  id: string;
-  name: string;
-  memo?: string;
-  completed: boolean;
-  categoryId: string;
-  order: number;
-};
+import { todoSchema } from "@/schemas/todo-schema";
+import * as z from "zod";
+
+export type Todo = z.infer<typeof todoSchema>;
