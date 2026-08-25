@@ -35,9 +35,9 @@ import {
   DEFAULT_CATEGORY_NAME,
 } from "@/constants/categories";
 import { MESSAGES } from "@/constants/messages";
-import { APP_STORAGE_KEY } from "@/lib/storage/app-storage";
+import { APP_STORAGE_KEY } from "@/lib/app-storage";
 import { TodoFormValues, todoFormSchema } from "@/schemas/todo-form-schema";
-import { Todo } from "@/types/todo";
+import { Todo } from "@/schemas/todo-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   ComponentProps,

@@ -1,7 +1,6 @@
 import { CURRENT_APP_STORAGE_VERSION } from "@/constants/version";
 import { categorySchema } from "@/schemas/category-schema";
 import { todoSchema } from "@/schemas/todo-schema";
-import { AppStorage } from "@/types/app-storage";
 import * as z from "zod";
 
 const appStorageDataSchema = z
@@ -9,6 +8,7 @@ const appStorageDataSchema = z
     settings: z.record(z.string(), z.unknown()),
     categories: z.array(categorySchema),
     todos: z.array(todoSchema),
+    // lastMarkedAllIncompleteAt: z.iso.datetime(),
   })
   .strict();
 
@@ -18,6 +18,9 @@ const appStorageSchema = z
     data: appStorageDataSchema,
   })
   .strict();
+
+export type AppStorageData = z.infer<typeof appStorageDataSchema>;
+export type AppStorage = z.infer<typeof appStorageSchema>;
 
 /**
  * 値を AppStorage として検証・パースする。

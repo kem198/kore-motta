@@ -15,7 +15,7 @@ import { ButtonGroup } from "@/components/ui/button-group";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MESSAGES } from "@/constants/messages";
-import { Todo } from "@/types/todo";
+import { Todo } from "@/schemas/todo-schema";
 import { ChevronDown, ChevronUp, Trash2 } from "lucide-react";
 import { Fragment } from "react";
 
@@ -143,7 +143,7 @@ function TodoItem({
       <div className="hover:bg-accent flex w-full items-center gap-2 rounded-md border border-transparent text-sm transition-colors duration-100">
         <div className="flex shrink-0 items-center justify-center p-2">
           <TodoToggle
-            aria-label="Toggle todo"
+            aria-label={`完了状態を切り替え: ${todo.name}`}
             todo={todo}
             onChange={onUpdate}
           />

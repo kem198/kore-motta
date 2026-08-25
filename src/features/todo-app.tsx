@@ -16,9 +16,9 @@ import { MESSAGES } from "@/constants/messages";
 import { useAppStorage } from "@/hooks/use-app-storage";
 import { useCategories } from "@/hooks/use-categories";
 import { useTodos } from "@/hooks/use-todos";
+import { Category } from "@/schemas/category-schema";
 import { TodoFormValues } from "@/schemas/todo-form-schema";
-import { Category } from "@/types/category";
-import { Todo } from "@/types/todo";
+import { Todo } from "@/schemas/todo-schema";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
 

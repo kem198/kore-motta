@@ -1,7 +1,6 @@
 import { DEFAULT_CATEGORIES_STORAGE } from "@/constants/categories";
 import { CURRENT_APP_STORAGE_VERSION } from "@/constants/version";
-import { parseAppStorage } from "@/schemas/app-storage-schema";
-import { AppStorage } from "@/types/app-storage";
+import { AppStorage, parseAppStorage } from "@/schemas/app-storage-schema";
 
 export const APP_STORAGE_KEY = "appStorage";
 

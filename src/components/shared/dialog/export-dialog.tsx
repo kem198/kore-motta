@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { MESSAGES } from "@/constants/messages";
-import { AppStorage } from "@/types/app-storage";
+import { AppStorage } from "@/schemas/app-storage-schema";
 import { toast } from "sonner";
 
 type ExportDialogProps = {

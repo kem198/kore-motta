@@ -9,3 +9,5 @@ export const categorySchema = z
     markAllIncompleteAt: z.iso.time({ precision: -1 }),
   })
   .strict();
+
+export type Category = z.infer<typeof categorySchema>;
