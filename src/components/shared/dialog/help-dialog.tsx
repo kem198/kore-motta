@@ -220,13 +220,13 @@ export function HelpDialog() {
         <CircleHelpIcon className="size-5" />
       </DialogTrigger>
 
-      <DialogContent className="flex h-[90vh] max-h-[75vh] w-[calc(100%-1rem)] max-w-xl! flex-col">
+      <DialogContent className="flex h-[90vh] max-h-[90vh] w-[90vw] max-w-xl! flex-col">
         <DialogHeader>
           <DialogTitle>使い方・利用規約</DialogTitle>
         </DialogHeader>
 
         <ScrollArea className="min-h-0 flex-1 p-2">
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 py-2">
             <Term />
             <HelpAccordions />
           </div>
