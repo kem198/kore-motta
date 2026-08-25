@@ -36,6 +36,18 @@ const CHANGELOG = [
   },
 ];
 
+function UnorderedList({ items }: { items: string[] }) {
+  return (
+    <ul className="flex list-disc flex-col gap-2 pl-5">
+      {items.map((item) => (
+        <li key={item} className="leading-relaxed">
+          {item}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 function HelpAccordions() {
   return (
     <>
@@ -43,30 +55,16 @@ function HelpAccordions() {
         <AccordionItem value="tips" className="border-b px-4 last:border-b-0">
           <AccordionTrigger>便利な使い方</AccordionTrigger>
 
-          <AccordionContent
-            className="typeset typeset-docs space-y-6"
-            style={{ "--typeset-size": "0.9rem" } as React.CSSProperties}
-          >
-            <ul>
-              {TIPS.map((tip) => (
-                <li key={tip}>{tip}</li>
-              ))}
-            </ul>
+          <AccordionContent>
+            <UnorderedList items={TIPS} />
           </AccordionContent>
         </AccordionItem>
 
         <AccordionItem value="issues" className="border-b px-4 last:border-b-0">
           <AccordionTrigger>既知の問題</AccordionTrigger>
 
-          <AccordionContent
-            className="typeset typeset-docs space-y-6"
-            style={{ "--typeset-size": "0.9rem" } as React.CSSProperties}
-          >
-            <ul>
-              {ISSUES.map((issue) => (
-                <li key={issue}>{issue}</li>
-              ))}
-            </ul>
+          <AccordionContent>
+            <UnorderedList items={ISSUES} />
           </AccordionContent>
         </AccordionItem>
 
@@ -76,10 +74,7 @@ function HelpAccordions() {
         >
           <AccordionTrigger>更新履歴</AccordionTrigger>
 
-          <AccordionContent
-            className="typeset typeset-docs space-y-6"
-            style={{ "--typeset-size": "0.9rem" } as React.CSSProperties}
-          >
+          <AccordionContent>
             <div className="flex flex-col gap-4">
               {CHANGELOG.map((release) => (
                 <div key={release.version}>
@@ -91,11 +86,7 @@ function HelpAccordions() {
                     </span>
                   </div>
 
-                  <ul className="mt-0">
-                    {release.changes.map((change) => (
-                      <li key={change}>{change}</li>
-                    ))}
-                  </ul>
+                  <UnorderedList items={release.changes} />
                 </div>
               ))}
             </div>
@@ -221,7 +212,7 @@ export function HelpDialog() {
         <CircleHelpIcon className="size-5" />
       </DialogTrigger>
 
-      <DialogContent className="flex h-[90vh] max-h-[90vh] w-[90vw] max-w-xl! flex-col">
+      <DialogContent className="flex h-[80vh] max-h-[80vh] w-[90vw] max-w-xl! flex-col">
         <DialogHeader>
           <DialogTitle>使い方・利用規約</DialogTitle>
         </DialogHeader>
@@ -232,6 +223,7 @@ export function HelpDialog() {
             <HelpAccordions />
           </div>
         </ScrollArea>
+
         <DialogFooter>
           <DialogClose
             render={
