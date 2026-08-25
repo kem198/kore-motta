@@ -146,6 +146,63 @@ test.describe("Todo ページのテスト", () => {
         );
         expect(legacyCategoriesKeyValue).toBeNull();
       });
+
+      test("00:00 を越えてページを再読み込みしたとき、完了済みの Todo が未完了になること", async ({
+        page,
+      }) => {
+        // Arrange
+        await page.clock.install({
+          time: new Date("2026-08-24T23:59:00+09:00"),
+        });
+
+        const todoStorage: AppStorage = {
+          version: 1,
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "test-todo",
+                name: "カギ",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                memo: "家の鍵",
+                completed: true,
+              },
+            ],
+            categories: DEFAULT_CATEGORIES_STORAGE,
+          },
+        };
+
+        await setAppStorage(page, todoStorage);
+        await navigateToTodoPage(page);
+
+        // Act
+        await page.clock.setFixedTime(new Date("2026-08-25T00:01:00+09:00"));
+        await page.reload();
+
+        // Assert
+        // UI 上でチェックボタンが押されていないこと
+        await expect(
+          assertScope.getByRole("button", {
+            name: "完了状態を切り替え: カギ",
+          }),
+        ).toHaveAttribute("aria-pressed", "true");
+
+        // Assert
+        // localStorage の completed が false になっていること
+        const actualStorage = await getAppStorage(page);
+
+        expect(actualStorage.data.todos).toEqual([
+          {
+            id: "test-todo",
+            name: "カギ",
+            order: 0,
+            categoryId: DEFAULT_CATEGORY_ID,
+            memo: "家の鍵",
+            completed: true,
+          },
+        ]);
+      });
     });
 
     test.describe("作成時のテスト", () => {
