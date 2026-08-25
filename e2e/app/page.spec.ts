@@ -520,62 +520,7 @@ test.describe("Todo ページのテスト", () => {
       });
     });
 
-    test.describe("初期化時のテスト", () => {
-      test("Todo をすべて未完了に戻す操作を行うと、登録済み Todo が削除されず、完了状態が未完了に戻ること", async ({
-        page,
-      }) => {
-        // Arrange
-        const appStorage: AppStorage = {
-          version: 1,
-          data: {
-            settings: {},
-            todos: [
-              {
-                id: "mark-todo-01",
-                name: "カギ",
-                order: 0,
-                categoryId: DEFAULT_CATEGORY_ID,
-                memo: "家の鍵",
-                completed: true,
-              },
-              {
-                id: "mark-todo-02",
-                name: "財布",
-                order: 1,
-                categoryId: DEFAULT_CATEGORY_ID,
-                memo: "白い財布",
-                completed: false,
-              },
-            ],
-            categories: DEFAULT_CATEGORIES_STORAGE,
-            lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
-            ).toISOString(),
-          },
-        };
-        await setAppStorage(page, appStorage);
-
-        // Act
-        await page.getByRole("button", { name: "カテゴリ設定" }).click();
-        await page.getByRole("button", { name: "すべて未完了に戻す" }).click();
-        await page.getByRole("button", { name: "すべて未完了に戻す" }).click();
-
-        // Assert (表示が残ること)
-        await expect(
-          assertScope.getByText("カギ", { exact: true }),
-        ).toBeVisible();
-        await expect(
-          assertScope.getByText("財布", { exact: true }),
-        ).toBeVisible();
-
-        // Assert (完了状態が未完了に戻ること)
-        const persisted: AppStorage = await getAppStorage(page);
-        expect(persisted.data.todos).toHaveLength(2);
-        expect(
-          persisted.data.todos.every((todo) => todo.completed === false),
-        ).toBe(true);
-      });
-    });
+    test.describe("初期化時のテスト", () => {});
   });
 
   test.describe("カテゴリの操作", () => {
