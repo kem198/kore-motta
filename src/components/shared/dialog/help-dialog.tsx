@@ -225,7 +225,7 @@ export function HelpDialog() {
           <DialogTitle>使い方・利用規約</DialogTitle>
         </DialogHeader>
 
-        <ScrollArea className="min-h-0 flex-1 p-2">
+        <ScrollArea className="min-h-0 flex-1 p-3">
           <div className="flex flex-col gap-4 py-2">
             <Term />
             <HelpAccordions />

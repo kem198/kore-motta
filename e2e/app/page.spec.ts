@@ -536,6 +536,17 @@ test.describe("Todo ページのテスト", () => {
         await navigateToTodoPage(page);
 
         // Assert
+        // localStorage からデータを取得できるまで繰り返す
+        // localStorage にデータが書き込まれる前に getAppStorage() して null を取得してしまいテストが FAIL するため
+        await expect
+          .poll(async () => {
+            const storage = await getAppStorage(page);
+            return storage?.data.categories.some(
+              (category) => category.id === DEFAULT_CATEGORY_ID,
+            );
+          })
+          .toBe(true);
+
         const persisted = await getAppStorage(page);
         const defaultCategory = persisted.data.categories.find(
           (category) => category.id === DEFAULT_CATEGORY_ID,
