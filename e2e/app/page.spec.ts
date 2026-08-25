@@ -68,6 +68,9 @@ test.describe("Todo ページのテスト", () => {
               },
             ],
             categories: DEFAULT_CATEGORIES_STORAGE,
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00",
+            ).toISOString(),
           },
         };
 
@@ -103,6 +106,9 @@ test.describe("Todo ページのテスト", () => {
               },
             ],
             categories: DEFAULT_CATEGORIES_STORAGE,
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00",
+            ).toISOString(),
           },
         };
 
@@ -128,18 +134,22 @@ test.describe("Todo ページのテスト", () => {
         expect(legacyCategoriesKeyValue).toBeNull();
       });
 
-      test("00:00 を越えていたとき、Todo が未完了になり、最終未完了化日時が更新されること", async ({
+      test("日付が変わる前にページを更新すると、完了済みの Todo が完了のままであること", async ({
         page,
       }) => {
         // Arrange
+        // 当日の未完了化がすでに実行済みの状態を再現する
+        const beforeMidnight = new Date("2026-08-24T23:59:00+09:00");
         await page.clock.install({
-          time: new Date("2026-08-24T23:59:00+09:00"),
+          time: beforeMidnight,
         });
 
+        const lastMarkedAllIncompleteAt = new Date("2026-08-24T00:00:00+09:00");
         const appStorage: AppStorage = {
           version: 1,
           data: {
             settings: {},
+            categories: DEFAULT_CATEGORIES_STORAGE,
             todos: [
               {
                 id: "test-todo",
@@ -150,29 +160,26 @@ test.describe("Todo ページのテスト", () => {
                 completed: true,
               },
             ],
-            categories: DEFAULT_CATEGORIES_STORAGE,
+            lastMarkedAllIncompleteAt: lastMarkedAllIncompleteAt.toISOString(),
           },
         };
-
         await setAppStorage(page, appStorage);
-        await navigateToTodoPage(page);
 
         // Act
-        await page.clock.setFixedTime(new Date("2026-08-25T00:01:00+09:00"));
+        // 当日にページを更新したことを再現する
+        const afterMidnight = new Date("2026-08-24T23:59:59+09:00");
+        await page.clock.setFixedTime(afterMidnight);
         await page.reload();
 
-        // Assert
-        // UI 上でチェックボタンが押されていないこと
+        // Assert (UI 上で Todo が完了のままであること)
         await expect(
           assertScope.getByRole("button", {
             name: "完了状態を切り替え: カギ",
           }),
         ).toHaveAttribute("aria-pressed", "true");
 
-        // Assert
-        // localStorage の completed が false になっていること
+        // Assert: localStorage の completed が true のままであること
         const actualStorage = await getAppStorage(page);
-
         expect(actualStorage.data.todos).toEqual([
           {
             id: "test-todo",
@@ -183,6 +190,74 @@ test.describe("Todo ページのテスト", () => {
             completed: true,
           },
         ]);
+
+        // Assert: 最終未完了化日時が更新されていないこと
+        expect(actualStorage.data.lastMarkedAllIncompleteAt).toBe(
+          lastMarkedAllIncompleteAt.toISOString(),
+        );
+      });
+
+      test("日付が変わってからページを更新すると、完了済みの Todo が未完了になること", async ({
+        page,
+      }) => {
+        // Arrange
+        // 当日の未完了化がすでに実行済みの状態を再現する
+        const beforeMidnight = new Date("2026-08-24T23:59:00+09:00");
+        await page.clock.install({
+          time: beforeMidnight,
+        });
+        const appStorage: AppStorage = {
+          version: 1,
+          data: {
+            settings: {},
+            categories: DEFAULT_CATEGORIES_STORAGE,
+            todos: [
+              {
+                id: "test-todo",
+                name: "カギ",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                memo: "家の鍵",
+                completed: true,
+              },
+            ],
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00+09:00",
+            ).toISOString(),
+          },
+        };
+        await setAppStorage(page, appStorage);
+
+        // Act
+        // 当日にページを更新したことを再現する
+        const afterMidnight = new Date("2026-08-25T00:00:00+09:00");
+        await page.clock.setFixedTime(afterMidnight);
+        await page.reload();
+
+        // Assert (UI 上で Todo が未完了になっていること)
+        await expect(
+          assertScope.getByRole("button", {
+            name: "完了状態を切り替え: カギ",
+          }),
+        ).toHaveAttribute("aria-pressed", "false");
+
+        // Assert: localStorage の completed が false になっていること
+        const actualStorage = await getAppStorage(page);
+        expect(actualStorage.data.todos).toEqual([
+          {
+            id: "test-todo",
+            name: "カギ",
+            order: 0,
+            categoryId: DEFAULT_CATEGORY_ID,
+            memo: "家の鍵",
+            completed: false,
+          },
+        ]);
+
+        // Assert: 最終未完了化日時が更新されていること
+        expect(actualStorage.data.lastMarkedAllIncompleteAt).toBe(
+          afterMidnight.toISOString(),
+        );
       });
     });
 
@@ -223,6 +298,9 @@ test.describe("Todo ページのテスト", () => {
               },
             ],
             categories: DEFAULT_CATEGORIES_STORAGE,
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00",
+            ).toISOString(),
           },
         };
         await setAppStorage(page, appStorage);
@@ -257,6 +335,9 @@ test.describe("Todo ページのテスト", () => {
               },
             ],
             categories: DEFAULT_CATEGORIES_STORAGE,
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00",
+            ).toISOString(),
           },
         };
         await setAppStorage(page, appStorage);
@@ -310,6 +391,9 @@ test.describe("Todo ページのテスト", () => {
                 markAllIncompleteAt: "09:00",
               },
             ],
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00",
+            ).toISOString(),
           },
         };
         await setAppStorage(page, appStorage);
@@ -376,6 +460,9 @@ test.describe("Todo ページのテスト", () => {
                 markAllIncompleteAt: "09:00",
               },
             ],
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00",
+            ).toISOString(),
           },
         };
         await setAppStorage(page, appStorage);
@@ -410,6 +497,9 @@ test.describe("Todo ページのテスト", () => {
               },
             ],
             categories: DEFAULT_CATEGORIES_STORAGE,
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00",
+            ).toISOString(),
           },
         };
         await setAppStorage(page, appStorage);
@@ -458,6 +548,9 @@ test.describe("Todo ページのテスト", () => {
               },
             ],
             categories: DEFAULT_CATEGORIES_STORAGE,
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00",
+            ).toISOString(),
           },
         };
         await setAppStorage(page, appStorage);
@@ -654,6 +747,9 @@ test.describe("Todo ページのテスト", () => {
                 markAllIncompleteAt: "09:00",
               },
             ],
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00",
+            ).toISOString(),
           },
         };
         await setAppStorage(page, appStorage);
@@ -695,6 +791,9 @@ test.describe("Todo ページのテスト", () => {
                 markAllIncompleteAt: "09:00",
               },
             ],
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00",
+            ).toISOString(),
           },
         };
         await setAppStorage(page, appStorage);
@@ -761,6 +860,9 @@ test.describe("Todo ページのテスト", () => {
                 markAllIncompleteAt: "09:00",
               },
             ],
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00",
+            ).toISOString(),
           },
         };
         await setAppStorage(page, appStorage);
@@ -823,6 +925,9 @@ test.describe("Todo ページのテスト", () => {
                 markAllIncompleteAt: "09:00",
               },
             ],
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00",
+            ).toISOString(),
           },
         };
         await setAppStorage(page, appStorage);
@@ -911,6 +1016,9 @@ test.describe("Todo ページのテスト", () => {
                 markAllIncompleteAt: "09:00",
               },
             ],
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00",
+            ).toISOString(),
           },
         };
 
@@ -963,6 +1071,9 @@ test.describe("Todo ページのテスト", () => {
               },
             ],
             categories: DEFAULT_CATEGORIES_STORAGE,
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00",
+            ).toISOString(),
           },
         };
         await setAppStorage(page, appStorage);
@@ -994,7 +1105,7 @@ test.describe("Todo ページのテスト", () => {
         page,
       }) => {
         // Arrange
-        const backupappStorage: AppStorage = {
+        const backupAppStorage: AppStorage = {
           version: 1,
           data: {
             settings: {},
@@ -1009,9 +1120,12 @@ test.describe("Todo ページのテスト", () => {
               },
             ],
             categories: DEFAULT_CATEGORIES_STORAGE,
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00",
+            ).toISOString(),
           },
         };
-        const backupText = JSON.stringify(backupappStorage, null, 2);
+        const backupText = JSON.stringify(backupAppStorage, null, 2);
         await page.getByRole("button", { name: "編集開始" }).click();
 
         // Act
@@ -1055,6 +1169,9 @@ test.describe("Todo ページのテスト", () => {
               },
             ],
             categories: DEFAULT_CATEGORIES_STORAGE,
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00",
+            ).toISOString(),
           },
         };
         await setAppStorage(page, appStorage);
@@ -1102,6 +1219,9 @@ test.describe("Todo ページのテスト", () => {
               },
             ],
             categories: DEFAULT_CATEGORIES_STORAGE,
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00",
+            ).toISOString(),
           },
         };
         await setAppStorage(page, appStorage);
