@@ -1,6 +1,7 @@
 "use client";
 
 import { Changelog } from "@/components/shared/changelog";
+import { Issues } from "@/components/shared/issues";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -109,6 +110,7 @@ function Term() {
         </p>
 
         <Changelog />
+        <Issues />
       </section>
     </div>
   );
