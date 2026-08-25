@@ -33,83 +33,73 @@ const CHANGELOG = [
   },
 ];
 
-export function Changelog() {
+function HelpAccordions() {
   return (
-    <Accordion className="max-w-lg rounded-lg border">
-      <AccordionItem
-        value="changelog"
-        className="border-b px-4 last:border-b-0"
-      >
-        <AccordionTrigger>更新履歴</AccordionTrigger>
+    <>
+      <Accordion className="max-w-lg rounded-lg border">
+        <AccordionItem value="issues" className="border-b px-4 last:border-b-0">
+          <AccordionTrigger>便利な使い方</AccordionTrigger>
 
-        <AccordionContent
-          className="typeset typeset-docs space-y-6"
-          style={{ "--typeset-size": "0.9rem" } as React.CSSProperties}
+          <AccordionContent
+            className="typeset typeset-docs space-y-6"
+            style={{ "--typeset-size": "0.9rem" } as React.CSSProperties}
+          >
+            <ul>
+              {TIPS.map((tip) => (
+                <li key={tip}>{tip}</li>
+              ))}
+            </ul>
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="issues" className="border-b px-4 last:border-b-0">
+          <AccordionTrigger>既知の問題</AccordionTrigger>
+
+          <AccordionContent
+            className="typeset typeset-docs space-y-6"
+            style={{ "--typeset-size": "0.9rem" } as React.CSSProperties}
+          >
+            <ul>
+              {ISSUES.map((issue) => (
+                <li key={issue}>{issue}</li>
+              ))}
+            </ul>
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem
+          value="changelog"
+          className="border-b px-4 last:border-b-0"
         >
-          <div className="flex flex-col gap-4">
-            {CHANGELOG.map((release) => (
-              <div key={release.version}>
-                <div className="font-mono">
-                  {release.version}
-                  <span className="text-muted-foreground">
-                    {" | "}
-                    {release.date}
-                  </span>
+          <AccordionTrigger>更新履歴</AccordionTrigger>
+
+          <AccordionContent
+            className="typeset typeset-docs space-y-6"
+            style={{ "--typeset-size": "0.9rem" } as React.CSSProperties}
+          >
+            <div className="flex flex-col gap-4">
+              {CHANGELOG.map((release) => (
+                <div key={release.version}>
+                  <div className="font-mono">
+                    {release.version}
+                    <span className="text-muted-foreground">
+                      {" | "}
+                      {release.date}
+                    </span>
+                  </div>
+
+                  <ul className="mt-0">
+                    {release.changes.map((change) => (
+                      <li key={change}>{change}</li>
+                    ))}
+                  </ul>
                 </div>
-
-                <ul className="mt-0">
-                  {release.changes.map((change) => (
-                    <li key={change}>{change}</li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion>
-  );
-}
-
-export function Issues() {
-  return (
-    <Accordion className="max-w-lg rounded-lg border">
-      <AccordionItem value="issues" className="border-b px-4 last:border-b-0">
-        <AccordionTrigger>既知の問題</AccordionTrigger>
-
-        <AccordionContent
-          className="typeset typeset-docs space-y-6"
-          style={{ "--typeset-size": "0.9rem" } as React.CSSProperties}
-        >
-          <ul>
-            {ISSUES.map((issue) => (
-              <li key={issue}>{issue}</li>
-            ))}
-          </ul>
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion>
-  );
-}
-
-export function Tips() {
-  return (
-    <Accordion className="max-w-lg rounded-lg border">
-      <AccordionItem value="issues" className="border-b px-4 last:border-b-0">
-        <AccordionTrigger>便利な使い方</AccordionTrigger>
-
-        <AccordionContent
-          className="typeset typeset-docs space-y-6"
-          style={{ "--typeset-size": "0.9rem" } as React.CSSProperties}
-        >
-          <ul>
-            {TIPS.map((tip) => (
-              <li key={tip}>{tip}</li>
-            ))}
-          </ul>
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion>
+              ))}
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+    </>
   );
 }
 
@@ -236,9 +226,7 @@ export function HelpDialog() {
         <ScrollArea className="min-h-0 flex-1 p-2">
           <div className="flex flex-col gap-4">
             <Term />
-            <Tips />
-            <Issues />
-            <Changelog />
+            <HelpAccordions />
           </div>
         </ScrollArea>
         <DialogFooter>
