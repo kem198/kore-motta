@@ -1,27 +1,8 @@
-import { DEFAULT_CATEGORY_ID } from "@/constants/categories";
 import { CURRENT_APP_STORAGE_VERSION } from "@/constants/version";
+import { categorySchema } from "@/schemas/category-schema";
+import { todoSchema } from "@/schemas/todo-schema";
 import { AppStorage } from "@/types/app-storage";
 import * as z from "zod";
-
-const categorySchema = z
-  .object({
-    id: z.string(),
-    name: z.string(),
-    order: z.number(),
-    markAllIncompleteAt: z.string().regex(/^\d{2}:\d{2}$/),
-  })
-  .strict();
-
-const todoSchema = z
-  .object({
-    id: z.string(),
-    name: z.string(),
-    order: z.number(),
-    categoryId: z.string().default(DEFAULT_CATEGORY_ID),
-    memo: z.string().optional(),
-    completed: z.boolean(),
-  })
-  .strict();
 
 const appStorageDataSchema = z
   .object({
@@ -38,6 +19,13 @@ const appStorageSchema = z
   })
   .strict();
 
-export function parseAppStorage(data: unknown): AppStorage {
-  return appStorageSchema.parse(data);
+/**
+ * 値を AppStorage として検証・パースする。
+ *
+ * @param rawData - パース対象の未検証データ
+ * @returns 検証済みの AppStorage
+ * @throws {z.ZodError} データがスキーマに適合しない場合
+ */
+export function parseAppStorage(rawData: unknown): AppStorage {
+  return appStorageSchema.parse(rawData);
 }

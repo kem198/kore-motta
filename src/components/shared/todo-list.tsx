@@ -56,7 +56,7 @@ function TodoItemActions({
   }
 
   return (
-    <div className="flex shrink-0 items-center justify-end gap-2 p-2">
+    <div className="flex shrink-0 items-center justify-end gap-2">
       <AlertDialog>
         <AlertDialogTrigger
           render={
@@ -138,7 +138,7 @@ function TodoItem({
     <div
       role="listitem"
       aria-label={`Todo: ${todo.name}`}
-      className="flex w-full items-center"
+      className="flex w-full items-center gap-2"
     >
       <div className="hover:bg-accent flex w-full items-center gap-2 rounded-md border border-transparent text-sm transition-colors duration-100">
         <div className="flex shrink-0 items-center justify-center p-2">
