@@ -19,6 +19,13 @@ const appStorageSchema = z
   })
   .strict();
 
+/**
+ * 値を AppStorage として検証・パースする。
+ *
+ * @param rawData - パース対象の未検証データ
+ * @returns 検証済みの AppStorage
+ * @throws {z.ZodError} データがスキーマに適合しない場合
+ */
 export function parseAppStorage(rawData: unknown): AppStorage {
   return appStorageSchema.parse(rawData);
 }
