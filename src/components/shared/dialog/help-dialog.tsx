@@ -19,7 +19,9 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CircleHelpIcon } from "lucide-react";
 
-const TIPS = ["a"];
+const TIPS = [
+  "ホーム画面やデスクトップに置いて、アプリとして起動できます。PC は URL 欄の追加ボタンから、スマートフォンはブラウザのメニューから追加してください。",
+];
 
 const ISSUES = [
   "スマートフォンで入力を開始すると、キーボードの表示によりページがスクロールされ、追加したアイテムが見づらくなることがあります。その場合は、ページをスクロールして確認してください。",
