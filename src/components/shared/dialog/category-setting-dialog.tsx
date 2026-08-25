@@ -190,7 +190,7 @@ export function CategorySettingDialog({
                         <AlertCircleIcon size={16} />
 
                         <AlertTitle>
-                          未分類カテゴリはタイトル変更・削除できません。
+                          未分類カテゴリは編集・削除できません。
                         </AlertTitle>
                       </Alert>
                     </Field>
