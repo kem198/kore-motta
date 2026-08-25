@@ -5,6 +5,7 @@ export const categorySchema = z
     id: z.string(),
     name: z.string(),
     order: z.number(),
-    markAllIncompleteAt: z.string().regex(/^\d{2}:\d{2}$/),
+    /** HH:MM であることを保証する */
+    markAllIncompleteAt: z.iso.time({ precision: -1 }),
   })
   .strict();
