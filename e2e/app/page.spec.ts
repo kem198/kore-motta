@@ -45,25 +45,6 @@ test.describe("Todo ページのテスト", () => {
 
     // テスト対象の範囲を指定する
     assertScope = page.locator('[data-testid="todo"]');
-
-    // ダミーデータを初期投入しておく
-    const DUMMY_APP_STORAGE: AppStorage = {
-      version: 1,
-      data: {
-        settings: {},
-        todos: [
-          {
-            id: "dummy-todo",
-            name: "dummy",
-            order: 0,
-            categoryId: DEFAULT_CATEGORY_ID,
-            completed: false,
-          },
-        ],
-        categories: DEFAULT_CATEGORIES_STORAGE,
-      },
-    };
-    await setAppStorage(page, DUMMY_APP_STORAGE);
   });
 
   test.describe("Todo の操作", () => {
@@ -72,7 +53,7 @@ test.describe("Todo ページのテスト", () => {
         page,
       }) => {
         // Arrange
-        const todoStorage: AppStorage = {
+        const appStorage: AppStorage = {
           version: 1,
           data: {
             settings: {},
@@ -90,7 +71,7 @@ test.describe("Todo ページのテスト", () => {
           },
         };
 
-        await setAppStorage(page, todoStorage);
+        await setAppStorage(page, appStorage);
 
         // Act
         await navigateToTodoPage(page);
@@ -147,7 +128,7 @@ test.describe("Todo ページのテスト", () => {
         expect(legacyCategoriesKeyValue).toBeNull();
       });
 
-      test("00:00 を越えてページを再読み込みしたとき、完了済みの Todo が未完了になること", async ({
+      test("00:00 を越えていたとき、Todo が未完了になり、最終未完了化日時が更新されること", async ({
         page,
       }) => {
         // Arrange
@@ -155,7 +136,7 @@ test.describe("Todo ページのテスト", () => {
           time: new Date("2026-08-24T23:59:00+09:00"),
         });
 
-        const todoStorage: AppStorage = {
+        const appStorage: AppStorage = {
           version: 1,
           data: {
             settings: {},
@@ -173,7 +154,7 @@ test.describe("Todo ページのテスト", () => {
           },
         };
 
-        await setAppStorage(page, todoStorage);
+        await setAppStorage(page, appStorage);
         await navigateToTodoPage(page);
 
         // Act
@@ -220,14 +201,31 @@ test.describe("Todo ページのテスト", () => {
         ).toBeVisible();
 
         // Assert (データストアへ登録されていること)
-        const todoStorage: AppStorage = await getAppStorage(page);
-        expect(todoStorage.data.todos[0].name).toBe("カギ");
+        const appStorage: AppStorage = await getAppStorage(page);
+        expect(appStorage.data.todos[0].name).toBe("カギ");
       });
 
       test("Todo が登録されている状態で新規 Todo を登録した時、末尾へ追加されること", async ({
         page,
       }) => {
         // Arrange
+        const appStorage: AppStorage = {
+          version: 1,
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "dummy-todo",
+                name: "dummy",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                completed: false,
+              },
+            ],
+            categories: DEFAULT_CATEGORIES_STORAGE,
+          },
+        };
+        await setAppStorage(page, appStorage);
         const nameInput = page.getByRole("textbox", { name: "新しいアイテム" });
 
         // Act
@@ -245,6 +243,24 @@ test.describe("Todo ページのテスト", () => {
     test.describe("更新時のテスト", () => {
       test("Todo を編集できること", async ({ page }) => {
         // Arrange
+        const appStorage: AppStorage = {
+          version: 1,
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "dummy-todo",
+                name: "dummy",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                completed: false,
+              },
+            ],
+            categories: DEFAULT_CATEGORIES_STORAGE,
+          },
+        };
+        await setAppStorage(page, appStorage);
+
         await page.getByRole("button", { name: "編集: dummy" }).click();
         await page.getByRole("textbox", { name: "タイトル *" }).fill("カギ");
         await page.getByRole("textbox", { name: "メモ" }).fill("家の鍵");
@@ -266,7 +282,7 @@ test.describe("Todo ページのテスト", () => {
         page,
       }) => {
         // Arrange
-        const todoStorage: AppStorage = {
+        const appStorage: AppStorage = {
           version: 1,
           data: {
             settings: {},
@@ -296,7 +312,7 @@ test.describe("Todo ページのテスト", () => {
             ],
           },
         };
-        await setAppStorage(page, todoStorage);
+        await setAppStorage(page, appStorage);
         await page.getByRole("button", { name: "仕事" }).click();
 
         // Act
@@ -312,7 +328,7 @@ test.describe("Todo ページのテスト", () => {
         page,
       }) => {
         // Arrange
-        const todoStorage: AppStorage = {
+        const appStorage: AppStorage = {
           version: 1,
           data: {
             settings: {},
@@ -362,7 +378,7 @@ test.describe("Todo ページのテスト", () => {
             ],
           },
         };
-        await setAppStorage(page, todoStorage);
+        await setAppStorage(page, appStorage);
         await page.getByRole("button", { name: "仕事" }).click();
 
         // Act
@@ -380,6 +396,23 @@ test.describe("Todo ページのテスト", () => {
     test.describe("削除時のテスト", () => {
       test("Todo を削除できること", async ({ page }) => {
         // Arrange
+        const appStorage: AppStorage = {
+          version: 1,
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "dummy-todo",
+                name: "dummy",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                completed: false,
+              },
+            ],
+            categories: DEFAULT_CATEGORIES_STORAGE,
+          },
+        };
+        await setAppStorage(page, appStorage);
         await page.getByRole("button", { name: "編集開始" }).click();
         await page.getByRole("button", { name: "削除: dummy" }).click();
 
@@ -402,7 +435,7 @@ test.describe("Todo ページのテスト", () => {
         page,
       }) => {
         // Arrange
-        const todoStorage: AppStorage = {
+        const appStorage: AppStorage = {
           version: 1,
           data: {
             settings: {},
@@ -427,7 +460,7 @@ test.describe("Todo ページのテスト", () => {
             categories: DEFAULT_CATEGORIES_STORAGE,
           },
         };
-        await setAppStorage(page, todoStorage);
+        await setAppStorage(page, appStorage);
 
         // Act
         await page.getByRole("button", { name: "カテゴリ設定" }).click();
@@ -454,23 +487,18 @@ test.describe("Todo ページのテスト", () => {
 
   test.describe("カテゴリの操作", () => {
     test.describe("初期表示時のテスト", () => {
-      test("localStorage が空のときデフォルトカテゴリが作成されること", async ({
+      test("初めて訪問したとき、デフォルトカテゴリが作成されること", async ({
         page,
       }) => {
         // Arrange
+        // localStorage を空にして、まだ初回訪問されていないことを再現する
         await page.evaluate(() => localStorage.clear());
 
         // Act
         await navigateToTodoPage(page);
 
         // Assert
-        await expect(await getAppStorage(page)).not.toBeNull();
-
-        const raw = await page.evaluate(
-          (key) => localStorage.getItem(key),
-          APP_STORAGE_KEY,
-        );
-        const persisted: AppStorage = JSON.parse(raw!);
+        const persisted = await getAppStorage(page);
         const defaultCategory = persisted.data.categories.find(
           (category) => category.id === DEFAULT_CATEGORY_ID,
         );
@@ -494,9 +522,9 @@ test.describe("Todo ページのテスト", () => {
         await page.getByRole("button", { name: "追加" }).click();
 
         // Assert
-        const todoStorage: AppStorage = await await getAppStorage(page);
+        const appStorage: AppStorage = await await getAppStorage(page);
 
-        const createdCategory = todoStorage.data.categories.find(
+        const createdCategory = appStorage.data.categories.find(
           (category) => category.name === "朝活",
         );
         expect(createdCategory).toBeDefined();
@@ -504,7 +532,7 @@ test.describe("Todo ページのテスト", () => {
         expect(createdCategory?.markAllIncompleteAt).toBe(
           DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
         );
-        expect(todoStorage.data.categories.at(-1)?.name).toBe("朝活");
+        expect(appStorage.data.categories.at(-1)?.name).toBe("朝活");
       });
 
       test("カテゴリを追加すると、そのカテゴリが選択状態になること", async ({
@@ -549,11 +577,11 @@ test.describe("Todo ページのテスト", () => {
         ).toBeVisible();
 
         // Assert (Todo がカテゴリと紐づいた状態でデータストアに登録されていていること)
-        const todoStorage: AppStorage = await getAppStorage(page);
-        const createdCategory = todoStorage.data.categories.find(
+        const appStorage: AppStorage = await getAppStorage(page);
+        const createdCategory = appStorage.data.categories.find(
           (category) => category.name === "朝活",
         );
-        const createdTodo = todoStorage.data.todos.find(
+        const createdTodo = appStorage.data.todos.find(
           (todo) => todo.name === "ランニング",
         );
         expect(createdCategory).toBeDefined();
@@ -592,7 +620,7 @@ test.describe("Todo ページのテスト", () => {
         page,
       }) => {
         // Arrange
-        const todoStorage: AppStorage = {
+        const appStorage: AppStorage = {
           version: 1,
           data: {
             settings: {},
@@ -628,7 +656,7 @@ test.describe("Todo ページのテスト", () => {
             ],
           },
         };
-        await setAppStorage(page, todoStorage);
+        await setAppStorage(page, appStorage);
 
         // Act
         await page.getByRole("button", { name: "仕事" }).click();
@@ -648,7 +676,7 @@ test.describe("Todo ページのテスト", () => {
         page,
       }) => {
         // Arrange
-        const todoStorage: AppStorage = {
+        const appStorage: AppStorage = {
           version: 1,
           data: {
             settings: {},
@@ -669,7 +697,7 @@ test.describe("Todo ページのテスト", () => {
             ],
           },
         };
-        await setAppStorage(page, todoStorage);
+        await setAppStorage(page, appStorage);
 
         // Act
         await page.getByRole("button", { name: "仕事" }).click();
@@ -693,7 +721,7 @@ test.describe("Todo ページのテスト", () => {
     test.describe("削除時のテスト", () => {
       test("カテゴリを削除できること", async ({ page }) => {
         // Arrange
-        const todoStorage: AppStorage = {
+        const appStorage: AppStorage = {
           version: 1,
           data: {
             settings: {},
@@ -735,7 +763,7 @@ test.describe("Todo ページのテスト", () => {
             ],
           },
         };
-        await setAppStorage(page, todoStorage);
+        await setAppStorage(page, appStorage);
 
         // Act
         await page.getByRole("button", { name: "個人" }).click();
@@ -768,7 +796,7 @@ test.describe("Todo ページのテスト", () => {
         page,
       }) => {
         // Arrange
-        const todoStorage: AppStorage = {
+        const appStorage: AppStorage = {
           version: 1,
           data: {
             settings: {},
@@ -797,7 +825,7 @@ test.describe("Todo ページのテスト", () => {
             ],
           },
         };
-        await setAppStorage(page, todoStorage);
+        await setAppStorage(page, appStorage);
 
         // Act
         // 仕事カテゴリを選択
@@ -842,7 +870,7 @@ test.describe("Todo ページのテスト", () => {
         page,
       }) => {
         // Arrange
-        const todoStorage: AppStorage = {
+        const appStorage: AppStorage = {
           version: 1,
           data: {
             settings: {},
@@ -886,7 +914,7 @@ test.describe("Todo ページのテスト", () => {
           },
         };
 
-        await setAppStorage(page, todoStorage);
+        await setAppStorage(page, appStorage);
 
         // Act
         await page.getByRole("button", { name: "仕事" }).click();
@@ -912,7 +940,7 @@ test.describe("Todo ページのテスト", () => {
         page,
       }) => {
         // Arrange
-        const todoStorage: AppStorage = {
+        const appStorage: AppStorage = {
           version: 1,
           data: {
             settings: {},
@@ -937,7 +965,7 @@ test.describe("Todo ページのテスト", () => {
             categories: DEFAULT_CATEGORIES_STORAGE,
           },
         };
-        await setAppStorage(page, todoStorage);
+        await setAppStorage(page, appStorage);
 
         // Act
         await page.getByRole("button", { name: "グローバルメニュー" }).click();
@@ -966,7 +994,7 @@ test.describe("Todo ページのテスト", () => {
         page,
       }) => {
         // Arrange
-        const backupTodoStorage: AppStorage = {
+        const backupappStorage: AppStorage = {
           version: 1,
           data: {
             settings: {},
@@ -983,7 +1011,7 @@ test.describe("Todo ページのテスト", () => {
             categories: DEFAULT_CATEGORIES_STORAGE,
           },
         };
-        const backupText = JSON.stringify(backupTodoStorage, null, 2);
+        const backupText = JSON.stringify(backupappStorage, null, 2);
         await page.getByRole("button", { name: "編集開始" }).click();
 
         // Act
@@ -1013,6 +1041,24 @@ test.describe("Todo ページのテスト", () => {
         page,
       }) => {
         // Arrange
+        const appStorage: AppStorage = {
+          version: 1,
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "dummy-todo",
+                name: "dummy",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                completed: false,
+              },
+            ],
+            categories: DEFAULT_CATEGORIES_STORAGE,
+          },
+        };
+        await setAppStorage(page, appStorage);
+
         const corruptedText = "JSON ではない文字列";
         await page.getByRole("button", { name: "グローバルメニュー" }).click();
         await page.getByRole("menuitem", { name: "インポート" }).click();
@@ -1042,6 +1088,24 @@ test.describe("Todo ページのテスト", () => {
         page,
       }) => {
         // Arrange
+        const appStorage: AppStorage = {
+          version: 1,
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "dummy-todo",
+                name: "dummy",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                completed: false,
+              },
+            ],
+            categories: DEFAULT_CATEGORIES_STORAGE,
+          },
+        };
+        await setAppStorage(page, appStorage);
+
         const corruptedAppStorage: unknown = {
           version: 1,
           data: {
