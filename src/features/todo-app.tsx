@@ -9,7 +9,6 @@ import { TodoList } from "@/components/shared/todo-list";
 import { Separator } from "@/components/ui/separator";
 import {
   DEFAULT_CATEGORY_ID,
-  DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
   DEFAULT_CATEGORY_ORDER,
 } from "@/constants/categories";
 import { MESSAGES } from "@/constants/messages";
@@ -70,7 +69,6 @@ export function TodoApp() {
         id,
         name,
         order,
-        markAllIncompleteAt: DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
       };
 
       addCategory(newCategory);
