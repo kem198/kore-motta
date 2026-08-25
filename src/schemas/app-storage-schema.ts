@@ -1,27 +1,8 @@
-import { DEFAULT_CATEGORY_ID } from "@/constants/categories";
 import { CURRENT_APP_STORAGE_VERSION } from "@/constants/version";
+import { categorySchema } from "@/schemas/category-schema";
+import { todoSchema } from "@/schemas/todo-schema";
 import { AppStorage } from "@/types/app-storage";
-import * as z from "zod";
-
-const categorySchema = z
-  .object({
-    id: z.string(),
-    name: z.string(),
-    order: z.number(),
-    markAllIncompleteAt: z.string().regex(/^\d{2}:\d{2}$/),
-  })
-  .strict();
-
-const todoSchema = z
-  .object({
-    id: z.string(),
-    name: z.string(),
-    order: z.number(),
-    categoryId: z.string().default(DEFAULT_CATEGORY_ID),
-    memo: z.string().optional(),
-    completed: z.boolean(),
-  })
-  .strict();
+import z from "zod";
 
 const appStorageDataSchema = z
   .object({
@@ -31,13 +12,14 @@ const appStorageDataSchema = z
   })
   .strict();
 
-const appStorageSchema = z
+export const appStorageSchema = z
   .object({
     version: z.literal(CURRENT_APP_STORAGE_VERSION),
     data: appStorageDataSchema,
   })
   .strict();
 
+/** アプリケーションの保存データを読み込んで AppStorage として取得する */
 export function parseAppStorage(data: unknown): AppStorage {
   return appStorageSchema.parse(data);
 }
