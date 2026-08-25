@@ -37,7 +37,7 @@ function HelpAccordions() {
   return (
     <>
       <Accordion className="max-w-lg rounded-lg border">
-        <AccordionItem value="issues" className="border-b px-4 last:border-b-0">
+        <AccordionItem value="tips" className="border-b px-4 last:border-b-0">
           <AccordionTrigger>便利な使い方</AccordionTrigger>
 
           <AccordionContent
