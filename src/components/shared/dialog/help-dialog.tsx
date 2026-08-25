@@ -1,6 +1,11 @@
 "use client";
 
-import { Changelog } from "@/components/shared/changelog";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,15 +19,93 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CircleHelpIcon } from "lucide-react";
 
-function Term() {
-  const CHANGELOG = [
-    {
-      version: "v0.1.0",
-      date: "2026-08-23",
-      changes: ["初回リリース"],
-    },
-  ];
+const TIPS = [
+  "ホーム画面やデスクトップに置いて、アプリとして起動できます。PC は URL 欄の「インストール」ボタンから、スマートフォンはブラウザのメニューから追加してください。",
+];
 
+const ISSUES = [
+  "スマートフォンで入力を開始すると、キーボードの表示によりページがスクロールされ、追加したアイテムが見づらくなることがあります。その場合は、ページをスクロールして確認してください。",
+];
+
+const CHANGELOG = [
+  {
+    version: "v0.1.0",
+    date: "2026-08-23",
+    changes: ["初回リリース"],
+  },
+];
+
+function HelpAccordions() {
+  return (
+    <>
+      <Accordion className="max-w-lg rounded-lg border">
+        <AccordionItem value="tips" className="border-b px-4 last:border-b-0">
+          <AccordionTrigger>便利な使い方</AccordionTrigger>
+
+          <AccordionContent
+            className="typeset typeset-docs space-y-6"
+            style={{ "--typeset-size": "0.9rem" } as React.CSSProperties}
+          >
+            <ul>
+              {TIPS.map((tip) => (
+                <li key={tip}>{tip}</li>
+              ))}
+            </ul>
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="issues" className="border-b px-4 last:border-b-0">
+          <AccordionTrigger>既知の問題</AccordionTrigger>
+
+          <AccordionContent
+            className="typeset typeset-docs space-y-6"
+            style={{ "--typeset-size": "0.9rem" } as React.CSSProperties}
+          >
+            <ul>
+              {ISSUES.map((issue) => (
+                <li key={issue}>{issue}</li>
+              ))}
+            </ul>
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem
+          value="changelog"
+          className="border-b px-4 last:border-b-0"
+        >
+          <AccordionTrigger>更新履歴</AccordionTrigger>
+
+          <AccordionContent
+            className="typeset typeset-docs space-y-6"
+            style={{ "--typeset-size": "0.9rem" } as React.CSSProperties}
+          >
+            <div className="flex flex-col gap-4">
+              {CHANGELOG.map((release) => (
+                <div key={release.version}>
+                  <div className="font-mono">
+                    {release.version}
+                    <span className="text-muted-foreground">
+                      {" | "}
+                      {release.date}
+                    </span>
+                  </div>
+
+                  <ul className="mt-0">
+                    {release.changes.map((change) => (
+                      <li key={change}>{change}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+    </>
+  );
+}
+
+function Term() {
   return (
     <div
       className="typeset typeset-docs space-y-6"
@@ -43,12 +126,10 @@ function Term() {
         <h3>概要</h3>
 
         <ul>
-          <li>
-            カテゴリに設定した時刻を過ぎると、そのカテゴリに属するすべてのアイテムが未完了に戻ります。
-          </li>
+          <li>日付が変わると、すべてのアイテムが未完了に戻ります。</li>
 
           <li>
-            持ち物や定期的な作業を登録しておくと、その日限りのチェックリストとして利用できます。
+            持ち物や定期的な作業を登録しておくと、一日限りのチェックリストとして利用できます。
           </li>
 
           <li>
@@ -117,8 +198,6 @@ function Term() {
           </a>{" "}
           までご連絡ください。
         </p>
-
-        <Changelog />
       </section>
     </div>
   );
@@ -141,13 +220,16 @@ export function HelpDialog() {
         <CircleHelpIcon className="size-5" />
       </DialogTrigger>
 
-      <DialogContent className="flex h-[90vh] max-h-[75vh] w-[calc(100%-1rem)] max-w-xl! flex-col">
+      <DialogContent className="flex h-[90vh] max-h-[90vh] w-[90vw] max-w-xl! flex-col">
         <DialogHeader>
           <DialogTitle>使い方・利用規約</DialogTitle>
         </DialogHeader>
 
         <ScrollArea className="min-h-0 flex-1 p-2">
-          <Term />
+          <div className="flex flex-col gap-4 py-2">
+            <Term />
+            <HelpAccordions />
+          </div>
         </ScrollArea>
         <DialogFooter>
           <DialogClose
