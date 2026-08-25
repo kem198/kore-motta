@@ -388,7 +388,6 @@ export function TodoApp() {
         onCreate={handleCreateCategory}
         onRename={handleRenameCategory}
         onDelete={handleDeleteCategory}
-        onMarkAllIncomplete={handleMarkAllIncomplete}
       />
     </div>
   );

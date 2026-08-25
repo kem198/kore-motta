@@ -49,7 +49,6 @@ export type CategorySettingDialogProps = {
   onCreate: (name: string) => void;
   onRename: (category: { id: string; name: string }, name: string) => void;
   onDelete: (category: { id: string; name: string }) => void;
-  onMarkAllIncomplete: () => void;
 };
 
 export function CategorySettingDialog({
@@ -61,10 +60,7 @@ export function CategorySettingDialog({
   onCreate,
   onRename,
   onDelete,
-  onMarkAllIncomplete,
 }: CategorySettingDialogProps) {
-  const [isMarkAllIncompleteConfirmOpen, setIsMarkAllIncompleteConfirmOpen] =
-    useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
 
   const isCreateMode = mode === "create";
@@ -97,11 +93,6 @@ export function CategorySettingDialog({
 
     onRename(category, data.name);
     onOpenChange(false);
-  };
-
-  const handleMarkAllIncompleteConfirm = () => {
-    onMarkAllIncomplete();
-    setIsMarkAllIncompleteConfirmOpen(false);
   };
 
   const handleDeleteConfirm = () => {
@@ -179,30 +170,16 @@ export function CategorySettingDialog({
                     />
                   </Field>
 
-                  <Field className="flex gap-2">
-                    {!isCreateMode && category && (
-                      <div className="flex gap-2">
-                        <Button
-                          type="button"
-                          variant="destructive"
-                          onClick={() => setIsDeleteConfirmOpen(true)}
-                          disabled={isDefaultCategory}
-                        >
-                          カテゴリを削除
-                        </Button>
-
-                        <Button
-                          type="button"
-                          variant="secondary"
-                          onClick={() =>
-                            setIsMarkAllIncompleteConfirmOpen(true)
-                          }
-                        >
-                          {MESSAGES.actions.markAllIncomplete}
-                        </Button>
-                      </div>
-                    )}
-                  </Field>
+                  {!isCreateMode && category && (
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      onClick={() => setIsDeleteConfirmOpen(true)}
+                      disabled={isDefaultCategory}
+                    >
+                      カテゴリを削除
+                    </Button>
+                  )}
 
                   {!isCreateMode && isDefaultCategory && (
                     <Field>
@@ -239,31 +216,6 @@ export function CategorySettingDialog({
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
-      <AlertDialog
-        open={isMarkAllIncompleteConfirmOpen}
-        onOpenChange={setIsMarkAllIncompleteConfirmOpen}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              アイテムをすべて未完了に戻しますか？
-            </AlertDialogTitle>
-
-            <AlertDialogDescription>
-              {`「${category?.name}」内のアイテムのみが対象です。`}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-
-          <AlertDialogFooter>
-            <AlertDialogCancel>{MESSAGES.actions.cancel}</AlertDialogCancel>
-
-            <AlertDialogAction onClick={handleMarkAllIncompleteConfirm}>
-              {MESSAGES.actions.markAllIncomplete}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
 
       <AlertDialog
         open={isDeleteConfirmOpen}

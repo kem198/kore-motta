@@ -15,7 +15,6 @@ export const MESSAGES = {
     export: "エクスポート",
     delete: "削除",
     unset: "未設定",
-    markAllIncomplete: "すべて未完了に戻す",
   },
 
   dialogs: {
@@ -27,10 +26,6 @@ export const MESSAGES = {
     reset: {
       title: "登録内容の初期化",
       description: "登録内容を初期状態に戻します。",
-    },
-    markAllIncomplete: {
-      title: "すべて未完了に戻す",
-      description: "カテゴリ内のすべてのアイテムを未完了に戻します。",
     },
     export: {
       title: "アイテム情報のエクスポート",
