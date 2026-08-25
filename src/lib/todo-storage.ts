@@ -1,7 +1,6 @@
 import { createInitialAppStorage } from "@/lib/storage/app-storage";
-import { parseAppStorage } from "@/schemas/app-storage-schema";
-import { AppStorage } from "@/types/app-storage";
-import { Todo } from "@/types/todo";
+import { AppStorage, parseAppStorage } from "@/schemas/app-storage-schema";
+import { Todo } from "@/schemas/todo-schema";
 
 export const TODO_STORAGE_KEY = "todoStorage";
 

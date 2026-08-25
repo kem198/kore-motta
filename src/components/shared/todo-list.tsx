@@ -15,7 +15,7 @@ import { ButtonGroup } from "@/components/ui/button-group";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MESSAGES } from "@/constants/messages";
-import { Todo } from "@/types/todo";
+import { Todo } from "@/schemas/todo-schema";
 import { ChevronDown, ChevronUp, Trash2 } from "lucide-react";
 import { Fragment } from "react";
 

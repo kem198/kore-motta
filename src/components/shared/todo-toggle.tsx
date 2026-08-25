@@ -2,7 +2,7 @@
 
 import { Toggle } from "@/components/ui/toggle";
 import { cn } from "@/lib/utils";
-import { Todo } from "@/types/todo";
+import { Todo } from "@/schemas/todo-schema";
 import { CheckIcon } from "lucide-react";
 import { ComponentProps } from "react";
 

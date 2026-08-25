@@ -2,8 +2,8 @@
 
 import { useCallback } from "react";
 
-import { AppStorage } from "@/types/app-storage";
-import { Category } from "@/types/category";
+import { AppStorage } from "@/schemas/app-storage-schema";
+import { Category } from "@/schemas/category-schema";
 
 type UseCategoriesOptions = {
   appStorage: AppStorage;

@@ -1,5 +1,5 @@
 import { TodoAppActions } from "@/components/shared/todo-app-actions";
-import { AppStorage } from "@/types/app-storage";
+import { AppStorage } from "@/schemas/app-storage-schema";
 
 type TodoAppNavigationProps = {
   isEditing: boolean;

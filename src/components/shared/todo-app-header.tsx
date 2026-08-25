@@ -12,7 +12,7 @@ import {
 import { MESSAGES } from "@/constants/messages";
 import { SITE_NAME } from "@/constants/site";
 import { cn } from "@/lib/utils";
-import { AppStorage } from "@/types/app-storage";
+import { AppStorage } from "@/schemas/app-storage-schema";
 import { DownloadIcon, EllipsisVerticalIcon, UploadIcon } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";

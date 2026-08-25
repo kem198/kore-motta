@@ -6,8 +6,8 @@ import {
   DEFAULT_CATEGORY_ORDER,
 } from "@/constants/categories";
 import { APP_STORAGE_KEY } from "@/lib/storage/app-storage";
-import { AppStorage } from "@/types/app-storage";
-import { Category } from "@/types/category";
+import { AppStorage } from "@/schemas/app-storage-schema";
+import { Category } from "@/schemas/category-schema";
 import { expect, Locator, Page, test } from "@playwright/test";
 
 test.describe("Todo ページのテスト", () => {

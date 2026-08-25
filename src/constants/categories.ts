@@ -1,4 +1,4 @@
-import { Category } from "@/types/category";
+import { Category } from "@/schemas/category-schema";
 
 export const DEFAULT_CATEGORY_ID = "uncategorized";
 export const DEFAULT_CATEGORY_NAME = "未分類";

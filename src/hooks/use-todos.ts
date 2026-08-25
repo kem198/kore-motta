@@ -2,9 +2,8 @@
 
 import { useCallback } from "react";
 
-import { parseAppStorage } from "@/schemas/app-storage-schema";
-import { AppStorage } from "@/types/app-storage";
-import { Todo } from "@/types/todo";
+import { AppStorage, parseAppStorage } from "@/schemas/app-storage-schema";
+import { Todo } from "@/schemas/todo-schema";
 
 type UseTodosOptions = {
   appStorage: AppStorage;

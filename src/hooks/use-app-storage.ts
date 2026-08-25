@@ -8,7 +8,7 @@ import {
   loadAppStorage,
   saveAppStorage,
 } from "@/lib/storage/app-storage";
-import { AppStorage } from "@/types/app-storage";
+import { AppStorage } from "@/schemas/app-storage-schema";
 
 type UseAppStorageOptions = {
   storageKey?: string;

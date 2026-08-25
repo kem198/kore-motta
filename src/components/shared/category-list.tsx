@@ -3,7 +3,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DEFAULT_CATEGORY_ID } from "@/constants/categories";
 import { MESSAGES } from "@/constants/messages";
-import { Category } from "@/types/category";
+import { Category } from "@/schemas/category-schema";
 import { PlusIcon } from "lucide-react";
 
 const sortCategories = (categories: Category[]) =>

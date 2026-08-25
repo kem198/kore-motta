@@ -10,3 +10,5 @@ export const todoSchema = z
     completed: z.boolean(),
   })
   .strict();
+
+export type Todo = z.infer<typeof todoSchema>;
