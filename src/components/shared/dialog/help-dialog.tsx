@@ -16,7 +16,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 import { CircleHelpIcon } from "lucide-react";
 
 const TIPS = [
@@ -213,17 +213,20 @@ export function HelpDialog() {
         <CircleHelpIcon className="size-5" />
       </DialogTrigger>
 
-      <DialogContent className="flex h-[80vh] max-h-[80vh] w-[90vw] max-w-xl! flex-col">
+      <DialogContent className="flex w-[90vw] max-w-xl! flex-col">
         <DialogHeader>
           <DialogTitle>使い方・利用規約</DialogTitle>
         </DialogHeader>
 
-        <ScrollArea className="min-h-0 flex-1 p-3">
-          <div className="flex flex-col gap-4 py-2">
-            <Term />
-            <HelpAccordions />
-          </div>
-        </ScrollArea>
+        <div
+          className={cn(
+            "flex flex-col gap-4 py-2",
+            "-mx-4 max-h-[60vh] overflow-y-auto px-4",
+          )}
+        >
+          <Term />
+          <HelpAccordions />
+        </div>
 
         <DialogFooter>
           <DialogClose
