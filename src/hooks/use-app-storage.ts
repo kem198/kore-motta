@@ -7,7 +7,7 @@ import {
   createInitialAppStorage,
   loadAppStorage,
   saveAppStorage,
-} from "@/lib/storage/app-storage";
+} from "@/lib/app-storage";
 import { AppStorage } from "@/schemas/app-storage-schema";
 
 type UseAppStorageOptions = {
