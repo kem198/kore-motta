@@ -2,6 +2,7 @@
 
 import { Changelog } from "@/components/shared/changelog";
 import { Issues } from "@/components/shared/issues";
+import { Tips } from "@/components/shared/tips";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -113,8 +114,9 @@ function Term() {
           </p>
         </section>
       </div>
-      <Changelog />
+      <Tips />
       <Issues />
+      <Changelog />
     </div>
   );
 }
