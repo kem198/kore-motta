@@ -28,6 +28,7 @@ import {
   FieldSet,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { FEATURES } from "@/constants/features";
 import { MESSAGES } from "@/constants/messages";
 import {
   CategoryFormValues,
@@ -151,24 +152,26 @@ export function CategorySettingDialog({
                     )}
                   />
 
-                  <Field>
-                    <FieldLabel htmlFor="category-reset-time">
-                      未完了に戻す時刻
-                    </FieldLabel>
-                    <Input
-                      // {...field}
-                      id="category-reset-time"
-                      // aria-label={MESSAGES.labels.categoryName}
-                      // aria-invalid={fieldState.invalid}
-                      placeholder={
-                        "将来対応"
-                        // isCreateMode
-                        //   ? MESSAGES.placeholders.categoryName
-                        //   : (category?.name ?? "")
-                      }
-                      disabled={!isCreateMode && isDefaultCategory}
-                    />
-                  </Field>
+                  {FEATURES.customMarkIncompleteAt && (
+                    <Field>
+                      <FieldLabel htmlFor="category-reset-time">
+                        未完了に戻す時刻
+                      </FieldLabel>
+                      <Input
+                        // {...field}
+                        id="category-reset-time"
+                        // aria-label={MESSAGES.labels.categoryName}
+                        // aria-invalid={fieldState.invalid}
+                        placeholder={
+                          "将来対応"
+                          // isCreateMode
+                          //   ? MESSAGES.placeholders.categoryName
+                          //   : (category?.name ?? "")
+                        }
+                        disabled={!isCreateMode && isDefaultCategory}
+                      />
+                    </Field>
+                  )}
 
                   {!isCreateMode && category && (
                     <Button
