@@ -11,11 +11,14 @@ const ISSUES = [
 
 export function Issues() {
   return (
-    <Accordion>
-      <AccordionItem value="known-issues">
+    <Accordion className="max-w-lg rounded-lg border">
+      <AccordionItem value="issues" className="border-b px-4 last:border-b-0">
         <AccordionTrigger>既知の問題</AccordionTrigger>
 
-        <AccordionContent>
+        <AccordionContent
+          className="typeset typeset-docs space-y-6"
+          style={{ "--typeset-size": "0.9rem" } as React.CSSProperties}
+        >
           <ul>
             {ISSUES.map((issue) => (
               <li key={issue}>{issue}</li>

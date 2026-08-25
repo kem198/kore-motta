@@ -17,101 +17,104 @@ import { CircleHelpIcon } from "lucide-react";
 
 function Term() {
   return (
-    <div
-      className="typeset typeset-docs space-y-6"
-      style={{ "--typeset-size": "0.9rem" } as React.CSSProperties}
-    >
-      <section>
-        <h3>このアプリは何？</h3>
+    <div className="flex flex-col gap-4">
+      <div
+        className="typeset typeset-docs space-y-6"
+        style={{ "--typeset-size": "0.9rem" } as React.CSSProperties}
+      >
+        <section>
+          <h3>このアプリは何？</h3>
 
-        <p>
-          <span className="font-ubuntu-sans font-medium">Kore Motta?</span>{" "}
-          は、毎日の「これ持った？」を確認するシンプルな Todo アプリです。
-        </p>
+          <p>
+            <span className="font-ubuntu-sans font-medium">Kore Motta?</span>{" "}
+            は、毎日の「これ持った？」を確認するシンプルな Todo アプリです。
+          </p>
 
-        <p>一日ごとにすべてのアイテムが未完了に戻ることが特徴です。</p>
-      </section>
+          <p>一日ごとにすべてのアイテムが未完了に戻ることが特徴です。</p>
+        </section>
 
-      <section>
-        <h3>概要</h3>
+        <section>
+          <h3>概要</h3>
 
-        <ul>
-          <li>日付が変わると、すべてのアイテムが未完了に戻ります。</li>
+          <ul>
+            <li>日付が変わると、すべてのアイテムが未完了に戻ります。</li>
 
-          <li>
-            持ち物や定期的な作業を登録しておくと、その日限りのチェックリストとして利用できます。
-          </li>
+            <li>
+              持ち物や定期的な作業を登録しておくと、その日限りのチェックリストとして利用できます。
+            </li>
 
-          <li>
-            アイテムが期限切れとして溜まらないため、好みのタイミングで使えます。
-          </li>
-        </ul>
-      </section>
+            <li>
+              アイテムが期限切れとして溜まらないため、好みのタイミングで使えます。
+            </li>
+          </ul>
+        </section>
 
-      <section>
-        <h3>情報の取り扱いについて</h3>
+        <section>
+          <h3>情報の取り扱いについて</h3>
 
-        <h4>保存先</h4>
+          <h4>保存先</h4>
 
-        <ul>
-          <li>登録した内容は、お使いのブラウザに保存されます。</li>
-          <li>登録した内容を外部サービスへ送信・保存することはありません。</li>
-        </ul>
+          <ul>
+            <li>登録した内容は、お使いのブラウザに保存されます。</li>
+            <li>
+              登録した内容を外部サービスへ送信・保存することはありません。
+            </li>
+          </ul>
 
-        <h4>バックアップ</h4>
+          <h4>バックアップ</h4>
 
-        <ul>
-          <li>登録した内容は、エクスポートしてバックアップできます。</li>
-          <li>バックアップした内容は、インポートして復元できます。</li>
-          <li>ブラウザ間のデータ移行などにも利用できます。</li>
-        </ul>
+          <ul>
+            <li>登録した内容は、エクスポートしてバックアップできます。</li>
+            <li>バックアップした内容は、インポートして復元できます。</li>
+            <li>ブラウザ間のデータ移行などにも利用できます。</li>
+          </ul>
 
-        <h4>注意点</h4>
+          <h4>注意点</h4>
 
-        <ul>
-          <li>個人情報や機密情報など重要な情報は登録しないでください。</li>
-          <li>
-            ブラウザの「Cookie
-            と他のサイトデータ」を削除すると、登録した内容が削除されます。
-          </li>
-          <li>
-            登録した内容を失いたくない場合は、あらかじめエクスポートしてください。
-          </li>
-        </ul>
-      </section>
+          <ul>
+            <li>個人情報や機密情報など重要な情報は登録しないでください。</li>
+            <li>
+              ブラウザの「Cookie
+              と他のサイトデータ」を削除すると、登録した内容が削除されます。
+            </li>
+            <li>
+              登録した内容を失いたくない場合は、あらかじめエクスポートしてください。
+            </li>
+          </ul>
+        </section>
 
-      <section>
-        <h3>利用規約</h3>
+        <section>
+          <h3>利用規約</h3>
 
-        <ul>
-          <li>
-            本サービスは、予告なく内容の変更、停止、または終了する場合があります。
-          </li>
-          <li>
-            本サービスの利用によって生じた損害について、運営者は責任を負いません。
-          </li>
-        </ul>
-      </section>
+          <ul>
+            <li>
+              本サービスは、予告なく内容の変更、停止、または終了する場合があります。
+            </li>
+            <li>
+              本サービスの利用によって生じた損害について、運営者は責任を負いません。
+            </li>
+          </ul>
+        </section>
 
-      <section>
-        <h3>お問い合わせ</h3>
+        <section>
+          <h3>お問い合わせ</h3>
 
-        <p>
-          ご不明な点やお問い合わせは{" "}
-          <a
-            href="https://x.com/kem198_x"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline underline-offset-4"
-          >
-            @KeM198
-          </a>{" "}
-          までご連絡ください。
-        </p>
-
-        <Changelog />
-        <Issues />
-      </section>
+          <p>
+            ご不明な点やお問い合わせは{" "}
+            <a
+              href="https://x.com/kem198_x"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-4"
+            >
+              @KeM198
+            </a>{" "}
+            までご連絡ください。
+          </p>
+        </section>
+      </div>
+      <Changelog />
+      <Issues />
     </div>
   );
 }

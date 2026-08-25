@@ -15,11 +15,17 @@ const CHANGELOG = [
 
 export function Changelog() {
   return (
-    <Accordion>
-      <AccordionItem value="changelog">
+    <Accordion className="max-w-lg rounded-lg border">
+      <AccordionItem
+        value="changelog"
+        className="border-b px-4 last:border-b-0"
+      >
         <AccordionTrigger>更新履歴</AccordionTrigger>
 
-        <AccordionContent>
+        <AccordionContent
+          className="typeset typeset-docs space-y-6"
+          style={{ "--typeset-size": "0.9rem" } as React.CSSProperties}
+        >
           <div className="flex flex-col gap-4">
             {CHANGELOG.map((release) => (
               <div key={release.version}>
