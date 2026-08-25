@@ -150,7 +150,7 @@ test("Todo を登録できること", async ({ page }) => {
 
   // Assert (データストアへ登録されていること)
   const todoStorage: AppStorage = await page.evaluate(
-    (key) => JSON.parse(localStorage.getItem(key)!),
+    (key) => JSON.parse(localStorage.getItem(key)),
     APP_STORAGE_KEY,
   );
   expect(todoStorage.data.todos[0].name).toBe("カギ");
