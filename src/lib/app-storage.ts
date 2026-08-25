@@ -26,8 +26,8 @@ export function createInitialAppStorage(): AppStorage {
  *
  * 日付が変わっていれば下記の処理を行われた AppStorage を返す。
  *
- * - todos を未完了化
- * - lastMarkedAllIncompleteAt を当日00:00に更新
+ * - todos を未完了にする
+ * - lastMarkedAllIncompleteAt を現在日時にする
  * @param appStorage
  * @returns
  */
