@@ -15,14 +15,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { CircleHelpIcon } from "lucide-react";
 
 function Term() {
-  const CHANGELOG = [
-    {
-      version: "v0.1.0",
-      date: "2026-08-23",
-      changes: ["初回リリース"],
-    },
-  ];
-
   return (
     <div
       className="typeset typeset-docs space-y-6"
@@ -43,9 +35,7 @@ function Term() {
         <h3>概要</h3>
 
         <ul>
-          <li>
-            カテゴリに設定した時刻を過ぎると、そのカテゴリに属するすべてのアイテムが未完了に戻ります。
-          </li>
+          <li>日付が変わると、すべてのアイテムが未完了に戻ります。</li>
 
           <li>
             持ち物や定期的な作業を登録しておくと、その日限りのチェックリストとして利用できます。
