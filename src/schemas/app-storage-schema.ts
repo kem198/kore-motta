@@ -8,7 +8,7 @@ const appStorageDataSchema = z
     settings: z.record(z.string(), z.unknown()),
     categories: z.array(categorySchema),
     todos: z.array(todoSchema),
-    // lastMarkedAllIncompleteAt: z.iso.datetime(),
+    lastMarkedAllIncompleteAt: z.iso.datetime(),
   })
   .strict();
 
