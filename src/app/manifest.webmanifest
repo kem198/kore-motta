@@ -2,8 +2,8 @@
   "name": "Kore Motta?",
   "display": "minimal-ui",
   "start_url": "/",
-  "background_color": "#607CA1",
-  "theme_color": "#607CA1",
+  "background_color": "#53749d",
+  "theme_color": "#53749d",
   "icons": [
     {
       "src": "/assets/icons/icon-white-192x192.png",

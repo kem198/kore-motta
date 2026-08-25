@@ -1,7 +1,6 @@
 import {
   DEFAULT_CATEGORIES_STORAGE,
   DEFAULT_CATEGORY_ID,
-  DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
   DEFAULT_CATEGORY_NAME,
   DEFAULT_CATEGORY_ORDER,
 } from "@/constants/categories";
@@ -124,9 +123,6 @@ test.describe("Todo ページのテスト", () => {
         );
         expect(defaultCategory).toBeDefined();
         expect(defaultCategory?.name).toBe(DEFAULT_CATEGORY_NAME);
-        expect(defaultCategory?.markAllIncompleteAt).toBe(
-          DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
-        );
 
         const legacyCategoriesKeyValue = await page.evaluate(() =>
           localStorage.getItem("categories"),
@@ -382,13 +378,11 @@ test.describe("Todo ページのテスト", () => {
                 id: DEFAULT_CATEGORY_ID,
                 name: DEFAULT_CATEGORY_NAME,
                 order: DEFAULT_CATEGORY_ORDER,
-                markAllIncompleteAt: DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
               },
               {
                 id: "work",
                 name: "仕事",
                 order: 1,
-                markAllIncompleteAt: "09:00",
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
@@ -451,13 +445,11 @@ test.describe("Todo ページのテスト", () => {
                 id: DEFAULT_CATEGORY_ID,
                 name: DEFAULT_CATEGORY_NAME,
                 order: DEFAULT_CATEGORY_ORDER,
-                markAllIncompleteAt: DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
               },
               {
                 id: "work",
                 name: "仕事",
                 order: 1,
-                markAllIncompleteAt: "09:00",
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
@@ -553,9 +545,6 @@ test.describe("Todo ページのテスト", () => {
         );
         expect(defaultCategory).toBeDefined();
         expect(defaultCategory?.name).toBe(DEFAULT_CATEGORY_NAME);
-        expect(defaultCategory?.markAllIncompleteAt).toBe(
-          DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
-        );
       });
     });
 
@@ -578,9 +567,6 @@ test.describe("Todo ページのテスト", () => {
         );
         expect(createdCategory).toBeDefined();
         expect(createdCategory?.id).toBeTruthy();
-        expect(createdCategory?.markAllIncompleteAt).toBe(
-          DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
-        );
         expect(appStorage.data.categories.at(-1)?.name).toBe("朝活");
       });
 
@@ -694,13 +680,11 @@ test.describe("Todo ページのテスト", () => {
                 id: DEFAULT_CATEGORY_ID,
                 name: DEFAULT_CATEGORY_NAME,
                 order: DEFAULT_CATEGORY_ORDER,
-                markAllIncompleteAt: DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
               },
               {
                 id: "work",
                 name: "仕事",
                 order: 1,
-                markAllIncompleteAt: "09:00",
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
@@ -738,13 +722,11 @@ test.describe("Todo ページのテスト", () => {
                 id: DEFAULT_CATEGORY_ID,
                 name: DEFAULT_CATEGORY_NAME,
                 order: DEFAULT_CATEGORY_ORDER,
-                markAllIncompleteAt: DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
               },
               {
                 id: "work",
                 name: "仕事",
                 order: 1,
-                markAllIncompleteAt: "09:00",
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
@@ -769,7 +751,6 @@ test.describe("Todo ページのテスト", () => {
         );
         expect(updatedCategory).toBeDefined();
         expect(updatedCategory?.name).toBe("営業");
-        expect(updatedCategory?.markAllIncompleteAt).toBe("09:00");
       });
     });
 
@@ -801,19 +782,16 @@ test.describe("Todo ページのテスト", () => {
                 id: DEFAULT_CATEGORY_ID,
                 name: DEFAULT_CATEGORY_NAME,
                 order: DEFAULT_CATEGORY_ORDER,
-                markAllIncompleteAt: DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
               },
               {
                 id: "work",
                 name: "仕事",
                 order: 1,
-                markAllIncompleteAt: "09:00",
               },
               {
                 id: "personal",
                 name: "個人",
                 order: 2,
-                markAllIncompleteAt: "09:00",
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
@@ -872,13 +850,11 @@ test.describe("Todo ページのテスト", () => {
                 id: DEFAULT_CATEGORY_ID,
                 name: DEFAULT_CATEGORY_NAME,
                 order: DEFAULT_CATEGORY_ORDER,
-                markAllIncompleteAt: DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
               },
               {
                 id: "work",
                 name: "仕事",
                 order: 1,
-                markAllIncompleteAt: "09:00",
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
@@ -922,9 +898,6 @@ test.describe("Todo ページのテスト", () => {
         );
         expect(defaultCategory).toBeDefined();
         expect(defaultCategory?.name).toBe(DEFAULT_CATEGORY_NAME);
-        expect(defaultCategory?.markAllIncompleteAt).toBe(
-          DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
-        );
       });
 
       test("カテゴリを削除したとき、登録済み Todo が未分類カテゴリの末尾に登録されること", async ({
@@ -963,13 +936,11 @@ test.describe("Todo ページのテスト", () => {
                 id: DEFAULT_CATEGORY_ID,
                 name: DEFAULT_CATEGORY_NAME,
                 order: DEFAULT_CATEGORY_ORDER,
-                markAllIncompleteAt: DEFAULT_CATEGORY_MARK_ALL_INCOMPLETE_AT,
               },
               {
                 id: "work",
                 name: "仕事",
                 order: 1,
-                markAllIncompleteAt: "09:00",
               },
             ],
             lastMarkedAllIncompleteAt: new Date(

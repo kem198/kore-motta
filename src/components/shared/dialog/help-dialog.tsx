@@ -16,15 +16,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 import { CircleHelpIcon } from "lucide-react";
 
 const TIPS = [
   "ホーム画面やデスクトップに置いて、アプリとして起動できます。PC は URL 欄の「インストール」ボタンから、スマートフォンはブラウザのメニューから追加してください。",
+  "カテゴリは名前順に並びます。「01-旅行」などとすると、並び順を調整できます。",
 ];
 
 const ISSUES = [
   "スマートフォンで入力を開始すると、キーボードの表示によりページがスクロールされ、追加したアイテムが見づらくなることがあります。その場合は、ページをスクロールして確認してください。",
+  "ページを開いたまま日付をまたいだ場合、未完了に戻りません。「ページを更新する」または「別タブ / 別アプリに移動した後戻る」をお試しください。",
 ];
 
 const CHANGELOG = [
@@ -35,6 +37,18 @@ const CHANGELOG = [
   },
 ];
 
+function UnorderedList({ items }: { items: string[] }) {
+  return (
+    <ul className="flex list-disc flex-col gap-2 pl-5">
+      {items.map((item) => (
+        <li key={item} className="leading-relaxed">
+          {item}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 function HelpAccordions() {
   return (
     <>
@@ -42,30 +56,16 @@ function HelpAccordions() {
         <AccordionItem value="tips" className="border-b px-4 last:border-b-0">
           <AccordionTrigger>便利な使い方</AccordionTrigger>
 
-          <AccordionContent
-            className="typeset typeset-docs space-y-6"
-            style={{ "--typeset-size": "0.9rem" } as React.CSSProperties}
-          >
-            <ul>
-              {TIPS.map((tip) => (
-                <li key={tip}>{tip}</li>
-              ))}
-            </ul>
+          <AccordionContent>
+            <UnorderedList items={TIPS} />
           </AccordionContent>
         </AccordionItem>
 
         <AccordionItem value="issues" className="border-b px-4 last:border-b-0">
           <AccordionTrigger>既知の問題</AccordionTrigger>
 
-          <AccordionContent
-            className="typeset typeset-docs space-y-6"
-            style={{ "--typeset-size": "0.9rem" } as React.CSSProperties}
-          >
-            <ul>
-              {ISSUES.map((issue) => (
-                <li key={issue}>{issue}</li>
-              ))}
-            </ul>
+          <AccordionContent>
+            <UnorderedList items={ISSUES} />
           </AccordionContent>
         </AccordionItem>
 
@@ -75,10 +75,7 @@ function HelpAccordions() {
         >
           <AccordionTrigger>更新履歴</AccordionTrigger>
 
-          <AccordionContent
-            className="typeset typeset-docs space-y-6"
-            style={{ "--typeset-size": "0.9rem" } as React.CSSProperties}
-          >
+          <AccordionContent>
             <div className="flex flex-col gap-4">
               {CHANGELOG.map((release) => (
                 <div key={release.version}>
@@ -90,11 +87,7 @@ function HelpAccordions() {
                     </span>
                   </div>
 
-                  <ul className="mt-0">
-                    {release.changes.map((change) => (
-                      <li key={change}>{change}</li>
-                    ))}
-                  </ul>
+                  <UnorderedList items={release.changes} />
                 </div>
               ))}
             </div>
@@ -220,17 +213,21 @@ export function HelpDialog() {
         <CircleHelpIcon className="size-5" />
       </DialogTrigger>
 
-      <DialogContent className="flex h-[90vh] max-h-[90vh] w-[90vw] max-w-xl! flex-col">
+      <DialogContent className="flex w-[90vw] max-w-xl! flex-col">
         <DialogHeader>
           <DialogTitle>使い方・利用規約</DialogTitle>
         </DialogHeader>
 
-        <ScrollArea className="min-h-0 flex-1 p-3">
-          <div className="flex flex-col gap-4 py-2">
-            <Term />
-            <HelpAccordions />
-          </div>
-        </ScrollArea>
+        <div
+          className={cn(
+            "flex flex-col gap-4 py-2",
+            "-mx-4 max-h-[60vh] overflow-y-auto px-4",
+          )}
+        >
+          <Term />
+          <HelpAccordions />
+        </div>
+
         <DialogFooter>
           <DialogClose
             render={
