@@ -19,6 +19,6 @@ const appStorageSchema = z
   })
   .strict();
 
-export function parseAppStorage(data: unknown): AppStorage {
-  return appStorageSchema.parse(data);
+export function parseAppStorage(rawData: unknown): AppStorage {
+  return appStorageSchema.parse(rawData);
 }
