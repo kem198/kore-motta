@@ -9,7 +9,10 @@ export function TodoFormFooter({ onSubmit }: TodoFormFooterProps) {
   return (
     <div className="fixed inset-x-0 bottom-0 z-50">
       <div className="bg-background mx-auto w-full max-w-3xl border-t p-4">
-        <TodoForm onSubmit={onSubmit} />
+        <TodoForm
+          onSubmit={onSubmit}
+          className="pb-[env(safe-area-inset-bottom)]"
+        />
       </div>
     </div>
   );
