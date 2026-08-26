@@ -18,7 +18,6 @@ type UseAppStorageReturn = {
   appStorage: AppStorage;
   isLoaded: boolean;
   updateAppStorage: (updater: (current: AppStorage) => AppStorage) => void;
-  replaceAppStorage: (appStorage: AppStorage) => void;
   importAppStorage: (data: string) => void;
 };
 
@@ -61,21 +60,16 @@ export function useAppStorage(
     setAppStorage((current) => updater(current));
   };
 
-  const replaceAppStorage = (nextAppStorage: AppStorage) => {
-    setAppStorage(nextAppStorage);
-  };
-
   const importAppStorage = (data: string) => {
     const parsed = parseAppStorage(JSON.parse(data));
 
-    replaceAppStorage(parsed);
+    setAppStorage(parsed);
   };
 
   return {
     appStorage,
     isLoaded,
     updateAppStorage,
-    replaceAppStorage,
     importAppStorage,
   };
 }
