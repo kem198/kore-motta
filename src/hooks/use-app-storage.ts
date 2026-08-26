@@ -8,7 +8,7 @@ import {
   loadAppStorage,
   saveAppStorage,
 } from "@/lib/app-storage";
-import { AppStorage } from "@/schemas/app-storage-schema";
+import { AppStorage, parseAppStorage } from "@/schemas/app-storage-schema";
 
 type UseAppStorageOptions = {
   storageKey?: string;
@@ -19,6 +19,7 @@ type UseAppStorageReturn = {
   isLoaded: boolean;
   updateAppStorage: (updater: (current: AppStorage) => AppStorage) => void;
   replaceAppStorage: (appStorage: AppStorage) => void;
+  importAppStorage: (data: string) => void;
 };
 
 export function useAppStorage(
@@ -67,10 +68,20 @@ export function useAppStorage(
     setAppStorage(next);
   }, []);
 
+  const importAppStorage = useCallback(
+    (data: string) => {
+      const parsed = parseAppStorage(JSON.parse(data));
+
+      updateAppStorage(() => parsed);
+    },
+    [updateAppStorage],
+  );
+
   return {
     appStorage,
     isLoaded,
     updateAppStorage,
     replaceAppStorage,
+    importAppStorage,
   };
 }

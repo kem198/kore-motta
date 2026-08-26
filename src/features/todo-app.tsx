@@ -13,8 +13,6 @@ import {
 } from "@/constants/categories";
 import { MESSAGES } from "@/constants/messages";
 import { useAppStorage } from "@/hooks/use-app-storage";
-import { useCategories } from "@/hooks/use-categories";
-import { useTodos } from "@/hooks/use-todos";
 import { Category } from "@/schemas/category-schema";
 import { TodoFormValues } from "@/schemas/todo-form-schema";
 import { Todo } from "@/schemas/todo-schema";
@@ -22,26 +20,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 export function TodoApp() {
-  const { appStorage, isLoaded, updateAppStorage } = useAppStorage();
-
-  const {
-    todos,
-    addTodo,
-    updateTodo,
-    updateTodos,
-    deleteTodoById,
-    markAllIncompleteTodos: markAllIncomplete,
-    importTodoStorage,
-  } = useTodos({
-    appStorage,
-    updateAppStorage,
-  });
-
-  const { categories, addCategory, updateCategory, deleteCategoryById } =
-    useCategories({
-      appStorage,
-      updateAppStorage,
-    });
+  const { appStorage, isLoaded, updateAppStorage, importAppStorage } =
+    useAppStorage();
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -55,22 +35,27 @@ export function TodoApp() {
     | null
   >(null);
 
-  const visibleTodos = todos
+  const visibleTodos = appStorage.data.todos
     .filter((todo) => todo.categoryId === activeCategoryId)
     .toSorted((a, b) => a.order - b.order);
 
   const handleCreateCategory = (name: string) => {
     const id = crypto.randomUUID();
     // TODO: カテゴリ並び替え機能を実装時に変更必要
-    const order = DEFAULT_CATEGORY_ORDER;
-
     const newCategory: Category = {
       id,
       name,
-      order,
+      order: DEFAULT_CATEGORY_ORDER,
     };
 
-    addCategory(newCategory);
+    updateAppStorage((current) => ({
+      ...current,
+      data: {
+        ...current.data,
+        categories: [...current.data.categories, newCategory],
+      },
+    }));
+
     setActiveCategoryId(id);
   };
 
@@ -97,19 +82,50 @@ export function TodoApp() {
       completed: false,
     };
 
-    addTodo(newTodo);
+    updateAppStorage((current) => ({
+      ...current,
+      data: {
+        ...current.data,
+        todos: [...current.data.todos, newTodo],
+      },
+    }));
   };
 
   const handleDelete = (todo: Todo) => {
-    deleteTodoById(todo.id);
+    updateAppStorage((current) => ({
+      ...current,
+      data: {
+        ...current.data,
+        todos: current.data.todos.filter(
+          (currentTodo) => currentTodo.id !== todo.id,
+        ),
+      },
+    }));
   };
 
   const handleUpdate = (todo: Todo) => {
-    updateTodo(todo);
+    updateAppStorage((current) => ({
+      ...current,
+      data: {
+        ...current.data,
+        todos: current.data.todos.map((currentTodo) =>
+          currentTodo.id === todo.id ? todo : currentTodo,
+        ),
+      },
+    }));
   };
-
   const handleMarkAllIncomplete = () => {
-    markAllIncomplete();
+    updateAppStorage((current) => ({
+      ...current,
+      data: {
+        ...current.data,
+        todos: current.data.todos.map((todo) => ({
+          ...todo,
+          completed: false,
+        })),
+      },
+    }));
+
     setIsEditing(false);
 
     toast.success(MESSAGES.toast.markAllIncomplete);
@@ -146,16 +162,22 @@ export function TodoApp() {
       reorderedVisibleTodos.map((todo) => [todo.id, todo]),
     );
 
-    const reorderedTodos = todos.map(
+    const reorderedTodos = appStorage.data.todos.map(
       (todo) => reorderedTodoMap.get(todo.id) ?? todo,
     );
 
-    updateTodos(reorderedTodos);
+    updateAppStorage((current) => ({
+      ...current,
+      data: {
+        ...current.data,
+        todos: reorderedTodos,
+      },
+    }));
   };
 
   const handleImport = (data: string) => {
     try {
-      importTodoStorage(data);
+      importAppStorage(data);
 
       toast.success(MESSAGES.toast.imported);
       return true;
@@ -192,20 +214,18 @@ export function TodoApp() {
       return;
     }
 
-    const currentCategory = categories.find((item) => item.id === category.id);
-
-    if (!currentCategory) {
-      return;
-    }
-
-    updateCategory({
-      ...currentCategory,
-      name: trimmedName,
-    });
+    updateAppStorage((current) => ({
+      ...current,
+      data: {
+        ...current.data,
+        categories: current.data.categories.map((item) =>
+          item.id === category.id ? { ...item, name: trimmedName } : item,
+        ),
+      },
+    }));
   };
 
   const isDefaultCategorySelected = activeCategoryId === DEFAULT_CATEGORY_ID;
-
   const handleDeleteCategory = (category: { id: string; name: string }) => {
     const categoryId = category.id;
 
@@ -217,44 +237,45 @@ export function TodoApp() {
       return;
     }
 
-    // 未分類カテゴリの Todo を取得する
-    const defaultCategoryTodos = todos.filter(
+    const defaultCategoryTodos = appStorage.data.todos.filter(
       (todo) => todo.categoryId === DEFAULT_CATEGORY_ID,
     );
-    // 削除対象カテゴリの Todo を現在の並び順で取得する
-    const categoryTodos = todos
+
+    const categoryTodos = appStorage.data.todos
       .filter((todo) => todo.categoryId === categoryId)
       .toSorted((a, b) => a.order - b.order);
 
-    // 未分類カテゴリの末尾に追加するための order を決める
     const nextOrder =
       defaultCategoryTodos.length === 0
         ? 0
         : Math.max(...defaultCategoryTodos.map((todo) => todo.order)) + 1;
 
-    // 移行する Todo に未分類カテゴリの末尾から順番に order を割り当てる
     const migratedTodoOrders = new Map(
       categoryTodos.map((todo, index) => [todo.id, nextOrder + index]),
     );
 
-    // 削除対象カテゴリの Todo を未分類カテゴリへ移行する
-    const migratedTodos = todos.map((todo) => {
-      const order = migratedTodoOrders.get(todo.id);
-      if (order === undefined) {
-        return todo;
-      }
+    updateAppStorage((current) => ({
+      ...current,
+      data: {
+        ...current.data,
+        todos: current.data.todos.map((todo) => {
+          const order = migratedTodoOrders.get(todo.id);
 
-      return {
-        ...todo,
-        categoryId: DEFAULT_CATEGORY_ID,
-        order,
-      };
-    });
+          if (order === undefined) {
+            return todo;
+          }
 
-    updateTodos(migratedTodos);
-
-    // カテゴリを削除
-    deleteCategoryById(categoryId);
+          return {
+            ...todo,
+            categoryId: DEFAULT_CATEGORY_ID,
+            order,
+          };
+        }),
+        categories: current.data.categories.filter(
+          (category) => category.id !== categoryId,
+        ),
+      },
+    }));
 
     // 削除されたカテゴリが選択中だった場合、デフォルトカテゴリに切り替え
     if (activeCategoryId === categoryId) {
@@ -273,7 +294,7 @@ export function TodoApp() {
 
         <div className="flex flex-col gap-3 p-4">
           <CategoryList
-            categories={categories}
+            categories={appStorage.data.categories}
             activeCategoryId={activeCategoryId}
             isLoaded={isLoaded}
             onSelect={setActiveCategoryId}
