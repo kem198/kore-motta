@@ -544,6 +544,78 @@ test.describe("Todo ページのテスト", () => {
         await expect(todoItems.nth(0)).toHaveAccessibleName("Todo: メール確認");
         await expect(todoItems.nth(1)).toHaveAccessibleName("Todo: 資料作成");
       });
+
+      test("Todo を上へ移動する操作を行ったら、対象の Todo が移動先 Todo よりも上に表示されること", async ({
+        page,
+      }) => {
+        // Arrange
+        const appStorage: AppStorage = {
+          version: 1,
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "work-1",
+                name: "資料作成",
+                order: 0,
+                categoryId: "work",
+                completed: false,
+              },
+              {
+                id: "daily-1",
+                name: "歯磨き",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                completed: false,
+              },
+              {
+                id: "work-2",
+                name: "メール確認",
+                order: 1,
+                categoryId: "work",
+                completed: false,
+              },
+              {
+                id: "daily-2",
+                name: "薬を飲む",
+                order: 3,
+                categoryId: DEFAULT_CATEGORY_ID,
+                completed: false,
+              },
+            ],
+            categories: [
+              {
+                id: DEFAULT_CATEGORY_ID,
+                name: DEFAULT_CATEGORY_NAME,
+                order: DEFAULT_CATEGORY_ORDER,
+              },
+              {
+                id: "work",
+                name: "仕事",
+                order: 1,
+              },
+            ],
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00",
+            ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
+          },
+        };
+        await navigateToTodoPage(page, { storage: appStorage });
+        await page.getByRole("button", { name: "仕事" }).click();
+
+        // Act
+        await page.getByRole("button", { name: "編集開始" }).click();
+        await page
+          .getByRole("button", { name: "上へ移動: メール確認" })
+          .click();
+
+        // Assert (表示順が正しいこと)
+        const todoItems = page.getByRole("listitem");
+        await expect(todoItems).toHaveCount(2);
+        await expect(todoItems.nth(0)).toHaveAccessibleName("Todo: メール確認");
+        await expect(todoItems.nth(1)).toHaveAccessibleName("Todo: 資料作成");
+      });
     });
 
     test.describe("削除時のテスト", () => {
