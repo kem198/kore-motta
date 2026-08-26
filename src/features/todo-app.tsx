@@ -176,6 +176,7 @@ export function TodoApp() {
   const handleImport = (data: string) => {
     try {
       importAppStorage(data);
+      setActiveCategoryId(DEFAULT_CATEGORY_ID);
 
       toast.success(MESSAGES.toast.imported);
       return true;
