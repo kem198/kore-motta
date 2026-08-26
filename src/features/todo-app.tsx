@@ -278,6 +278,11 @@ export function TodoApp() {
     });
   };
 
+  const handleReset = () => {
+    resetAppStorage();
+    toast.success("登録内容を初期化しました");
+  };
+
   return (
     <div className="not-prose flex w-full flex-col">
       <div className="bg-background sticky top-0 z-50">
@@ -347,7 +352,7 @@ export function TodoApp() {
       <StorageRecoveryDialog
         open={isStorageCorrupted}
         corruptedStorage={corruptedStorage}
-        onReset={resetAppStorage}
+        onReset={handleReset}
       />
     </div>
   );
