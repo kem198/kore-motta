@@ -14,6 +14,20 @@ const sortCategories = (categories: Category[]) =>
     return a.name.localeCompare(b.name);
   });
 
+/** マウスホイールで横スクロールする */
+const handleWheel = (event: React.WheelEvent<HTMLDivElement>) => {
+  const delta =
+    Math.abs(event.deltaX) > Math.abs(event.deltaY)
+      ? event.deltaX
+      : event.deltaY;
+
+  if (delta === 0) {
+    return;
+  }
+
+  event.currentTarget.scrollLeft += delta;
+};
+
 function CategoryListSkeleton() {
   return (
     <div className="flex gap-2 p-1 pb-3">
@@ -52,8 +66,8 @@ export function CategoryList({
   const sortedCategories = sortCategories(categories);
 
   return (
-    <ScrollArea aria-label={MESSAGES.labels.categoryList}>
-      <div className="flex gap-2 p-1 pb-3">
+    <ScrollArea aria-label={MESSAGES.labels.categoryList} onWheel={handleWheel}>
+      <div className="flex gap-2 p-1">
         {sortedCategories.map((category) => {
           const isSelected = category.id === activeCategoryId;
 
@@ -85,7 +99,7 @@ export function CategoryList({
         </Button>
       </div>
 
-      <ScrollBar orientation="horizontal" />
+      {/* <ScrollBar orientation="horizontal" /> */}
     </ScrollArea>
   );
 }
