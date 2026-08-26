@@ -2057,13 +2057,22 @@ test.describe("Todo ページのテスト", () => {
           storage: maliciousAppStorage,
         });
 
-        // Assert
+        // Assert (JavaScript が実行されないこと)
         expect(dialogOpened).toBe(false);
 
+        // Assert (意味のある HTML 文字列が通常の文字列として表示されていること)
         await expect(
           page.getByText('<img src=x onerror=alert("todo-name")>'),
         ).toBeVisible();
-
+        await expect(
+          page.getByText('<svg onload=alert("todo-memo")>'),
+        ).toBeVisible();
+        await expect(
+          page.getByText('<img src=x onerror=alert("category-name")>'),
+        ).toBeVisible();
+        await expect(
+          page.getByText('<img src=x onerror=alert("todo-name")>'),
+        ).toBeVisible();
         await expect(
           page.getByText('<svg onload=alert("todo-memo")>'),
         ).toBeVisible();
