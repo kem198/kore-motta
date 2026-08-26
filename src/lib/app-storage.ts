@@ -151,6 +151,10 @@ export function deleteCategory(
   data: AppStorage["data"],
   categoryId: string,
 ): AppStorage["data"] {
+  if (categoryId === DEFAULT_CATEGORY_ID) {
+    return data;
+  }
+
   const defaultCategoryTodos = data.todos.filter(
     (todo) => todo.categoryId === DEFAULT_CATEGORY_ID,
   );
