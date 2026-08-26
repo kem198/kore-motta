@@ -1219,7 +1219,6 @@ test.describe("Todo ページのテスト", () => {
         const backupText = JSON.stringify(backupAppStorage, null, 2);
 
         // Act
-        await page.getByRole("button", { name: "編集開始" }).click();
         await page.getByRole("button", { name: "グローバルメニュー" }).click();
         await page.getByRole("menuitem", { name: "インポート" }).click();
         await page
