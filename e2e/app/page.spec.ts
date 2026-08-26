@@ -742,32 +742,32 @@ test.describe("Todo ページのテスト", () => {
         expect(createdTodo).toBeDefined();
         expect(createdTodo?.categoryId).toBe(createdCategory?.id);
       });
-    });
 
-    test("カテゴリを追加した時、カテゴリの名前順 -> 未分類 の順で並ぶこと", async ({
-      page,
-    }) => {
-      // Arrange
-      await navigateToTodoPage(page);
+      test("カテゴリを追加した時、カテゴリの名前順 -> 未分類 の順で並ぶこと", async ({
+        page,
+      }) => {
+        // Arrange
+        await navigateToTodoPage(page);
 
-      // Act
-      await page.getByRole("button", { name: "カテゴリ作成" }).click();
-      await page.getByRole("textbox", { name: "カテゴリ名" }).fill("03_朝活");
-      await page.getByRole("button", { name: "追加" }).click();
+        // Act
+        await page.getByRole("button", { name: "カテゴリ作成" }).click();
+        await page.getByRole("textbox", { name: "カテゴリ名" }).fill("03_朝活");
+        await page.getByRole("button", { name: "追加" }).click();
 
-      await page.getByRole("button", { name: "カテゴリ作成" }).click();
-      await page.getByRole("textbox", { name: "カテゴリ名" }).fill("01_仕事");
-      await page.getByRole("button", { name: "追加" }).click();
+        await page.getByRole("button", { name: "カテゴリ作成" }).click();
+        await page.getByRole("textbox", { name: "カテゴリ名" }).fill("01_仕事");
+        await page.getByRole("button", { name: "追加" }).click();
 
-      await page.getByRole("button", { name: "カテゴリ作成" }).click();
-      await page.getByRole("textbox", { name: "カテゴリ名" }).fill("02_趣味");
-      await page.getByRole("button", { name: "追加" }).click();
+        await page.getByRole("button", { name: "カテゴリ作成" }).click();
+        await page.getByRole("textbox", { name: "カテゴリ名" }).fill("02_趣味");
+        await page.getByRole("button", { name: "追加" }).click();
 
-      // Assert
-      const categoryList = page.getByLabel("カテゴリ一覧");
-      await expect(categoryList).toHaveText(
-        /01_仕事.*02_趣味.*03_朝活.*未分類/,
-      );
+        // Assert
+        const categoryList = page.getByLabel("カテゴリ一覧");
+        await expect(categoryList).toHaveText(
+          /01_仕事.*02_趣味.*03_朝活.*未分類/,
+        );
+      });
     });
 
     test.describe("表示時のテスト", () => {
