@@ -28,11 +28,14 @@ export function TodoApp() {
   const { appStorage, isLoaded, updateAppStorage, importAppStorage } =
     useAppStorage();
 
-  const [isEditing, setIsEditing] = useState(false);
+  // 削除済みカテゴリが最後に選択されていた場合は、デフォルトカテゴリを使用する
+  const activeCategoryId = appStorage.data.categories.some(
+    (c) => c.id === appStorage.data.lastSelectedCategoryId,
+  )
+    ? appStorage.data.lastSelectedCategoryId
+    : DEFAULT_CATEGORY_ID;
 
-  const [activeCategoryId, setActiveCategoryId] = useState<string>(
-    () => DEFAULT_CATEGORY_ID,
-  );
+  const [isEditing, setIsEditing] = useState(false);
 
   const [categoryDialog, setCategoryDialog] = useState<
     | { mode: "create"; category: null }
@@ -60,10 +63,19 @@ export function TodoApp() {
       data: {
         ...current.data,
         categories: [...current.data.categories, newCategory],
+        lastSelectedCategoryId: id,
       },
     }));
+  };
 
-    setActiveCategoryId(id);
+  const handleSelectCategory = (categoryId: string) => {
+    updateAppStorage((current) => ({
+      ...current,
+      data: {
+        ...current.data,
+        lastSelectedCategoryId: categoryId,
+      },
+    }));
   };
 
   const handleCreate = (values: TodoFormValues) => {
@@ -177,7 +189,6 @@ export function TodoApp() {
   const handleImport = (data: string) => {
     try {
       importAppStorage(data);
-      setActiveCategoryId(DEFAULT_CATEGORY_ID);
 
       toast.success(MESSAGES.toast.imported);
       return true;
@@ -238,15 +249,21 @@ export function TodoApp() {
       return;
     }
 
-    updateAppStorage((current) => ({
-      ...current,
-      data: deleteCategory(current.data, categoryId),
-    }));
+    updateAppStorage((current) => {
+      const data = deleteCategory(current.data, categoryId);
 
-    // 削除されたカテゴリが選択中だった場合、デフォルトカテゴリに切り替え
-    if (activeCategoryId === categoryId) {
-      setActiveCategoryId(DEFAULT_CATEGORY_ID);
-    }
+      return {
+        ...current,
+        data: {
+          ...data,
+          lastSelectedCategoryId:
+            // 削除されたカテゴリが選択中だった場合、デフォルトカテゴリに切り替える
+            current.data.lastSelectedCategoryId === categoryId
+              ? DEFAULT_CATEGORY_ID
+              : current.data.lastSelectedCategoryId,
+        },
+      };
+    });
 
     toast.success(MESSAGES.toast.categoryDeleted, {
       description: category.name,
@@ -263,7 +280,7 @@ export function TodoApp() {
             categories={appStorage.data.categories}
             activeCategoryId={activeCategoryId}
             isLoaded={isLoaded}
-            onSelect={setActiveCategoryId}
+            onSelect={handleSelectCategory}
             onCreate={() =>
               setCategoryDialog({
                 mode: "create",

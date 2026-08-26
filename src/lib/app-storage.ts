@@ -21,6 +21,7 @@ export function createInitialAppStorage(): AppStorage {
       categories: DEFAULT_CATEGORIES_STORAGE,
       todos: [],
       lastMarkedAllIncompleteAt: now.toISOString(),
+      lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
     },
   };
 }

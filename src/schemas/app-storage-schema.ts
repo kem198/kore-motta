@@ -9,6 +9,7 @@ const appStorageDataSchema = z
     categories: z.array(categorySchema),
     todos: z.array(todoSchema),
     lastMarkedAllIncompleteAt: z.iso.datetime(),
+    lastSelectedCategoryId: z.string(),
   })
   .strict();
 
