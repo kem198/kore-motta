@@ -16,16 +16,9 @@ const sortCategories = (categories: Category[]) =>
 
 /** マウスホイールで横スクロールする */
 const handleWheel = (event: React.WheelEvent<HTMLDivElement>) => {
-  const delta =
-    Math.abs(event.deltaX) > Math.abs(event.deltaY)
-      ? event.deltaX
-      : event.deltaY;
-
-  if (delta === 0) {
-    return;
+  if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
+    event.currentTarget.scrollLeft += event.deltaY;
   }
-
-  event.currentTarget.scrollLeft += delta;
 };
 
 function CategoryListSkeleton() {
