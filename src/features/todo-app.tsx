@@ -71,26 +71,31 @@ export function TodoApp() {
       return;
     }
 
-    // 表示されているカテゴリ内の Todo を元に order を割り振る
-    // 新規 Todo を末尾に追加するため
-    const nextOrder = getNextTodoOrder(visibleTodos);
+    updateAppStorage((current) => {
+      const currentVisibleTodos = current.data.todos
+        .filter((todo) => todo.categoryId === activeCategoryId)
+        .toSorted((a, b) => a.order - b.order);
+      // 表示されているカテゴリ内の Todo を元に order を割り振る
+      // 新規 Todo を末尾に追加するため
+      const nextOrder = getNextTodoOrder(currentVisibleTodos);
 
-    const newTodo: Todo = {
-      id: crypto.randomUUID(),
-      name: trimmedName,
-      order: nextOrder,
-      memo: values.memo?.trim() || undefined,
-      categoryId: activeCategoryId,
-      completed: false,
-    };
+      const newTodo: Todo = {
+        id: crypto.randomUUID(),
+        name: trimmedName,
+        order: nextOrder,
+        memo: values.memo?.trim() || undefined,
+        categoryId: activeCategoryId,
+        completed: false,
+      };
 
-    updateAppStorage((current) => ({
-      ...current,
-      data: {
-        ...current.data,
-        todos: [...current.data.todos, newTodo],
-      },
-    }));
+      return {
+        ...current,
+        data: {
+          ...current.data,
+          todos: [...current.data.todos, newTodo],
+        },
+      };
+    });
   };
 
   const handleDelete = (todo: Todo) => {
