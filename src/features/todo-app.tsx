@@ -327,7 +327,7 @@ export function TodoApp() {
           <Separator />
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-4">
+        <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-28">
           <TodoList
             todos={visibleTodos}
             categories={appStorage.data.categories}
