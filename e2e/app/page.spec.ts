@@ -14,7 +14,7 @@ test.describe("Todo ページのテスト", () => {
   let assertScope: Locator;
 
   /**デフォルトのテスト実行日時 */
-  const DEFAULT_CLOCK_TIME = new Date("2026-08-24T12:00:00");
+  const DEFAULT_CLOCK_TIME = new Date("2026-08-24T12:00:00+09:00");
 
   /**
    * Todo ページを初期状態を指定して表示するヘルパー。
