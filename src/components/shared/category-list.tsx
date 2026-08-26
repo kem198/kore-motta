@@ -63,7 +63,7 @@ export function CategoryList({
               type="button"
               variant={isSelected ? "default" : "secondary"}
               size="sm"
-              className="shrink-0 rounded-full"
+              className={`shrink-0 rounded-full ${!isSelected && "bg-muted border-border/60 border"}`}
               aria-label={category.name}
               aria-pressed={isSelected}
               onClick={() => onSelect(category.id)}
@@ -79,7 +79,7 @@ export function CategoryList({
           size="icon-sm"
           aria-label={MESSAGES.actions.createCategory}
           onClick={onCreate}
-          className="border-border/60 bg-background shrink-0 rounded-full border"
+          className="border-border/60 bg-muted shrink-0 rounded-full border"
         >
           <PlusIcon />
         </Button>
