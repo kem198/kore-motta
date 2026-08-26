@@ -21,7 +21,7 @@ import {
 import { Category } from "@/schemas/category-schema";
 import { TodoFormValues } from "@/schemas/todo-form-schema";
 import { Todo } from "@/schemas/todo-schema";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
 export function TodoApp() {
@@ -40,9 +40,11 @@ export function TodoApp() {
     | null
   >(null);
 
-  const visibleTodos = appStorage.data.todos
-    .filter((todo) => todo.categoryId === activeCategoryId)
-    .toSorted((a, b) => a.order - b.order);
+  const visibleTodos = useMemo(() => {
+    return appStorage.data.todos
+      .filter((todo) => todo.categoryId === activeCategoryId)
+      .toSorted((a, b) => a.order - b.order);
+  }, [appStorage.data.todos, activeCategoryId]);
 
   const handleCreateCategory = (name: string) => {
     const id = crypto.randomUUID();
