@@ -2011,5 +2011,63 @@ test.describe("Todo ページのテスト", () => {
         );
       });
     });
+
+    test.describe("セキュリティ対策", () => {
+      test("悪意のある文字列を含む保存データから JavaScript が実行されないこと", async ({
+        page,
+      }) => {
+        // Arrange
+        const maliciousAppStorage: AppStorage = {
+          version: 1,
+          data: {
+            settings: {
+              injection: '<script>alert("settings")</script>',
+            },
+            categories: [
+              {
+                id: "category-1",
+                name: '<img src=x onerror=alert("category-name")>',
+                order: 0,
+              },
+            ],
+            todos: [
+              {
+                id: "todo-1",
+                name: '<img src=x onerror=alert("todo-name")>',
+                order: 0,
+                categoryId: "category-1",
+                memo: '<svg onload=alert("todo-memo")>',
+                completed: false,
+              },
+            ],
+            lastMarkedAllIncompleteAt: "2026-08-26T12:00:00.000Z",
+            lastSelectedCategoryId: "category-1",
+          },
+        };
+
+        let dialogOpened = false;
+
+        page.on("dialog", async (dialog) => {
+          dialogOpened = true;
+          await dialog.dismiss();
+        });
+
+        // Act
+        await navigateToTodoPage(page, {
+          storage: maliciousAppStorage,
+        });
+
+        // Assert
+        expect(dialogOpened).toBe(false);
+
+        await expect(
+          page.getByText('<img src=x onerror=alert("todo-name")>'),
+        ).toBeVisible();
+
+        await expect(
+          page.getByText('<svg onload=alert("todo-memo")>'),
+        ).toBeVisible();
+      });
+    });
   });
 });
