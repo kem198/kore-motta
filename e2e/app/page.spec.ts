@@ -80,7 +80,7 @@ test.describe("Todo ページのテスト", () => {
             ],
             categories: DEFAULT_CATEGORIES_STORAGE,
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -117,7 +117,7 @@ test.describe("Todo ページのテスト", () => {
             ],
             categories: DEFAULT_CATEGORIES_STORAGE,
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -315,7 +315,7 @@ test.describe("Todo ページのテスト", () => {
             ],
             categories: DEFAULT_CATEGORIES_STORAGE,
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -353,7 +353,7 @@ test.describe("Todo ページのテスト", () => {
             ],
             categories: DEFAULT_CATEGORIES_STORAGE,
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -396,7 +396,7 @@ test.describe("Todo ページのテスト", () => {
             ],
             categories: DEFAULT_CATEGORIES_STORAGE,
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -450,7 +450,7 @@ test.describe("Todo ページのテスト", () => {
             ],
             categories: DEFAULT_CATEGORIES_STORAGE,
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -539,7 +539,7 @@ test.describe("Todo ページのテスト", () => {
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -653,7 +653,7 @@ test.describe("Todo ページのテスト", () => {
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -698,7 +698,7 @@ test.describe("Todo ページのテスト", () => {
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -778,7 +778,7 @@ test.describe("Todo ページのテスト", () => {
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -848,7 +848,7 @@ test.describe("Todo ページのテスト", () => {
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -888,7 +888,7 @@ test.describe("Todo ページのテスト", () => {
             ],
             categories: DEFAULT_CATEGORIES_STORAGE,
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -970,7 +970,7 @@ test.describe("Todo ページのテスト", () => {
                 },
               ],
               lastMarkedAllIncompleteAt: new Date(
-                "2026-08-24T00:00:00",
+                "2026-08-24T00:00:00+09:00",
               ).toISOString(),
               lastSelectedCategoryId: "work",
             },
@@ -1131,7 +1131,7 @@ test.describe("Todo ページのテスト", () => {
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -1174,7 +1174,7 @@ test.describe("Todo ページのテスト", () => {
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -1240,7 +1240,7 @@ test.describe("Todo ページのテスト", () => {
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -1304,7 +1304,7 @@ test.describe("Todo ページのテスト", () => {
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -1391,7 +1391,7 @@ test.describe("Todo ページのテスト", () => {
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -1585,7 +1585,7 @@ test.describe("Todo ページのテスト", () => {
             ],
             categories: DEFAULT_CATEGORIES_STORAGE,
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -1637,7 +1637,7 @@ test.describe("Todo ページのテスト", () => {
             ],
             categories: DEFAULT_CATEGORIES_STORAGE,
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -1686,7 +1686,7 @@ test.describe("Todo ページのテスト", () => {
             ],
             categories: DEFAULT_CATEGORIES_STORAGE,
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -1737,7 +1737,7 @@ test.describe("Todo ページのテスト", () => {
             ],
             categories: DEFAULT_CATEGORIES_STORAGE,
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
