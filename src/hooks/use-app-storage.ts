@@ -7,6 +7,7 @@ import {
   AppStorageLoadError,
   createInitialAppStorage,
   loadAppStorage,
+  markAllIncompleteIfDateChanged,
   saveAppStorage,
 } from "@/lib/app-storage";
 import { AppStorage, parseAppStorage } from "@/schemas/app-storage-schema";
@@ -25,6 +26,8 @@ type UseAppStorageReturn = {
   isStorageCorrupted: boolean;
   /** localStorage から AppStorage の読み込みが完了したかどうか。 */
   isLoaded: boolean;
+  /** AppStorage の読み込み時に Todo が未完了に戻されたかどうか。 */
+  didMarkAllIncomplete: boolean;
   /**
    * 現在の AppStorage を基に更新する。
    *
@@ -42,6 +45,15 @@ type UseAppStorageReturn = {
   resetAppStorage: () => void;
 };
 
+/**
+ * AppStorage の読み込み・更新・インポート・リセットを管理するカスタムフック。
+ *
+ * - 初期状態として AppStorage を作成し、マウント後に localStorage から保存データを読み込む。
+ * - 保存データの読み込み時に日付が変わっていた場合は Todo が未完了に戻され、`didMarkAllIncomplete` が `true` になる。
+ *
+ * @param options localStorage の設定
+ * @returns AppStorage とその操作関数
+ */
 export function useAppStorage(
   options: UseAppStorageOptions = {},
 ): UseAppStorageReturn {
@@ -54,13 +66,15 @@ export function useAppStorage(
 
   const [isStorageCorrupted, setIsStorageCorrupted] = useState(false);
   const [corruptedStorage, setCorruptedStorage] = useState<string | null>(null);
+  const [didMarkAllIncomplete, setDidMarkAllIncomplete] = useState(false);
 
   useEffect(() => {
     try {
-      const loadedStorage = loadAppStorage(storageKey);
+      const result = loadAppStorage(storageKey);
 
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setAppStorage(loadedStorage);
+      setAppStorage(result.appStorage);
+      setDidMarkAllIncomplete(result.didMarkAllIncomplete);
     } catch (error) {
       if (error instanceof AppStorageLoadError) {
         setCorruptedStorage(error.rawData);
@@ -95,14 +109,17 @@ export function useAppStorage(
 
   const importAppStorage = useCallback((data: string) => {
     const parsed = parseAppStorage(JSON.parse(data));
+    const result = markAllIncompleteIfDateChanged(parsed);
 
-    setAppStorage(parsed);
+    setAppStorage(result.appStorage);
+    setDidMarkAllIncomplete(result.didMarkAllIncomplete);
   }, []);
 
   const resetAppStorage = useCallback(() => {
     const initialStorage = createInitialAppStorage();
 
     setAppStorage(initialStorage);
+    setDidMarkAllIncomplete(false);
     setIsStorageCorrupted(false);
     setCorruptedStorage(null);
   }, []);
@@ -112,6 +129,7 @@ export function useAppStorage(
     corruptedStorage,
     isLoaded,
     isStorageCorrupted,
+    didMarkAllIncomplete,
     updateAppStorage,
     importAppStorage,
     resetAppStorage,

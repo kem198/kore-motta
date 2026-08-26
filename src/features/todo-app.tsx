@@ -22,7 +22,7 @@ import {
 import { Category } from "@/schemas/category-schema";
 import { TodoFormValues } from "@/schemas/todo-form-schema";
 import { Todo } from "@/schemas/todo-schema";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 export function TodoApp() {
@@ -30,6 +30,7 @@ export function TodoApp() {
     appStorage,
     corruptedStorage,
     isLoaded,
+    didMarkAllIncomplete,
     isStorageCorrupted,
     updateAppStorage,
     importAppStorage,
@@ -50,6 +51,14 @@ export function TodoApp() {
     | { mode: "edit"; category: { id: string; name: string } }
     | null
   >(null);
+
+  useEffect(() => {
+    if (!isLoaded || !didMarkAllIncomplete) {
+      return;
+    }
+
+    toast.success(MESSAGES.toast.markedAllIncomplete);
+  }, [isLoaded, didMarkAllIncomplete]);
 
   const visibleTodos = useMemo(() => {
     return appStorage.data.todos
@@ -157,7 +166,7 @@ export function TodoApp() {
       },
     }));
 
-    toast.success(MESSAGES.toast.markAllIncomplete);
+    toast.success(MESSAGES.toast.markedAllIncomplete);
   };
 
   const handleReorder = (startIndex: number, endIndex: number) => {
