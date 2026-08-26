@@ -84,5 +84,6 @@ export const MESSAGES = {
     error: "エラー",
     importError: "アイテム情報の形式が不正なため、インポートできませんでした。",
     clipboardCopied: "アイテム情報をクリップボードにコピーしました",
+    clipboardCopyError: "アイテム情報をクリップボードにコピーできませんでした",
   },
 } as const;

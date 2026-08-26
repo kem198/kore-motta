@@ -1492,7 +1492,7 @@ test.describe("Todo ページのテスト", () => {
         expect(persistedData).toBe(corruptedText);
       });
 
-      test("AppStorage が不正な JSON の場合、初期化用ダイアログが表示されること", async ({
+      test("AppStorage が不正な JSON の場合、初期化用ダイアログに元のデータが表示されること", async ({
         page,
       }) => {
         // Arrange
@@ -1509,7 +1509,9 @@ test.describe("Todo ページのテスト", () => {
         await page.goto("/");
 
         // Assert
-        await expect(page.getByRole("alertdialog")).toBeVisible();
+        const alertDialog = page.getByRole("alertdialog");
+        await expect(alertDialog).toBeVisible();
+        await expect(alertDialog).toContainText("JSON ではない文字列");
       });
 
       test("AppStorage が不正な JSON の場合、初期化用ダイアログで初期化するとデータが初期化されること", async ({
@@ -1601,7 +1603,7 @@ test.describe("Todo ページのテスト", () => {
         expect(persistedData).toBe(corruptedText);
       });
 
-      test("AppStorage のスキーマが不正な場合、初期化用ダイアログが表示されること", async ({
+      test("AppStorage のスキーマが不正な場合、初期化用ダイアログに元のデータが表示されること", async ({
         page,
       }) => {
         // Arrange
@@ -1634,7 +1636,9 @@ test.describe("Todo ページのテスト", () => {
         await page.goto("/");
 
         // Assert
-        await expect(page.getByRole("alertdialog")).toBeVisible();
+        const corruptedText = JSON.stringify(corruptedAppStorage);
+        const alertDialog = page.getByRole("alertdialog");
+        await expect(alertDialog).toContainText(corruptedText);
       });
 
       test("AppStorage のスキーマが不正な場合、初期化用ダイアログで初期化するとデータが初期化されること", async ({
