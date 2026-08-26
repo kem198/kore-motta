@@ -280,10 +280,6 @@ export function TodoApp() {
         },
       };
     });
-
-    toast.success(MESSAGES.toast.categoryDeleted, {
-      description: category.name,
-    });
   };
 
   const handleReset = () => {
