@@ -160,9 +160,9 @@ function TodoItem({
             </span>
 
             {todo.memo ? (
-              <span className="text-muted-foreground line-clamp-2 text-left text-sm leading-normal font-normal wrap-break-word">
+              <p className="text-muted-foreground line-clamp-2 text-left text-sm leading-normal font-normal wrap-break-word">
                 {todo.memo}
-              </span>
+              </p>
             ) : null}
           </button>
         </TodoEditDialog>
