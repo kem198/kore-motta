@@ -13,6 +13,9 @@ test.describe("Todo ページのテスト", () => {
   /** テストの Assert 範囲 */
   let assertScope: Locator;
 
+  /**デフォルトのテスト実行日時 */
+  const DEFAULT_CLOCK_TIME = new Date("2026-08-24T12:00:00");
+
   /**
    * Todo ページを初期状態を指定して表示するヘルパー。
    *
@@ -25,9 +28,9 @@ test.describe("Todo ページのテスト", () => {
     page: Page,
     options: { storage?: AppStorage; clockTime?: Date } = {},
   ) => {
-    if (options.clockTime) {
-      await page.clock.install({ time: options.clockTime });
-    }
+    await page.clock.install({
+      time: options.clockTime ?? DEFAULT_CLOCK_TIME,
+    });
     if (options.storage) {
       await page.addInitScript(
         ([key, value]) => {
@@ -368,6 +371,114 @@ test.describe("Todo ページのテスト", () => {
         const persisted: AppStorage = await getAppStorage(page);
         expect(persisted.version).toBe(1);
         expect(persisted.data.todos[0].name).toBe("カギ");
+      });
+
+      test("未完了 Todo の完了ボタンを押したとき、完了済みにできること", async ({
+        page,
+      }) => {
+        // Arrange
+        const appStorage: AppStorage = {
+          version: 1,
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "dummy-todo",
+                name: "資料作成",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                completed: false,
+              },
+            ],
+            categories: DEFAULT_CATEGORIES_STORAGE,
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00",
+            ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
+          },
+        };
+
+        await navigateToTodoPage(page, { storage: appStorage });
+
+        // Act
+        await page
+          .getByRole("button", {
+            name: "完了状態を切り替え: 資料作成",
+          })
+          .click();
+
+        // Assert (表示が正しいこと)
+        await expect(
+          assertScope.getByRole("button", {
+            name: "完了状態を切り替え: 資料作成",
+          }),
+        ).toHaveAttribute("aria-pressed", "true");
+
+        // Assert (データストアへ登録されていること)
+        const persisted = await getAppStorage(page);
+
+        expect(persisted.version).toBe(1);
+        expect(persisted.data.todos[0]).toEqual(
+          expect.objectContaining({
+            id: "dummy-todo",
+            name: "資料作成",
+            completed: true,
+          }),
+        );
+      });
+
+      test("完了済み Todo の完了ボタンを押したとき、未完了にできること", async ({
+        page,
+      }) => {
+        // Arrange
+        const appStorage: AppStorage = {
+          version: 1,
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "dummy-todo",
+                name: "資料作成",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                completed: true,
+              },
+            ],
+            categories: DEFAULT_CATEGORIES_STORAGE,
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00",
+            ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
+          },
+        };
+
+        await navigateToTodoPage(page, { storage: appStorage });
+
+        // Act
+        await page
+          .getByRole("button", {
+            name: "完了状態を切り替え: 資料作成",
+          })
+          .click();
+
+        // Assert (表示が正しいこと)
+        await expect(
+          assertScope.getByRole("button", {
+            name: "完了状態を切り替え: 資料作成",
+          }),
+        ).toHaveAttribute("aria-pressed", "false");
+
+        // Assert (データストアへ登録されていること)
+        const persisted = await getAppStorage(page);
+
+        expect(persisted.version).toBe(1);
+        expect(persisted.data.todos[0]).toEqual(
+          expect.objectContaining({
+            id: "dummy-todo",
+            name: "資料作成",
+            completed: false,
+          }),
+        );
       });
 
       test("Todo の編集画面に現在のカテゴリ名が表示されること", async ({
