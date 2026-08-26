@@ -165,9 +165,10 @@ test.describe("Todo ページのテスト", () => {
         // 当日にページを更新したことを再現する
         const afterMidnight = new Date("2026-08-24T23:59:59+09:00");
         await page.clock.setFixedTime(afterMidnight);
+        // 更新する
         await page.reload();
 
-        // Assert (UI 上で Todo が完了のままであること)
+        // Assert: UI 上で Todo が完了のままであること
         await expect(
           assertScope.getByRole("button", {
             name: "完了状態を切り替え: カギ",
@@ -225,12 +226,13 @@ test.describe("Todo ページのテスト", () => {
         await setAppStorage(page, appStorage);
 
         // Act
-        // 当日にページを更新したことを再現する
+        // 日付が変わった状態を再現する
         const afterMidnight = new Date("2026-08-25T00:00:00+09:00");
         await page.clock.setFixedTime(afterMidnight);
+        // 更新する
         await page.reload();
 
-        // Assert (UI 上で Todo が未完了になっていること)
+        // Assert: UI 上で Todo が未完了になっていること
         await expect(
           assertScope.getByRole("button", {
             name: "完了状態を切り替え: カギ",
@@ -970,6 +972,139 @@ test.describe("Todo ページのテスト", () => {
   });
 
   test.describe("共通操作", () => {
+    test.describe("「更新する」ボタンのテスト", () => {
+      test("日付が変わる前に「更新する」ボタンを押すと、完了済みの Todo が完了のままであること", async ({
+        page,
+      }) => {
+        // Arrange
+        // 当日の未完了化がすでに実行済みの状態を再現する
+        const beforeMidnight = new Date("2026-08-24T23:59:00+09:00");
+        await page.clock.install({
+          time: beforeMidnight,
+        });
+
+        const lastMarkedAllIncompleteAt = new Date("2026-08-24T00:00:00+09:00");
+        const appStorage: AppStorage = {
+          version: 1,
+          data: {
+            settings: {},
+            categories: DEFAULT_CATEGORIES_STORAGE,
+            todos: [
+              {
+                id: "test-todo",
+                name: "カギ",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                memo: "家の鍵",
+                completed: true,
+              },
+            ],
+            lastMarkedAllIncompleteAt: lastMarkedAllIncompleteAt.toISOString(),
+          },
+        };
+        await setAppStorage(page, appStorage);
+
+        // Act
+        // 当日にページを更新したことを再現する
+        const afterMidnight = new Date("2026-08-24T23:59:59+09:00");
+        await page.clock.setFixedTime(afterMidnight);
+        // 更新ボタンを押す
+        await page.getByRole("button", { name: "グローバルメニュー" }).click();
+        await page.getByRole("menuitem", { name: "更新する" }).click();
+        await page.reload();
+
+        // Assert: UI 上で Todo が完了のままであること
+        await expect(
+          assertScope.getByRole("button", {
+            name: "完了状態を切り替え: カギ",
+          }),
+        ).toHaveAttribute("aria-pressed", "true");
+
+        // Assert: localStorage の completed が true のままであること
+        const actualStorage = await getAppStorage(page);
+        expect(actualStorage.data.todos).toEqual([
+          {
+            id: "test-todo",
+            name: "カギ",
+            order: 0,
+            categoryId: DEFAULT_CATEGORY_ID,
+            memo: "家の鍵",
+            completed: true,
+          },
+        ]);
+
+        // Assert: 最終未完了化日時が更新されていないこと
+        expect(actualStorage.data.lastMarkedAllIncompleteAt).toBe(
+          lastMarkedAllIncompleteAt.toISOString(),
+        );
+      });
+
+      test("日付が変わってから「更新する」ボタンを押すと、完了済みの Todo が未完了になること", async ({
+        page,
+      }) => {
+        // Arrange
+        // 当日の未完了化がすでに実行済みの状態を再現する
+        const beforeMidnight = new Date("2026-08-24T23:59:00+09:00");
+        await page.clock.install({
+          time: beforeMidnight,
+        });
+        const appStorage: AppStorage = {
+          version: 1,
+          data: {
+            settings: {},
+            categories: DEFAULT_CATEGORIES_STORAGE,
+            todos: [
+              {
+                id: "test-todo",
+                name: "カギ",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                memo: "家の鍵",
+                completed: true,
+              },
+            ],
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00+09:00",
+            ).toISOString(),
+          },
+        };
+        await setAppStorage(page, appStorage);
+
+        // Act
+        // 日付が変わった状態を再現する
+        const afterMidnight = new Date("2026-08-25T00:00:00+09:00");
+        await page.clock.setFixedTime(afterMidnight);
+        // 更新ボタンを押す
+        await page.getByRole("button", { name: "グローバルメニュー" }).click();
+        await page.getByRole("menuitem", { name: "更新する" }).click();
+
+        // Assert: UI 上で Todo が未完了になっていること
+        await expect(
+          assertScope.getByRole("button", {
+            name: "完了状態を切り替え: カギ",
+          }),
+        ).toHaveAttribute("aria-pressed", "false");
+
+        // Assert: localStorage の completed が false になっていること
+        const actualStorage = await getAppStorage(page);
+        expect(actualStorage.data.todos).toEqual([
+          {
+            id: "test-todo",
+            name: "カギ",
+            order: 0,
+            categoryId: DEFAULT_CATEGORY_ID,
+            memo: "家の鍵",
+            completed: false,
+          },
+        ]);
+
+        // Assert: 最終未完了化日時が更新されていること
+        expect(actualStorage.data.lastMarkedAllIncompleteAt).toBe(
+          afterMidnight.toISOString(),
+        );
+      });
+    });
+
     test.describe("エクスポート時のテスト", () => {
       test("Todo が登録済みの状態で、「エクスポート」ボタンをクリックした時、登録内容のエクスポート用テキストが表示されること", async ({
         page,

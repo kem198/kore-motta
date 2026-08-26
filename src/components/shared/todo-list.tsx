@@ -140,7 +140,7 @@ function TodoItem({
       aria-label={`Todo: ${todo.name}`}
       className="flex w-full items-center gap-2"
     >
-      <div className="hover:bg-accent flex w-full items-center gap-2 rounded-md border border-transparent text-sm transition-colors duration-100">
+      <div className="hover:bg-accent flex w-full min-w-0 items-center gap-2 rounded-md border border-transparent text-sm transition-colors duration-100">
         <div className="flex shrink-0 items-center justify-center p-2">
           <TodoToggle
             aria-label={`完了状態を切り替え: ${todo.name}`}
@@ -155,14 +155,14 @@ function TodoItem({
             aria-label={`編集: ${todo.name}`}
             className="flex min-w-0 flex-1 cursor-pointer flex-col justify-center gap-1 self-stretch text-left outline-none"
           >
-            <span className="line-clamp-1 flex w-fit items-center gap-2 text-sm leading-snug font-medium underline-offset-4">
+            <span className="line-clamp-1 flex w-fit items-center gap-2 text-sm leading-snug font-medium wrap-break-word underline-offset-4">
               {todo.name}
             </span>
 
             {todo.memo ? (
-              <span className="text-muted-foreground line-clamp-2 text-left text-sm leading-normal font-normal">
+              <p className="text-muted-foreground line-clamp-2 text-left text-sm leading-normal font-normal wrap-break-word">
                 {todo.memo}
-              </span>
+              </p>
             ) : null}
           </button>
         </TodoEditDialog>

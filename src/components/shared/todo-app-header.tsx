@@ -7,13 +7,19 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MESSAGES } from "@/constants/messages";
 import { SITE_NAME } from "@/constants/site";
 import { cn } from "@/lib/utils";
 import { AppStorage } from "@/schemas/app-storage-schema";
-import { DownloadIcon, EllipsisVerticalIcon, UploadIcon } from "lucide-react";
+import {
+  DownloadIcon,
+  EllipsisVerticalIcon,
+  RefreshCcwIcon,
+  UploadIcon,
+} from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 
@@ -40,12 +46,14 @@ export function TodoAppHeader({
         )}
         {...props}
       >
-        <Link
-          href="/"
-          className="font-ubuntu-sans inline-flex w-auto items-center gap-2 text-xl font-medium"
-        >
-          {SITE_NAME}
-        </Link>
+        <h1>
+          <Link
+            href="/"
+            className="font-ubuntu-sans inline-flex w-auto items-center gap-2 text-xl font-medium"
+          >
+            {SITE_NAME}
+          </Link>
+        </h1>
 
         <div className="flex gap-1">
           <HelpDialog />
@@ -65,6 +73,15 @@ export function TodoAppHeader({
             />
 
             <DropdownMenuContent align="end" className="w-40">
+              <DropdownMenuGroup>
+                <DropdownMenuItem
+                  onClick={() => window.location.reload()}
+                  aria-label="更新する"
+                >
+                  <RefreshCcwIcon /> 更新する
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
               <DropdownMenuGroup>
                 <DropdownMenuItem
                   onClick={() => setIsExportDialogOpen(true)}
