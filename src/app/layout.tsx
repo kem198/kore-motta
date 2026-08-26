@@ -21,7 +21,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         notoSansJp.variable,
         ubuntuSans.variable,
         ubuntuSansMono.variable,
-        "font-sans",
       )}
     >
       <body className="flex min-h-full flex-col">
