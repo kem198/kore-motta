@@ -300,7 +300,8 @@ export function TodoApp() {
           onImport={handleImport}
         />
 
-        <div className="flex flex-col gap-3 p-4">
+        {/* CategoryList の内部でリスト表示に p-1 を指定しているので pl-3 を付けて幅を揃えている */}
+        <div className="flex flex-col gap-3 p-4 pl-3">
           <CategoryList
             categories={appStorage.data.categories}
             activeCategoryId={activeCategoryId}
