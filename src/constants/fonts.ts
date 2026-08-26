@@ -1,20 +1,4 @@
-import {
-  Geist,
-  Geist_Mono,
-  Noto_Sans_JP,
-  Ubuntu_Sans,
-  Ubuntu_Sans_Mono,
-} from "next/font/google";
-
-export const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-export const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import { Noto_Sans_JP, Ubuntu_Sans, Ubuntu_Sans_Mono } from "next/font/google";
 
 export const notoSansJp = Noto_Sans_JP({
   variable: "--font-noto-sans-jp",
