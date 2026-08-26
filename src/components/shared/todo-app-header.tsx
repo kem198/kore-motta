@@ -82,7 +82,7 @@ export function TodoAppHeader({
                   onClick={() => setIsHelpDialogOpen(true)}
                   aria-label="使い方・利用規約"
                 >
-                  <CircleHelpIcon className="size-5" /> 使い方・利用規約
+                  <CircleHelpIcon /> 使い方・利用規約
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
