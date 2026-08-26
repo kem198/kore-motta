@@ -13,8 +13,29 @@ test.describe("Todo ページのテスト", () => {
   /** テストの Assert 範囲 */
   let assertScope: Locator;
 
-  /** テスト対象のページへ遷移する */
-  const navigateToTodoPage = async (page: Page) => {
+  /**
+   * Todo ページを初期状態を指定して表示するヘルパー。
+   *
+   * @param page - Playwright のページオブジェクト
+   * @param options - ページ表示時に適用する初期設定
+   * @param options.storage - ページ読み込み前に localStorage に設定するアプリケーションデータ
+   * @param options.clockTime - ページ読み込み前に設定する仮想時刻
+   */
+  const navigateToTodoPage = async (
+    page: Page,
+    options: { storage?: AppStorage; clockTime?: Date } = {},
+  ) => {
+    if (options.clockTime) {
+      await page.clock.install({ time: options.clockTime });
+    }
+    if (options.storage) {
+      await page.addInitScript(
+        ([key, value]) => {
+          window.localStorage.setItem(key, value);
+        },
+        [APP_STORAGE_KEY, JSON.stringify(options.storage)],
+      );
+    }
     await page.goto("/");
   };
 
@@ -39,9 +60,6 @@ test.describe("Todo ページのテスト", () => {
     );
 
   test.beforeEach(async ({ page }) => {
-    // アプリケーションのページへ遷移しておく
-    await navigateToTodoPage(page);
-
     // テスト対象の範囲を指定する
     assertScope = page.locator('[data-testid="todo"]');
   });
@@ -73,10 +91,8 @@ test.describe("Todo ページのテスト", () => {
           },
         };
 
-        await setAppStorage(page, appStorage);
-
         // Act
-        await navigateToTodoPage(page);
+        await navigateToTodoPage(page, { storage: appStorage });
 
         // Assert
         await expect(
@@ -112,7 +128,7 @@ test.describe("Todo ページのテスト", () => {
         };
 
         // Act
-        await setAppStorage(page, storage);
+        await navigateToTodoPage(page, { storage });
 
         // Assert
         const persisted = await getAppStorage(page);
@@ -136,9 +152,6 @@ test.describe("Todo ページのテスト", () => {
         // Arrange
         // 当日の未完了化がすでに実行済みの状態を再現する
         const beforeMidnight = new Date("2026-08-24T23:59:00+09:00");
-        await page.clock.install({
-          time: beforeMidnight,
-        });
 
         const lastMarkedAllIncompleteAt = new Date("2026-08-24T00:00:00+09:00");
         const appStorage: AppStorage = {
@@ -159,7 +172,11 @@ test.describe("Todo ページのテスト", () => {
             lastMarkedAllIncompleteAt: lastMarkedAllIncompleteAt.toISOString(),
           },
         };
-        await setAppStorage(page, appStorage);
+
+        await navigateToTodoPage(page, {
+          storage: appStorage,
+          clockTime: beforeMidnight,
+        });
 
         // Act
         // 当日にページを更新したことを再現する
@@ -200,9 +217,7 @@ test.describe("Todo ページのテスト", () => {
         // Arrange
         // 当日の未完了化がすでに実行済みの状態を再現する
         const beforeMidnight = new Date("2026-08-24T23:59:00+09:00");
-        await page.clock.install({
-          time: beforeMidnight,
-        });
+
         const appStorage: AppStorage = {
           version: 1,
           data: {
@@ -223,7 +238,11 @@ test.describe("Todo ページのテスト", () => {
             ).toISOString(),
           },
         };
-        await setAppStorage(page, appStorage);
+
+        await navigateToTodoPage(page, {
+          storage: appStorage,
+          clockTime: beforeMidnight,
+        });
 
         // Act
         // 日付が変わった状態を再現する
@@ -262,6 +281,7 @@ test.describe("Todo ページのテスト", () => {
     test.describe("作成時のテスト", () => {
       test("Todo を登録できること", async ({ page }) => {
         // Arrange
+        await navigateToTodoPage(page);
         const nameInput = page.getByRole("textbox", { name: "新しいアイテム" });
 
         // Act
@@ -301,7 +321,7 @@ test.describe("Todo ページのテスト", () => {
             ).toISOString(),
           },
         };
-        await setAppStorage(page, appStorage);
+        await navigateToTodoPage(page, { storage: appStorage });
         const nameInput = page.getByRole("textbox", { name: "新しいアイテム" });
 
         // Act
@@ -338,7 +358,7 @@ test.describe("Todo ページのテスト", () => {
             ).toISOString(),
           },
         };
-        await setAppStorage(page, appStorage);
+        await navigateToTodoPage(page, { storage: appStorage });
 
         await page.getByRole("button", { name: "編集: dummy" }).click();
         await page.getByRole("textbox", { name: "タイトル *" }).fill("カギ");
@@ -392,7 +412,7 @@ test.describe("Todo ページのテスト", () => {
             ).toISOString(),
           },
         };
-        await setAppStorage(page, appStorage);
+        await navigateToTodoPage(page, { storage: appStorage });
         await page.getByRole("button", { name: "仕事" }).click();
 
         // Act
@@ -459,7 +479,7 @@ test.describe("Todo ページのテスト", () => {
             ).toISOString(),
           },
         };
-        await setAppStorage(page, appStorage);
+        await navigateToTodoPage(page, { storage: appStorage });
         await page.getByRole("button", { name: "仕事" }).click();
 
         // Act
@@ -496,7 +516,7 @@ test.describe("Todo ページのテスト", () => {
             ).toISOString(),
           },
         };
-        await setAppStorage(page, appStorage);
+        await navigateToTodoPage(page, { storage: appStorage });
         await page.getByRole("button", { name: "編集開始" }).click();
         await page.getByRole("button", { name: "削除: dummy" }).click();
 
@@ -524,6 +544,7 @@ test.describe("Todo ページのテスト", () => {
       }) => {
         // Arrange
         // localStorage を空にして、まだ初回訪問されていないことを再現する
+        await navigateToTodoPage(page);
         await page.evaluate(() => localStorage.clear());
 
         // Act
@@ -555,6 +576,7 @@ test.describe("Todo ページのテスト", () => {
         page,
       }) => {
         // Arrange
+        await navigateToTodoPage(page);
 
         // Act
         await page.getByRole("button", { name: "カテゴリ作成" }).click();
@@ -576,6 +598,7 @@ test.describe("Todo ページのテスト", () => {
         page,
       }) => {
         // Arrange
+        await navigateToTodoPage(page);
 
         // Act
         await page.getByRole("button", { name: "カテゴリ作成" }).click();
@@ -593,6 +616,7 @@ test.describe("Todo ページのテスト", () => {
         page,
       }) => {
         // Arrange
+        await navigateToTodoPage(page);
         await page.getByRole("button", { name: "カテゴリ作成" }).click();
         await page.getByRole("textbox", { name: "カテゴリ名" }).fill("朝活");
         await page.getByRole("button", { name: "追加" }).click();
@@ -631,6 +655,7 @@ test.describe("Todo ページのテスト", () => {
       page,
     }) => {
       // Arrange
+      await navigateToTodoPage(page);
 
       // Act
       await page.getByRole("button", { name: "カテゴリ作成" }).click();
@@ -694,7 +719,7 @@ test.describe("Todo ページのテスト", () => {
             ).toISOString(),
           },
         };
-        await setAppStorage(page, appStorage);
+        await navigateToTodoPage(page, { storage: appStorage });
 
         // Act
         await page.getByRole("button", { name: "仕事" }).click();
@@ -736,7 +761,7 @@ test.describe("Todo ページのテスト", () => {
             ).toISOString(),
           },
         };
-        await setAppStorage(page, appStorage);
+        await navigateToTodoPage(page, { storage: appStorage });
 
         // Act
         await page.getByRole("button", { name: "仕事" }).click();
@@ -801,7 +826,7 @@ test.describe("Todo ページのテスト", () => {
             ).toISOString(),
           },
         };
-        await setAppStorage(page, appStorage);
+        await navigateToTodoPage(page, { storage: appStorage });
 
         // Act
         await page.getByRole("button", { name: "個人" }).click();
@@ -864,7 +889,7 @@ test.describe("Todo ページのテスト", () => {
             ).toISOString(),
           },
         };
-        await setAppStorage(page, appStorage);
+        await navigateToTodoPage(page, { storage: appStorage });
 
         // Act
         // 仕事カテゴリを選択
@@ -951,7 +976,7 @@ test.describe("Todo ページのテスト", () => {
           },
         };
 
-        await setAppStorage(page, appStorage);
+        await navigateToTodoPage(page, { storage: appStorage });
 
         // Act
         await page.getByRole("button", { name: "仕事" }).click();
@@ -979,9 +1004,6 @@ test.describe("Todo ページのテスト", () => {
         // Arrange
         // 当日の未完了化がすでに実行済みの状態を再現する
         const beforeMidnight = new Date("2026-08-24T23:59:00+09:00");
-        await page.clock.install({
-          time: beforeMidnight,
-        });
 
         const lastMarkedAllIncompleteAt = new Date("2026-08-24T00:00:00+09:00");
         const appStorage: AppStorage = {
@@ -1002,7 +1024,11 @@ test.describe("Todo ページのテスト", () => {
             lastMarkedAllIncompleteAt: lastMarkedAllIncompleteAt.toISOString(),
           },
         };
-        await setAppStorage(page, appStorage);
+
+        await navigateToTodoPage(page, {
+          storage: appStorage,
+          clockTime: beforeMidnight,
+        });
 
         // Act
         // 当日にページを更新したことを再現する
@@ -1045,9 +1071,7 @@ test.describe("Todo ページのテスト", () => {
         // Arrange
         // 当日の未完了化がすでに実行済みの状態を再現する
         const beforeMidnight = new Date("2026-08-24T23:59:00+09:00");
-        await page.clock.install({
-          time: beforeMidnight,
-        });
+
         const appStorage: AppStorage = {
           version: 1,
           data: {
@@ -1068,7 +1092,11 @@ test.describe("Todo ページのテスト", () => {
             ).toISOString(),
           },
         };
-        await setAppStorage(page, appStorage);
+
+        await navigateToTodoPage(page, {
+          storage: appStorage,
+          clockTime: beforeMidnight,
+        });
 
         // Act
         // 日付が変わった状態を再現する
@@ -1138,7 +1166,7 @@ test.describe("Todo ページのテスト", () => {
             ).toISOString(),
           },
         };
-        await setAppStorage(page, appStorage);
+        await navigateToTodoPage(page, { storage: appStorage });
 
         // Act
         await page.getByRole("button", { name: "グローバルメニュー" }).click();
@@ -1167,6 +1195,8 @@ test.describe("Todo ページのテスト", () => {
         page,
       }) => {
         // Arrange
+        await navigateToTodoPage(page);
+
         const backupAppStorage: AppStorage = {
           version: 1,
           data: {
@@ -1188,7 +1218,6 @@ test.describe("Todo ページのテスト", () => {
           },
         };
         const backupText = JSON.stringify(backupAppStorage, null, 2);
-        await page.getByRole("button", { name: "編集開始" }).click();
 
         // Act
         await page.getByRole("button", { name: "グローバルメニュー" }).click();
@@ -1236,13 +1265,13 @@ test.describe("Todo ページのテスト", () => {
             ).toISOString(),
           },
         };
-        await setAppStorage(page, appStorage);
+        await navigateToTodoPage(page, { storage: appStorage });
 
         const corruptedText = "JSON ではない文字列";
-        await page.getByRole("button", { name: "グローバルメニュー" }).click();
-        await page.getByRole("menuitem", { name: "インポート" }).click();
 
         // Act
+        await page.getByRole("button", { name: "グローバルメニュー" }).click();
+        await page.getByRole("menuitem", { name: "インポート" }).click();
         await page.getByRole("textbox").fill(corruptedText);
         await page.getByRole("button", { name: "インポート" }).click();
 
@@ -1286,7 +1315,7 @@ test.describe("Todo ページのテスト", () => {
             ).toISOString(),
           },
         };
-        await setAppStorage(page, appStorage);
+        await navigateToTodoPage(page, { storage: appStorage });
 
         const corruptedAppStorage: unknown = {
           version: 1,
