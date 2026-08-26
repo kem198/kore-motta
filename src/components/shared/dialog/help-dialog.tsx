@@ -16,13 +16,18 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { FEATURES } from "@/constants/features";
 import { cn } from "@/lib/utils";
 import { CircleHelpIcon } from "lucide-react";
 
 const TIPS = [
   "ホーム画面やデスクトップに置いて、アプリとして起動できます。PC はブラウザの URL 欄に表示されているボタンから、スマートフォンはブラウザのメニューからインストールしてください。",
   "カテゴリは名前順に並びます。「01_毎日」「02_旅行」などとすると、並び順を調整できます。",
-  "メニューから、手動ですべてのアイテムを未完了に戻せます。日付をまたいでから利用する時などにお使いください。",
+  ...(FEATURES.markAllIncomplete
+    ? [
+        "メニューから、手動ですべてのアイテムを未完了に戻せます。日付をまたいでから利用する時などにお使いください。",
+      ]
+    : []),
 ];
 
 const ISSUES = [
