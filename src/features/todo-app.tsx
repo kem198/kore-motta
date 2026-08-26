@@ -18,7 +18,7 @@ import { useTodos } from "@/hooks/use-todos";
 import { Category } from "@/schemas/category-schema";
 import { TodoFormValues } from "@/schemas/todo-form-schema";
 import { Todo } from "@/schemas/todo-schema";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 export function TodoApp() {
@@ -59,95 +59,61 @@ export function TodoApp() {
     .filter((todo) => todo.categoryId === activeCategoryId)
     .toSorted((a, b) => a.order - b.order);
 
-  const handleCreateCategory = useCallback(
-    (name: string) => {
-      const id = crypto.randomUUID();
-      // TODO: カテゴリ並び替え機能を実装時に変更必要
-      const order = DEFAULT_CATEGORY_ORDER;
+  const handleCreateCategory = (name: string) => {
+    const id = crypto.randomUUID();
+    // TODO: カテゴリ並び替え機能を実装時に変更必要
+    const order = DEFAULT_CATEGORY_ORDER;
 
-      const newCategory: Category = {
-        id,
-        name,
-        order,
-      };
+    const newCategory: Category = {
+      id,
+      name,
+      order,
+    };
 
-      addCategory(newCategory);
-      setActiveCategoryId(id);
+    addCategory(newCategory);
+    setActiveCategoryId(id);
+  };
 
-      // toast.add({
-      //   title: MESSAGES.toast.categoryCreated,
-      //   description: name,
-      //   type: "success",
-      // });
-    },
-    [addCategory],
-  );
+  const handleCreate = (values: TodoFormValues) => {
+    const trimmedName = values.name.trim();
 
-  const handleCreate = useCallback(
-    (values: TodoFormValues) => {
-      const trimmedName = values.name.trim();
+    if (!trimmedName) {
+      return;
+    }
 
-      if (!trimmedName) {
-        return;
-      }
+    // 表示されているカテゴリ内の Todo を元に order を割り振る
+    // 新規 Todo を末尾に追加するため
+    const order =
+      visibleTodos.length === 0
+        ? 0
+        : Math.max(...visibleTodos.map((todo) => todo.order)) + 1;
 
-      // 表示されているカテゴリ内の Todo を元に order を割り振る
-      // 新規 Todo を末尾に追加するため
-      const order =
-        visibleTodos.length === 0
-          ? 0
-          : Math.max(...visibleTodos.map((todo) => todo.order)) + 1;
+    const newTodo: Todo = {
+      id: crypto.randomUUID(),
+      name: trimmedName,
+      order: order,
+      memo: values.memo?.trim() || undefined,
+      categoryId: activeCategoryId,
+      completed: false,
+    };
 
-      const newTodo: Todo = {
-        id: crypto.randomUUID(),
-        name: trimmedName,
-        order: order,
-        memo: values.memo?.trim() || undefined,
-        categoryId: activeCategoryId,
-        completed: false,
-      };
+    addTodo(newTodo);
+  };
 
-      addTodo(newTodo);
-    },
-    [activeCategoryId, addTodo, visibleTodos],
-  );
+  const handleDelete = (todo: Todo) => {
+    deleteTodoById(todo.id);
+  };
 
-  const handleDelete = useCallback(
-    (todo: Todo) => {
-      deleteTodoById(todo.id);
+  const handleUpdate = (todo: Todo) => {
+    updateTodo(todo);
+  };
 
-      // toast.add({
-      //   title: MESSAGES.toast.deleted,
-      //   description: todo.name,
-      //   type: "success",
-      // });
-    },
-    [deleteTodoById],
-  );
-
-  const handleUpdate = useCallback(
-    (todo: Todo) => {
-      updateTodo(todo);
-
-      // toast.add({
-      //   title: MESSAGES.toast.updated,
-      //   description: todo.name,
-      //   type: "success",
-      // });
-    },
-    [updateTodo],
-  );
-
-  const handleMarkAllIncomplete = useCallback(() => {
+  const handleMarkAllIncomplete = () => {
     markAllIncomplete();
     setIsEditing(false);
 
     toast.success(MESSAGES.toast.markAllIncomplete);
-    // toast.add({
-    //   title: MESSAGES.toast.markAllIncomplete,
-    //   type: "success",
-    // });
-  }, [markAllIncomplete]);
+  };
 
   function reorderTodos(
     todos: Todo[],
@@ -165,53 +131,41 @@ export function TodoApp() {
     }));
   }
 
-  const handleReorder = useCallback(
-    (startIndex: number, endIndex: number) => {
-      if (!isLoaded) {
-        return;
-      }
+  const handleReorder = (startIndex: number, endIndex: number) => {
+    if (!isLoaded) {
+      return;
+    }
 
-      const reorderedVisibleTodos = reorderTodos(
-        visibleTodos,
-        startIndex,
-        endIndex,
-      );
+    const reorderedVisibleTodos = reorderTodos(
+      visibleTodos,
+      startIndex,
+      endIndex,
+    );
 
-      const reorderedTodoMap = new Map(
-        reorderedVisibleTodos.map((todo) => [todo.id, todo]),
-      );
+    const reorderedTodoMap = new Map(
+      reorderedVisibleTodos.map((todo) => [todo.id, todo]),
+    );
 
-      const reorderedTodos = todos.map(
-        (todo) => reorderedTodoMap.get(todo.id) ?? todo,
-      );
+    const reorderedTodos = todos.map(
+      (todo) => reorderedTodoMap.get(todo.id) ?? todo,
+    );
 
-      updateTodos(reorderedTodos);
-    },
-    [isLoaded, todos, visibleTodos, updateTodos],
-  );
+    updateTodos(reorderedTodos);
+  };
 
-  const handleImport = useCallback(
-    (data: string) => {
-      try {
-        importTodoStorage(data);
+  const handleImport = (data: string) => {
+    try {
+      importTodoStorage(data);
 
-        toast.success(MESSAGES.toast.imported);
+      toast.success(MESSAGES.toast.imported);
+      return true;
+    } catch {
+      return false;
+    }
+  };
 
-        // toast.add({
-        //   title: MESSAGES.toast.imported,
-        //   type: "success",
-        // });
-
-        return true;
-      } catch {
-        return false;
-      }
-    },
-    [importTodoStorage],
-  );
-
-  const handleOpenCategoryEditDialog = useCallback(() => {
-    const selectedCategory = categories.find(
+  const handleOpenCategoryEditDialog = () => {
+    const selectedCategory = appStorage.data.categories.find(
       (category) => category.id === activeCategoryId,
     );
 
@@ -226,102 +180,91 @@ export function TodoApp() {
         name: selectedCategory.name,
       },
     });
-  }, [activeCategoryId, categories]);
+  };
 
-  const handleRenameCategory = useCallback(
-    (category: { id: string; name: string }, name: string) => {
-      const trimmedName = name.trim();
+  const handleRenameCategory = (
+    category: { id: string; name: string },
+    name: string,
+  ) => {
+    const trimmedName = name.trim();
 
-      if (!trimmedName) {
-        return;
-      }
+    if (!trimmedName) {
+      return;
+    }
 
-      const currentCategory = categories.find(
-        (item) => item.id === category.id,
-      );
+    const currentCategory = categories.find((item) => item.id === category.id);
 
-      if (!currentCategory) {
-        return;
-      }
+    if (!currentCategory) {
+      return;
+    }
 
-      updateCategory({
-        ...currentCategory,
-        name: trimmedName,
-      });
-
-      // toast.add({
-      //   title: MESSAGES.toast.categoryUpdated,
-      //   description: trimmedName,
-      //   type: "success",
-      // });
-    },
-    [categories, updateCategory],
-  );
+    updateCategory({
+      ...currentCategory,
+      name: trimmedName,
+    });
+  };
 
   const isDefaultCategorySelected = activeCategoryId === DEFAULT_CATEGORY_ID;
 
-  const handleDeleteCategory = useCallback(
-    (category: { id: string; name: string }) => {
-      const categoryId = category.id;
+  const handleDeleteCategory = (category: { id: string; name: string }) => {
+    const categoryId = category.id;
 
-      // デフォルトカテゴリは削除できない
-      if (categoryId === DEFAULT_CATEGORY_ID) {
-        toast.error(MESSAGES.toast.error, {
-          description: "デフォルトカテゴリは削除できません",
-        });
-        return;
+    // デフォルトカテゴリは削除できない
+    if (categoryId === DEFAULT_CATEGORY_ID) {
+      toast.error(MESSAGES.toast.error, {
+        description: "デフォルトカテゴリは削除できません",
+      });
+      return;
+    }
+
+    // 未分類カテゴリの Todo を取得する
+    const defaultCategoryTodos = todos.filter(
+      (todo) => todo.categoryId === DEFAULT_CATEGORY_ID,
+    );
+    // 削除対象カテゴリの Todo を現在の並び順で取得する
+    const categoryTodos = todos
+      .filter((todo) => todo.categoryId === categoryId)
+      .toSorted((a, b) => a.order - b.order);
+
+    // 未分類カテゴリの末尾に追加するための order を決める
+    const nextOrder =
+      defaultCategoryTodos.length === 0
+        ? 0
+        : Math.max(...defaultCategoryTodos.map((todo) => todo.order)) + 1;
+
+    // 移行する Todo に未分類カテゴリの末尾から順番に order を割り当てる
+    const migratedTodoOrders = new Map(
+      categoryTodos.map((todo, index) => [todo.id, nextOrder + index]),
+    );
+
+    // 削除対象カテゴリの Todo を未分類カテゴリへ移行する
+    const migratedTodos = todos.map((todo) => {
+      const order = migratedTodoOrders.get(todo.id);
+      if (order === undefined) {
+        return todo;
       }
 
-      // 未分類カテゴリの Todo を取得する
-      const defaultCategoryTodos = todos.filter(
-        (todo) => todo.categoryId === DEFAULT_CATEGORY_ID,
-      );
-      // 削除対象カテゴリの Todo を現在の並び順で取得する
-      const categoryTodos = todos
-        .filter((todo) => todo.categoryId === categoryId)
-        .toSorted((a, b) => a.order - b.order);
+      return {
+        ...todo,
+        categoryId: DEFAULT_CATEGORY_ID,
+        order,
+      };
+    });
 
-      // 未分類カテゴリの末尾に追加するための order を決める
-      const nextOrder =
-        defaultCategoryTodos.length === 0
-          ? 0
-          : Math.max(...defaultCategoryTodos.map((todo) => todo.order)) + 1;
+    updateTodos(migratedTodos);
 
-      // 移行する Todo に未分類カテゴリの末尾から順番に order を割り当てる
-      const migratedTodoOrders = new Map(
-        categoryTodos.map((todo, index) => [todo.id, nextOrder + index]),
-      );
+    // カテゴリを削除
+    deleteCategoryById(categoryId);
 
-      // 削除対象カテゴリの Todo を未分類カテゴリへ移行する
-      const migratedTodos = todos.map((todo) => {
-        const order = migratedTodoOrders.get(todo.id);
-        if (order === undefined) {
-          return todo;
-        }
+    // 削除されたカテゴリが選択中だった場合、デフォルトカテゴリに切り替え
+    if (activeCategoryId === categoryId) {
+      setActiveCategoryId(DEFAULT_CATEGORY_ID);
+    }
 
-        return {
-          ...todo,
-          categoryId: DEFAULT_CATEGORY_ID,
-          order,
-        };
-      });
-
-      updateTodos(migratedTodos);
-
-      // カテゴリを削除
-      deleteCategoryById(categoryId);
-
-      // 削除されたカテゴリが選択中だった場合、デフォルトカテゴリに切り替え
-      if (activeCategoryId === categoryId) {
-        setActiveCategoryId(DEFAULT_CATEGORY_ID);
-      }
-
-      toast.success(MESSAGES.toast.categoryDeleted, {
-        description: category.name,
-      });
-    },
-    [todos, updateTodos, deleteCategoryById, activeCategoryId],
-  );
+    toast.success(MESSAGES.toast.categoryDeleted, {
+      description: category.name,
+    });
+  };
 
   return (
     <div className="not-prose flex w-full flex-col">
