@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   APP_STORAGE_KEY,
@@ -57,25 +57,19 @@ export function useAppStorage(
     }
   }, [appStorage, isLoaded, storageKey]);
 
-  const updateAppStorage = useCallback(
-    (updater: (current: AppStorage) => AppStorage) => {
-      setAppStorage((current) => updater(current));
-    },
-    [],
-  );
+  const updateAppStorage = (updater: (current: AppStorage) => AppStorage) => {
+    setAppStorage((current) => updater(current));
+  };
 
-  const replaceAppStorage = useCallback((next: AppStorage) => {
-    setAppStorage(next);
-  }, []);
+  const replaceAppStorage = (nextAppStorage: AppStorage) => {
+    setAppStorage(nextAppStorage);
+  };
 
-  const importAppStorage = useCallback(
-    (data: string) => {
-      const parsed = parseAppStorage(JSON.parse(data));
+  const importAppStorage = (data: string) => {
+    const parsed = parseAppStorage(JSON.parse(data));
 
-      updateAppStorage(() => parsed);
-    },
-    [updateAppStorage],
-  );
+    replaceAppStorage(parsed);
+  };
 
   return {
     appStorage,
