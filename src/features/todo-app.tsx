@@ -13,7 +13,7 @@ import {
 } from "@/constants/categories";
 import { MESSAGES } from "@/constants/messages";
 import { useAppStorage } from "@/hooks/use-app-storage";
-import { reorderTodos } from "@/lib/app-storage";
+import { deleteCategory, reorderTodos } from "@/lib/app-storage";
 import { Category } from "@/schemas/category-schema";
 import { TodoFormValues } from "@/schemas/todo-form-schema";
 import { Todo } from "@/schemas/todo-schema";
@@ -211,6 +211,7 @@ export function TodoApp() {
   };
 
   const isDefaultCategorySelected = activeCategoryId === DEFAULT_CATEGORY_ID;
+
   const handleDeleteCategory = (category: { id: string; name: string }) => {
     const categoryId = category.id;
 
@@ -222,44 +223,9 @@ export function TodoApp() {
       return;
     }
 
-    const defaultCategoryTodos = appStorage.data.todos.filter(
-      (todo) => todo.categoryId === DEFAULT_CATEGORY_ID,
-    );
-
-    const categoryTodos = appStorage.data.todos
-      .filter((todo) => todo.categoryId === categoryId)
-      .toSorted((a, b) => a.order - b.order);
-
-    const nextOrder =
-      defaultCategoryTodos.length === 0
-        ? 0
-        : Math.max(...defaultCategoryTodos.map((todo) => todo.order)) + 1;
-
-    const migratedTodoOrders = new Map(
-      categoryTodos.map((todo, index) => [todo.id, nextOrder + index]),
-    );
-
     updateAppStorage((current) => ({
       ...current,
-      data: {
-        ...current.data,
-        todos: current.data.todos.map((todo) => {
-          const order = migratedTodoOrders.get(todo.id);
-
-          if (order === undefined) {
-            return todo;
-          }
-
-          return {
-            ...todo,
-            categoryId: DEFAULT_CATEGORY_ID,
-            order,
-          };
-        }),
-        categories: current.data.categories.filter(
-          (category) => category.id !== categoryId,
-        ),
-      },
+      data: deleteCategory(current.data, categoryId),
     }));
 
     // 削除されたカテゴリが選択中だった場合、デフォルトカテゴリに切り替え

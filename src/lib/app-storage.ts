@@ -1,4 +1,7 @@
-import { DEFAULT_CATEGORIES_STORAGE } from "@/constants/categories";
+import {
+  DEFAULT_CATEGORIES_STORAGE,
+  DEFAULT_CATEGORY_ID,
+} from "@/constants/categories";
 import { CURRENT_APP_STORAGE_VERSION } from "@/constants/version";
 import { AppStorage, parseAppStorage } from "@/schemas/app-storage-schema";
 import { Todo } from "@/schemas/todo-schema";
@@ -107,4 +110,56 @@ export function reorderTodos(
     ...todo,
     order: index,
   }));
+}
+
+/**
+ * 指定したカテゴリを削除し、そのカテゴリに属する Todo をデフォルトカテゴリへ移動する。
+ *
+ * 移動した Todo には、デフォルトカテゴリ内の既存 Todo の末尾から
+ * 連続した order を割り当てる。
+ *
+ * @param appStorage 現在の AppStorage
+ * @param categoryId 削除するカテゴリの ID
+ * @returns カテゴリ削除後の AppStorage
+ */
+export function deleteCategory(
+  data: AppStorage["data"],
+  categoryId: string,
+): AppStorage["data"] {
+  const defaultCategoryTodos = data.todos.filter(
+    (todo) => todo.categoryId === DEFAULT_CATEGORY_ID,
+  );
+
+  const categoryTodos = data.todos
+    .filter((todo) => todo.categoryId === categoryId)
+    .toSorted((a, b) => a.order - b.order);
+
+  const nextOrder =
+    defaultCategoryTodos.length === 0
+      ? 0
+      : Math.max(...defaultCategoryTodos.map((todo) => todo.order)) + 1;
+
+  const migratedTodoOrders = new Map(
+    categoryTodos.map((todo, index) => [todo.id, nextOrder + index]),
+  );
+
+  return {
+    ...data,
+    todos: data.todos.map((todo) => {
+      const order = migratedTodoOrders.get(todo.id);
+
+      if (order === undefined) {
+        return todo;
+      }
+
+      return {
+        ...todo,
+        categoryId: DEFAULT_CATEGORY_ID,
+        order,
+      };
+    }),
+    categories: data.categories.filter(
+      (category) => category.id !== categoryId,
+    ),
+  };
 }
