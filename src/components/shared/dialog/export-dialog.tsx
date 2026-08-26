@@ -2,8 +2,10 @@ import { JsonDisplay } from "@/components/shared/json-display";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -52,6 +54,9 @@ export function ExportDialog({
             className: "max-h-[50vh]",
           }}
         />
+        <DialogFooter>
+          <DialogClose render={<Button variant="outline">閉じる</Button>} />
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
