@@ -61,7 +61,7 @@ export function CategoryList({
             <Button
               key={category.id}
               type="button"
-              variant={isSelected ? "default" : "muted"}
+              variant={isSelected ? "default" : "secondary"}
               size="sm"
               className="shrink-0 rounded-full"
               aria-label={category.name}
@@ -75,7 +75,7 @@ export function CategoryList({
 
         <Button
           type="button"
-          variant="muted"
+          variant="secondary"
           size="icon-sm"
           aria-label={MESSAGES.actions.createCategory}
           onClick={onCreate}
