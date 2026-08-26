@@ -91,8 +91,6 @@ export function CategoryList({
           <PlusIcon />
         </Button>
       </div>
-
-      {/* <ScrollBar orientation="horizontal" /> */}
     </ScrollArea>
   );
 }
