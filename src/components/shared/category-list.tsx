@@ -16,7 +16,7 @@ const sortCategories = (categories: Category[]) =>
 
 function CategoryListSkeleton() {
   return (
-    <div className="flex gap-2 pb-3">
+    <div className="flex gap-2 p-1 pb-3">
       <Skeleton className="h-8 w-16 shrink-0 rounded-full" />
       <Skeleton className="h-8 w-16 shrink-0 rounded-full" />
       <Skeleton className="h-8 w-16 shrink-0 rounded-full" />
@@ -53,7 +53,7 @@ export function CategoryList({
 
   return (
     <ScrollArea aria-label={MESSAGES.labels.categoryList}>
-      <div className="flex gap-2 pb-3">
+      <div className="flex gap-2 p-1 pb-3">
         {sortedCategories.map((category) => {
           const isSelected = category.id === activeCategoryId;
 
