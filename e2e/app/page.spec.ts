@@ -651,10 +651,9 @@ test.describe("Todo ページのテスト", () => {
               lastSelectedCategoryId: "work",
             },
           };
-          await navigateToTodoPage(page, { storage: appStorage });
 
           // Act
-          await navigateToTodoPage(page);
+          await navigateToTodoPage(page, { storage: appStorage });
 
           // Assert
           await expect(
