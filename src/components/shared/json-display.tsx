@@ -4,7 +4,8 @@ import { cn } from "@/lib/utils";
 import { ComponentProps } from "react";
 
 export type JsonDisplayProps = {
-  data: unknown;
+  data?: unknown;
+  jsonString?: string;
   scrollAreaProps?: ComponentProps<typeof ScrollArea>;
   itemProps?: ComponentProps<typeof Item>;
   itemContentProps?: ComponentProps<typeof ItemContent>;
@@ -13,12 +14,14 @@ export type JsonDisplayProps = {
 
 export function JsonDisplay({
   data,
+  jsonString,
   scrollAreaProps,
   itemProps,
   itemContentProps,
   preProps,
 }: JsonDisplayProps) {
-  const jsonString = data ? JSON.stringify(data, undefined, 2) : " ";
+  const displayText =
+    jsonString ?? (data ? JSON.stringify(data, undefined, 2) : " ");
 
   return (
     <ScrollArea
@@ -36,11 +39,11 @@ export function JsonDisplay({
           <pre
             {...preProps}
             className={cn(
-              "cursor-text text-xs break-words whitespace-pre-wrap select-text",
+              "cursor-text text-xs wrap-break-word whitespace-pre-wrap select-text",
               preProps?.className,
             )}
           >
-            {jsonString}
+            {displayText}
           </pre>
         </ItemContent>
       </Item>

@@ -17,8 +17,10 @@ type UseAppStorageOptions = {
 };
 
 type UseAppStorageReturn = {
-  /** 現在の AppStorage。 */
+  /** 現在の AppStorage 。 */
   appStorage: AppStorage;
+  /** データが破損している場合の AppStorage 。 */
+  corruptedStorage: string | null;
   /** localStorage に保存された AppStorage が破損しているかどうか。 */
   isStorageCorrupted: boolean;
   /** localStorage から AppStorage の読み込みが完了したかどうか。 */
@@ -49,7 +51,9 @@ export function useAppStorage(
     createInitialAppStorage(),
   );
   const [isLoaded, setIsLoaded] = useState(false);
+
   const [isStorageCorrupted, setIsStorageCorrupted] = useState(false);
+  const [corruptedStorage, setCorruptedStorage] = useState<string | null>(null);
 
   useEffect(() => {
     try {
@@ -59,6 +63,7 @@ export function useAppStorage(
       setAppStorage(loadedStorage);
     } catch (error) {
       if (error instanceof AppStorageLoadError) {
+        setCorruptedStorage(error.rawData);
         setIsStorageCorrupted(true);
       } else {
         throw error;
@@ -96,12 +101,15 @@ export function useAppStorage(
 
   const resetAppStorage = useCallback(() => {
     const initialStorage = createInitialAppStorage();
+
     setAppStorage(initialStorage);
     setIsStorageCorrupted(false);
+    setCorruptedStorage(null);
   }, []);
 
   return {
     appStorage,
+    corruptedStorage,
     isLoaded,
     isStorageCorrupted,
     updateAppStorage,

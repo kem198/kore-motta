@@ -28,6 +28,7 @@ import { toast } from "sonner";
 export function TodoApp() {
   const {
     appStorage,
+    corruptedStorage,
     isLoaded,
     isStorageCorrupted,
     updateAppStorage,
@@ -345,6 +346,7 @@ export function TodoApp() {
 
       <StorageRecoveryDialog
         open={isStorageCorrupted}
+        corruptedStorage={corruptedStorage}
         onReset={resetAppStorage}
       />
     </div>

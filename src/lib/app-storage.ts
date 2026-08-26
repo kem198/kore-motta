@@ -66,7 +66,10 @@ function markAllIncompleteIfNeeded(appStorage: AppStorage): AppStorage {
 }
 
 export class AppStorageLoadError extends Error {
-  constructor(cause: unknown) {
+  constructor(
+    public readonly rawData: string,
+    cause: unknown,
+  ) {
     super("Failed to load AppStorage.", { cause });
     this.name = "AppStorageLoadError";
   }
@@ -91,7 +94,7 @@ export function loadAppStorage(storageKey = APP_STORAGE_KEY): AppStorage {
   try {
     parsed = JSON.parse(raw);
   } catch (error) {
-    throw new AppStorageLoadError(error);
+    throw new AppStorageLoadError(raw, error);
   }
 
   // AppStorage 型として解釈できなければ例外をスローする
@@ -99,7 +102,7 @@ export function loadAppStorage(storageKey = APP_STORAGE_KEY): AppStorage {
   try {
     appStorage = parseAppStorage(parsed);
   } catch (error) {
-    throw new AppStorageLoadError(error);
+    throw new AppStorageLoadError(raw, error);
   }
 
   return markAllIncompleteIfNeeded(appStorage);
