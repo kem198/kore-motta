@@ -163,10 +163,7 @@ export function deleteCategory(
     .filter((todo) => todo.categoryId === categoryId)
     .toSorted((a, b) => a.order - b.order);
 
-  const nextOrder =
-    defaultCategoryTodos.length === 0
-      ? 0
-      : Math.max(...defaultCategoryTodos.map((todo) => todo.order)) + 1;
+  const nextOrder = getNextTodoOrder(defaultCategoryTodos);
 
   const migratedTodoOrders = new Map(
     categoryTodos.map((todo, index) => [todo.id, nextOrder + index]),
