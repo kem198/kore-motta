@@ -545,10 +545,7 @@ test.describe("Todo ページのテスト", () => {
           },
         };
 
-        await navigateToTodoPage(page, {
-          storage: appStorage,
-          clockTime: new Date("2026-08-24T12:00:00"),
-        });
+        await navigateToTodoPage(page, { storage: appStorage });
 
         // Act
         await page.getByRole("button", { name: "グローバルメニュー" }).click();
