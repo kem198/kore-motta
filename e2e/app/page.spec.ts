@@ -39,19 +39,6 @@ test.describe("Todo ページのテスト", () => {
     await page.goto("/");
   };
 
-  /** localStorage の appStorage キーへ値をセットするヘルパー */
-  const setAppStorage = async (
-    page: Page,
-    storage: AppStorage,
-  ): Promise<void> => {
-    await page.evaluate(
-      ([key, value]) => {
-        localStorage.setItem(key, value);
-      },
-      [APP_STORAGE_KEY, JSON.stringify(storage)],
-    );
-  };
-
   /** localStorage の appStorage キーの値を取得するヘルパー */
   const getAppStorage = async (page: Page): Promise<AppStorage> =>
     page.evaluate(
