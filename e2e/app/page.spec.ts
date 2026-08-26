@@ -485,7 +485,7 @@ test.describe("Todo ページのテスト", () => {
         );
       });
 
-      test("すべて未完了に戻す操作をしたとき、すべての Todo を未完了にできること", async ({
+      test("すべて未完了に戻す操作をしたとき、カテゴリをまたいですべての Todo を未完了にできること", async ({
         page,
       }) => {
         // Arrange
@@ -495,7 +495,7 @@ test.describe("Todo ページのテスト", () => {
             settings: {},
             todos: [
               {
-                id: "incomplete-todo",
+                id: "dummy-todo",
                 name: "資料作成",
                 order: 0,
                 categoryId: DEFAULT_CATEGORY_ID,
@@ -515,8 +515,29 @@ test.describe("Todo ページのテスト", () => {
                 categoryId: DEFAULT_CATEGORY_ID,
                 completed: true,
               },
+              {
+                id: "temporary-todo-1",
+                name: "仮Todo 1",
+                order: 0,
+                categoryId: "temporary-category",
+                completed: true,
+              },
+              {
+                id: "temporary-todo-2",
+                name: "仮Todo 2",
+                order: 1,
+                categoryId: "temporary-category",
+                completed: false,
+              },
             ],
-            categories: DEFAULT_CATEGORIES_STORAGE,
+            categories: [
+              ...DEFAULT_CATEGORIES_STORAGE,
+              {
+                id: "temporary-category",
+                name: "仮カテゴリ",
+                order: 1,
+              },
+            ],
             lastMarkedAllIncompleteAt: new Date(
               "2026-08-24T00:00:00",
             ).toISOString(),
@@ -535,7 +556,7 @@ test.describe("Todo ページのテスト", () => {
           .getByRole("menuitem", { name: "すべて未完了に戻す" })
           .click();
 
-        // Assert (表示が正しいこと)
+        // Assert (現在カテゴリの表示が正しいこと)
         await expect(
           assertScope.getByRole("button", {
             name: "完了状態を切り替え: 資料作成",
@@ -554,6 +575,21 @@ test.describe("Todo ページのテスト", () => {
           }),
         ).toHaveAttribute("aria-pressed", "false");
 
+        // Assert (別カテゴリの表示が正しいこと)
+        await assertScope.getByRole("button", { name: "仮カテゴリ" }).click();
+
+        await expect(
+          assertScope.getByRole("button", {
+            name: "完了状態を切り替え: 仮Todo 1",
+          }),
+        ).toHaveAttribute("aria-pressed", "false");
+
+        await expect(
+          assertScope.getByRole("button", {
+            name: "完了状態を切り替え: 仮Todo 2",
+          }),
+        ).toHaveAttribute("aria-pressed", "false");
+
         // Assert (データストアへ登録されていること)
         const persisted = await getAppStorage(page);
 
@@ -561,7 +597,7 @@ test.describe("Todo ページのテスト", () => {
         expect(persisted.data.todos).toEqual(
           expect.arrayContaining([
             expect.objectContaining({
-              id: "incomplete-todo",
+              id: "dummy-todo",
               completed: false,
             }),
             expect.objectContaining({
@@ -570,6 +606,14 @@ test.describe("Todo ページのテスト", () => {
             }),
             expect.objectContaining({
               id: "complete-todo-2",
+              completed: false,
+            }),
+            expect.objectContaining({
+              id: "temporary-todo-1",
+              completed: false,
+            }),
+            expect.objectContaining({
+              id: "temporary-todo-2",
               completed: false,
             }),
           ]),
