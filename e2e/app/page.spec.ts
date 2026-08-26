@@ -424,6 +424,62 @@ test.describe("Todo ページのテスト", () => {
         ).toContainText("仕事");
       });
 
+      test("Todo を別のカテゴリへ移動できること", async ({ page }) => {
+        // Arrange
+        const appStorage: AppStorage = {
+          version: 1,
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "move-todo",
+                name: "資料作成",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                completed: false,
+              },
+            ],
+            categories: [
+              {
+                id: DEFAULT_CATEGORY_ID,
+                name: DEFAULT_CATEGORY_NAME,
+                order: DEFAULT_CATEGORY_ORDER,
+              },
+              {
+                id: "work",
+                name: "仕事",
+                order: 1,
+              },
+            ],
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00",
+            ).toISOString(),
+          },
+        };
+        await navigateToTodoPage(page, { storage: appStorage });
+
+        // Act
+        await page.getByRole("button", { name: "編集: 資料作成" }).click();
+        await page.getByRole("combobox", { name: "カテゴリ" }).click();
+        await page.getByRole("option", { name: "仕事" }).click();
+        await page.getByRole("button", { name: "更新" }).click();
+
+        // Assert (移動元カテゴリに Todo が表示されていないこと)
+        await expect(
+          page.getByRole("button", { name: "編集: 資料作成" }),
+        ).toHaveCount(0);
+
+        // Assert (移動先カテゴリに Todo が表示されること)
+        await page.getByRole("button", { name: "仕事" }).click();
+        await expect(
+          page.getByRole("button", { name: "編集: 資料作成" }),
+        ).toBeVisible();
+
+        // Assert (データストアへ登録されていること)
+        const persisted: AppStorage = await getAppStorage(page);
+        expect(persisted.data.todos[0].categoryId).toBe("work");
+      });
+
       test("Todo を下へ移動する操作を行ったら、対象の Todo が移動先 Todo よりも下に表示されること", async ({
         page,
       }) => {

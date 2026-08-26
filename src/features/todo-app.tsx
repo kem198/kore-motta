@@ -123,6 +123,7 @@ export function TodoApp() {
       },
     }));
   };
+
   const handleMarkAllIncomplete = () => {
     updateAppStorage((current) => ({
       ...current,
@@ -286,6 +287,7 @@ export function TodoApp() {
       <div className="px-4">
         <TodoList
           todos={visibleTodos}
+          categories={appStorage.data.categories}
           isLoaded={isLoaded}
           isEditing={isEditing}
           onDelete={handleDelete}

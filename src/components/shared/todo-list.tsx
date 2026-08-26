@@ -15,6 +15,7 @@ import { ButtonGroup } from "@/components/ui/button-group";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MESSAGES } from "@/constants/messages";
+import { Category } from "@/schemas/category-schema";
 import { Todo } from "@/schemas/todo-schema";
 import { ChevronDown, ChevronUp, Trash2 } from "lucide-react";
 import { Fragment } from "react";
@@ -117,6 +118,7 @@ function TodoItemActions({
 
 type TodoItemProps = {
   todo: Todo;
+  categories: Category[];
   index: number;
   length: number;
   isEditing: boolean;
@@ -128,6 +130,7 @@ type TodoItemProps = {
 function TodoItem({
   index,
   todo,
+  categories,
   length,
   isEditing,
   onDelete,
@@ -149,7 +152,7 @@ function TodoItem({
           />
         </div>
 
-        <TodoEditDialog todo={todo} onSave={onUpdate}>
+        <TodoEditDialog todo={todo} categories={categories} onSave={onUpdate}>
           <button
             type="button"
             aria-label={`編集: ${todo.name}`}
@@ -192,6 +195,7 @@ function TodoListLoading() {
 
 type TodoListContentProps = {
   todos: Todo[];
+  categories: Category[];
   isEditing: boolean;
   onDelete: (todo: Todo) => void;
   onUpdate: (todo: Todo) => void;
@@ -200,6 +204,7 @@ type TodoListContentProps = {
 
 function TodoListContent({
   todos,
+  categories,
   isEditing,
   onDelete,
   onUpdate,
@@ -212,6 +217,7 @@ function TodoListContent({
         <Fragment key={todo.id}>
           <TodoItem
             todo={todo}
+            categories={categories}
             index={index}
             length={todos.length}
             isEditing={isEditing}
@@ -229,6 +235,7 @@ function TodoListContent({
 
 type TodoListProps = {
   todos: Todo[];
+  categories: Category[];
   isLoaded: boolean;
   isEditing: boolean;
   onDelete: (todo: Todo) => void;
@@ -238,6 +245,7 @@ type TodoListProps = {
 
 export function TodoList({
   todos,
+  categories,
   isLoaded,
   isEditing,
   onDelete,
@@ -255,6 +263,7 @@ export function TodoList({
   return (
     <TodoListContent
       todos={todos}
+      categories={categories}
       isEditing={isEditing}
       onDelete={onDelete}
       onUpdate={onUpdate}

@@ -30,39 +30,31 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  DEFAULT_CATEGORY_ID,
-  DEFAULT_CATEGORY_NAME,
-} from "@/constants/categories";
 import { MESSAGES } from "@/constants/messages";
-import { APP_STORAGE_KEY } from "@/lib/app-storage";
+import { Category } from "@/schemas/category-schema";
 import { TodoFormValues, todoFormSchema } from "@/schemas/todo-form-schema";
 import { Todo } from "@/schemas/todo-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  ComponentProps,
-  ReactElement,
-  ReactNode,
-  useCallback,
-  useState,
-} from "react";
+import { ComponentProps, ReactElement, ReactNode, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 type TodoEditDialogProps = {
   todo: Todo;
+  categories: Category[];
   onSave: (updated: Todo) => void;
   children: ReactNode;
 } & ComponentProps<typeof DialogTrigger>;
 
 export function TodoEditDialog({
   todo,
+  categories,
   onSave,
   children,
   ...props
 }: TodoEditDialogProps) {
   const [open, setOpen] = useState(false);
   const [completed, setCompleted] = useState(todo.completed);
-  const [categoryName, setCategoryName] = useState(DEFAULT_CATEGORY_NAME);
+  const [categoryId, setCategoryId] = useState(todo.categoryId);
 
   const form = useForm<TodoFormValues>({
     resolver: zodResolver(todoFormSchema),
@@ -72,41 +64,16 @@ export function TodoEditDialog({
     },
   });
 
-  const resetFormValues = useCallback(() => {
-    form.reset({
-      name: todo.name,
-      memo: todo.memo,
-    });
-    setCompleted(todo.completed);
-  }, [todo, form]);
-
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);
 
     if (nextOpen) {
-      try {
-        const raw = window.localStorage.getItem(APP_STORAGE_KEY);
-
-        if (!raw) {
-          setCategoryName(DEFAULT_CATEGORY_NAME);
-        } else {
-          const parsed = JSON.parse(raw) as {
-            data?: {
-              categories?: Array<{ id: string; name?: string }>;
-            };
-          };
-          const resolvedCategoryName =
-            parsed.data?.categories?.find(
-              (category) => category.id === todo.categoryId,
-            )?.name ?? DEFAULT_CATEGORY_NAME;
-
-          setCategoryName(resolvedCategoryName);
-        }
-      } catch {
-        setCategoryName(DEFAULT_CATEGORY_NAME);
-      }
-
-      resetFormValues();
+      form.reset({
+        name: todo.name,
+        memo: todo.memo,
+      });
+      setCompleted(todo.completed);
+      setCategoryId(todo.categoryId);
     }
   };
 
@@ -116,17 +83,12 @@ export function TodoEditDialog({
       name: data.name.trim(),
       memo: data.memo?.trim() || undefined,
       completed,
+      categoryId,
     };
 
     onSave(updatedTodo);
     setOpen(false);
   };
-
-  const dummyItems = [
-    { label: DEFAULT_CATEGORY_NAME, value: DEFAULT_CATEGORY_ID },
-    { label: "仕事", value: "work" },
-    { label: "毎日", value: "daily" },
-  ];
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange} {...props}>
@@ -150,17 +112,26 @@ export function TodoEditDialog({
 
                   <Select
                     id="todo-category"
-                    items={dummyItems}
-                    defaultValue={categoryName}
+                    items={categories.map((category) => ({
+                      label: category.name,
+                      value: category.id,
+                    }))}
+                    value={categoryId}
+                    onValueChange={(value) => {
+                      if (value) {
+                        setCategoryId(value);
+                      }
+                    }}
                   >
                     <SelectTrigger aria-label="カテゴリ">
                       <SelectValue />
                     </SelectTrigger>
+
                     <SelectContent>
                       <SelectGroup>
-                        {dummyItems.map((item) => (
-                          <SelectItem key={item.value} value={item.value}>
-                            {item.label}
+                        {categories.map((category) => (
+                          <SelectItem key={category.id} value={category.id}>
+                            {category.name}
                           </SelectItem>
                         ))}
                       </SelectGroup>
