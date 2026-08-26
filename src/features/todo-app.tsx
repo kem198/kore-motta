@@ -13,6 +13,7 @@ import {
 } from "@/constants/categories";
 import { MESSAGES } from "@/constants/messages";
 import { useAppStorage } from "@/hooks/use-app-storage";
+import { reorderTodos } from "@/lib/app-storage";
 import { Category } from "@/schemas/category-schema";
 import { TodoFormValues } from "@/schemas/todo-form-schema";
 import { Todo } from "@/schemas/todo-schema";
@@ -130,22 +131,6 @@ export function TodoApp() {
 
     toast.success(MESSAGES.toast.markAllIncomplete);
   };
-
-  function reorderTodos(
-    todos: Todo[],
-    startIndex: number,
-    endIndex: number,
-  ): Todo[] {
-    const newTodos = [...todos];
-    const [removed] = newTodos.splice(startIndex, 1);
-
-    newTodos.splice(endIndex, 0, removed);
-
-    return newTodos.map((todo, index) => ({
-      ...todo,
-      order: index,
-    }));
-  }
 
   const handleReorder = (startIndex: number, endIndex: number) => {
     if (!isLoaded) {

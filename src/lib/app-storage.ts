@@ -1,6 +1,7 @@
 import { DEFAULT_CATEGORIES_STORAGE } from "@/constants/categories";
 import { CURRENT_APP_STORAGE_VERSION } from "@/constants/version";
 import { AppStorage, parseAppStorage } from "@/schemas/app-storage-schema";
+import { Todo } from "@/schemas/todo-schema";
 
 export const APP_STORAGE_KEY = "appStorage";
 
@@ -90,4 +91,20 @@ export function saveAppStorage(
 
 export function importAppStorage(data: string): AppStorage {
   return parseAppStorage(JSON.parse(data));
+}
+
+export function reorderTodos(
+  todos: Todo[],
+  startIndex: number,
+  endIndex: number,
+): Todo[] {
+  const newTodos = [...todos];
+  const [removed] = newTodos.splice(startIndex, 1);
+
+  newTodos.splice(endIndex, 0, removed);
+
+  return newTodos.map((todo, index) => ({
+    ...todo,
+    order: index,
+  }));
 }
