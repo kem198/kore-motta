@@ -28,7 +28,12 @@ export function TodoApp() {
   const { appStorage, isLoaded, updateAppStorage, importAppStorage } =
     useAppStorage();
 
-  const activeCategoryId = appStorage.data.lastSelectedCategoryId;
+  // 削除済みカテゴリが最後に選択されていた場合は、デフォルトカテゴリを使用する
+  const activeCategoryId = appStorage.data.categories.some(
+    (c) => c.id === appStorage.data.lastSelectedCategoryId,
+  )
+    ? appStorage.data.lastSelectedCategoryId
+    : DEFAULT_CATEGORY_ID;
 
   const [isEditing, setIsEditing] = useState(false);
 
