@@ -61,10 +61,10 @@ export function CategoryList({
             <Button
               key={category.id}
               type="button"
-              variant={isSelected ? "default" : "secondary"}
+              variant={isSelected ? "default" : "muted"}
               size="sm"
               // className="bg-muted shrink-0 rounded-full"
-              className={`shrink-0 rounded-full ${!isSelected && "bg-muted border-border/60 hover:bg-muted border hover:brightness-96"}`}
+              className="shrink-0 rounded-full"
               aria-label={category.name}
               aria-pressed={isSelected}
               onClick={() => onSelect(category.id)}
@@ -76,11 +76,11 @@ export function CategoryList({
 
         <Button
           type="button"
-          variant="secondary"
+          variant="muted"
           size="icon-sm"
           aria-label={MESSAGES.actions.createCategory}
           onClick={onCreate}
-          className="bg-muted hover:bg-muted shrink-0 rounded-full hover:brightness-96"
+          className="shrink-0 rounded-full"
         >
           <PlusIcon />
         </Button>
