@@ -85,12 +85,14 @@ export function TodoAppHeader({
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => window.location.reload()}
-                aria-label="更新する"
-              >
-                <RefreshCcwIcon /> 更新する
-              </DropdownMenuItem>
+              <DropdownMenuGroup>
+                <DropdownMenuItem
+                  onClick={() => window.location.reload()}
+                  aria-label="更新する"
+                >
+                  <RefreshCcwIcon /> 更新する
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
                 <DropdownMenuItem
