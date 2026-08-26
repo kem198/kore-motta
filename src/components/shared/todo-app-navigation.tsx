@@ -4,8 +4,6 @@ import { AppStorage } from "@/schemas/app-storage-schema";
 type TodoAppNavigationProps = {
   isEditing: boolean;
   appStorage: AppStorage;
-  onMarkAllIncomplete: () => void;
-  onImport: (data: string) => boolean;
   onOpenCategorySettings: () => void;
   onToggleEditing: () => void;
 };

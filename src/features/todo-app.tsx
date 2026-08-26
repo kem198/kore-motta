@@ -153,10 +153,9 @@ export function TodoApp() {
           ...todo,
           completed: false,
         })),
+        lastMarkedAllIncompleteAt: new Date().toISOString(),
       },
     }));
-
-    setIsEditing(false);
 
     toast.success(MESSAGES.toast.markAllIncomplete);
   };
@@ -286,7 +285,11 @@ export function TodoApp() {
   return (
     <div className="not-prose flex w-full flex-col">
       <div className="bg-background sticky top-0 z-50">
-        <TodoAppHeader appStorage={appStorage} onImport={handleImport} />
+        <TodoAppHeader
+          appStorage={appStorage}
+          onMarkAllIncomplete={handleMarkAllIncomplete}
+          onImport={handleImport}
+        />
 
         <div className="flex flex-col gap-3 p-4">
           <CategoryList
@@ -305,8 +308,6 @@ export function TodoApp() {
           <TodoAppNavigation
             isEditing={isEditing}
             appStorage={appStorage}
-            onMarkAllIncomplete={handleMarkAllIncomplete}
-            onImport={handleImport}
             onOpenCategorySettings={handleOpenCategoryEditDialog}
             onToggleEditing={() => setIsEditing((prev) => !prev)}
           />

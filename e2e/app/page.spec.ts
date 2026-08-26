@@ -28,9 +28,13 @@ test.describe("Todo ページのテスト", () => {
     page: Page,
     options: { storage?: AppStorage; clockTime?: Date } = {},
   ) => {
+    const clockTime = options.clockTime ?? DEFAULT_CLOCK_TIME;
     await page.clock.install({
-      time: options.clockTime ?? DEFAULT_CLOCK_TIME,
+      time: clockTime,
     });
+    // 現在時刻を固定して日時のストレージ保存確認を正確にする
+    await page.clock.setFixedTime(clockTime);
+
     if (options.storage) {
       await page.addInitScript(
         ([key, value]) => {
@@ -478,6 +482,102 @@ test.describe("Todo ページのテスト", () => {
             name: "資料作成",
             completed: false,
           }),
+        );
+      });
+
+      test("すべて未完了に戻す操作をしたとき、すべての Todo を未完了にできること", async ({
+        page,
+      }) => {
+        // Arrange
+        const appStorage: AppStorage = {
+          version: 1,
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "incomplete-todo",
+                name: "資料作成",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                completed: false,
+              },
+              {
+                id: "complete-todo-1",
+                name: "メール確認",
+                order: 1,
+                categoryId: DEFAULT_CATEGORY_ID,
+                completed: true,
+              },
+              {
+                id: "complete-todo-2",
+                name: "会議資料確認",
+                order: 2,
+                categoryId: DEFAULT_CATEGORY_ID,
+                completed: true,
+              },
+            ],
+            categories: DEFAULT_CATEGORIES_STORAGE,
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00",
+            ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
+          },
+        };
+
+        await navigateToTodoPage(page, {
+          storage: appStorage,
+          clockTime: new Date("2026-08-24T12:00:00"),
+        });
+
+        // Act
+        await page.getByRole("button", { name: "グローバルメニュー" }).click();
+        await page
+          .getByRole("menuitem", { name: "すべて未完了に戻す" })
+          .click();
+
+        // Assert (表示が正しいこと)
+        await expect(
+          assertScope.getByRole("button", {
+            name: "完了状態を切り替え: 資料作成",
+          }),
+        ).toHaveAttribute("aria-pressed", "false");
+
+        await expect(
+          assertScope.getByRole("button", {
+            name: "完了状態を切り替え: メール確認",
+          }),
+        ).toHaveAttribute("aria-pressed", "false");
+
+        await expect(
+          assertScope.getByRole("button", {
+            name: "完了状態を切り替え: 会議資料確認",
+          }),
+        ).toHaveAttribute("aria-pressed", "false");
+
+        // Assert (データストアへ登録されていること)
+        const persisted = await getAppStorage(page);
+
+        expect(persisted.version).toBe(1);
+        expect(persisted.data.todos).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              id: "incomplete-todo",
+              completed: false,
+            }),
+            expect.objectContaining({
+              id: "complete-todo-1",
+              completed: false,
+            }),
+            expect.objectContaining({
+              id: "complete-todo-2",
+              completed: false,
+            }),
+          ]),
+        );
+
+        // 最終未完了日時が想定の日時で保存されていること
+        expect(persisted.data.lastMarkedAllIncompleteAt).toBe(
+          new Date("2026-08-24T03:00:00.000Z").toISOString(),
         );
       });
 
