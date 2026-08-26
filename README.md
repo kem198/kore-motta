@@ -2,8 +2,8 @@
 
 [Kore Motta?](https://kore-motta.kem198.net) は、毎日の「これ持った？」を確認するためのシンプルな Todo アプリです。
 
+- 日付をまたいだとき、すべての Todo を未完了へリセットします。
 - カテゴリごとに Todo を管理します。
-- 設定した時刻にカテゴリに属するすべての Todo を未完了へリセットします。
 - 登録データはブラウザの [localStorage](https://developer.mozilla.org/ja/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API) に保存します。
 
 ## 公開中の URL
@@ -14,7 +14,7 @@
 
 - Todo の作成・編集・削除・並び替え
 - カテゴリの作成・編集・削除
-- カテゴリごとの Todo 一括未完了化 (自動・手動)
+- Todo 一括未完了化 (自動・手動)
 - JSON 形式によるエクスポート・インポート
 
 ## ローカル環境での実行
