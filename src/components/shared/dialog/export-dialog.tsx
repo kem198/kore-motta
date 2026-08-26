@@ -51,7 +51,7 @@ export function ExportDialog({
         <JsonDisplay
           data={appStorage}
           scrollAreaProps={{
-            className: "max-h-[50vh]",
+            className: "max-h-[50dvh]",
           }}
         />
         <DialogFooter>

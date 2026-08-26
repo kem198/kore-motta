@@ -60,7 +60,7 @@ export function StorageRecoveryDialog({
         <JsonDisplay
           jsonString={corruptedStorage}
           scrollAreaProps={{
-            className: "max-h-[50vh]",
+            className: "max-h-[50dvh]",
           }}
         />
 
