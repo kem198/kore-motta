@@ -53,14 +53,14 @@ export function ImportDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <ScrollArea className="border-border max-h-[60vh] rounded-md border">
+        <ScrollArea className="border-border max-h-[60dvh] rounded-md border">
           <Textarea
             value={value}
             onChange={(e) => {
               setValue(e.target.value);
               setError(false);
             }}
-            className="bg-muted/50 min-h-[160px] w-full cursor-text resize-none p-2 font-mono text-xs break-words whitespace-pre-wrap select-text"
+            className="bg-muted/50 min-h-40 w-full cursor-text resize-none p-2 font-mono text-xs wrap-break-word whitespace-pre-wrap select-text"
             aria-label="インポート用テキストエリア"
           />
         </ScrollArea>

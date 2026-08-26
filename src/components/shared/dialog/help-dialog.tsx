@@ -14,11 +14,9 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { FEATURES } from "@/constants/features";
 import { cn } from "@/lib/utils";
-import { CircleHelpIcon } from "lucide-react";
 
 const TIPS = [
   "ホーム画面やデスクトップに置いて、アプリとして起動できます。PC はブラウザの URL 欄に表示されているボタンから、スマートフォンはブラウザのメニューからインストールしてください。",
@@ -202,24 +200,18 @@ function Term() {
   );
 }
 
-export function HelpDialog() {
-  return (
-    <Dialog>
-      <DialogTrigger
-        render={
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-lg"
-            aria-label="アプリの使い方・利用規約"
-            className="rounded-full text-white hover:bg-white/10 hover:text-white aria-expanded:bg-white/10 aria-expanded:text-white"
-          />
-        }
-      >
-        <CircleHelpIcon className="size-5" />
-      </DialogTrigger>
+type HelpDialogProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+};
 
-      <DialogContent className="flex w-[90vw] max-w-xl! flex-col">
+export function HelpDialog({ open, onOpenChange }: HelpDialogProps) {
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent
+        initialFocus={false}
+        className="flex w-[90vw] max-w-xl! flex-col"
+      >
         <DialogHeader>
           <DialogTitle>使い方・利用規約</DialogTitle>
         </DialogHeader>
@@ -227,7 +219,7 @@ export function HelpDialog() {
         <div
           className={cn(
             "flex flex-col gap-4 py-2",
-            "-mx-4 max-h-[60vh] overflow-y-auto px-4",
+            "-mx-4 max-h-[60dvh] overflow-y-auto px-4",
           )}
         >
           <Term />

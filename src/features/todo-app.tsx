@@ -280,10 +280,6 @@ export function TodoApp() {
         },
       };
     });
-
-    toast.success(MESSAGES.toast.categoryDeleted, {
-      description: category.name,
-    });
   };
 
   const handleReset = () => {
@@ -292,48 +288,53 @@ export function TodoApp() {
   };
 
   return (
-    <div className="not-prose flex w-full flex-col">
-      <div className="bg-background sticky top-0 z-50">
-        <TodoAppHeader
-          appStorage={appStorage}
-          onMarkAllIncomplete={handleMarkAllIncomplete}
-          onImport={handleImport}
-        />
-
-        <div className="flex flex-col gap-3 p-4">
-          <CategoryList
-            categories={appStorage.data.categories}
-            activeCategoryId={activeCategoryId}
-            isLoaded={isLoaded}
-            onSelect={handleSelectCategory}
-            onCreate={() =>
-              setCategoryDialog({
-                mode: "create",
-                category: null,
-              })
-            }
+    <>
+      <div className="not-prose flex h-full w-full flex-col">
+        <div className="bg-background shrink-0">
+          <TodoAppHeader
+            appStorage={appStorage}
+            onMarkAllIncomplete={handleMarkAllIncomplete}
+            onImport={handleImport}
           />
 
-          <TodoAppNavigation
+          {/* CategoryList の内部でリスト表示に p-1 を指定しているので pl-3 を付けて幅を揃えている */}
+          <div className="flex flex-col gap-3 p-4 pl-3">
+            <CategoryList
+              categories={appStorage.data.categories}
+              activeCategoryId={activeCategoryId}
+              isLoaded={isLoaded}
+              onSelect={handleSelectCategory}
+              onCreate={() =>
+                setCategoryDialog({
+                  mode: "create",
+                  category: null,
+                })
+              }
+            />
+
+            <TodoAppNavigation
+              isEditing={isEditing}
+              appStorage={appStorage}
+              onOpenCategorySettings={handleOpenCategoryEditDialog}
+              onToggleEditing={() => setIsEditing((prev) => !prev)}
+            />
+          </div>
+
+          <Separator />
+        </div>
+
+        <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-28">
+          <TodoList
+            todos={visibleTodos}
+            categories={appStorage.data.categories}
+            isLoaded={isLoaded}
             isEditing={isEditing}
-            appStorage={appStorage}
-            onOpenCategorySettings={handleOpenCategoryEditDialog}
-            onToggleEditing={() => setIsEditing((prev) => !prev)}
+            onDelete={handleDelete}
+            onUpdate={handleUpdate}
+            onReorder={handleReorder}
           />
         </div>
-        <Separator />
-      </div>
 
-      <div className="px-4">
-        <TodoList
-          todos={visibleTodos}
-          categories={appStorage.data.categories}
-          isLoaded={isLoaded}
-          isEditing={isEditing}
-          onDelete={handleDelete}
-          onUpdate={handleUpdate}
-          onReorder={handleReorder}
-        />
         <TodoFormFooter onSubmit={handleCreate} />
       </div>
 
@@ -364,6 +365,6 @@ export function TodoApp() {
         corruptedStorage={corruptedStorage}
         onReset={handleReset}
       />
-    </div>
+    </>
   );
 }

@@ -14,9 +14,16 @@ const sortCategories = (categories: Category[]) =>
     return a.name.localeCompare(b.name);
   });
 
+/** マウスホイールで横スクロールする */
+const handleWheel = (event: React.WheelEvent<HTMLDivElement>) => {
+  if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
+    event.currentTarget.scrollLeft += event.deltaY;
+  }
+};
+
 function CategoryListSkeleton() {
   return (
-    <div className="flex gap-2 pb-3">
+    <div className="flex gap-2 p-1 pb-3">
       <Skeleton className="h-8 w-16 shrink-0 rounded-full" />
       <Skeleton className="h-8 w-16 shrink-0 rounded-full" />
       <Skeleton className="h-8 w-16 shrink-0 rounded-full" />
@@ -52,8 +59,8 @@ export function CategoryList({
   const sortedCategories = sortCategories(categories);
 
   return (
-    <ScrollArea aria-label={MESSAGES.labels.categoryList}>
-      <div className="flex gap-2 pb-3">
+    <ScrollArea aria-label={MESSAGES.labels.categoryList} onWheel={handleWheel}>
+      <div className="flex gap-2 p-1">
         {sortedCategories.map((category) => {
           const isSelected = category.id === activeCategoryId;
 
@@ -61,9 +68,8 @@ export function CategoryList({
             <Button
               key={category.id}
               type="button"
-              variant={isSelected ? "default" : "muted"}
+              variant={isSelected ? "default" : "secondary"}
               size="sm"
-              // className="bg-muted shrink-0 rounded-full"
               className="shrink-0 rounded-full"
               aria-label={category.name}
               aria-pressed={isSelected}
@@ -76,7 +82,7 @@ export function CategoryList({
 
         <Button
           type="button"
-          variant="muted"
+          variant="secondary"
           size="icon-sm"
           aria-label={MESSAGES.actions.createCategory}
           onClick={onCreate}
@@ -85,8 +91,6 @@ export function CategoryList({
           <PlusIcon />
         </Button>
       </div>
-
-      <ScrollBar orientation="horizontal" />
     </ScrollArea>
   );
 }
