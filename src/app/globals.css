@@ -136,5 +136,7 @@
   }
   html {
     @apply font-sans;
+    /* iOS, Android の縦方向ひっぱりの更新による伸びを無効化 */
+    overscroll-behavior-y: none;
   }
 }
