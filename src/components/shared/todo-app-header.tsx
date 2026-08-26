@@ -15,6 +15,7 @@ import { SITE_NAME } from "@/constants/site";
 import { cn } from "@/lib/utils";
 import { AppStorage } from "@/schemas/app-storage-schema";
 import {
+  CircleDashedIcon,
   DownloadIcon,
   EllipsisVerticalIcon,
   RefreshCcwIcon,
@@ -25,11 +26,13 @@ import * as React from "react";
 
 export type TodoAppHeaderProps = {
   appStorage: AppStorage;
+  onMarkAllIncomplete: () => void;
   onImport: (data: string) => boolean;
 } & React.HTMLAttributes<HTMLElement>;
 
 export function TodoAppHeader({
   appStorage,
+  onMarkAllIncomplete,
   onImport,
   className,
   ...props
@@ -72,7 +75,16 @@ export function TodoAppHeader({
               }
             />
 
-            <DropdownMenuContent align="end" className="w-40">
+            <DropdownMenuContent align="end" className="w-44">
+              <DropdownMenuGroup>
+                <DropdownMenuItem
+                  onClick={onMarkAllIncomplete}
+                  aria-label="すべて未完了に戻す"
+                >
+                  <CircleDashedIcon /> すべて未完了に戻す
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
               <DropdownMenuGroup>
                 <DropdownMenuItem
                   onClick={() => window.location.reload()}

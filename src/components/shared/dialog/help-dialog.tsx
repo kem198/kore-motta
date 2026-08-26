@@ -32,7 +32,7 @@ const ISSUES = [
 const CHANGELOG = [
   {
     version: "v0.1.0",
-    date: "2026-08-23",
+    date: "2026-08-27",
     changes: ["初回リリース"],
   },
 ];

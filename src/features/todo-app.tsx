@@ -153,10 +153,9 @@ export function TodoApp() {
           ...todo,
           completed: false,
         })),
+        lastMarkedAllIncompleteAt: new Date().toISOString(),
       },
     }));
-
-    setIsEditing(false);
 
     toast.success(MESSAGES.toast.markAllIncomplete);
   };
@@ -278,10 +277,19 @@ export function TodoApp() {
     });
   };
 
+  const handleReset = () => {
+    resetAppStorage();
+    toast.success("登録内容を初期化しました");
+  };
+
   return (
     <div className="not-prose flex w-full flex-col">
       <div className="bg-background sticky top-0 z-50">
-        <TodoAppHeader appStorage={appStorage} onImport={handleImport} />
+        <TodoAppHeader
+          appStorage={appStorage}
+          onMarkAllIncomplete={handleMarkAllIncomplete}
+          onImport={handleImport}
+        />
 
         <div className="flex flex-col gap-3 p-4">
           <CategoryList
@@ -300,8 +308,6 @@ export function TodoApp() {
           <TodoAppNavigation
             isEditing={isEditing}
             appStorage={appStorage}
-            onMarkAllIncomplete={handleMarkAllIncomplete}
-            onImport={handleImport}
             onOpenCategorySettings={handleOpenCategoryEditDialog}
             onToggleEditing={() => setIsEditing((prev) => !prev)}
           />
@@ -347,7 +353,7 @@ export function TodoApp() {
       <StorageRecoveryDialog
         open={isStorageCorrupted}
         corruptedStorage={corruptedStorage}
-        onReset={resetAppStorage}
+        onReset={handleReset}
       />
     </div>
   );

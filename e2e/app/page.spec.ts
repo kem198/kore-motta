@@ -13,6 +13,9 @@ test.describe("Todo ページのテスト", () => {
   /** テストの Assert 範囲 */
   let assertScope: Locator;
 
+  /**デフォルトのテスト実行日時 */
+  const DEFAULT_CLOCK_TIME = new Date("2026-08-24T12:00:00+09:00");
+
   /**
    * Todo ページを初期状態を指定して表示するヘルパー。
    *
@@ -25,9 +28,13 @@ test.describe("Todo ページのテスト", () => {
     page: Page,
     options: { storage?: AppStorage; clockTime?: Date } = {},
   ) => {
-    if (options.clockTime) {
-      await page.clock.install({ time: options.clockTime });
-    }
+    const clockTime = options.clockTime ?? DEFAULT_CLOCK_TIME;
+    await page.clock.install({
+      time: clockTime,
+    });
+    // 現在時刻を固定して日時のストレージ保存確認を正確にする
+    await page.clock.setFixedTime(clockTime);
+
     if (options.storage) {
       await page.addInitScript(
         ([key, value]) => {
@@ -73,7 +80,7 @@ test.describe("Todo ページのテスト", () => {
             ],
             categories: DEFAULT_CATEGORIES_STORAGE,
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -110,7 +117,7 @@ test.describe("Todo ページのテスト", () => {
             ],
             categories: DEFAULT_CATEGORIES_STORAGE,
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -308,7 +315,7 @@ test.describe("Todo ページのテスト", () => {
             ],
             categories: DEFAULT_CATEGORIES_STORAGE,
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -346,7 +353,7 @@ test.describe("Todo ページのテスト", () => {
             ],
             categories: DEFAULT_CATEGORIES_STORAGE,
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -368,6 +375,251 @@ test.describe("Todo ページのテスト", () => {
         const persisted: AppStorage = await getAppStorage(page);
         expect(persisted.version).toBe(1);
         expect(persisted.data.todos[0].name).toBe("カギ");
+      });
+
+      test("未完了 Todo の完了ボタンを押したとき、完了済みにできること", async ({
+        page,
+      }) => {
+        // Arrange
+        const appStorage: AppStorage = {
+          version: 1,
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "dummy-todo",
+                name: "資料作成",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                completed: false,
+              },
+            ],
+            categories: DEFAULT_CATEGORIES_STORAGE,
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00+09:00",
+            ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
+          },
+        };
+
+        await navigateToTodoPage(page, { storage: appStorage });
+
+        // Act
+        await page
+          .getByRole("button", {
+            name: "完了状態を切り替え: 資料作成",
+          })
+          .click();
+
+        // Assert (表示が正しいこと)
+        await expect(
+          assertScope.getByRole("button", {
+            name: "完了状態を切り替え: 資料作成",
+          }),
+        ).toHaveAttribute("aria-pressed", "true");
+
+        // Assert (データストアへ登録されていること)
+        const persisted = await getAppStorage(page);
+
+        expect(persisted.version).toBe(1);
+        expect(persisted.data.todos[0]).toEqual(
+          expect.objectContaining({
+            id: "dummy-todo",
+            name: "資料作成",
+            completed: true,
+          }),
+        );
+      });
+
+      test("完了済み Todo の完了ボタンを押したとき、未完了にできること", async ({
+        page,
+      }) => {
+        // Arrange
+        const appStorage: AppStorage = {
+          version: 1,
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "dummy-todo",
+                name: "資料作成",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                completed: true,
+              },
+            ],
+            categories: DEFAULT_CATEGORIES_STORAGE,
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00+09:00",
+            ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
+          },
+        };
+
+        await navigateToTodoPage(page, { storage: appStorage });
+
+        // Act
+        await page
+          .getByRole("button", {
+            name: "完了状態を切り替え: 資料作成",
+          })
+          .click();
+
+        // Assert (表示が正しいこと)
+        await expect(
+          assertScope.getByRole("button", {
+            name: "完了状態を切り替え: 資料作成",
+          }),
+        ).toHaveAttribute("aria-pressed", "false");
+
+        // Assert (データストアへ登録されていること)
+        const persisted = await getAppStorage(page);
+
+        expect(persisted.version).toBe(1);
+        expect(persisted.data.todos[0]).toEqual(
+          expect.objectContaining({
+            id: "dummy-todo",
+            name: "資料作成",
+            completed: false,
+          }),
+        );
+      });
+
+      test("すべて未完了に戻す操作をしたとき、カテゴリをまたいですべての Todo を未完了にできること", async ({
+        page,
+      }) => {
+        // Arrange
+        const appStorage: AppStorage = {
+          version: 1,
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "dummy-todo",
+                name: "資料作成",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                completed: false,
+              },
+              {
+                id: "complete-todo-1",
+                name: "メール確認",
+                order: 1,
+                categoryId: DEFAULT_CATEGORY_ID,
+                completed: true,
+              },
+              {
+                id: "complete-todo-2",
+                name: "会議資料確認",
+                order: 2,
+                categoryId: DEFAULT_CATEGORY_ID,
+                completed: true,
+              },
+              {
+                id: "temporary-todo-1",
+                name: "仮Todo 1",
+                order: 0,
+                categoryId: "temporary-category",
+                completed: true,
+              },
+              {
+                id: "temporary-todo-2",
+                name: "仮Todo 2",
+                order: 1,
+                categoryId: "temporary-category",
+                completed: false,
+              },
+            ],
+            categories: [
+              ...DEFAULT_CATEGORIES_STORAGE,
+              {
+                id: "temporary-category",
+                name: "仮カテゴリ",
+                order: 1,
+              },
+            ],
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00+09:00",
+            ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
+          },
+        };
+
+        await navigateToTodoPage(page, { storage: appStorage });
+
+        // Act
+        await page.getByRole("button", { name: "グローバルメニュー" }).click();
+        await page
+          .getByRole("menuitem", { name: "すべて未完了に戻す" })
+          .click();
+
+        // Assert (現在カテゴリの表示が正しいこと)
+        await expect(
+          assertScope.getByRole("button", {
+            name: "完了状態を切り替え: 資料作成",
+          }),
+        ).toHaveAttribute("aria-pressed", "false");
+
+        await expect(
+          assertScope.getByRole("button", {
+            name: "完了状態を切り替え: メール確認",
+          }),
+        ).toHaveAttribute("aria-pressed", "false");
+
+        await expect(
+          assertScope.getByRole("button", {
+            name: "完了状態を切り替え: 会議資料確認",
+          }),
+        ).toHaveAttribute("aria-pressed", "false");
+
+        // Assert (別カテゴリの表示が正しいこと)
+        await assertScope.getByRole("button", { name: "仮カテゴリ" }).click();
+
+        await expect(
+          assertScope.getByRole("button", {
+            name: "完了状態を切り替え: 仮Todo 1",
+          }),
+        ).toHaveAttribute("aria-pressed", "false");
+
+        await expect(
+          assertScope.getByRole("button", {
+            name: "完了状態を切り替え: 仮Todo 2",
+          }),
+        ).toHaveAttribute("aria-pressed", "false");
+
+        // Assert (データストアへ登録されていること)
+        const persisted = await getAppStorage(page);
+
+        expect(persisted.version).toBe(1);
+        expect(persisted.data.todos).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              id: "dummy-todo",
+              completed: false,
+            }),
+            expect.objectContaining({
+              id: "complete-todo-1",
+              completed: false,
+            }),
+            expect.objectContaining({
+              id: "complete-todo-2",
+              completed: false,
+            }),
+            expect.objectContaining({
+              id: "temporary-todo-1",
+              completed: false,
+            }),
+            expect.objectContaining({
+              id: "temporary-todo-2",
+              completed: false,
+            }),
+          ]),
+        );
+
+        // 最終未完了日時が想定の日時で保存されていること
+        expect(persisted.data.lastMarkedAllIncompleteAt).toBe(
+          new Date("2026-08-24T03:00:00.000Z").toISOString(),
+        );
       });
 
       test("Todo の編集画面に現在のカテゴリ名が表示されること", async ({
@@ -401,7 +653,7 @@ test.describe("Todo ページのテスト", () => {
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -446,7 +698,7 @@ test.describe("Todo ページのテスト", () => {
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -526,7 +778,7 @@ test.describe("Todo ページのテスト", () => {
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -537,6 +789,78 @@ test.describe("Todo ページのテスト", () => {
         // Act
         await page.getByRole("button", { name: "編集開始" }).click();
         await page.getByRole("button", { name: "下へ移動: 資料作成" }).click();
+
+        // Assert (表示順が正しいこと)
+        const todoItems = page.getByRole("listitem");
+        await expect(todoItems).toHaveCount(2);
+        await expect(todoItems.nth(0)).toHaveAccessibleName("Todo: メール確認");
+        await expect(todoItems.nth(1)).toHaveAccessibleName("Todo: 資料作成");
+      });
+
+      test("Todo を上へ移動する操作を行ったら、対象の Todo が移動先 Todo よりも上に表示されること", async ({
+        page,
+      }) => {
+        // Arrange
+        const appStorage: AppStorage = {
+          version: 1,
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "work-1",
+                name: "資料作成",
+                order: 0,
+                categoryId: "work",
+                completed: false,
+              },
+              {
+                id: "daily-1",
+                name: "歯磨き",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                completed: false,
+              },
+              {
+                id: "work-2",
+                name: "メール確認",
+                order: 1,
+                categoryId: "work",
+                completed: false,
+              },
+              {
+                id: "daily-2",
+                name: "薬を飲む",
+                order: 3,
+                categoryId: DEFAULT_CATEGORY_ID,
+                completed: false,
+              },
+            ],
+            categories: [
+              {
+                id: DEFAULT_CATEGORY_ID,
+                name: DEFAULT_CATEGORY_NAME,
+                order: DEFAULT_CATEGORY_ORDER,
+              },
+              {
+                id: "work",
+                name: "仕事",
+                order: 1,
+              },
+            ],
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00+09:00",
+            ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
+          },
+        };
+        await navigateToTodoPage(page, { storage: appStorage });
+        await page.getByRole("button", { name: "仕事" }).click();
+
+        // Act
+        await page.getByRole("button", { name: "編集開始" }).click();
+        await page
+          .getByRole("button", { name: "上へ移動: メール確認" })
+          .click();
 
         // Assert (表示順が正しいこと)
         const todoItems = page.getByRole("listitem");
@@ -564,7 +888,7 @@ test.describe("Todo ページのテスト", () => {
             ],
             categories: DEFAULT_CATEGORIES_STORAGE,
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -646,7 +970,7 @@ test.describe("Todo ページのテスト", () => {
                 },
               ],
               lastMarkedAllIncompleteAt: new Date(
-                "2026-08-24T00:00:00",
+                "2026-08-24T00:00:00+09:00",
               ).toISOString(),
               lastSelectedCategoryId: "work",
             },
@@ -807,7 +1131,7 @@ test.describe("Todo ページのテスト", () => {
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -850,7 +1174,7 @@ test.describe("Todo ページのテスト", () => {
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -916,7 +1240,7 @@ test.describe("Todo ページのテスト", () => {
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -980,7 +1304,7 @@ test.describe("Todo ページのテスト", () => {
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -1067,7 +1391,7 @@ test.describe("Todo ページのテスト", () => {
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -1261,7 +1585,7 @@ test.describe("Todo ページのテスト", () => {
             ],
             categories: DEFAULT_CATEGORIES_STORAGE,
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -1313,7 +1637,7 @@ test.describe("Todo ページのテスト", () => {
             ],
             categories: DEFAULT_CATEGORIES_STORAGE,
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -1362,7 +1686,7 @@ test.describe("Todo ページのテスト", () => {
             ],
             categories: DEFAULT_CATEGORIES_STORAGE,
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
@@ -1413,7 +1737,7 @@ test.describe("Todo ページのテスト", () => {
             ],
             categories: DEFAULT_CATEGORIES_STORAGE,
             lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00",
+              "2026-08-24T00:00:00+09:00",
             ).toISOString(),
             lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
