@@ -143,17 +143,21 @@ export function TodoApp() {
       return;
     }
 
-    const reorderedVisibleTodos = reorderTodos(
-      visibleTodos,
-      startIndex,
-      endIndex,
-    );
-
-    const reorderedTodoMap = new Map(
-      reorderedVisibleTodos.map((todo) => [todo.id, todo]),
-    );
-
     updateAppStorage((current) => {
+      const currentVisibleTodos = current.data.todos
+        .filter((todo) => todo.categoryId === activeCategoryId)
+        .toSorted((a, b) => a.order - b.order);
+
+      const reorderedVisibleTodos = reorderTodos(
+        currentVisibleTodos,
+        startIndex,
+        endIndex,
+      );
+
+      const reorderedTodoMap = new Map(
+        reorderedVisibleTodos.map((todo) => [todo.id, todo]),
+      );
+
       const reorderedTodos = current.data.todos.map(
         (todo) => reorderedTodoMap.get(todo.id) ?? todo,
       );
