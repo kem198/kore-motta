@@ -61,8 +61,9 @@ export function CategoryList({
             <Button
               key={category.id}
               type="button"
-              variant={isSelected ? "default" : "secondary"}
+              variant={isSelected ? "default" : "muted"}
               size="sm"
+              // className="bg-muted shrink-0 rounded-full"
               className="shrink-0 rounded-full"
               aria-label={category.name}
               aria-pressed={isSelected}
@@ -75,11 +76,11 @@ export function CategoryList({
 
         <Button
           type="button"
-          variant="secondary"
+          variant="muted"
           size="icon-sm"
           aria-label={MESSAGES.actions.createCategory}
           onClick={onCreate}
-          className="border-border/60 bg-background shrink-0 rounded-full border"
+          className="shrink-0 rounded-full"
         >
           <PlusIcon />
         </Button>
