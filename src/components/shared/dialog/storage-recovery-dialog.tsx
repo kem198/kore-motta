@@ -35,7 +35,7 @@ export function StorageRecoveryDialog({
 
       toast.success(MESSAGES.toast.clipboardCopied);
     } catch {
-      toast.error(MESSAGES.toast.clipboardCopied);
+      toast.error(MESSAGES.toast.clipboardCopyError);
     }
   };
 
