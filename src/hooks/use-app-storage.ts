@@ -11,13 +11,27 @@ import {
 import { AppStorage, parseAppStorage } from "@/schemas/app-storage-schema";
 
 type UseAppStorageOptions = {
+  /** localStorage に使用するキー。省略時はデフォルトキーを使用する。 */
   storageKey?: string;
 };
 
 type UseAppStorageReturn = {
+  /** 現在の AppStorage。 */
   appStorage: AppStorage;
+  /** localStorage から AppStorage の読み込みが完了したかどうか。 */
   isLoaded: boolean;
+  /**
+   * 現在の AppStorage を基に更新する。
+   *
+   * @param updater 現在の AppStorage を受け取り、更新後の AppStorage を返す関数
+   */
   updateAppStorage: (updater: (current: AppStorage) => AppStorage) => void;
+  /**
+   * JSON 文字列から AppStorage を読み込み、現在の状態を置き換える。
+   *
+   * @param data インポートする AppStorage の JSON 文字列
+   * @throws JSON の解析または AppStorage のバリデーションに失敗した場合
+   */
   importAppStorage: (data: string) => void;
 };
 
