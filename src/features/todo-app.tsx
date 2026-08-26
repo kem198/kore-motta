@@ -148,17 +148,18 @@ export function TodoApp() {
       reorderedVisibleTodos.map((todo) => [todo.id, todo]),
     );
 
-    const reorderedTodos = appStorage.data.todos.map(
-      (todo) => reorderedTodoMap.get(todo.id) ?? todo,
-    );
-
-    updateAppStorage((current) => ({
-      ...current,
-      data: {
-        ...current.data,
-        todos: reorderedTodos,
-      },
-    }));
+    updateAppStorage((current) => {
+      const reorderedTodos = current.data.todos.map(
+        (todo) => reorderedTodoMap.get(todo.id) ?? todo,
+      );
+      return {
+        ...current,
+        data: {
+          ...current.data,
+          todos: reorderedTodos,
+        },
+      };
+    });
   };
 
   const handleImport = (data: string) => {
