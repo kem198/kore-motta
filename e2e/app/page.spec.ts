@@ -1562,7 +1562,26 @@ test.describe("Todo ページのテスト", () => {
         page,
       }) => {
         // Arrange
-        const corruptedText = "JSON ではない文字列";
+        const corruptedAppStorage: unknown = {
+          version: 1,
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "import-todo",
+                name: "カギ",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                memo: "家の鍵",
+                undefinedKey: "★ AppStorage 型に一致しないキー",
+              },
+            ],
+            categories: DEFAULT_CATEGORIES_STORAGE,
+          },
+        };
+
+        const corruptedText = JSON.stringify(corruptedAppStorage);
+
         await page.addInitScript(
           ([key, value]) => {
             window.localStorage.setItem(key, value);
