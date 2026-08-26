@@ -65,6 +65,13 @@ function markAllIncompleteIfNeeded(appStorage: AppStorage): AppStorage {
   };
 }
 
+export class AppStorageLoadError extends Error {
+  constructor(cause: unknown) {
+    super("Failed to load AppStorage.", { cause });
+    this.name = "AppStorageLoadError";
+  }
+}
+
 export function loadAppStorage(storageKey = APP_STORAGE_KEY): AppStorage {
   if (typeof window === "undefined") {
     return createInitialAppStorage();
@@ -72,13 +79,29 @@ export function loadAppStorage(storageKey = APP_STORAGE_KEY): AppStorage {
 
   const raw = window.localStorage.getItem(storageKey);
 
+  // localStorage にデータがない場合は初期データを作成して返す
   if (!raw) {
     const initialStorage = createInitialAppStorage();
     saveAppStorage(initialStorage, storageKey);
     return initialStorage;
   }
 
-  const appStorage = parseAppStorage(JSON.parse(raw));
+  // JSON として解釈できなければ例外をスローする
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch (error) {
+    throw new AppStorageLoadError(error);
+  }
+
+  // AppStorage 型として解釈できなければ例外をスローする
+  let appStorage: AppStorage;
+  try {
+    appStorage = parseAppStorage(parsed);
+  } catch (error) {
+    throw new AppStorageLoadError(error);
+  }
+
   return markAllIncompleteIfNeeded(appStorage);
 }
 

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import {
   APP_STORAGE_KEY,
+  AppStorageLoadError,
   createInitialAppStorage,
   loadAppStorage,
   saveAppStorage,
@@ -18,6 +19,8 @@ type UseAppStorageOptions = {
 type UseAppStorageReturn = {
   /** 現在の AppStorage。 */
   appStorage: AppStorage;
+  /** localStorage に保存された AppStorage が破損しているかどうか。 */
+  isStorageCorrupted: boolean;
   /** localStorage から AppStorage の読み込みが完了したかどうか。 */
   isLoaded: boolean;
   /**
@@ -33,6 +36,8 @@ type UseAppStorageReturn = {
    * @throws JSON の解析または AppStorage のバリデーションに失敗した場合
    */
   importAppStorage: (data: string) => void;
+  /** AppStorage を初期状態に戻す。 */
+  resetAppStorage: () => void;
 };
 
 export function useAppStorage(
@@ -44,6 +49,7 @@ export function useAppStorage(
     createInitialAppStorage(),
   );
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isStorageCorrupted, setIsStorageCorrupted] = useState(false);
 
   useEffect(() => {
     try {
@@ -51,15 +57,20 @@ export function useAppStorage(
 
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setAppStorage(loadedStorage);
-    } catch {
-      setAppStorage(createInitialAppStorage());
+    } catch (error) {
+      if (error instanceof AppStorageLoadError) {
+        setIsStorageCorrupted(true);
+      } else {
+        throw error;
+      }
     } finally {
       setIsLoaded(true);
     }
   }, [storageKey]);
 
   useEffect(() => {
-    if (!isLoaded) {
+    // localStorage のデータが破損していれば何もしない
+    if (!isLoaded || isStorageCorrupted) {
       return;
     }
 
@@ -68,7 +79,7 @@ export function useAppStorage(
     } catch {
       // ignore
     }
-  }, [appStorage, isLoaded, storageKey]);
+  }, [appStorage, isLoaded, isStorageCorrupted, storageKey]);
 
   const updateAppStorage = useCallback(
     (updater: (current: AppStorage) => AppStorage) => {
@@ -83,10 +94,18 @@ export function useAppStorage(
     setAppStorage(parsed);
   }, []);
 
+  const resetAppStorage = useCallback(() => {
+    const initialStorage = createInitialAppStorage();
+    setAppStorage(initialStorage);
+    setIsStorageCorrupted(false);
+  }, []);
+
   return {
     appStorage,
     isLoaded,
+    isStorageCorrupted,
     updateAppStorage,
     importAppStorage,
+    resetAppStorage,
   };
 }
