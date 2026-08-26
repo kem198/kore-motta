@@ -13,7 +13,11 @@ import {
 } from "@/constants/categories";
 import { MESSAGES } from "@/constants/messages";
 import { useAppStorage } from "@/hooks/use-app-storage";
-import { deleteCategory, reorderTodos } from "@/lib/app-storage";
+import {
+  deleteCategory,
+  getNextTodoOrder,
+  reorderTodos,
+} from "@/lib/app-storage";
 import { Category } from "@/schemas/category-schema";
 import { TodoFormValues } from "@/schemas/todo-form-schema";
 import { Todo } from "@/schemas/todo-schema";
@@ -69,15 +73,12 @@ export function TodoApp() {
 
     // 表示されているカテゴリ内の Todo を元に order を割り振る
     // 新規 Todo を末尾に追加するため
-    const order =
-      visibleTodos.length === 0
-        ? 0
-        : Math.max(...visibleTodos.map((todo) => todo.order)) + 1;
+    const nextOrder = getNextTodoOrder(visibleTodos);
 
     const newTodo: Todo = {
       id: crypto.randomUUID(),
       name: trimmedName,
-      order: order,
+      order: nextOrder,
       memo: values.memo?.trim() || undefined,
       categoryId: activeCategoryId,
       completed: false,

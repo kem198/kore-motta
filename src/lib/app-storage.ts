@@ -113,6 +113,21 @@ export function reorderTodos(
 }
 
 /**
+ * Todo を末尾に追加する際の order を返す。
+ * 表示されているカテゴリ内の Todo を元に order を割り振る
+ *
+ * @param todos 対象の Todo
+ * @returns 次に使用する order
+ */
+export function getNextTodoOrder(todos: Todo[]): number {
+  if (todos.length === 0) {
+    return 0;
+  }
+
+  return Math.max(...todos.map((todo) => todo.order)) + 1;
+}
+
+/**
  * 指定したカテゴリを削除し、そのカテゴリに属する Todo をデフォルトカテゴリへ移動する。
  *
  * 移動した Todo には、デフォルトカテゴリ内の既存 Todo の末尾から
