@@ -63,7 +63,6 @@ export function CategoryList({
               type="button"
               variant={isSelected ? "default" : "muted"}
               size="sm"
-              // className="bg-muted shrink-0 rounded-full"
               className="shrink-0 rounded-full"
               aria-label={category.name}
               aria-pressed={isSelected}
