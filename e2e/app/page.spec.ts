@@ -75,6 +75,7 @@ test.describe("Todo ページのテスト", () => {
             lastMarkedAllIncompleteAt: new Date(
               "2026-08-24T00:00:00",
             ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
         };
 
@@ -111,6 +112,7 @@ test.describe("Todo ページのテスト", () => {
             lastMarkedAllIncompleteAt: new Date(
               "2026-08-24T00:00:00",
             ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
         };
 
@@ -157,6 +159,7 @@ test.describe("Todo ページのテスト", () => {
               },
             ],
             lastMarkedAllIncompleteAt: lastMarkedAllIncompleteAt.toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
         };
 
@@ -223,6 +226,7 @@ test.describe("Todo ページのテスト", () => {
             lastMarkedAllIncompleteAt: new Date(
               "2026-08-24T00:00:00+09:00",
             ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
         };
 
@@ -306,6 +310,7 @@ test.describe("Todo ページのテスト", () => {
             lastMarkedAllIncompleteAt: new Date(
               "2026-08-24T00:00:00",
             ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
         };
         await navigateToTodoPage(page, { storage: appStorage });
@@ -343,6 +348,7 @@ test.describe("Todo ページのテスト", () => {
             lastMarkedAllIncompleteAt: new Date(
               "2026-08-24T00:00:00",
             ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
         };
         await navigateToTodoPage(page, { storage: appStorage });
@@ -397,6 +403,7 @@ test.describe("Todo ページのテスト", () => {
             lastMarkedAllIncompleteAt: new Date(
               "2026-08-24T00:00:00",
             ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
         };
         await navigateToTodoPage(page, { storage: appStorage });
@@ -441,6 +448,7 @@ test.describe("Todo ページのテスト", () => {
             lastMarkedAllIncompleteAt: new Date(
               "2026-08-24T00:00:00",
             ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
         };
         await navigateToTodoPage(page, { storage: appStorage });
@@ -520,6 +528,7 @@ test.describe("Todo ページのテスト", () => {
             lastMarkedAllIncompleteAt: new Date(
               "2026-08-24T00:00:00",
             ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
         };
         await navigateToTodoPage(page, { storage: appStorage });
@@ -557,6 +566,7 @@ test.describe("Todo ページのテスト", () => {
             lastMarkedAllIncompleteAt: new Date(
               "2026-08-24T00:00:00",
             ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
         };
         await navigateToTodoPage(page, { storage: appStorage });
@@ -611,6 +621,46 @@ test.describe("Todo ページのテスト", () => {
         );
         expect(defaultCategory).toBeDefined();
         expect(defaultCategory?.name).toBe(DEFAULT_CATEGORY_NAME);
+      });
+
+      test.describe("表示時のテスト", () => {
+        test("ページを開いたとき、最後に選択していたカテゴリが表示されること", async ({
+          page,
+        }) => {
+          // Arrange
+          const appStorage: AppStorage = {
+            version: 1,
+            data: {
+              settings: {},
+              todos: [],
+              categories: [
+                {
+                  id: DEFAULT_CATEGORY_ID,
+                  name: DEFAULT_CATEGORY_NAME,
+                  order: DEFAULT_CATEGORY_ORDER,
+                },
+                {
+                  id: "work",
+                  name: "仕事",
+                  order: 1,
+                },
+              ],
+              lastMarkedAllIncompleteAt: new Date(
+                "2026-08-24T00:00:00",
+              ).toISOString(),
+              lastSelectedCategoryId: "work",
+            },
+          };
+          await navigateToTodoPage(page, { storage: appStorage });
+
+          // Act
+          await navigateToTodoPage(page);
+
+          // Assert
+          await expect(
+            page.getByRole("button", { name: "仕事" }),
+          ).toHaveAttribute("aria-pressed", "true");
+        });
       });
     });
 
@@ -760,6 +810,7 @@ test.describe("Todo ページのテスト", () => {
             lastMarkedAllIncompleteAt: new Date(
               "2026-08-24T00:00:00",
             ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
         };
         await navigateToTodoPage(page, { storage: appStorage });
@@ -802,6 +853,7 @@ test.describe("Todo ページのテスト", () => {
             lastMarkedAllIncompleteAt: new Date(
               "2026-08-24T00:00:00",
             ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
         };
         await navigateToTodoPage(page, { storage: appStorage });
@@ -867,6 +919,7 @@ test.describe("Todo ページのテスト", () => {
             lastMarkedAllIncompleteAt: new Date(
               "2026-08-24T00:00:00",
             ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
         };
         await navigateToTodoPage(page, { storage: appStorage });
@@ -930,6 +983,7 @@ test.describe("Todo ページのテスト", () => {
             lastMarkedAllIncompleteAt: new Date(
               "2026-08-24T00:00:00",
             ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
         };
         await navigateToTodoPage(page, { storage: appStorage });
@@ -1016,6 +1070,7 @@ test.describe("Todo ページのテスト", () => {
             lastMarkedAllIncompleteAt: new Date(
               "2026-08-24T00:00:00",
             ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
         };
 
@@ -1065,6 +1120,7 @@ test.describe("Todo ページのテスト", () => {
               },
             ],
             lastMarkedAllIncompleteAt: lastMarkedAllIncompleteAt.toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
         };
 
@@ -1133,6 +1189,7 @@ test.describe("Todo ページのテスト", () => {
             lastMarkedAllIncompleteAt: new Date(
               "2026-08-24T00:00:00+09:00",
             ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
         };
 
@@ -1207,6 +1264,7 @@ test.describe("Todo ページのテスト", () => {
             lastMarkedAllIncompleteAt: new Date(
               "2026-08-24T00:00:00",
             ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
         };
         await navigateToTodoPage(page, { storage: appStorage });
@@ -1258,6 +1316,7 @@ test.describe("Todo ページのテスト", () => {
             lastMarkedAllIncompleteAt: new Date(
               "2026-08-24T00:00:00",
             ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
         };
         const backupText = JSON.stringify(backupAppStorage, null, 2);
@@ -1306,6 +1365,7 @@ test.describe("Todo ページのテスト", () => {
             lastMarkedAllIncompleteAt: new Date(
               "2026-08-24T00:00:00",
             ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
         };
         await navigateToTodoPage(page, { storage: appStorage });
@@ -1356,6 +1416,7 @@ test.describe("Todo ページのテスト", () => {
             lastMarkedAllIncompleteAt: new Date(
               "2026-08-24T00:00:00",
             ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
           },
         };
         await navigateToTodoPage(page, { storage: appStorage });
