@@ -1465,4 +1465,223 @@ test.describe("Todo ページのテスト", () => {
       });
     });
   });
+
+  test.describe("異常時のテスト", () => {
+    test.describe("localStorage の破損", () => {
+      test("AppStorage が不正な JSON の場合、元のデータが保持されていること", async ({
+        page,
+      }) => {
+        // Arrange
+        const corruptedText = "JSON ではない文字列";
+        await page.addInitScript(
+          ([key, value]) => {
+            window.localStorage.setItem(key, value);
+          },
+          [APP_STORAGE_KEY, corruptedText],
+        );
+
+        // Act
+        await page.goto("/");
+
+        // Assert (localStorage の元データが保持されていること)
+        const persistedData = await page.evaluate(
+          (key) => window.localStorage.getItem(key),
+          APP_STORAGE_KEY,
+        );
+
+        expect(persistedData).toBe(corruptedText);
+      });
+
+      test("AppStorage が不正な JSON の場合、初期化用ダイアログが表示されること", async ({
+        page,
+      }) => {
+        // Arrange
+        const corruptedText = "JSON ではない文字列";
+
+        await page.addInitScript(
+          ([key, value]) => {
+            window.localStorage.setItem(key, value);
+          },
+          [APP_STORAGE_KEY, corruptedText],
+        );
+
+        // Act
+        await page.goto("/");
+
+        // Assert
+        await expect(page.getByRole("alertdialog")).toBeVisible();
+      });
+
+      test("AppStorage が不正な JSON の場合、初期化用ダイアログで初期化するとデータが初期化されること", async ({
+        page,
+      }) => {
+        // Arrange
+        const corruptedAppStorage: unknown = {
+          version: 1,
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "import-todo",
+                name: "カギ",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                memo: "家の鍵",
+                undefinedKey: "★ AppStorage 型に一致しないキー",
+              },
+            ],
+            categories: DEFAULT_CATEGORIES_STORAGE,
+          },
+        };
+
+        await page.addInitScript(
+          ([key, value]) => {
+            window.localStorage.setItem(key, value);
+          },
+          [APP_STORAGE_KEY, JSON.stringify(corruptedAppStorage)],
+        );
+
+        await page.goto("/");
+
+        // Act
+        await page.getByRole("button", { name: "初期化" }).click();
+
+        // Assert
+        const persistedData = await getAppStorage(page);
+
+        expect(persistedData.data.todos).toEqual([]);
+        expect(persistedData.data.categories).toEqual(
+          DEFAULT_CATEGORIES_STORAGE,
+        );
+        expect(persistedData.data.lastSelectedCategoryId).toBe(
+          DEFAULT_CATEGORY_ID,
+        );
+      });
+
+      test("AppStorage のスキーマが不正な場合、元のデータが保持されていること", async ({
+        page,
+      }) => {
+        // Arrange
+        const corruptedAppStorage: unknown = {
+          version: 1,
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "import-todo",
+                name: "カギ",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                memo: "家の鍵",
+                undefinedKey: "★ AppStorage 型に一致しないキー",
+              },
+            ],
+            categories: DEFAULT_CATEGORIES_STORAGE,
+          },
+        };
+
+        const corruptedText = JSON.stringify(corruptedAppStorage);
+
+        await page.addInitScript(
+          ([key, value]) => {
+            window.localStorage.setItem(key, value);
+          },
+          [APP_STORAGE_KEY, corruptedText],
+        );
+
+        // Act
+        await page.goto("/");
+
+        // Assert (localStorage の元データが保持されていること)
+        const persistedData = await page.evaluate(
+          (key) => window.localStorage.getItem(key),
+          APP_STORAGE_KEY,
+        );
+
+        expect(persistedData).toBe(corruptedText);
+      });
+
+      test("AppStorage のスキーマが不正な場合、初期化用ダイアログが表示されること", async ({
+        page,
+      }) => {
+        // Arrange
+        const corruptedAppStorage: unknown = {
+          version: 1,
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "import-todo",
+                name: "カギ",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                memo: "家の鍵",
+                undefinedKey: "★ AppStorage 型に一致しないキー",
+              },
+            ],
+            categories: DEFAULT_CATEGORIES_STORAGE,
+          },
+        };
+
+        await page.addInitScript(
+          ([key, value]) => {
+            window.localStorage.setItem(key, value);
+          },
+          [APP_STORAGE_KEY, JSON.stringify(corruptedAppStorage)],
+        );
+
+        // Act
+        await page.goto("/");
+
+        // Assert
+        await expect(page.getByRole("alertdialog")).toBeVisible();
+      });
+
+      test("AppStorage のスキーマが不正な場合、初期化用ダイアログで初期化するとデータが初期化されること", async ({
+        page,
+      }) => {
+        // Arrange
+        const corruptedAppStorage: unknown = {
+          version: 1,
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "import-todo",
+                name: "カギ",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                memo: "家の鍵",
+                undefinedKey: "★ AppStorage 型に一致しないキー",
+              },
+            ],
+            categories: DEFAULT_CATEGORIES_STORAGE,
+          },
+        };
+
+        await page.addInitScript(
+          ([key, value]) => {
+            window.localStorage.setItem(key, value);
+          },
+          [APP_STORAGE_KEY, JSON.stringify(corruptedAppStorage)],
+        );
+
+        await page.goto("/");
+
+        // Act
+        await page.getByRole("button", { name: "初期化" }).click();
+
+        // Assert
+        const persistedData = await getAppStorage(page);
+
+        expect(persistedData.data.todos).toEqual([]);
+        expect(persistedData.data.categories).toEqual(
+          DEFAULT_CATEGORIES_STORAGE,
+        );
+        expect(persistedData.data.lastSelectedCategoryId).toBe(
+          DEFAULT_CATEGORY_ID,
+        );
+      });
+    });
+  });
 });

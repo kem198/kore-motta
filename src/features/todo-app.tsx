@@ -2,6 +2,7 @@
 
 import { CategoryList } from "@/components/shared/category-list";
 import { CategorySettingDialog } from "@/components/shared/dialog/category-setting-dialog";
+import { StorageRecoveryDialog } from "@/components/shared/dialog/storage-recovery-dialog";
 import { TodoAppHeader } from "@/components/shared/todo-app-header";
 import { TodoAppNavigation } from "@/components/shared/todo-app-navigation";
 import { TodoFormFooter } from "@/components/shared/todo-form-footer";
@@ -25,8 +26,14 @@ import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
 export function TodoApp() {
-  const { appStorage, isLoaded, updateAppStorage, importAppStorage } =
-    useAppStorage();
+  const {
+    appStorage,
+    isLoaded,
+    isStorageCorrupted,
+    updateAppStorage,
+    importAppStorage,
+    resetAppStorage,
+  } = useAppStorage();
 
   // 削除済みカテゴリが最後に選択されていた場合は、デフォルトカテゴリを使用する
   const activeCategoryId = appStorage.data.categories.some(
@@ -334,6 +341,11 @@ export function TodoApp() {
         onCreate={handleCreateCategory}
         onRename={handleRenameCategory}
         onDelete={handleDeleteCategory}
+      />
+
+      <StorageRecoveryDialog
+        open={isStorageCorrupted}
+        onReset={resetAppStorage}
       />
     </div>
   );
