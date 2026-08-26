@@ -7,6 +7,7 @@ import {
   AppStorageLoadError,
   createInitialAppStorage,
   loadAppStorage,
+  markAllIncompleteIfDateChanged,
   saveAppStorage,
 } from "@/lib/app-storage";
 import { AppStorage, parseAppStorage } from "@/schemas/app-storage-schema";
@@ -108,9 +109,10 @@ export function useAppStorage(
 
   const importAppStorage = useCallback((data: string) => {
     const parsed = parseAppStorage(JSON.parse(data));
+    const result = markAllIncompleteIfDateChanged(parsed);
 
-    setAppStorage(parsed);
-    setDidMarkAllIncomplete(false);
+    setAppStorage(result.appStorage);
+    setDidMarkAllIncomplete(result.didMarkAllIncomplete);
   }, []);
 
   const resetAppStorage = useCallback(() => {

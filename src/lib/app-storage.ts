@@ -49,7 +49,7 @@ type MarkAllIncompleteResult = {
  * @param now 現在日時
  * @returns 未完了化後の AppStorage と、未完了化を実行したかどうか
  */
-function markAllIncompleteIfDateChanged(
+export function markAllIncompleteIfDateChanged(
   appStorage: AppStorage,
   now = new Date(),
 ): MarkAllIncompleteResult {
