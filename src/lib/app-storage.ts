@@ -101,6 +101,16 @@ export function reorderTodos(
   startIndex: number,
   endIndex: number,
 ): Todo[] {
+  // 範囲外のインデックスでは splice が undefined を返すため、元の配列を返す
+  if (
+    startIndex < 0 ||
+    startIndex >= todos.length ||
+    endIndex < 0 ||
+    endIndex >= todos.length
+  ) {
+    return todos;
+  }
+
   const newTodos = [...todos];
   const [removed] = newTodos.splice(startIndex, 1);
 
