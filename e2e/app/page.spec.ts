@@ -544,7 +544,6 @@ test.describe("Todo ページのテスト", () => {
       }) => {
         // Arrange
         // localStorage を空にして、まだ初回訪問されていないことを再現する
-        await navigateToTodoPage(page);
         await page.evaluate(() => localStorage.clear());
 
         // Act
