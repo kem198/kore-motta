@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
 import { AppStorage } from "@/schemas/app-storage-schema";
 import {
   CircleDashedIcon,
+  CircleHelpIcon,
   DownloadIcon,
   EllipsisVerticalIcon,
   RefreshCcwIcon,
@@ -38,6 +39,7 @@ export function TodoAppHeader({
   className,
   ...props
 }: TodoAppHeaderProps) {
+  const [isHelpDialogOpen, setIsHelpDialogOpen] = React.useState(false);
   const [isImportDialogOpen, setIsImportDialogOpen] = React.useState(false);
   const [isExportDialogOpen, setIsExportDialogOpen] = React.useState(false);
 
@@ -60,8 +62,6 @@ export function TodoAppHeader({
         </h1>
 
         <div className="flex gap-1">
-          <HelpDialog />
-
           <DropdownMenu>
             <DropdownMenuTrigger
               render={
@@ -77,6 +77,15 @@ export function TodoAppHeader({
             />
 
             <DropdownMenuContent align="end" className="w-44">
+              <DropdownMenuGroup>
+                <DropdownMenuItem
+                  onClick={() => setIsHelpDialogOpen(true)}
+                  aria-label="使い方・利用規約"
+                >
+                  <CircleHelpIcon className="size-5" /> 使い方・利用規約
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
               {FEATURES.markAllIncomplete && (
                 <>
                   <DropdownMenuGroup>
@@ -120,6 +129,8 @@ export function TodoAppHeader({
           </DropdownMenu>
         </div>
       </header>
+
+      <HelpDialog open={isHelpDialogOpen} onOpenChange={setIsHelpDialogOpen} />
 
       <ImportDialog
         open={isImportDialogOpen}
