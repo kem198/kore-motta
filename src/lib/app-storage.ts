@@ -26,19 +26,20 @@ export function createInitialAppStorage(): AppStorage {
   };
 }
 
-/**
- * 前回リセット日時と現在のローカル日付を比較して、日付が変わっていなければ、そのまま返す。
- *
- * 日付が変わっていれば下記の処理を行われた AppStorage を返す。
- *
- * - todos を未完了にする
- * - lastMarkedAllIncompleteAt を現在日時にする
- * @param appStorage
- * @returns
- */
-function markAllIncompleteIfNeeded(appStorage: AppStorage): AppStorage {
-  const now = new Date();
+type MarkAllIncompleteResult = {
+  appStorage: AppStorage;
+  didMarkAllIncomplete: boolean;
+};
 
+/**
+ * 日付が変わっている場合、すべての Todo を未完了にする。
+ *
+ * 日付が変わっていない場合は、AppStorage を変更せずに返す。
+ */
+function markAllIncompleteIfNeeded(
+  appStorage: AppStorage,
+  now = new Date(),
+): MarkAllIncompleteResult {
   const lastMarkedAllIncompleteAt = new Date(
     appStorage.data.lastMarkedAllIncompleteAt,
   );
@@ -49,19 +50,25 @@ function markAllIncompleteIfNeeded(appStorage: AppStorage): AppStorage {
     now.getDate() === lastMarkedAllIncompleteAt.getDate();
 
   if (isSameDate) {
-    return appStorage;
+    return {
+      appStorage,
+      didMarkAllIncomplete: false,
+    };
   }
 
   return {
-    ...appStorage,
-    data: {
-      ...appStorage.data,
-      todos: appStorage.data.todos.map((todo) => ({
-        ...todo,
-        completed: false,
-      })),
-      lastMarkedAllIncompleteAt: now.toISOString(),
+    appStorage: {
+      ...appStorage,
+      data: {
+        ...appStorage.data,
+        todos: appStorage.data.todos.map((todo) => ({
+          ...todo,
+          completed: false,
+        })),
+        lastMarkedAllIncompleteAt: now.toISOString(),
+      },
     },
+    didMarkAllIncomplete: true,
   };
 }
 
@@ -75,9 +82,19 @@ export class AppStorageLoadError extends Error {
   }
 }
 
-export function loadAppStorage(storageKey = APP_STORAGE_KEY): AppStorage {
+type AppStorageLoadResult = {
+  appStorage: AppStorage;
+  didMarkAllIncomplete: boolean;
+};
+
+export function loadAppStorage(
+  storageKey = APP_STORAGE_KEY,
+): AppStorageLoadResult {
   if (typeof window === "undefined") {
-    return createInitialAppStorage();
+    return {
+      appStorage: createInitialAppStorage(),
+      didMarkAllIncomplete: false,
+    };
   }
 
   const raw = window.localStorage.getItem(storageKey);
@@ -86,7 +103,11 @@ export function loadAppStorage(storageKey = APP_STORAGE_KEY): AppStorage {
   if (!raw) {
     const initialStorage = createInitialAppStorage();
     saveAppStorage(initialStorage, storageKey);
-    return initialStorage;
+
+    return {
+      appStorage: initialStorage,
+      didMarkAllIncomplete: false,
+    };
   }
 
   // JSON として解釈できなければ例外をスローする
@@ -166,9 +187,9 @@ export function getNextTodoOrder(todos: Todo[]): number {
  * 移動した Todo には、デフォルトカテゴリ内の既存 Todo の末尾から
  * 連続した order を割り当てる。
  *
- * @param appStorage 現在の AppStorage
+ * @param data 現在の AppStorage の data
  * @param categoryId 削除するカテゴリの ID
- * @returns カテゴリ削除後の AppStorage
+ * @returns カテゴリ削除後の AppStorage の data
  */
 export function deleteCategory(
   data: AppStorage["data"],

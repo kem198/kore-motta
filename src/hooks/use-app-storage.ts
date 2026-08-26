@@ -25,6 +25,8 @@ type UseAppStorageReturn = {
   isStorageCorrupted: boolean;
   /** localStorage から AppStorage の読み込みが完了したかどうか。 */
   isLoaded: boolean;
+  /** AppStorage の読み込み時に Todo が未完了に戻されたかどうか。 */
+  didMarkAllIncomplete: boolean;
   /**
    * 現在の AppStorage を基に更新する。
    *
@@ -54,13 +56,15 @@ export function useAppStorage(
 
   const [isStorageCorrupted, setIsStorageCorrupted] = useState(false);
   const [corruptedStorage, setCorruptedStorage] = useState<string | null>(null);
+  const [didMarkAllIncomplete, setDidMarkAllIncomplete] = useState(false);
 
   useEffect(() => {
     try {
-      const loadedStorage = loadAppStorage(storageKey);
+      const result = loadAppStorage(storageKey);
 
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setAppStorage(loadedStorage);
+      setAppStorage(result.appStorage);
+      setDidMarkAllIncomplete(result.didMarkAllIncomplete);
     } catch (error) {
       if (error instanceof AppStorageLoadError) {
         setCorruptedStorage(error.rawData);
@@ -97,12 +101,14 @@ export function useAppStorage(
     const parsed = parseAppStorage(JSON.parse(data));
 
     setAppStorage(parsed);
+    setDidMarkAllIncomplete(false);
   }, []);
 
   const resetAppStorage = useCallback(() => {
     const initialStorage = createInitialAppStorage();
 
     setAppStorage(initialStorage);
+    setDidMarkAllIncomplete(false);
     setIsStorageCorrupted(false);
     setCorruptedStorage(null);
   }, []);
@@ -112,6 +118,7 @@ export function useAppStorage(
     corruptedStorage,
     isLoaded,
     isStorageCorrupted,
+    didMarkAllIncomplete,
     updateAppStorage,
     importAppStorage,
     resetAppStorage,
