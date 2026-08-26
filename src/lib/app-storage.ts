@@ -130,11 +130,7 @@ export function reorderTodos(
  * @returns 次に使用する order
  */
 export function getNextTodoOrder(todos: Todo[]): number {
-  if (todos.length === 0) {
-    return 0;
-  }
-
-  return Math.max(...todos.map((todo) => todo.order)) + 1;
+  return todos.reduce((max, todo) => Math.max(max, todo.order), -1) + 1;
 }
 
 /**
