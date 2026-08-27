@@ -362,7 +362,8 @@ export function TodoApp() {
 
       <StorageRecoveryDialog
         open={isStorageCorrupted}
-        corruptedStorage={corruptedStorage}
+        storage={corruptedStorage}
+        mode="corrupted"
         onReset={handleReset}
       />
     </>
