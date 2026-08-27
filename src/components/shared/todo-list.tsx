@@ -163,7 +163,7 @@ function TodoItem({
             </span>
 
             {todo.memo ? (
-              <p className="text-accent-foreground line-clamp-2 text-left text-sm leading-normal font-normal wrap-break-word">
+              <p className="text-muted-foreground group-hover:text-accent-foreground line-clamp-2 text-left text-sm leading-normal font-normal wrap-break-word">
                 {todo.memo}
               </p>
             ) : null}
