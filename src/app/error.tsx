@@ -2,11 +2,11 @@
 
 import { StorageRecoveryDialog } from "@/components/shared/dialog/storage-recovery-dialog";
 import { Button } from "@/components/ui/button";
+import { saveAppStorage } from "@/lib/app-storage";
 import {
   APP_STORAGE_KEY,
   createInitialAppStorage,
-  saveAppStorage,
-} from "@/lib/app-storage";
+} from "@/lib/app-storage-utils";
 import { useEffect, useState } from "react";
 
 export default function Error({

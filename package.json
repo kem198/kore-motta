@@ -9,8 +9,9 @@
     "start": "next start",
     "lint": "eslint",
     "format": "npx prettier . --write",
-    "test": "echo No tests available.",
     "clean": "rm -rf .next",
+    "test": "vitest run",
+    "test:watch": "vitest --watch",
     "e2e": "playwright test -c playwright.config.ts",
     "e2e:webkit": "playwright test -c playwright.webkit.config.ts --project=webkit",
     "e2e:all": "npm run e2e && npm run e2e:webkit",
@@ -45,7 +46,9 @@
     "prettier-plugin-organize-imports": "^4.3.0",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^4.1.11"
   },
   "volta": {
     "node": "24.19.0"
