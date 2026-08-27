@@ -54,7 +54,18 @@ export function TodoAppHeader({
         <h1 className="font-ubuntu-sans inline-flex w-auto cursor-default items-center gap-2 text-xl font-medium">
           {SITE_NAME}
         </h1>
+
         <div className="flex gap-1">
+          <Button
+            variant="ghost"
+            size="icon-lg"
+            aria-label="使い方・利用規約"
+            onClick={() => setIsHelpDialogOpen(true)}
+            className="rounded-full text-white hover:bg-white/10 hover:text-white"
+          >
+            <CircleHelpIcon className="size-5" />
+          </Button>
+
           <DropdownMenu>
             <DropdownMenuTrigger
               render={
@@ -70,15 +81,6 @@ export function TodoAppHeader({
             />
 
             <DropdownMenuContent align="end" className="w-44">
-              <DropdownMenuGroup>
-                <DropdownMenuItem
-                  onClick={() => setIsHelpDialogOpen(true)}
-                  aria-label="使い方・利用規約"
-                >
-                  <CircleHelpIcon /> 使い方・利用規約
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-              <DropdownMenuSeparator />
               {FEATURES.markAllIncomplete && (
                 <>
                   <DropdownMenuGroup>
@@ -89,9 +91,11 @@ export function TodoAppHeader({
                       <CircleDashedIcon /> すべて未完了に戻す
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
+
                   <DropdownMenuSeparator />
                 </>
               )}
+
               <DropdownMenuGroup>
                 <DropdownMenuItem
                   onClick={() => window.location.reload()}
@@ -100,7 +104,9 @@ export function TodoAppHeader({
                   <RefreshCcwIcon /> 更新する
                 </DropdownMenuItem>
               </DropdownMenuGroup>
+
               <DropdownMenuSeparator />
+
               <DropdownMenuGroup>
                 <DropdownMenuItem
                   onClick={() => setIsExportDialogOpen(true)}
