@@ -16,22 +16,24 @@ import { toast } from "sonner";
 
 type StorageRecoveryDialogProps = {
   open: boolean;
-  corruptedStorage: string | null;
+  storage: string | null;
+  mode: "corrupted" | "error";
   onReset: () => void;
 };
 
 export function StorageRecoveryDialog({
   open,
-  corruptedStorage,
+  storage,
+  mode,
   onReset,
 }: StorageRecoveryDialogProps) {
-  if (!corruptedStorage) {
-    return null;
-  }
-
   const handleCopy = async () => {
+    if (storage === null) {
+      return;
+    }
+
     try {
-      await navigator.clipboard.writeText(corruptedStorage);
+      await navigator.clipboard.writeText(storage);
 
       toast.success(MESSAGES.toast.clipboardCopied);
     } catch {
@@ -39,30 +41,46 @@ export function StorageRecoveryDialog({
     }
   };
 
+  const isCorrupted = mode === "corrupted";
+
   return (
     <AlertDialog open={open}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>保存データを読み込めませんでした</AlertDialogTitle>
+          <AlertDialogTitle>
+            アプリケーションで問題が発生しました
+          </AlertDialogTitle>
 
-          <AlertDialogDescription>
-            保存されているデータが壊れているため、アプリを使用できません。
-          </AlertDialogDescription>
+          {isCorrupted ? (
+            <AlertDialogDescription>
+              保存されているデータに問題があるため、アプリを使用できません。{" "}
+            </AlertDialogDescription>
+          ) : null}
         </AlertDialogHeader>
+
         <p>
-          登録内容を初期化するとアプリを使用できるようになります。
-          <br />
-          現在の登録内容をバックアップした上で「初期化」ボタンを押してください。
+          現在の登録内容をバックアップしてから、 「初期化」を押してください。
         </p>
 
-        <Button onClick={handleCopy}>コピー</Button>
+        {storage !== null ? (
+          <>
+            <Button onClick={handleCopy}>コピー</Button>
 
-        <JsonDisplay
-          jsonString={corruptedStorage}
-          scrollAreaProps={{
-            className: "max-h-[50dvh]",
-          }}
-        />
+            <JsonDisplay
+              jsonString={storage}
+              scrollAreaProps={{
+                className: "max-h-[50dvh]",
+              }}
+            />
+          </>
+        ) : (
+          <JsonDisplay
+            jsonString="保存データはありません。"
+            scrollAreaProps={{
+              className: "max-h-[50dvh]",
+            }}
+          />
+        )}
 
         <Alert variant="destructive">
           <AlertCircleIcon size={16} />
