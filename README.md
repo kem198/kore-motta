@@ -78,7 +78,7 @@ npm run start
 
 ### コードレビュー
 
-
+- [Gemini Code Assist on GitHub](https://docs.cloud.google.com/gemini/docs/code-review/review-repo-code?hl=ja)
 
 ### ドメイン管理・ホスティング
 
