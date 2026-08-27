@@ -4,7 +4,7 @@ import {
   DEFAULT_CATEGORY_NAME,
   DEFAULT_CATEGORY_ORDER,
 } from "@/constants/categories";
-import { APP_STORAGE_KEY } from "@/lib/app-storage";
+import { APP_STORAGE_KEY } from "@/lib/app-storage-utils";
 import { AppStorage } from "@/schemas/app-storage-schema";
 import { Category } from "@/schemas/category-schema";
 import { expect, Locator, Page, test } from "@playwright/test";

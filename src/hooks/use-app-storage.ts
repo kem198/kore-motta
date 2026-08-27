@@ -1,16 +1,17 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-
 import {
-  APP_STORAGE_KEY,
   AppStorageLoadError,
-  createInitialAppStorage,
   loadAppStorage,
-  markAllIncompleteIfDateChanged,
   saveAppStorage,
 } from "@/lib/app-storage";
+import {
+  APP_STORAGE_KEY,
+  createInitialAppStorage,
+  markAllIncompleteIfDateChanged,
+} from "@/lib/app-storage-utils";
 import { AppStorage, parseAppStorage } from "@/schemas/app-storage-schema";
+import { useCallback, useEffect, useState } from "react";
 
 type UseAppStorageOptions = {
   /** localStorage に使用するキー。省略時はデフォルトキーを使用する。 */
