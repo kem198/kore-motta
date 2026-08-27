@@ -2,7 +2,7 @@ import { TodoApp } from "@/features/todo-app";
 
 export default function Home() {
   return (
-    <div className="bg-muted relative h-dvh">
+    <div className="relative h-dvh bg-gray-200">
       <div
         className="bg-primary absolute inset-x-0 top-0"
 
