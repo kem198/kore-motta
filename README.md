@@ -4,7 +4,7 @@
 
 - 日付をまたいだとき、すべての Todo を未完了へリセットします。
 - カテゴリごとに Todo を管理します。
-- 登録データはブラウザの [localStorage](https://developer.mozilla.org/ja/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API) に保存します。
+- 登録内容はブラウザの [localStorage](https://developer.mozilla.org/ja/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API) に保存します。
 
 ## 公開中の URL
 
