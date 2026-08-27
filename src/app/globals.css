@@ -140,34 +140,3 @@
     overscroll-behavior-y: none;
   }
 }
-
-/* Window Controls Overlay: 指定した領域をドラッグ可能にする
- *
- * 利用例:
- *   <div className="wco-titlebar-padding">                // タイトルバー分の余白を追加
- *     <div className="h-[env(titlebar-area-height,0px)]"> // タイトルバー領域の高さを指定
- *       ...
- *     </div>
- *     <header className="wco-drag">        // ドラッグ可能な範囲を指定
- *       <Button className="wco-no-drag" /> // ドラッグを除外する場合 (UI ボタンなど)
- *     </header>
- *   </div>
- *
- * 合わせて PWA の設定へ下記を記述すると、アプリのタイトル名のみを隠した状態でヘッダー全体がドラッグ可能になる
- *
- * manifest.ts:
- *   display: "standalone",
- *   display_override: ["window-controls-overlay", "standalone"],
- */
-@utility wco-titlebar-height {
-  height: env(titlebar-area-height, 0px);
-}
-@utility wco-titlebar-padding {
-  padding-top: env(titlebar-area-height, 0px);
-}
-@utility wco-drag {
-  app-region: drag;
-}
-@utility wco-no-drag {
-  app-region: no-drag;
-}

@@ -47,8 +47,6 @@ export function TodoAppHeader({
       <header
         className={cn(
           "bg-primary flex items-center justify-between gap-2 px-3 py-1 font-normal text-white",
-          // アプリ内ヘッダーをドラッグ可能にする場合
-          // "wco-drag",
           className,
         )}
         {...props}
@@ -64,7 +62,7 @@ export function TodoAppHeader({
                   variant="ghost"
                   size="icon-lg"
                   aria-label="グローバルメニュー"
-                  className="wco-no-drag rounded-full text-white hover:bg-white/10 hover:text-white aria-expanded:bg-white/10 aria-expanded:text-white"
+                  className="rounded-full text-white hover:bg-white/10 hover:text-white aria-expanded:bg-white/10 aria-expanded:text-white"
                 >
                   <EllipsisVerticalIcon className="size-5" />
                 </Button>
