@@ -1,10 +1,15 @@
 import { TodoApp } from "@/features/todo-app";
+import { cn } from "@/lib/utils";
 
 export default function Home() {
   return (
     <div className="bg-muted relative h-dvh">
       <div
-        className="bg-primary wco-drag wco-titlebar-height absolute inset-x-0 top-0"
+        className={cn(
+          "bg-primary wco-titlebar-height absolute inset-x-0 top-0",
+          // PWA のタイトルバーをドラッグ可能にする場合
+          "wco-drag",
+        )}
         aria-hidden
       />
 

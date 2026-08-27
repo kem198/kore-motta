@@ -46,7 +46,9 @@ export function TodoAppHeader({
     <>
       <header
         className={cn(
-          "bg-primary wco-drag flex items-center justify-between gap-2 px-3 py-1 font-normal text-white",
+          "bg-primary flex items-center justify-between gap-2 px-3 py-1 font-normal text-white",
+          // アプリ内ヘッダーをドラッグ可能にする場合
+          // "wco-drag",
           className,
         )}
         {...props}
