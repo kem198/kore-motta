@@ -23,7 +23,6 @@ import {
   RefreshCcwIcon,
   UploadIcon,
 } from "lucide-react";
-import Link from "next/link";
 import * as React from "react";
 
 export type TodoAppHeaderProps = {
@@ -52,15 +51,9 @@ export function TodoAppHeader({
         )}
         {...props}
       >
-        <h1>
-          <Link
-            href="/"
-            className="font-ubuntu-sans inline-flex w-auto items-center gap-2 text-xl font-medium"
-          >
-            {SITE_NAME}
-          </Link>
+        <h1 className="font-ubuntu-sans inline-flex w-auto cursor-default items-center gap-2 text-xl font-medium">
+          {SITE_NAME}
         </h1>
-
         <div className="flex gap-1">
           <DropdownMenu>
             <DropdownMenuTrigger
