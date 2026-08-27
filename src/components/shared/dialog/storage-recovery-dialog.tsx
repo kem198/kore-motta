@@ -74,12 +74,9 @@ export function StorageRecoveryDialog({
             />
           </>
         ) : (
-          <JsonDisplay
-            jsonString="保存データはありません。"
-            scrollAreaProps={{
-              className: "max-h-[50dvh]",
-            }}
-          />
+          <Alert>
+            <AlertTitle>保存データはありません。</AlertTitle>
+          </Alert>
         )}
 
         <Alert variant="destructive">
