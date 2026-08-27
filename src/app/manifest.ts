@@ -6,9 +6,10 @@ export default function manifest(): MetadataRoute.Manifest {
     name: SITE_NAME,
     short_name: SITE_NAME,
     display: "standalone",
+    display_override: ["window-controls-overlay", "standalone"],
     start_url: "/",
     theme_color: "#446c6b",
-    background_color: "#fcfaf6",
+    background_color: "#fdfcf9",
     icons: [
       {
         src: "/assets/icons/icon-white-192x192.png",
