@@ -72,8 +72,13 @@ npm run start
 
 ### テスト・CI
 
+- [Vitest](https://vitest.dev/)
 - [Playwright](https://playwright.dev/)
 - [GitHub Actions](https://github.com/features/actions)
+
+### コードレビュー
+
+
 
 ### ドメイン管理・ホスティング
 
