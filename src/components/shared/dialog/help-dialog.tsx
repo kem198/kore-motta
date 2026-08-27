@@ -18,35 +18,65 @@ import {
 import { FEATURES } from "@/constants/features";
 import { cn } from "@/lib/utils";
 
-const TIPS = [
-  "ホーム画面やデスクトップに置いて、アプリとして起動できます。PC はブラウザの URL 欄に表示されているボタンから、スマートフォンはブラウザのメニューからインストールしてください。",
-  "カテゴリは名前順に並びます。「01_毎朝」「02_旅行前」などとすると、並び順を調整できます。",
+type ListItem = {
+  text: string;
+  children?: string[];
+};
+
+const TIPS: ListItem[] = [
+  {
+    text: "ホーム画面やデスクトップに置いて、アプリとして起動できます。",
+    children: [
+      "[PC Edge / Chrome]: URL 欄 > インストールボタン",
+      "[iPhone Safari]: 共有メニュー > ホーム画面に追加",
+      "[Android Chrome]: メニュー > ホーム画面に追加",
+    ],
+  },
+  {
+    text: "カテゴリは名前順に並びます。「01_毎朝」「02_旅行前」などとすると、並び順を調整できます。",
+  },
   ...(FEATURES.markAllIncomplete
     ? [
-        "メニューから、手動ですべてのアイテムを未完了に戻せます。日付をまたいでから利用する時などにお使いください。",
+        {
+          text: "メニューから、手動ですべてのアイテムを未完了に戻せます。日付をまたいでから利用する時などにお使いください。",
+        },
       ]
     : []),
 ];
 
-const ISSUES = [
-  "iPhone の Safari では、タスクの入力中に画面がスクロールし、追加したタスクが見づらくなる場合があります。必要に応じてページをスクロールしてください。",
-  "ページを開いたまま日付をまたいだ場合、未完了に戻りません。メニューから「更新する」をお試しください。",
+const ISSUES: ListItem[] = [
+  {
+    text: "iPhone の Safari では、タスクの入力中に画面がスクロールし、追加したタスクが見づらくなる場合があります。必要に応じてページをスクロールしてください。",
+  },
+  {
+    text: "ページを開いたまま日付をまたいだ場合、未完了に戻りません。メニューから「更新する」をお試しください。",
+  },
 ];
 
 const CHANGELOG = [
   {
     version: "v0.1.0",
     date: "2026-08-27",
-    changes: ["初回リリース"],
+    changes: [{ text: "初回リリース" }],
   },
 ];
 
-function UnorderedList({ items }: { items: string[] }) {
+function UnorderedList({ items }: { items: ListItem[] }) {
   return (
     <ul className="flex list-disc flex-col gap-2 pl-5">
       {items.map((item) => (
-        <li key={item} className="leading-relaxed">
-          {item}
+        <li key={item.text} className="leading-relaxed">
+          {item.text}
+
+          {item.children && (
+            <ul className="mt-2 flex list-[circle] flex-col gap-2 pl-5">
+              {item.children.map((child) => (
+                <li key={child} className="leading-relaxed">
+                  {child}
+                </li>
+              ))}
+            </ul>
+          )}
         </li>
       ))}
     </ul>
