@@ -143,7 +143,7 @@ function TodoItem({
       aria-label={`Todo: ${todo.name}`}
       className="flex w-full items-center gap-2"
     >
-      <div className="hover:bg-accent flex w-full min-w-0 items-center gap-2 rounded-md border border-transparent text-sm transition-colors duration-100">
+      <div className="group hover:bg-accent flex w-full min-w-0 items-center gap-2 rounded-md border border-transparent text-sm transition-colors duration-100">
         <div className="flex shrink-0 items-center justify-center p-2">
           <TodoToggle
             aria-label={`完了状態を切り替え: ${todo.name}`}
