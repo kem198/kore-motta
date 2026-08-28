@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DEFAULT_CATEGORY_ID } from "@/constants/categories";
 import { MESSAGES } from "@/constants/messages";
@@ -23,11 +23,10 @@ const handleWheel = (event: React.WheelEvent<HTMLDivElement>) => {
 
 function CategoryListSkeleton() {
   return (
-    <div className="flex gap-2 p-1 pb-3">
+    <div className="flex gap-2">
       <Skeleton className="h-8 w-16 shrink-0 rounded-full" />
       <Skeleton className="h-8 w-16 shrink-0 rounded-full" />
-      <Skeleton className="h-8 w-16 shrink-0 rounded-full" />
-      <Skeleton className="size-8 shrink-0 rounded-full" />
+      <Skeleton className="h-8 w-8 shrink-0 rounded-full" />
     </div>
   );
 }
@@ -53,7 +52,6 @@ export function CategoryList({
     return (
       <ScrollArea aria-label={MESSAGES.labels.categoryList}>
         <CategoryListSkeleton />
-        <ScrollBar orientation="horizontal" />
       </ScrollArea>
     );
   }
@@ -62,7 +60,7 @@ export function CategoryList({
 
   return (
     <ScrollArea aria-label={MESSAGES.labels.categoryList} onWheel={handleWheel}>
-      <div className="flex gap-2 p-1">
+      <div className="flex gap-2">
         {sortedCategories.map((category) => {
           const isSelected = category.id === activeCategoryId;
 

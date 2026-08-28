@@ -43,7 +43,7 @@ const TIPS: ListItem[] = [
 
 const ISSUES: ListItem[] = [
   {
-    text: "iPhone の Safari では、タスクの入力中に画面がスクロールし、追加したタスクが見づらくなる場合があります。お手数ですがページをスクロールしてご確認ください。",
+    text: "iPhone の Safari では、キーボードの表示により末尾のアイテムが見づらくなる場合があります。お手数ですがキーボードを閉じてご確認ください。",
   },
   {
     text: "ページを開いたまま日付をまたいだ場合、未完了に戻りません。メニューから「更新する」をお試しください。",
@@ -55,9 +55,12 @@ const CHANGELOG = [
     version: "v0.2.0",
     date: "2026-08-28",
     changes: [
-      { text: "「すべて未完了に戻す」機能の手動操作を追加しました。" },
+      { text: "すべて未完了に戻す操作を、手動でもできるようにしました。" },
       {
         text: "UI を調整し、アイテムの表示範囲を広げました。",
+      },
+      {
+        text: "UI を調整し、iOS Safari で起きる表示崩れを軽減しました。",
       },
     ],
   },
@@ -190,16 +193,16 @@ function Term() {
           <li>ブラウザ間のデータ移行などにも利用できます。</li>
         </ul>
 
-        <h4>注意点</h4>
+        <h4>注意事項</h4>
 
         <ul>
           <li>個人情報や機密情報など重要な情報は登録しないでください。</li>
           <li>
             ブラウザの「Cookie
-            と他のサイトデータ」を削除すると、登録した内容が削除されます。
+            と他のサイトデータ」を削除すると、登録した内容が削除されます。必要に応じて事前にバックアップを取ってください。
           </li>
           <li>
-            登録した内容を失いたくない場合は、あらかじめエクスポートしてください。
+            ブラウザの開発者ツールなどで保存データを直接変更した場合、データの内容によっては初期化されることがあります。
           </li>
         </ul>
       </section>
@@ -247,7 +250,7 @@ function Support() {
       <ul className="mt-0">
         <li>
           <a
-            href="https://github.com/kem198/kore-motta/tree/main"
+            href="https://github.com/kem198/kore-motta"
             target="_blank"
             rel="noopener noreferrer"
             className="underline underline-offset-4"
