@@ -24,6 +24,11 @@ type ListItem = {
   children?: string[];
 };
 
+type ListItemWithTitle = {
+  title: string;
+  items: ListItem[];
+};
+
 const TIPS: ListItem[] = [
   {
     text: "ホーム画面やデスクトップに置いて、アプリとして起動できます。",
@@ -50,6 +55,69 @@ const ISSUES: ListItem[] = [
   },
 ];
 
+const TERMS: ListItem[] = [
+  {
+    text: "本サービスは、予告なく内容の変更、停止、または終了する場合があります。",
+  },
+  {
+    text: "本サービスの利用によって生じた損害について、運営者は責任を負いません。",
+  },
+];
+
+const INFORMATION: ListItemWithTitle[] = [
+  {
+    title: "保存先",
+    items: [
+      {
+        text: "登録した内容は、お使いのブラウザに保存されます。",
+      },
+      {
+        text: "登録した内容を外部サービスへ送信・保存することはありません。",
+      },
+    ],
+  },
+  {
+    title: "バックアップ",
+    items: [
+      {
+        text: "登録した内容は、エクスポートしてバックアップできます。",
+      },
+      {
+        text: "バックアップした内容は、インポートして復元できます。",
+      },
+      {
+        text: "ブラウザ間のデータ移行などにも利用できます。",
+      },
+    ],
+  },
+  {
+    title: "注意事項",
+    items: [
+      {
+        text: "個人情報や機密情報など重要な情報は登録しないでください。",
+      },
+      {
+        text: "ブラウザの「Cookie と他のサイトデータ」を削除すると、登録した内容が削除されます。必要に応じて事前にバックアップを取ってください。",
+      },
+      {
+        text: "ブラウザの開発者ツールなどで保存データを直接変更した場合、データの内容によっては初期化されることがあります。",
+      },
+    ],
+  },
+];
+
+const OVERVIEW: ListItem[] = [
+  {
+    text: "日付が変わると、すべてのアイテムが未完了に戻ります。",
+  },
+  {
+    text: "持ち物や定期的な作業を登録しておくと、一日限りのチェックリストとして利用できます。",
+  },
+  {
+    text: "アイテムが期限切れとして溜まらないため、好みのタイミングで使えます。",
+  },
+];
+
 const CHANGELOG = [
   {
     version: "v0.2.1",
@@ -67,7 +135,9 @@ const CHANGELOG = [
     version: "v0.2.0",
     date: "2026-08-28",
     changes: [
-      { text: "すべて未完了に戻す操作を、手動でもできるようにしました。" },
+      {
+        text: "すべて未完了に戻す操作を、手動でもできるようにしました。",
+      },
       {
         text: "UI を調整し、アイテムの表示範囲を広げました。",
       },
@@ -83,21 +153,37 @@ const CHANGELOG = [
   },
 ];
 
-function UnorderedList({ items }: { items: ListItem[] }) {
+const TYPESET_CLASS_NAME = "typeset typeset-docs";
+const ACCORDION_ITEM_CLASS_NAME = "border-b px-4 last:border-b-0";
+const ACCORDION_TRIGGER_CLASS_NAME = "py-3";
+
+type UnorderedListProps = {
+  items: ListItem[];
+  className?: string;
+  codeStyle?: boolean;
+};
+
+function UnorderedList({
+  items,
+  className,
+  codeStyle: code = false,
+}: UnorderedListProps) {
   return (
-    <ul className="flex list-disc flex-col gap-0 pl-5">
+    <ul className={cn("flex list-disc flex-col gap-1 pl-5", className)}>
       {items.map((item) => (
         <li key={item.text} className="leading-relaxed">
           {item.text}
-
           {item.children && (
-            <ul className="mt-2 flex list-[circle] flex-col gap-2 pl-5">
+            <div
+              className={cn(
+                "mt-1 flex flex-col gap-1 pl-5",
+                code && "bg-muted/50 rounded-md border p-2 text-xs",
+              )}
+            >
               {item.children.map((child) => (
-                <li key={child} className="leading-relaxed">
-                  {child}
-                </li>
+                <div key={child}>{child}</div>
               ))}
-            </ul>
+            </div>
           )}
         </li>
       ))}
@@ -105,126 +191,141 @@ function UnorderedList({ items }: { items: ListItem[] }) {
   );
 }
 
-function HelpAccordion({ children }: { children: React.ReactNode }) {
+type HelpAccordionProps = {
+  children: React.ReactNode;
+  className?: string;
+};
+
+function HelpAccordion({ children, className }: HelpAccordionProps) {
   return (
-    <Accordion className="max-w-lg rounded-lg border">{children}</Accordion>
+    <Accordion className={cn("max-w-lg rounded-lg border", className)}>
+      {children}
+    </Accordion>
   );
 }
 
-function HelpAccordions() {
+type HelpAccordionItemProps = {
+  value: string;
+  title: string;
+  children: React.ReactNode;
+  className?: string;
+  triggerClassName?: string;
+  contentClassName?: string;
+};
+
+function HelpAccordionItem({
+  value,
+  title,
+  children,
+  className,
+  triggerClassName,
+  contentClassName,
+}: HelpAccordionItemProps) {
   return (
-    <HelpAccordion>
-      <AccordionItem value="tips" className="border-b px-4 last:border-b-0">
-        <AccordionTrigger className="py-3">便利な使い方</AccordionTrigger>
-
-        <AccordionContent>
-          <UnorderedList items={TIPS} />
-        </AccordionContent>
-      </AccordionItem>
-
-      <AccordionItem value="issues" className="border-b px-4 last:border-b-0">
-        <AccordionTrigger className="py-3">既知の問題</AccordionTrigger>
-
-        <AccordionContent>
-          <UnorderedList items={ISSUES} />
-        </AccordionContent>
-      </AccordionItem>
-
-      <AccordionItem
-        value="changelog"
-        className="border-b px-4 last:border-b-0"
+    <AccordionItem
+      value={value}
+      className={cn(ACCORDION_ITEM_CLASS_NAME, className)}
+    >
+      <AccordionTrigger
+        className={cn(ACCORDION_TRIGGER_CLASS_NAME, triggerClassName)}
       >
-        <AccordionTrigger className="py-3">更新履歴</AccordionTrigger>
+        {title}
+      </AccordionTrigger>
 
-        <AccordionContent>
-          <div className="flex flex-col gap-4">
-            {CHANGELOG.map((release) => (
-              <div key={release.version}>
-                <div className="font-mono">
-                  {release.version}
-                  <span className="text-muted-foreground">
-                    {" | "}
-                    {release.date}
-                  </span>
-                </div>
-
-                <UnorderedList items={release.changes} />
-              </div>
-            ))}
-          </div>
-        </AccordionContent>
-      </AccordionItem>
-    </HelpAccordion>
+      <AccordionContent className={contentClassName}>
+        {children}
+      </AccordionContent>
+    </AccordionItem>
   );
 }
 
-function InformationAccordions() {
+type InformationSectionProps = ListItemWithTitle & {
+  className?: string;
+};
+
+function InformationSection({
+  title,
+  items,
+  className,
+}: InformationSectionProps) {
   return (
-    <HelpAccordion>
-      <AccordionItem value="terms" className="border-b px-4 last:border-b-0">
-        <AccordionTrigger className="py-3">利用規約</AccordionTrigger>
+    <section className={cn("space-y-2", className)}>
+      <h4 className="font-medium">{title}</h4>
+      <UnorderedList items={items} />
+    </section>
+  );
+}
 
-        <AccordionContent>
-          <div className="typeset typeset-docs">
-            <ul>
-              <li>
-                本サービスは、予告なく内容の変更、停止、または終了する場合があります。
-              </li>
-              <li>
-                本サービスの利用によって生じた損害について、運営者は責任を負いません。
-              </li>
-            </ul>
-          </div>
-        </AccordionContent>
-      </AccordionItem>
+type HelpAccordionsProps = {
+  className?: string;
+};
 
-      <AccordionItem value="data" className="border-b px-4 last:border-b-0">
-        <AccordionTrigger className="py-3">
-          情報の取り扱いについて
-        </AccordionTrigger>
+function HelpAccordions({ className }: HelpAccordionsProps) {
+  return (
+    <HelpAccordion className={className}>
+      <HelpAccordionItem value="tips" title="便利な使い方">
+        <UnorderedList items={TIPS} codeStyle />
+      </HelpAccordionItem>
 
-        <AccordionContent>
-          <div className="typeset typeset-docs">
-            <h4>保存先</h4>
+      <HelpAccordionItem value="issues" title="既知の問題">
+        <UnorderedList items={ISSUES} />
+      </HelpAccordionItem>
 
-            <ul>
-              <li>登録した内容は、お使いのブラウザに保存されます。</li>
-              <li>
-                登録した内容を外部サービスへ送信・保存することはありません。
-              </li>
-            </ul>
+      <HelpAccordionItem value="changelog" title="更新履歴">
+        <div className="flex flex-col gap-4">
+          {CHANGELOG.map((release) => (
+            <div key={release.version}>
+              <div className="font-mono">
+                {release.version}
+                <span className="text-muted-foreground">
+                  {" | "}
+                  {release.date}
+                </span>
+              </div>
 
-            <h4>バックアップ</h4>
-
-            <ul>
-              <li>登録した内容は、エクスポートしてバックアップできます。</li>
-              <li>バックアップした内容は、インポートして復元できます。</li>
-              <li>ブラウザ間のデータ移行などにも利用できます。</li>
-            </ul>
-
-            <h4>注意事項</h4>
-
-            <ul>
-              <li>個人情報や機密情報など重要な情報は登録しないでください。</li>
-              <li>
-                ブラウザの「Cookie
-                と他のサイトデータ」を削除すると、登録した内容が削除されます。必要に応じて事前にバックアップを取ってください。
-              </li>
-              <li>
-                ブラウザの開発者ツールなどで保存データを直接変更した場合、データの内容によっては初期化されることがあります。
-              </li>
-            </ul>
-          </div>
-        </AccordionContent>
-      </AccordionItem>
+              <UnorderedList items={release.changes} />
+            </div>
+          ))}
+        </div>
+      </HelpAccordionItem>
     </HelpAccordion>
   );
 }
 
-function Term() {
+type InformationAccordionsProps = {
+  className?: string;
+};
+
+function InformationAccordions({ className }: InformationAccordionsProps) {
+  return (
+    <HelpAccordion className={className}>
+      <HelpAccordionItem value="terms" title="利用規約">
+        <UnorderedList items={TERMS} />
+      </HelpAccordionItem>
+
+      <HelpAccordionItem value="data" title="情報の取り扱いについて">
+        <div className="flex flex-col gap-4">
+          {INFORMATION.map((section) => (
+            <InformationSection
+              key={section.title}
+              title={section.title}
+              items={section.items}
+            />
+          ))}
+        </div>
+      </HelpAccordionItem>
+    </HelpAccordion>
+  );
+}
+
+type SummaryProps = {
+  className?: string;
+};
+
+function Summary({ className }: SummaryProps) {
   return (
     <div
-      className="typeset typeset-docs"
+      className={cn(TYPESET_CLASS_NAME, className)}
       style={{ "--typeset-size": "0.9rem" } as React.CSSProperties}
     >
       <section>
@@ -240,24 +341,25 @@ function Term() {
 
       <section>
         <h3>概要</h3>
-
-        <ul>
-          <li>日付が変わると、すべてのアイテムが未完了に戻ります。</li>
-          <li>
-            持ち物や定期的な作業を登録しておくと、一日限りのチェックリストとして利用できます。
-          </li>
-          <li>
-            アイテムが期限切れとして溜まらないため、好みのタイミングで使えます。
-          </li>
-        </ul>
+        <UnorderedList items={OVERVIEW} />
       </section>
     </div>
   );
 }
 
-function Support() {
+type SupportProps = {
+  className?: string;
+};
+
+function Support({ className }: SupportProps) {
   return (
-    <section className="text-muted-foreground typeset typeset-docs space-y-6 text-xs">
+    <section
+      className={cn(
+        TYPESET_CLASS_NAME,
+        "text-muted-foreground space-y-6 text-xs",
+        className,
+      )}
+    >
       <p className="mb-0 leading-relaxed">
         ご不明な点は{" "}
         <a
@@ -272,6 +374,7 @@ function Support() {
         <br />
         アプリが気に入ったら、応援していただけると励みになります！
       </p>
+
       <ul className="mt-0">
         <li>
           <a
@@ -306,14 +409,21 @@ function Support() {
 type HelpDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  className?: string;
+  bodyClassName?: string;
 };
 
-export function HelpDialog({ open, onOpenChange }: HelpDialogProps) {
+export function HelpDialog({
+  open,
+  onOpenChange,
+  className,
+  bodyClassName,
+}: HelpDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         initialFocus={false}
-        className="flex w-[90vw] max-w-xl! flex-col"
+        className={cn("flex w-[90vw] max-w-xl! flex-col", className)}
       >
         <DialogHeader>
           <DialogTitle>使い方・利用規約</DialogTitle>
@@ -323,9 +433,10 @@ export function HelpDialog({ open, onOpenChange }: HelpDialogProps) {
           className={cn(
             "flex flex-col gap-4 py-2",
             "-mx-4 max-h-[60dvh] overflow-y-auto px-4",
+            bodyClassName,
           )}
         >
-          <Term />
+          <Summary className="mb-4" />
           <InformationAccordions />
           <HelpAccordions />
           <Support />
