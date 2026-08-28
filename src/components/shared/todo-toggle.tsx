@@ -13,10 +13,12 @@ export function TodoToggle({ completed, className, ...rest }: TodoToggleProps) {
       pressed={completed}
       variant="outline"
       className={cn(
-        "aria-pressed:bg-primary size-9 cursor-pointer rounded-full transition-colors hover:bg-transparent",
+        "aria-pressed:bg-primary pointer-events-none size-9 rounded-full transition-colors",
         className,
       )}
       {...rest}
+      tabIndex={-1}
+      aria-hidden="true"
     >
       <CheckIcon
         className={cn(
