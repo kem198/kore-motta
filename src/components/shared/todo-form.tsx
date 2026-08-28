@@ -30,13 +30,12 @@ export function TodoForm({ onSubmit, ...props }: TodoFormProps) {
 
   return (
     <form id="todoadd" onSubmit={form.handleSubmit(handleSubmit)} {...props}>
-      <div className="flex items-end gap-2">
+      <div className="flex items-start gap-2">
         <Controller
           name="name"
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               <Input
                 {...field}
                 id="todoname"
@@ -44,6 +43,7 @@ export function TodoForm({ onSubmit, ...props }: TodoFormProps) {
                 placeholder={MESSAGES.placeholders.newItem}
                 autoComplete="off"
               />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />
