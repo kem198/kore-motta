@@ -1,7 +1,7 @@
 ---
 name: Cording Conventions
 description: プロジェクト共通のコーディング規約
-applyTo: "**/*.{js,jsx,ts,tsx}"
+applyTo: "**/*"
 ---
 
 **目次**
