@@ -297,7 +297,7 @@ export function TodoApp() {
 
   return (
     /* 1. 最外枠：スクロールを完全に禁止して画面枠を固定 */
-    <div className="flex h-svh w-svw flex-col overflow-hidden">
+    <div className="bg-background mx-auto flex h-svh w-full max-w-3xl flex-col overflow-hidden">
       {/* 2. 上部ヘッダー (スクロールせず固定) */}
       <header className="shrink-0">
         <TodoAppHeader
