@@ -58,7 +58,19 @@ function TodoItemActions({
   onReorder,
 }: TodoItemActionsProps) {
   if (!isEditing) {
-    return null;
+    return (
+      <div className="shrink-0 opacity-0 transition-opacity group-hover:opacity-100">
+        <TodoEditDialog todo={todo} categories={categories} onSave={onUpdate}>
+          <Button
+            variant="secondary"
+            size="icon"
+            aria-label={`編集: ${todo.name}`}
+          >
+            <PencilIcon />
+          </Button>
+        </TodoEditDialog>
+      </div>
+    );
   }
 
   return (
@@ -163,7 +175,7 @@ function TodoItem({
     <div
       role="listitem"
       aria-label={`Todo: ${todo.name}`}
-      className="flex w-full items-center gap-2"
+      className="group flex w-full items-center gap-2"
     >
       <div
         role="button"
@@ -177,7 +189,7 @@ function TodoItem({
             handleToggle();
           }
         }}
-        className="group hover:bg-accent flex w-full min-w-0 cursor-pointer items-center gap-2 rounded-md border border-transparent text-sm transition-colors duration-100"
+        className="hover:bg-accent flex w-full min-w-0 cursor-pointer items-center gap-2 rounded-md border border-transparent text-sm transition-colors duration-100"
       >
         <div className="flex shrink-0 items-center justify-center p-2">
           <TodoToggle completed={todo.completed} />
@@ -189,7 +201,7 @@ function TodoItem({
           </span>
 
           {todo.memo ? (
-            <p className="text-muted-foreground group-hover:text-accent-foreground line-clamp-2 text-left text-sm leading-normal font-normal wrap-break-word">
+            <p className="text-muted-foreground line-clamp-2 text-left text-sm leading-normal font-normal wrap-break-word">
               {todo.memo}
             </p>
           ) : null}
