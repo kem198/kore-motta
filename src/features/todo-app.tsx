@@ -324,10 +324,9 @@ export function TodoApp() {
         />
       </main>
 
-      {/* CategoryList の内部でリスト表示に p-1 を指定しているので pl-3 を付けて幅を揃えている */}
       <footer className="bg-background shrink-0">
         <Separator />
-        <div className="px-4 py-3 pl-3">
+        <div className="px-4 py-3">
           <div className="flex items-center gap-3">
             <div className="min-w-0 flex-1">
               <CategoryList
