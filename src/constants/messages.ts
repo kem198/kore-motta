@@ -47,8 +47,8 @@ export const MESSAGES = {
   },
 
   placeholders: {
-    title: "財布",
-    memo: "カバンのポケットに入れる",
+    title: "スマホ",
+    memo: "充電しておく",
     newItem: "新しいアイテム",
     categoryName: "毎朝",
   },
