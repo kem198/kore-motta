@@ -672,6 +672,88 @@ test.describe("Todo ページのテスト", () => {
         ).toContainText("仕事");
       });
 
+      test("Todo の編集画面でカテゴリ名を変更すると、更新ボタンが有効になること", async ({
+        page,
+      }) => {
+        // Arrange
+        const appStorage: AppStorage = {
+          version: 1,
+          data: {
+            settings: {},
+            todos: [],
+            categories: [
+              {
+                id: DEFAULT_CATEGORY_ID,
+                name: DEFAULT_CATEGORY_NAME,
+                order: DEFAULT_CATEGORY_ORDER,
+              },
+              {
+                id: "work",
+                name: "仕事",
+                order: 1,
+              },
+            ],
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00+09:00",
+            ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
+          },
+        };
+
+        await navigateToTodoPage(page, { storage: appStorage });
+
+        await page.getByRole("button", { name: "編集開始" }).click();
+        await page.getByRole("button", { name: "仕事" }).click();
+        await page.getByRole("button", { name: "仕事" }).click();
+
+        const nameInput = page.getByRole("textbox", { name: "カテゴリ名" });
+        const updateButton = page.getByRole("button", { name: "更新" });
+
+        // Act
+        await nameInput.fill("営業");
+
+        // Assert
+        await expect(updateButton).toBeEnabled();
+      });
+
+      test("Todo の編集画面でカテゴリ名に変更がなければ更新ボタンが無効であること", async ({
+        page,
+      }) => {
+        // Arrange
+        const appStorage: AppStorage = {
+          version: 1,
+          data: {
+            settings: {},
+            todos: [],
+            categories: [
+              {
+                id: DEFAULT_CATEGORY_ID,
+                name: DEFAULT_CATEGORY_NAME,
+                order: DEFAULT_CATEGORY_ORDER,
+              },
+              {
+                id: "work",
+                name: "仕事",
+                order: 1,
+              },
+            ],
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00+09:00",
+            ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
+          },
+        };
+
+        await navigateToTodoPage(page, { storage: appStorage });
+
+        await page.getByRole("button", { name: "編集開始" }).click();
+        await page.getByRole("button", { name: "仕事" }).click();
+        await page.getByRole("button", { name: "仕事" }).click();
+
+        // Assert
+        await expect(page.getByRole("button", { name: "更新" })).toBeDisabled();
+      });
+
       test("Todo を別のカテゴリへ移動できること", async ({ page }) => {
         // Arrange
         const appStorage: AppStorage = {
@@ -1200,6 +1282,44 @@ test.describe("Todo ページのテスト", () => {
         );
         expect(updatedCategory).toBeDefined();
         expect(updatedCategory?.name).toBe("営業");
+      });
+
+      test("カテゴリ名に変更がなければ更新ボタンが無効であること", async ({
+        page,
+      }) => {
+        // Arrange
+        const appStorage: AppStorage = {
+          version: 1,
+          data: {
+            settings: {},
+            todos: [],
+            categories: [
+              {
+                id: DEFAULT_CATEGORY_ID,
+                name: DEFAULT_CATEGORY_NAME,
+                order: DEFAULT_CATEGORY_ORDER,
+              },
+              {
+                id: "work",
+                name: "仕事",
+                order: 1,
+              },
+            ],
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00+09:00",
+            ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
+          },
+        };
+        await navigateToTodoPage(page, { storage: appStorage });
+
+        // Act
+        await page.getByRole("button", { name: "編集開始" }).click();
+        await page.getByRole("button", { name: "仕事" }).click();
+        await page.getByRole("button", { name: "仕事" }).click();
+
+        // Assert
+        await expect(page.getByRole("button", { name: "更新" })).toBeDisabled();
       });
     });
 

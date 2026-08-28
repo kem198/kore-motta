@@ -73,6 +73,10 @@ export function CategorySettingDialog({
     },
   });
 
+  const {
+    formState: { isDirty },
+  } = form;
+
   useEffect(() => {
     if (open) {
       form.reset({
@@ -212,7 +216,7 @@ export function CategorySettingDialog({
             <Button
               type="submit"
               form="category-setting"
-              disabled={!isCreateMode && isDefaultCategory}
+              disabled={!isCreateMode && (isDefaultCategory || !isDirty)}
             >
               {isCreateMode ? MESSAGES.actions.add : MESSAGES.actions.update}
             </Button>
