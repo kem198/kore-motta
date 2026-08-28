@@ -260,7 +260,7 @@ function Summary({ className }: SummaryProps) {
       </section>
 
       <section>
-        <h3>概要</h3>
+        <h3>特徴</h3>
         <UnorderedList items={OVERVIEW} />
       </section>
     </div>
