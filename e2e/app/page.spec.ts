@@ -360,6 +360,7 @@ test.describe("Todo ページのテスト", () => {
         };
         await navigateToTodoPage(page, { storage: appStorage });
 
+        await page.getByRole("button", { name: "編集開始" }).click();
         await page.getByRole("button", { name: "編集: dummy" }).click();
         await page.getByRole("textbox", { name: "タイトル *" }).fill("カギ");
         await page.getByRole("textbox", { name: "メモ" }).fill("家の鍵");
@@ -662,6 +663,7 @@ test.describe("Todo ページのテスト", () => {
         await page.getByRole("button", { name: "仕事" }).click();
 
         // Act
+        await page.getByRole("button", { name: "編集開始" }).click();
         await page.getByRole("button", { name: "編集: 資料作成" }).click();
 
         // Assert
@@ -706,6 +708,7 @@ test.describe("Todo ページのテスト", () => {
         await navigateToTodoPage(page, { storage: appStorage });
 
         // Act
+        await page.getByRole("button", { name: "編集開始" }).click();
         await page.getByRole("button", { name: "編集: 資料作成" }).click();
         await page.getByRole("combobox", { name: "カテゴリ" }).click();
         await page.getByRole("option", { name: "仕事" }).click();
