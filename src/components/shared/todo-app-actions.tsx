@@ -3,14 +3,18 @@ import { MESSAGES } from "@/constants/messages";
 import { SquarePenIcon } from "lucide-react";
 
 type TodoAppActionsProps = {
+  categoryCount: number;
   isEditing: boolean;
   onToggleEditing: () => void;
 };
 
 export function TodoAppActions({
+  categoryCount,
   isEditing,
   onToggleEditing,
 }: TodoAppActionsProps) {
+  const shouldHideLabel = categoryCount >= 3;
+
   return (
     <div className="flex gap-2">
       <Button
@@ -21,7 +25,8 @@ export function TodoAppActions({
         }
       >
         <SquarePenIcon />
-        {isEditing ? MESSAGES.actions.done : null}
+        {!shouldHideLabel &&
+          (isEditing ? MESSAGES.actions.done : MESSAGES.actions.edit)}
       </Button>
     </div>
   );
