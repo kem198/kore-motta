@@ -24,25 +24,25 @@ import {
 } from "lucide-react";
 import * as React from "react";
 
-export type TodoAppHeaderProps = {
+export type TodoAppHeaderContentProps = {
   appStorage: AppStorage;
   onMarkAllIncomplete: () => void;
   onImport: (data: string) => boolean;
 } & React.ComponentPropsWithoutRef<"header">;
 
-export function TodoAppHeader({
+export function TodoAppHeaderContent({
   appStorage,
   onMarkAllIncomplete,
   onImport,
   className,
   ...props
-}: TodoAppHeaderProps) {
+}: TodoAppHeaderContentProps) {
   const [isHelpDialogOpen, setIsHelpDialogOpen] = React.useState(false);
   const [isImportDialogOpen, setIsImportDialogOpen] = React.useState(false);
   const [isExportDialogOpen, setIsExportDialogOpen] = React.useState(false);
 
   return (
-    <header
+    <div
       className={cn(
         "bg-primary flex items-center justify-between gap-2 px-3 py-1 font-normal text-white",
         className,
@@ -135,6 +135,6 @@ export function TodoAppHeader({
         onOpenChange={setIsExportDialogOpen}
         appStorage={appStorage}
       />
-    </header>
+    </div>
   );
 }
