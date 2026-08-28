@@ -87,10 +87,6 @@ export function TodoApp() {
 
   const handleSelectCategory = (categoryId: string) => {
     if (categoryId === activeCategoryId) {
-      if (isEditing) {
-        handleOpenCategoryEditDialog();
-      }
-
       return;
     }
 
@@ -327,13 +323,12 @@ export function TodoApp() {
       <footer className="bg-background shrink-0">
         <Separator />
         <div className="px-4 py-3">
-          <div className="flex items-center gap-3">
-            <div className="min-w-0 flex-1">
+          <div className="flex flex-col gap-3">
+            <div className="w-full min-w-0">
               <CategoryList
                 categories={appStorage.data.categories}
                 activeCategoryId={activeCategoryId}
                 isLoaded={isLoaded}
-                isEditing={isEditing}
                 onSelect={handleSelectCategory}
                 onCreate={() =>
                   setCategoryDialog({
@@ -345,9 +340,9 @@ export function TodoApp() {
             </div>
 
             <TodoAppNavigation
-              categoryCount={appStorage.data.categories.length}
               isEditing={isEditing}
               onToggleEditing={() => setIsEditing((prev) => !prev)}
+              onOpenCategorySetting={handleOpenCategoryEditDialog}
             />
           </div>
         </div>
