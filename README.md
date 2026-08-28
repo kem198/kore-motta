@@ -3,7 +3,7 @@
 [Kore Motta?](https://kore-motta.kem198.net) は、日頃の「これ持った？」を確認するためのシンプルな Todo アプリです。
 
 - 日付をまたいだとき、すべての Todo を未完了へ戻します。
-- カテゴリごとに Todo を管理します。
+- アイテムが期限切れとして溜まらないため、好みのタイミングで使えます。
 - 登録内容はブラウザの [localStorage](https://developer.mozilla.org/ja/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API) に保存します。
 
 ## 公開中の URL
