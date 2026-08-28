@@ -1,12 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { MESSAGES } from "@/constants/messages";
-import { AppStorage } from "@/schemas/app-storage-schema";
 import { SquarePenIcon } from "lucide-react";
 
 type TodoAppNavigationProps = {
   categoryCount: number;
   isEditing: boolean;
-  appStorage: AppStorage;
   onToggleEditing: () => void;
 };
 
