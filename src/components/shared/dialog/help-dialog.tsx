@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { FEATURES } from "@/constants/features";
 import { cn } from "@/lib/utils";
+import { SquareArrowOutUpRightIcon } from "lucide-react";
 
 type ListItem = {
   text: string;
@@ -230,6 +231,40 @@ function Term() {
   );
 }
 
+function Support() {
+  return (
+    <section className="text-muted-foreground typeset typeset-docs space-y-6 text-xs">
+      <p className="mb-0">
+        アプリが気に入ったら、応援していただけると励みになります。
+      </p>
+
+      <ul className="mt-0">
+        <li>
+          <a
+            href="https://github.com/kem198/kore-motta/tree/main"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-4"
+          >
+            スターをつける{" "}
+            <SquareArrowOutUpRightIcon className="inline size-3.5 align-middle" />
+          </a>
+        </li>
+        {/* <li>
+          <a
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-4"
+          >
+            おやつをおごる
+          </a>
+        </li> */}
+      </ul>
+    </section>
+  );
+}
+
 type HelpDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -254,6 +289,7 @@ export function HelpDialog({ open, onOpenChange }: HelpDialogProps) {
         >
           <Term />
           <HelpAccordions />
+          <Support></Support>
         </div>
 
         <DialogFooter>
