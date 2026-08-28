@@ -340,7 +340,6 @@ export function TodoApp() {
             </div>
 
             <TodoAppNavigation
-              categoryCount={appStorage.data.categories.length}
               isEditing={isEditing}
               onToggleEditing={() => setIsEditing((prev) => !prev)}
               onOpenCategorySetting={handleOpenCategoryEditDialog}

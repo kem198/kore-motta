@@ -3,7 +3,6 @@ import { MESSAGES } from "@/constants/messages";
 import { FolderEditIcon, SquarePenIcon } from "lucide-react";
 
 type TodoAppNavigationProps = {
-  categoryCount: number;
   isEditing: boolean;
   onToggleEditing: () => void;
   onOpenCategorySetting: () => void;
