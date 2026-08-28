@@ -157,9 +157,14 @@ const TYPESET_CLASS_NAME = "typeset typeset-docs";
 const ACCORDION_ITEM_CLASS_NAME = "border-b px-4 last:border-b-0";
 const ACCORDION_TRIGGER_CLASS_NAME = "py-3";
 
-function UnorderedList({ items }: { items: ListItem[] }) {
+type UnorderedListProps = {
+  items: ListItem[];
+  className?: string;
+};
+
+function UnorderedList({ items, className }: UnorderedListProps) {
   return (
-    <ul className="flex list-disc flex-col gap-1 pl-5">
+    <ul className={cn("flex list-disc flex-col gap-1 pl-5", className)}>
       {items.map((item) => (
         <li key={item.text} className="leading-relaxed">
           {item.text}
@@ -179,44 +184,78 @@ function UnorderedList({ items }: { items: ListItem[] }) {
   );
 }
 
-function HelpAccordion({ children }: { children: React.ReactNode }) {
+type HelpAccordionProps = {
+  children: React.ReactNode;
+  className?: string;
+};
+
+function HelpAccordion({ children, className }: HelpAccordionProps) {
   return (
-    <Accordion className="max-w-lg rounded-lg border">{children}</Accordion>
+    <Accordion className={cn("max-w-lg rounded-lg border", className)}>
+      {children}
+    </Accordion>
   );
 }
+
+type HelpAccordionItemProps = {
+  value: string;
+  title: string;
+  children: React.ReactNode;
+  className?: string;
+  triggerClassName?: string;
+  contentClassName?: string;
+};
 
 function HelpAccordionItem({
   value,
   title,
   children,
-}: {
-  value: string;
-  title: string;
-  children: React.ReactNode;
-}) {
+  className,
+  triggerClassName,
+  contentClassName,
+}: HelpAccordionItemProps) {
   return (
-    <AccordionItem value={value} className={ACCORDION_ITEM_CLASS_NAME}>
-      <AccordionTrigger className={ACCORDION_TRIGGER_CLASS_NAME}>
+    <AccordionItem
+      value={value}
+      className={cn(ACCORDION_ITEM_CLASS_NAME, className)}
+    >
+      <AccordionTrigger
+        className={cn(ACCORDION_TRIGGER_CLASS_NAME, triggerClassName)}
+      >
         {title}
       </AccordionTrigger>
 
-      <AccordionContent>{children}</AccordionContent>
+      <AccordionContent className={contentClassName}>
+        {children}
+      </AccordionContent>
     </AccordionItem>
   );
 }
 
-function InformationSection({ title, items }: InformationSection) {
+type InformationSectionProps = InformationSection & {
+  className?: string;
+};
+
+function InformationSection({
+  title,
+  items,
+  className,
+}: InformationSectionProps) {
   return (
-    <section className="space-y-2">
+    <section className={cn("space-y-2", className)}>
       <h4 className="font-medium">{title}</h4>
       <UnorderedList items={items} />
     </section>
   );
 }
 
-function HelpAccordions() {
+type HelpAccordionsProps = {
+  className?: string;
+};
+
+function HelpAccordions({ className }: HelpAccordionsProps) {
   return (
-    <HelpAccordion>
+    <HelpAccordion className={className}>
       <HelpAccordionItem value="tips" title="便利な使い方">
         <UnorderedList items={TIPS} />
       </HelpAccordionItem>
@@ -246,9 +285,13 @@ function HelpAccordions() {
   );
 }
 
-function InformationAccordions() {
+type InformationAccordionsProps = {
+  className?: string;
+};
+
+function InformationAccordions({ className }: InformationAccordionsProps) {
   return (
-    <HelpAccordion>
+    <HelpAccordion className={className}>
       <HelpAccordionItem value="terms" title="利用規約">
         <UnorderedList items={TERMS} />
       </HelpAccordionItem>
@@ -268,14 +311,19 @@ function InformationAccordions() {
   );
 }
 
-function Summary() {
+type SummaryProps = {
+  className?: string;
+};
+
+function Summary({ className }: SummaryProps) {
   return (
     <div
-      className={TYPESET_CLASS_NAME}
+      className={cn(TYPESET_CLASS_NAME, className)}
       style={{ "--typeset-size": "0.9rem" } as React.CSSProperties}
     >
       <section>
         <h3>このアプリは何？</h3>
+
         <p>
           <span className="font-ubuntu-sans font-medium">Kore Motta?</span>{" "}
           は、日頃の「これ持った？」を確認するシンプルな Todo アプリです。
@@ -292,12 +340,17 @@ function Summary() {
   );
 }
 
-function Support() {
+type SupportProps = {
+  className?: string;
+};
+
+function Support({ className }: SupportProps) {
   return (
     <section
       className={cn(
         TYPESET_CLASS_NAME,
         "text-muted-foreground space-y-6 text-xs",
+        className,
       )}
     >
       <p className="mb-0 leading-relaxed">
@@ -349,14 +402,27 @@ function Support() {
 type HelpDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  className?: string;
+  contentClassName?: string;
+  bodyClassName?: string;
 };
 
-export function HelpDialog({ open, onOpenChange }: HelpDialogProps) {
+export function HelpDialog({
+  open,
+  onOpenChange,
+  className,
+  contentClassName,
+  bodyClassName,
+}: HelpDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         initialFocus={false}
-        className="flex w-[90vw] max-w-xl! flex-col"
+        className={cn(
+          "flex w-[90vw] max-w-xl! flex-col",
+          className,
+          contentClassName,
+        )}
       >
         <DialogHeader>
           <DialogTitle>使い方・利用規約</DialogTitle>
@@ -366,9 +432,10 @@ export function HelpDialog({ open, onOpenChange }: HelpDialogProps) {
           className={cn(
             "flex flex-col gap-4 py-2",
             "-mx-4 max-h-[60dvh] overflow-y-auto px-4",
+            bodyClassName,
           )}
         >
-          <Summary />
+          <Summary className="mb-4" />
           <InformationAccordions />
           <HelpAccordions />
           <Support />
