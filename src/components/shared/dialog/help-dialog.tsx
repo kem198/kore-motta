@@ -24,7 +24,7 @@ type ListItem = {
   children?: string[];
 };
 
-type InformationSectionItem = {
+type ListItemWithTitle = {
   title: string;
   items: ListItem[];
 };
@@ -64,7 +64,7 @@ const TERMS: ListItem[] = [
   },
 ];
 
-const INFORMATION: InformationSectionItem[] = [
+const INFORMATION: ListItemWithTitle[] = [
   {
     title: "保存先",
     items: [
@@ -239,7 +239,7 @@ function HelpAccordionItem({
   );
 }
 
-type InformationSectionProps = InformationSectionItem & {
+type InformationSectionProps = ListItemWithTitle & {
   className?: string;
 };
 
