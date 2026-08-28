@@ -1,7 +1,6 @@
 "use client";
 
 import { Required } from "@/components/shared/required";
-import { TodoToggle } from "@/components/shared/todo-toggle";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -138,16 +137,6 @@ export function TodoEditDialog({
                     </SelectContent>
                   </Select>
                 </div>
-              </Field>
-
-              <Field>
-                {/* TODO: ボタンの見た目を整える */}
-                <FieldLabel>完了</FieldLabel>
-                <TodoToggle
-                  todo={{ ...todo, completed }}
-                  onChange={(updated) => setCompleted(updated.completed)}
-                  aria-label={`${todo.name} の完了状態`}
-                />
               </Field>
 
               <Controller
