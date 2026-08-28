@@ -48,7 +48,7 @@ const TIPS: ListItemWithTitle[] = [
     ],
   },
   {
-    title: "バックアップ",
+    title: "バックアップする",
     items: [
       {
         text: "メニューから、登録した内容をエクスポートできます。",
