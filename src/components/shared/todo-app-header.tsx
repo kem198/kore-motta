@@ -80,18 +80,16 @@ export function TodoAppHeader({
             />
 
             <DropdownMenuContent align="end" className="w-44">
-              <>
-                <DropdownMenuGroup>
-                  <DropdownMenuItem
-                    onClick={onMarkAllIncomplete}
-                    aria-label="すべて未完了に戻す"
-                  >
-                    <CircleDashedIcon /> すべて未完了に戻す
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
+              <DropdownMenuGroup>
+                <DropdownMenuItem
+                  onClick={onMarkAllIncomplete}
+                  aria-label="すべて未完了に戻す"
+                >
+                  <CircleDashedIcon /> すべて未完了に戻す
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
 
-                <DropdownMenuSeparator />
-              </>
+              <DropdownMenuSeparator />
 
               <DropdownMenuGroup>
                 <DropdownMenuItem
