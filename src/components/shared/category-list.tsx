@@ -78,7 +78,9 @@ export function CategoryList({
               onClick={() => onSelect(category.id)}
             >
               {category.name}
-              {isEditing && isSelected && <PencilIcon />}
+              {isEditing && isSelected && (
+                <PencilIcon size={14} className="ml-1" />
+              )}
             </Button>
           );
         })}
