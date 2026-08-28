@@ -5,7 +5,7 @@ import { ComponentProps } from "react";
 
 type TodoToggleProps = {
   completed: boolean;
-} & Omit<ComponentProps<typeof Toggle>, "pressed" | "onPressedChange">;
+} & Omit<ComponentProps<typeof Toggle>, "pressed">;
 
 export function TodoToggle({ completed, className, ...rest }: TodoToggleProps) {
   return (
@@ -13,12 +13,10 @@ export function TodoToggle({ completed, className, ...rest }: TodoToggleProps) {
       pressed={completed}
       variant="outline"
       className={cn(
-        "aria-pressed:bg-primary pointer-events-none size-9 rounded-full transition-colors",
+        "aria-pressed:bg-primary size-9 rounded-full transition-colors",
         className,
       )}
       {...rest}
-      tabIndex={-1}
-      aria-hidden="true"
     >
       <CheckIcon
         className={cn(
