@@ -11,7 +11,7 @@ import {
   markAllIncompleteIfDateChanged,
 } from "@/lib/app-storage-utils";
 import { AppStorage, parseAppStorage } from "@/schemas/app-storage-schema";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type UseAppStorageOptions = {
   /** localStorage に使用するキー。省略時はデフォルトキーを使用する。 */
@@ -63,6 +63,10 @@ export function useAppStorage(
   const [appStorage, setAppStorage] = useState<AppStorage>(() =>
     createInitialAppStorage(),
   );
+
+  // バックグラウンドからの復帰時に現在の AppStorage を参照し、更新が必要か否かを判定するためため
+  const appStorageRef = useRef(appStorage);
+
   const [isLoaded, setIsLoaded] = useState(false);
 
   const [isStorageCorrupted, setIsStorageCorrupted] = useState(false);
@@ -72,6 +76,8 @@ export function useAppStorage(
   useEffect(() => {
     try {
       const result = loadAppStorage(storageKey);
+
+      appStorageRef.current = result.appStorage;
 
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setAppStorage(result.appStorage);
@@ -103,15 +109,44 @@ export function useAppStorage(
 
   const updateAppStorage = useCallback(
     (updater: (current: AppStorage) => AppStorage) => {
-      setAppStorage((current) => updater(current));
+      setAppStorage((current) => {
+        const next = updater(current);
+        appStorageRef.current = next;
+        return next;
+      });
     },
     [],
   );
+
+  useEffect(() => {
+    if (!isLoaded || isStorageCorrupted) {
+      return;
+    }
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState !== "visible") {
+        return;
+      }
+
+      const result = markAllIncompleteIfDateChanged(appStorageRef.current);
+
+      appStorageRef.current = result.appStorage;
+      setAppStorage(result.appStorage);
+      setDidMarkAllIncomplete(result.didMarkAllIncomplete);
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [isLoaded, isStorageCorrupted]);
 
   const importAppStorage = useCallback((data: string) => {
     const parsed = parseAppStorage(JSON.parse(data));
     const result = markAllIncompleteIfDateChanged(parsed);
 
+    appStorageRef.current = result.appStorage;
     setAppStorage(result.appStorage);
     setDidMarkAllIncomplete(result.didMarkAllIncomplete);
   }, []);
@@ -119,6 +154,7 @@ export function useAppStorage(
   const resetAppStorage = useCallback(() => {
     const initialStorage = createInitialAppStorage();
 
+    appStorageRef.current = initialStorage;
     setAppStorage(initialStorage);
     setDidMarkAllIncomplete(false);
     setIsStorageCorrupted(false);
