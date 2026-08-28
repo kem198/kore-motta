@@ -485,7 +485,7 @@ test.describe("Todo ページのテスト", () => {
         );
       });
 
-      test.skip("すべて未完了に戻す操作をしたとき、カテゴリをまたいですべての Todo を未完了にできること", async ({
+      test("すべて未完了に戻す操作をしたとき、カテゴリをまたいですべての Todo を未完了にできること", async ({
         page,
       }) => {
         // Arrange
@@ -1182,8 +1182,9 @@ test.describe("Todo ページのテスト", () => {
         await navigateToTodoPage(page, { storage: appStorage });
 
         // Act
+        await page.getByRole("button", { name: "編集開始" }).click();
         await page.getByRole("button", { name: "仕事" }).click();
-        await page.getByRole("button", { name: "カテゴリ設定" }).click();
+        await page.getByRole("button", { name: "仕事" }).click();
         await page.getByRole("textbox", { name: "カテゴリ名" }).fill("営業");
         await page.getByRole("button", { name: "更新" }).click();
 
@@ -1248,8 +1249,9 @@ test.describe("Todo ページのテスト", () => {
         await navigateToTodoPage(page, { storage: appStorage });
 
         // Act
+        await page.getByRole("button", { name: "編集開始" }).click();
         await page.getByRole("button", { name: "個人" }).click();
-        await page.getByRole("button", { name: "カテゴリ設定" }).click();
+        await page.getByRole("button", { name: "個人" }).click();
         await page.getByRole("button", { name: "カテゴリを削除" }).click();
         await page.getByRole("button", { name: "削除" }).click();
 
@@ -1313,15 +1315,9 @@ test.describe("Todo ページのテスト", () => {
 
         // Act
         // 仕事カテゴリを選択
-        await page.getByRole("button", { name: "仕事" }).click();
-        await expect(
-          page.getByRole("button", { name: "仕事" }),
-        ).toHaveAttribute("aria-pressed", "true");
-
-        // 編集モードを有効にする
         await page.getByRole("button", { name: "編集開始" }).click();
-        // 仕事カテゴリを設定ダイアログから削除
-        await page.getByRole("button", { name: "カテゴリ設定" }).click();
+        await page.getByRole("button", { name: "仕事" }).click();
+        await page.getByRole("button", { name: "仕事" }).click();
         await page.getByRole("button", { name: "カテゴリを削除" }).click();
         await page.getByRole("button", { name: "削除" }).click();
 
@@ -1400,14 +1396,13 @@ test.describe("Todo ページのテスト", () => {
         await navigateToTodoPage(page, { storage: appStorage });
 
         // Act
+        await page.getByRole("button", { name: "編集開始" }).click();
         await page.getByRole("button", { name: "仕事" }).click();
-        await page.getByRole("button", { name: "カテゴリ設定" }).click();
+        await page.getByRole("button", { name: "仕事" }).click();
         await page.getByRole("button", { name: "カテゴリを削除" }).click();
         await page.getByRole("button", { name: "削除" }).click();
 
         // Assert
-        await page.getByRole("button", { name: DEFAULT_CATEGORY_NAME }).click();
-
         const todos = page.getByRole("listitem");
         await expect(todos).toHaveCount(3);
         await expect(todos.nth(0)).toHaveAccessibleName("Todo: 買い物");
