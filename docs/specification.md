@@ -139,7 +139,7 @@ Todo を新規作成した場合、選択中のカテゴリへ追加する。
 
 ユーザーは、対応端末にアプリケーションをインストールして、アプリとして利用できる。
 
-[PWA](https://developer.mozilla.org/ja/docs/Web/Progressive_web_apps) を利用する。
+実現には [PWA](https://developer.mozilla.org/ja/docs/Web/Progressive_web_apps) を利用する。
 
 ### 5.3. ヘルプ・規約
 
