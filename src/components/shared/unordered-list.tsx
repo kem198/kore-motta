@@ -4,7 +4,6 @@ import { ListItem } from "@/types/help";
 type UnorderedListProps = {
   items: ListItem[];
   className?: string;
-  codeStyle?: boolean;
 };
 
 export function UnorderedList({ items, className }: UnorderedListProps) {
