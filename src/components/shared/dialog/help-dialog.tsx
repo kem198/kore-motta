@@ -29,20 +29,55 @@ type ListItemWithTitle = {
   items: ListItem[];
 };
 
-const TIPS: ListItem[] = [
+const TIPS: ListItemWithTitle[] = [
   {
-    text: "ホーム画面やデスクトップに置いて、アプリとして起動できます。",
-    children: [
-      "[PC Edge / Chrome]: URL 欄 > インストールボタン",
-      "[iPhone Safari]: 共有メニュー > ホーム画面に追加",
-      "[Android Chrome]: メニュー > ホーム画面に追加",
+    title: "アプリとして使う",
+    items: [
+      {
+        text: "ホーム画面やデスクトップに置いて、アプリとして起動できます。",
+        children: [
+          "[PC Edge / Chrome]: URL 欄 > インストールボタン",
+          "[iPhone Safari]: 共有メニュー > ホーム画面に追加",
+          "[Android Chrome]: メニュー > ホーム画面に追加",
+        ],
+      },
     ],
   },
   {
-    text: "カテゴリは名前順に並びます。「01_毎朝」「02_旅行前」などとすると、並び順を調整できます。",
+    title: "カテゴリの並び順を調整する",
+    items: [
+      {
+        text: "カテゴリは名前順に並びます。",
+      },
+      {
+        text: "「01_毎朝」「02_旅行前」などとすると、並び順を調整できます。",
+      },
+    ],
   },
   {
-    text: "メニューから、手動ですべてのアイテムを未完了に戻せます。日付をまたいでから利用する時などにお使いください。",
+    title: "バックアップ",
+    items: [
+      {
+        text: "メニューから、登録した内容をエクスポートできます。",
+      },
+      {
+        text: "エクスポートした内容は、インポートして復元できます。",
+      },
+      {
+        text: "バックアップやブラウザ間のデータ移行にご利用ください。",
+      },
+    ],
+  },
+  {
+    title: "すべて未完了に戻す",
+    items: [
+      {
+        text: "メニューから、手動ですべてのアイテムを未完了に戻せます。",
+      },
+      {
+        text: "日付をまたいでから利用する時などにお使いください。",
+      },
+    ],
   },
 ];
 
@@ -73,20 +108,6 @@ const INFORMATION: ListItemWithTitle[] = [
       },
       {
         text: "登録した内容を外部サービスへ送信・保存することはありません。",
-      },
-    ],
-  },
-  {
-    title: "バックアップ",
-    items: [
-      {
-        text: "登録した内容は、エクスポートしてバックアップできます。",
-      },
-      {
-        text: "バックアップした内容は、インポートして復元できます。",
-      },
-      {
-        text: "ブラウザ間のデータ移行などにも利用できます。",
       },
     ],
   },
@@ -163,27 +184,18 @@ type UnorderedListProps = {
   codeStyle?: boolean;
 };
 
-function UnorderedList({
-  items,
-  className,
-  codeStyle: code = false,
-}: UnorderedListProps) {
+function UnorderedList({ items, className }: UnorderedListProps) {
   return (
     <ul className={cn("flex list-disc flex-col gap-1 pl-5", className)}>
       {items.map((item) => (
         <li key={item.text} className="leading-relaxed">
           {item.text}
           {item.children && (
-            <div
-              className={cn(
-                "mt-1 flex flex-col gap-1 pl-5",
-                code && "bg-muted/50 rounded-md border p-2 text-xs",
-              )}
-            >
+            <ul className={cn("mt-1 flex list-[circle] flex-col gap-1 pl-5")}>
               {item.children.map((child) => (
-                <div key={child}>{child}</div>
+                <li key={child}>{child}</li>
               ))}
-            </div>
+            </ul>
           )}
         </li>
       ))}
@@ -264,7 +276,15 @@ function HelpAccordions({ className }: HelpAccordionsProps) {
   return (
     <HelpAccordion className={className}>
       <HelpAccordionItem value="tips" title="便利な使い方">
-        <UnorderedList items={TIPS} codeStyle />
+        <div className="flex flex-col gap-4">
+          {TIPS.map((section) => (
+            <InformationSection
+              key={section.title}
+              title={section.title}
+              items={section.items}
+            />
+          ))}
+        </div>
       </HelpAccordionItem>
 
       <HelpAccordionItem value="issues" title="既知の問題">
