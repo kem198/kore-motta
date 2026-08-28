@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, test } from "vitest";
 
 import {
   createInitialAppStorage,
@@ -6,7 +6,7 @@ import {
 } from "@/lib/app-storage-utils";
 
 describe("markAllIncompleteIfDateChanged", () => {
-  it("同日ではすべての Todo を未完了にしない", () => {
+  test("同日ではすべての Todo を未完了にしない", () => {
     // Arrange
     const appStorage = createInitialAppStorage();
     appStorage.data.lastMarkedAllIncompleteAt = new Date(
@@ -28,7 +28,7 @@ describe("markAllIncompleteIfDateChanged", () => {
     expect(result.appStorage).toBe(appStorage);
   });
 
-  it("日付が変わる直前ではすべての Todo を未完了にしない", () => {
+  test("日付が変わる直前ではすべての Todo を未完了にしない", () => {
     // Arrange
     const appStorage = createInitialAppStorage();
     appStorage.data.lastMarkedAllIncompleteAt = new Date(
@@ -50,7 +50,7 @@ describe("markAllIncompleteIfDateChanged", () => {
     expect(result.appStorage).toBe(appStorage);
   });
 
-  it("日付が変わった瞬間にすべての Todo を未完了にする", () => {
+  test("日付が変わった瞬間にすべての Todo を未完了にする", () => {
     // Arrange
     const appStorage = createInitialAppStorage();
 
@@ -105,7 +105,7 @@ describe("markAllIncompleteIfDateChanged", () => {
     ]);
   });
 
-  it("月が変わった場合はすべての Todo を未完了にする", () => {
+  test("月が変わった場合はすべての Todo を未完了にする", () => {
     // Arrange
     const appStorage = createInitialAppStorage();
 
@@ -138,7 +138,7 @@ describe("markAllIncompleteIfDateChanged", () => {
     expect(result.appStorage.data.todos[0].completed).toBe(false);
   });
 
-  it("年が変わった場合はすべての Todo を未完了にする", () => {
+  test("年が変わった場合はすべての Todo を未完了にする", () => {
     // Arrange
     const appStorage = createInitialAppStorage();
 
@@ -171,7 +171,7 @@ describe("markAllIncompleteIfDateChanged", () => {
     expect(result.appStorage.data.todos[0].completed).toBe(false);
   });
 
-  it("完了と未完了が混在する複数の Todo をすべて未完了にする", () => {
+  test("完了と未完了が混在する複数の Todo をすべて未完了にする", () => {
     // Arrange
     const appStorage = createInitialAppStorage();
 

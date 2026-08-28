@@ -1,21 +1,35 @@
 ---
 name: Testing Guidelines
-description: Vitest と Playwright のテストコードに適用するルール
+description: テストコードに適用するルール
 applyTo: "**/*.{spec,test}.{ts,tsx}"
 ---
 
-# Testing Instructions
+**目次**
 
-## 基本方針
+- [1. 基本方針](#1-基本方針)
+- [2. テストタイトル](#2-テストタイトル)
+  - [2.1. 良い例](#21-良い例)
+  - [2.2. 避ける例](#22-避ける例)
+- [3. describe と it](#3-describe-と-it)
+- [4. テストのタイトル](#4-テストのタイトル)
+- [5. コメント](#5-コメント)
+- [6. 単体テスト](#6-単体テスト)
+- [7. E2E テスト](#7-e2e-テスト)
+- [8. Locator](#8-locator)
+- [9. Assert](#9-assert)
+- [10. Locator の命名](#10-locator-の命名)
+- [11. テスト構造](#11-テスト構造)
 
-- テストは実装詳細ではなく、期待される振る舞いを検証する。
+## 1. 基本方針
+
+- テストは期待される振る舞いに重点を置き検証する。
 - テストタイトルも仕様の一部として扱う。
 - テストタイトルから、前提条件・操作・期待される結果が理解できるようにする。
 - 既存のテストパターン・命名規則を優先する。
 - テストコードも本番コードと同様に可読性を重視する。
 - 1 テストの責務は 1 機能に絞る。肥大化や依存性を避ける。
 
-## テストタイトル
+## 2. テストタイトル
 
 テストタイトルは、実装ではなく振る舞いを表現する。
 
@@ -26,7 +40,7 @@ applyTo: "**/*.{spec,test}.{ts,tsx}"
 - `〜すると、〜できる`
 - `〜の場合、〜できない`
 
-### 良い例
+### 2.1. 良い例
 
 ```ts
 it("Todo を完了すると、完了状態になる", () => {});
@@ -38,7 +52,7 @@ it("リセット時刻前にアクセスすると、Todo の完了状態が維�
 it("未入力で送信すると、エラーメッセージが表示される", () => {});
 ```
 
-### 避ける例
+### 2.2. 避ける例
 
 ```ts
 it("setCompleted が true を設定する", () => {});
@@ -59,7 +73,7 @@ it("useEffect が実行される", () => {});
 - localStorage などの内部実装
 - 使用しているライブラリ
 
-## describe と it
+## 3. describe と it
 
 `describe` はテスト対象となる機能や仕様を表す。
 
@@ -115,7 +129,7 @@ test.describe("Todo ページのテスト", () => {
 });
 ```
 
-## Given / When / Then
+## 4. テストのタイトル
 
 テストタイトルでは `Given`、`When`、`Then` を可能な限り明示する。
 
@@ -131,7 +145,7 @@ it("リセット時刻を過ぎてアクセスすると、Todo が未完了に�
 - When: リセット時刻を過ぎてアクセスする
 - Then: Todo が未完了になる
 
-## コメント
+## 5. コメント
 
 各テスト用の処理について、`// Arrange`、 `// Act`、`// Assert` のコメントをつける。
 
@@ -157,11 +171,9 @@ test("Todo を登録できること", async ({ page }) => {
 });
 ```
 
-## Vitest
+## 6. 単体テスト
 
-※現在の方針では Vitest は採用していない。テストが肥大化してきた際に環境構築を検討する。
-
-<!-- 以下のテストには Vitest を使用する。
+以下のテストには Vitest を使用する。
 
 - 純粋な関数
 - ユーティリティ
@@ -171,29 +183,123 @@ test("Todo を登録できること", async ({ page }) => {
 - 日付・時刻に関するロジック
 - ブラウザを必要としない処理
 
-実装詳細ではなく、入力と出力、または観測可能な振る舞いを検証する。
+方針は次のとおりとする。
 
-正常系だけでなく、必要に応じて境界値や異常系も検証する。
+- テスト名 (テストの方針) は入力と出力、または観測可能な振る舞いを基準とし、テスト内の Arrange で正確な検証を行う。
+- 境界値検査など、一般的な単体テストのベストプラクティスに沿って検証を行う。
+- アプリケーションの規模によって、後述の
 
 例:
 
 ```ts
-describe("Todo のリセット判定", () => {
-  it("リセット時刻を過ぎると、リセットが必要になる", () => {
-    // ...
+describe("markAllIncompleteIfDateChanged", () => {
+  it("同日ではすべての Todo を未完了にしない", () => {
+    // Arrange
+    const appStorage = createInitialAppStorage();
+    appStorage.data.lastMarkedAllIncompleteAt = new Date(
+      2026,
+      7,
+      27,
+      0,
+      0,
+      0,
+    ).toISOString();
+
+    const now = new Date(2026, 7, 27, 12, 0, 0);
+
+    // Act
+    const result = markAllIncompleteIfDateChanged(appStorage, now);
+
+    // Assert
+    expect(result.didMarkAllIncomplete).toBe(false);
+    expect(result.appStorage).toBe(appStorage);
   });
 
-  it("リセット時刻前の場合、リセットは必要にならない", () => {
-    // ...
+  it("日付が変わる直前ではすべての Todo を未完了にしない", () => {
+    // Arrange
+    const appStorage = createInitialAppStorage();
+    appStorage.data.lastMarkedAllIncompleteAt = new Date(
+      2026,
+      7,
+      26,
+      0,
+      0,
+      0,
+    ).toISOString();
+
+    const now = new Date(2026, 7, 26, 23, 59, 59, 999);
+
+    // Act
+    const result = markAllIncompleteIfDateChanged(appStorage, now);
+
+    // Assert
+    expect(result.didMarkAllIncomplete).toBe(false);
+    expect(result.appStorage).toBe(appStorage);
   });
 
-  it("リセット時刻ちょうどの場合、リセットが必要になる", () => {
-    // ...
+  it("日付が変わった瞬間にすべての Todo を未完了にする", () => {
+    // Arrange
+    const appStorage = createInitialAppStorage();
+
+    appStorage.data.todos = [
+      {
+        id: "todo-1",
+        name: "Todo 1",
+        order: 0,
+        categoryId: "uncategorized",
+        completed: true,
+      },
+      {
+        id: "todo-2",
+        name: "Todo 2",
+        order: 1,
+        categoryId: "uncategorized",
+        completed: false,
+      },
+    ];
+
+    appStorage.data.lastMarkedAllIncompleteAt = new Date(
+      2026,
+      7,
+      26,
+      0,
+      0,
+      0,
+    ).toISOString();
+
+    const now = new Date(2026, 7, 27, 0, 0, 0, 0);
+
+    // Act
+    const result = markAllIncompleteIfDateChanged(appStorage, now);
+
+    // Assert
+    expect(result.didMarkAllIncomplete).toBe(true);
+    expect(result.appStorage.data.todos).toEqual([
+      {
+        id: "todo-1",
+        name: "Todo 1",
+        order: 0,
+        categoryId: "uncategorized",
+        completed: false,
+      },
+      {
+        id: "todo-2",
+        name: "Todo 2",
+        order: 1,
+        categoryId: "uncategorized",
+        completed: false,
+      },
+    ]);
   });
 });
-``` -->
+```
 
-## Playwright
+アプリケーションの規模によって、単体テストの網羅性を調整する。
+
+- 例: 小規模なアプリケーションの場合、E2E テストに重点を置き、単体テストでは重要な機能のテストに絞る。
+- 例: 大規模なアプリケーションのの場合、単体テストに重点を置き、E2E テストでは単体テストで網羅した内容は省略する。
+
+## 7. E2E テスト
 
 以下のテストには Playwright を使用する。
 
@@ -214,7 +320,7 @@ test("Todo を完了すると、完了状態として表示される", async ({ 
 });
 ```
 
-## Locator
+## 8. Locator
 
 以下を優先する。
 
@@ -229,7 +335,7 @@ CSS セレクタや XPath は、上記で適切に対象を特定できない場
 
 `first()`、`last()`、`nth()` は、位置による選択が仕様上適切な場合にのみ使用する。
 
-## Assert
+## 9. Assert
 
 - Assert の対象範囲を明確にする。
 - ページ全体を対象にした曖昧な Assert を避ける。
@@ -238,7 +344,7 @@ CSS セレクタや XPath は、上記で適切に対象を特定できない場
 - 実装詳細ではなく、ユーザーが確認できる状態を Assert する。
 - テストを PASS させるためだけに Assert を弱めない。
 
-## Locator の命名
+## 10. Locator の命名
 
 Locator は、対象の役割が分かる名前にする。
 
@@ -263,7 +369,7 @@ let area: Locator;
 
 ただし、`area`、`section`、`panel` 自体を禁止するものではない。
 
-## テスト構造
+## 11. テスト構造
 
 - テスト対象ページへの共通の遷移処理は必要に応じて関数化する。
 - テスト同士で状態を共有しない。
