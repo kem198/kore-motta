@@ -18,7 +18,7 @@ import { MESSAGES } from "@/constants/messages";
 import { cn } from "@/lib/utils";
 import { Category } from "@/schemas/category-schema";
 import { Todo } from "@/schemas/todo-schema";
-import { ChevronDown, ChevronUp, PencilIcon, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Trash2 } from "lucide-react";
 import { Fragment } from "react";
 
 function TodoListSkeleton() {
@@ -40,20 +40,16 @@ type TodoItemActionsProps = {
   todo: Todo;
   index: number;
   length: number;
-  categories: Category[];
   isEditing: boolean;
-  onUpdate: (todo: Todo) => void;
   onDelete: (todo: Todo) => void;
   onReorder: (startIndex: number, endIndex: number) => void;
 };
 
 function TodoItemActions({
   todo,
-  categories,
   index,
   length,
   isEditing,
-  onUpdate,
   onDelete,
   onReorder,
 }: TodoItemActionsProps) {
@@ -116,16 +112,6 @@ function TodoItemActions({
         >
           <ChevronDown />
         </Button>
-
-        <TodoEditDialog todo={todo} categories={categories} onSave={onUpdate}>
-          <Button
-            variant="secondary"
-            size="icon"
-            aria-label={`編集: ${todo.name}`}
-          >
-            <PencilIcon />
-          </Button>
-        </TodoEditDialog>
       </ButtonGroup>
     </div>
   );
@@ -165,44 +151,37 @@ function TodoItem({
       aria-label={`Todo: ${todo.name}`}
       className="flex w-full items-center gap-2"
     >
-      <div
-        role="button"
-        aria-label={`完了状態を切り替え: ${todo.name}`}
-        aria-pressed={todo.completed}
-        tabIndex={0}
-        onClick={handleToggle}
-        onKeyDown={(event) => {
-          if (event.key === "Enter" || event.key === " ") {
-            event.preventDefault();
-            handleToggle();
-          }
-        }}
-        className="group hover:bg-accent flex w-full min-w-0 cursor-pointer items-center gap-2 rounded-md border border-transparent text-sm transition-colors duration-100"
-      >
-        <div className="flex shrink-0 items-center justify-center p-2">
-          <TodoToggle completed={todo.completed} />
-        </div>
+      <div className="flex shrink-0 items-center justify-center py-2">
+        <TodoToggle
+          completed={todo.completed}
+          aria-label={`完了状態を切り替え: ${todo.name}`}
+          onPressedChange={handleToggle}
+        />
+      </div>
 
-        <div className="flex min-w-0 flex-1 flex-col justify-center gap-1 self-stretch text-left">
+      <TodoEditDialog todo={todo} categories={categories} onSave={onUpdate}>
+        <button
+          type="button"
+          className="group hover:bg-accent flex min-w-0 flex-1 cursor-pointer flex-col justify-center gap-1 self-stretch rounded-md border border-transparent px-2 text-left text-sm transition-colors duration-100"
+          aria-label={`編集: ${todo.name}`}
+        >
           <span className="line-clamp-1 flex w-fit items-center gap-2 text-sm leading-snug font-medium wrap-break-word">
             {todo.name}
           </span>
 
           {todo.memo ? (
-            <p className="text-muted-foreground group-hover:text-accent-foreground line-clamp-2 text-left text-sm leading-normal font-normal wrap-break-word">
+            <span className="text-muted-foreground group-hover:text-accent-foreground line-clamp-2 text-left text-sm leading-normal font-normal wrap-break-word">
               {todo.memo}
-            </p>
+            </span>
           ) : null}
-        </div>
-      </div>
+        </button>
+      </TodoEditDialog>
 
       <TodoItemActions
         todo={todo}
-        categories={categories}
         index={index}
         length={length}
         isEditing={isEditing}
-        onUpdate={onUpdate}
         onDelete={onDelete}
         onReorder={onReorder}
       />

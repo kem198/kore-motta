@@ -83,14 +83,11 @@ const ISSUES: ListItem[] = [
 
 const CHANGELOG = [
   {
-    version: "v0.2.1",
+    version: "v0.2.2",
     date: "2026-08-28",
     changes: [
       {
-        text: "アイテムのどこをクリックしても、完了状態を切り替えられるようにしました。",
-      },
-      {
-        text: "アイテムの編集は編集ボタンからのみ行うようにしました。",
+        text: "使い方・利用規約を更新しました。",
       },
     ],
   },
