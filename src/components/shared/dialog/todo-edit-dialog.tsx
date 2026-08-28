@@ -52,7 +52,6 @@ export function TodoEditDialog({
   ...props
 }: TodoEditDialogProps) {
   const [open, setOpen] = useState(false);
-  const [completed, setCompleted] = useState(todo.completed);
   const [categoryId, setCategoryId] = useState(todo.categoryId);
 
   const form = useForm<TodoFormValues>({
@@ -71,7 +70,6 @@ export function TodoEditDialog({
         name: todo.name,
         memo: todo.memo,
       });
-      setCompleted(todo.completed);
       setCategoryId(todo.categoryId);
     }
   };
@@ -81,7 +79,7 @@ export function TodoEditDialog({
       ...todo,
       name: data.name.trim(),
       memo: data.memo?.trim() || undefined,
-      completed,
+      completed: todo.completed,
       categoryId,
     };
 
