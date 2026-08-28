@@ -52,6 +52,18 @@ const ISSUES: ListItem[] = [
 
 const CHANGELOG = [
   {
+    version: "v0.2.1",
+    date: "2026-08-28",
+    changes: [
+      {
+        text: "アイテムのどこをクリックしても、完了状態を切り替えられるようにしました。",
+      },
+      {
+        text: "アイテムの編集は編集ボタンからのみ行えるようにしました。",
+      },
+    ],
+  },
+  {
     version: "v0.2.0",
     date: "2026-08-28",
     changes: [
@@ -93,59 +105,126 @@ function UnorderedList({ items }: { items: ListItem[] }) {
   );
 }
 
+function HelpAccordion({ children }: { children: React.ReactNode }) {
+  return (
+    <Accordion className="max-w-lg rounded-lg border">{children}</Accordion>
+  );
+}
+
 function HelpAccordions() {
   return (
-    <>
-      <Accordion className="max-w-lg rounded-lg border">
-        <AccordionItem value="tips" className="border-b px-4 last:border-b-0">
-          <AccordionTrigger>便利な使い方</AccordionTrigger>
+    <HelpAccordion>
+      <AccordionItem value="tips" className="border-b px-4 last:border-b-0">
+        <AccordionTrigger className="py-3">便利な使い方</AccordionTrigger>
 
-          <AccordionContent>
-            <UnorderedList items={TIPS} />
-          </AccordionContent>
-        </AccordionItem>
+        <AccordionContent>
+          <UnorderedList items={TIPS} />
+        </AccordionContent>
+      </AccordionItem>
 
-        <AccordionItem value="issues" className="border-b px-4 last:border-b-0">
-          <AccordionTrigger>既知の問題</AccordionTrigger>
+      <AccordionItem value="issues" className="border-b px-4 last:border-b-0">
+        <AccordionTrigger className="py-3">既知の問題</AccordionTrigger>
 
-          <AccordionContent>
-            <UnorderedList items={ISSUES} />
-          </AccordionContent>
-        </AccordionItem>
+        <AccordionContent>
+          <UnorderedList items={ISSUES} />
+        </AccordionContent>
+      </AccordionItem>
 
-        <AccordionItem
-          value="changelog"
-          className="border-b px-4 last:border-b-0"
-        >
-          <AccordionTrigger>更新履歴</AccordionTrigger>
+      <AccordionItem
+        value="changelog"
+        className="border-b px-4 last:border-b-0"
+      >
+        <AccordionTrigger className="py-3">更新履歴</AccordionTrigger>
 
-          <AccordionContent>
-            <div className="flex flex-col gap-4">
-              {CHANGELOG.map((release) => (
-                <div key={release.version}>
-                  <div className="font-mono">
-                    {release.version}
-                    <span className="text-muted-foreground">
-                      {" | "}
-                      {release.date}
-                    </span>
-                  </div>
-
-                  <UnorderedList items={release.changes} />
+        <AccordionContent>
+          <div className="flex flex-col gap-4">
+            {CHANGELOG.map((release) => (
+              <div key={release.version}>
+                <div className="font-mono">
+                  {release.version}
+                  <span className="text-muted-foreground">
+                    {" | "}
+                    {release.date}
+                  </span>
                 </div>
-              ))}
-            </div>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
-    </>
+
+                <UnorderedList items={release.changes} />
+              </div>
+            ))}
+          </div>
+        </AccordionContent>
+      </AccordionItem>
+    </HelpAccordion>
+  );
+}
+
+function InformationAccordions() {
+  return (
+    <HelpAccordion>
+      <AccordionItem value="terms" className="border-b px-4 last:border-b-0">
+        <AccordionTrigger className="py-3">利用規約</AccordionTrigger>
+
+        <AccordionContent>
+          <div className="typeset typeset-docs">
+            <ul>
+              <li>
+                本サービスは、予告なく内容の変更、停止、または終了する場合があります。
+              </li>
+              <li>
+                本サービスの利用によって生じた損害について、運営者は責任を負いません。
+              </li>
+            </ul>
+          </div>
+        </AccordionContent>
+      </AccordionItem>
+
+      <AccordionItem value="data" className="border-b px-4 last:border-b-0">
+        <AccordionTrigger className="py-3">
+          情報の取り扱いについて
+        </AccordionTrigger>
+
+        <AccordionContent>
+          <div className="typeset typeset-docs">
+            <h4>保存先</h4>
+
+            <ul>
+              <li>登録した内容は、お使いのブラウザに保存されます。</li>
+              <li>
+                登録した内容を外部サービスへ送信・保存することはありません。
+              </li>
+            </ul>
+
+            <h4>バックアップ</h4>
+
+            <ul>
+              <li>登録した内容は、エクスポートしてバックアップできます。</li>
+              <li>バックアップした内容は、インポートして復元できます。</li>
+              <li>ブラウザ間のデータ移行などにも利用できます。</li>
+            </ul>
+
+            <h4>注意事項</h4>
+
+            <ul>
+              <li>個人情報や機密情報など重要な情報は登録しないでください。</li>
+              <li>
+                ブラウザの「Cookie
+                と他のサイトデータ」を削除すると、登録した内容が削除されます。必要に応じて事前にバックアップを取ってください。
+              </li>
+              <li>
+                ブラウザの開発者ツールなどで保存データを直接変更した場合、データの内容によっては初期化されることがあります。
+              </li>
+            </ul>
+          </div>
+        </AccordionContent>
+      </AccordionItem>
+    </HelpAccordion>
   );
 }
 
 function Term() {
   return (
     <div
-      className="typeset typeset-docs space-y-6"
+      className="typeset typeset-docs"
       style={{ "--typeset-size": "0.9rem" } as React.CSSProperties}
     >
       <section>
@@ -164,77 +243,13 @@ function Term() {
 
         <ul>
           <li>日付が変わると、すべてのアイテムが未完了に戻ります。</li>
-
           <li>
             持ち物や定期的な作業を登録しておくと、一日限りのチェックリストとして利用できます。
           </li>
-
           <li>
             アイテムが期限切れとして溜まらないため、好みのタイミングで使えます。
           </li>
         </ul>
-      </section>
-
-      <section>
-        <h3>情報の取り扱いについて</h3>
-
-        <h4>保存先</h4>
-
-        <ul>
-          <li>登録した内容は、お使いのブラウザに保存されます。</li>
-          <li>登録した内容を外部サービスへ送信・保存することはありません。</li>
-        </ul>
-
-        <h4>バックアップ</h4>
-
-        <ul>
-          <li>登録した内容は、エクスポートしてバックアップできます。</li>
-          <li>バックアップした内容は、インポートして復元できます。</li>
-          <li>ブラウザ間のデータ移行などにも利用できます。</li>
-        </ul>
-
-        <h4>注意事項</h4>
-
-        <ul>
-          <li>個人情報や機密情報など重要な情報は登録しないでください。</li>
-          <li>
-            ブラウザの「Cookie
-            と他のサイトデータ」を削除すると、登録した内容が削除されます。必要に応じて事前にバックアップを取ってください。
-          </li>
-          <li>
-            ブラウザの開発者ツールなどで保存データを直接変更した場合、データの内容によっては初期化されることがあります。
-          </li>
-        </ul>
-      </section>
-
-      <section>
-        <h3>利用規約</h3>
-
-        <ul>
-          <li>
-            本サービスは、予告なく内容の変更、停止、または終了する場合があります。
-          </li>
-          <li>
-            本サービスの利用によって生じた損害について、運営者は責任を負いません。
-          </li>
-        </ul>
-      </section>
-
-      <section>
-        <h3>お問い合わせ</h3>
-
-        <p>
-          ご不明な点やお問い合わせは{" "}
-          <a
-            href="https://x.com/kem198_x"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline underline-offset-4"
-          >
-            @KeM198
-          </a>{" "}
-          までご連絡ください。
-        </p>
       </section>
     </div>
   );
@@ -243,10 +258,20 @@ function Term() {
 function Support() {
   return (
     <section className="text-muted-foreground typeset typeset-docs space-y-6 text-xs">
-      <p className="mb-0">
-        アプリが気に入ったら、応援していただけると励みになります。
+      <p className="mb-0 leading-relaxed">
+        ご不明な点は{" "}
+        <a
+          href="https://x.com/kem198_x"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline underline-offset-4"
+        >
+          @KeM198
+        </a>{" "}
+        までご連絡ください。
+        <br />
+        アプリが気に入ったら、応援していただけると励みになります！
       </p>
-
       <ul className="mt-0">
         <li>
           <a
@@ -259,6 +284,7 @@ function Support() {
             <SquareArrowOutUpRightIcon className="inline size-3.5 align-middle" />
           </a>
         </li>
+
         {FEATURES.tip && (
           <li>
             <a
@@ -300,6 +326,7 @@ export function HelpDialog({ open, onOpenChange }: HelpDialogProps) {
           )}
         >
           <Term />
+          <InformationAccordions />
           <HelpAccordions />
           <Support />
         </div>

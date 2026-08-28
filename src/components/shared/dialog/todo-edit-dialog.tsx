@@ -1,7 +1,6 @@
 "use client";
 
 import { Required } from "@/components/shared/required";
-import { TodoToggle } from "@/components/shared/todo-toggle";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -53,7 +52,6 @@ export function TodoEditDialog({
   ...props
 }: TodoEditDialogProps) {
   const [open, setOpen] = useState(false);
-  const [completed, setCompleted] = useState(todo.completed);
   const [categoryId, setCategoryId] = useState(todo.categoryId);
 
   const form = useForm<TodoFormValues>({
@@ -64,15 +62,19 @@ export function TodoEditDialog({
     },
   });
 
+  const {
+    formState: { isDirty },
+  } = form;
+  const isChanged = isDirty || categoryId !== todo.categoryId;
+
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);
 
     if (nextOpen) {
       form.reset({
         name: todo.name,
-        memo: todo.memo,
+        memo: todo.memo ?? "",
       });
-      setCompleted(todo.completed);
       setCategoryId(todo.categoryId);
     }
   };
@@ -82,7 +84,7 @@ export function TodoEditDialog({
       ...todo,
       name: data.name.trim(),
       memo: data.memo?.trim() || undefined,
-      completed,
+      completed: todo.completed,
       categoryId,
     };
 
@@ -138,16 +140,6 @@ export function TodoEditDialog({
                     </SelectContent>
                   </Select>
                 </div>
-              </Field>
-
-              <Field>
-                {/* TODO: ボタンの見た目を整える */}
-                <FieldLabel>完了</FieldLabel>
-                <TodoToggle
-                  todo={{ ...todo, completed }}
-                  onChange={(updated) => setCompleted(updated.completed)}
-                  aria-label={`${todo.name} の完了状態`}
-                />
               </Field>
 
               <Controller
@@ -212,7 +204,7 @@ export function TodoEditDialog({
             }
           />
 
-          <Button type="submit" form="todo-edit">
+          <Button type="submit" form="todo-edit" disabled={!isChanged}>
             {MESSAGES.actions.update}
           </Button>
         </DialogFooter>

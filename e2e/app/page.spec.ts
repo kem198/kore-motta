@@ -360,6 +360,7 @@ test.describe("Todo ページのテスト", () => {
         };
         await navigateToTodoPage(page, { storage: appStorage });
 
+        await page.getByRole("button", { name: "編集開始" }).click();
         await page.getByRole("button", { name: "編集: dummy" }).click();
         await page.getByRole("textbox", { name: "タイトル *" }).fill("カギ");
         await page.getByRole("textbox", { name: "メモ" }).fill("家の鍵");
@@ -662,12 +663,105 @@ test.describe("Todo ページのテスト", () => {
         await page.getByRole("button", { name: "仕事" }).click();
 
         // Act
+        await page.getByRole("button", { name: "編集開始" }).click();
         await page.getByRole("button", { name: "編集: 資料作成" }).click();
 
         // Assert
         await expect(
           page.getByRole("combobox", { name: "カテゴリ" }),
         ).toContainText("仕事");
+      });
+
+      test("Todo の編集画面でカテゴリを変更すると、更新ボタンが有効になること", async ({
+        page,
+      }) => {
+        // Arrange
+        const appStorage: AppStorage = {
+          version: 1,
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "test-todo",
+                name: "資料作成",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                completed: false,
+              },
+            ],
+            categories: [
+              {
+                id: DEFAULT_CATEGORY_ID,
+                name: DEFAULT_CATEGORY_NAME,
+                order: DEFAULT_CATEGORY_ORDER,
+              },
+              {
+                id: "work",
+                name: "仕事",
+                order: 1,
+              },
+            ],
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00+09:00",
+            ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
+          },
+        };
+
+        await navigateToTodoPage(page, { storage: appStorage });
+
+        await page.getByRole("button", { name: "編集開始" }).click();
+        await page.getByRole("button", { name: "編集: 資料作成" }).click();
+
+        const categorySelect = page.getByRole("combobox", { name: "カテゴリ" });
+        const updateButton = page.getByRole("button", { name: "更新" });
+
+        // Act
+        await categorySelect.click();
+        await page.getByRole("option", { name: "仕事" }).click();
+
+        // Assert
+        await expect(updateButton).toBeEnabled();
+      });
+
+      test("Todo の編集画面で変更がなければ更新ボタンが無効であること", async ({
+        page,
+      }) => {
+        // Arrange
+        const appStorage: AppStorage = {
+          version: 1,
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "test-todo",
+                name: "資料作成",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                completed: false,
+              },
+            ],
+            categories: [
+              {
+                id: DEFAULT_CATEGORY_ID,
+                name: DEFAULT_CATEGORY_NAME,
+                order: DEFAULT_CATEGORY_ORDER,
+              },
+            ],
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00+09:00",
+            ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
+          },
+        };
+
+        await navigateToTodoPage(page, { storage: appStorage });
+
+        await page.getByRole("button", { name: "編集開始" }).click();
+        await page.getByRole("button", { name: "編集: 資料作成" }).click();
+
+        // Assert
+        await expect(page.getByRole("button", { name: "更新" })).toBeDisabled();
       });
 
       test("Todo を別のカテゴリへ移動できること", async ({ page }) => {
@@ -706,6 +800,7 @@ test.describe("Todo ページのテスト", () => {
         await navigateToTodoPage(page, { storage: appStorage });
 
         // Act
+        await page.getByRole("button", { name: "編集開始" }).click();
         await page.getByRole("button", { name: "編集: 資料作成" }).click();
         await page.getByRole("combobox", { name: "カテゴリ" }).click();
         await page.getByRole("option", { name: "仕事" }).click();
@@ -1197,6 +1292,44 @@ test.describe("Todo ページのテスト", () => {
         );
         expect(updatedCategory).toBeDefined();
         expect(updatedCategory?.name).toBe("営業");
+      });
+
+      test("カテゴリ名に変更がなければ更新ボタンが無効であること", async ({
+        page,
+      }) => {
+        // Arrange
+        const appStorage: AppStorage = {
+          version: 1,
+          data: {
+            settings: {},
+            todos: [],
+            categories: [
+              {
+                id: DEFAULT_CATEGORY_ID,
+                name: DEFAULT_CATEGORY_NAME,
+                order: DEFAULT_CATEGORY_ORDER,
+              },
+              {
+                id: "work",
+                name: "仕事",
+                order: 1,
+              },
+            ],
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00+09:00",
+            ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
+          },
+        };
+        await navigateToTodoPage(page, { storage: appStorage });
+
+        // Act
+        await page.getByRole("button", { name: "編集開始" }).click();
+        await page.getByRole("button", { name: "仕事" }).click();
+        await page.getByRole("button", { name: "仕事" }).click();
+
+        // Assert
+        await expect(page.getByRole("button", { name: "更新" })).toBeDisabled();
       });
     });
 
