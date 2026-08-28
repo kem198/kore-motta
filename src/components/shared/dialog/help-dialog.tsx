@@ -26,12 +26,15 @@ import { cn } from "@/lib/utils";
 import { ListItem, ListItemWithTitle } from "@/types/help";
 import { SquareArrowOutUpRightIcon } from "lucide-react";
 
-const ISSUES: ListItem[] = [
+const OVERVIEW: ListItem[] = [
   {
-    text: "iPhone の Safari では、キーボードの表示により末尾のアイテムが見づらくなる場合があります。お手数ですがキーボードを閉じてご確認ください。",
+    text: "日付が変わると、すべてのアイテムが未完了に戻ります。",
   },
   {
-    text: "ページを開いたまま日付をまたいだ場合、未完了に戻りません。メニューから「更新する」をお試しください。",
+    text: "持ち物や定期的な作業を登録しておくと、一日限りのチェックリストとして利用できます。",
+  },
+  {
+    text: "アイテムが期限切れとして溜まらないため、好みのタイミングで使えます。",
   },
 ];
 
@@ -44,7 +47,7 @@ const TERMS: ListItem[] = [
   },
 ];
 
-const INFORMATION: ListItemWithTitle[] = [
+const STORED_DATA: ListItemWithTitle[] = [
   {
     title: "保存先",
     items: [
@@ -69,15 +72,12 @@ const INFORMATION: ListItemWithTitle[] = [
   },
 ];
 
-const OVERVIEW: ListItem[] = [
+const ISSUES: ListItem[] = [
   {
-    text: "日付が変わると、すべてのアイテムが未完了に戻ります。",
+    text: "iPhone の Safari では、キーボードの表示により末尾のアイテムが見づらくなる場合があります。お手数ですがキーボードを閉じてご確認ください。",
   },
   {
-    text: "持ち物や定期的な作業を登録しておくと、一日限りのチェックリストとして利用できます。",
-  },
-  {
-    text: "アイテムが期限切れとして溜まらないため、好みのタイミングで使えます。",
+    text: "ページを開いたまま日付をまたいだ場合、未完了に戻りません。メニューから「更新する」をお試しください。",
   },
 ];
 
@@ -194,7 +194,7 @@ function HelpAccordions({ className }: HelpAccordionsProps) {
 
       <HelpAccordionItem value="data" title="情報の取り扱いについて">
         <div className="flex flex-col gap-4">
-          {INFORMATION.map((section) => (
+          {STORED_DATA.map((section) => (
             <InformationSection
               key={section.title}
               title={section.title}
