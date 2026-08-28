@@ -28,13 +28,13 @@ import { SquareArrowOutUpRightIcon } from "lucide-react";
 
 const OVERVIEW: ListItem[] = [
   {
-    text: "日付が変わると、すべてのアイテムが未完了に戻ります。",
-  },
-  {
     text: "持ち物や定期的な作業を登録しておくと、一日限りのチェックリストとして利用できます。",
   },
   {
     text: "アイテムが期限切れとして溜まらないため、好みのタイミングで使えます。",
+  },
+  {
+    text: "ログイン無しで利用できます。",
   },
 ];
 
@@ -253,7 +253,7 @@ function Summary({ className }: SummaryProps) {
           は、日頃の「これ持った？」を確認するシンプルな Todo アプリです。
         </p>
 
-        <p>一日ごとにすべてのアイテムが未完了に戻ることが特徴です。</p>
+        <p>日付をまたぐと、すべてのアイテムが未完了に戻ります。</p>
       </section>
 
       <section>
