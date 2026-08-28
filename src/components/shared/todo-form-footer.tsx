@@ -1,21 +1,16 @@
 import { TodoForm } from "@/components/shared/todo-form";
-import { cn } from "@/lib/utils";
 import { TodoFormValues } from "@/schemas/todo-form-schema";
 
 type TodoFormFooterProps = {
   onSubmit: (values: TodoFormValues) => void;
-  className?: string;
 };
 
-export function TodoFormFooter({ onSubmit, className }: TodoFormFooterProps) {
+export function TodoFormFooter({ onSubmit }: TodoFormFooterProps) {
   return (
-    <footer
-      className={cn(
-        'bg-background pb-[calc(1rem+env(safe-area-inset-bottom))]" mx-auto w-full max-w-3xl border-t p-4',
-        className,
-      )}
-    >
-      <TodoForm onSubmit={onSubmit} />
-    </footer>
+    <div className="fixed inset-x-0 bottom-0 z-50">
+      <div className="bg-background mx-auto w-full max-w-3xl border-t p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+        <TodoForm onSubmit={onSubmit} />
+      </div>
+    </div>
   );
 }

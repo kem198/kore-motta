@@ -296,63 +296,58 @@ export function TodoApp() {
   };
 
   return (
-    /* 1. 最外枠：スクロールを完全に禁止して画面枠を固定 */
-    <div className="flex h-svh w-svw flex-col overflow-hidden">
-      {/* 2. 上部ヘッダー (スクロールせず固定) */}
-      <header className="shrink-0">
-        <TodoAppHeader
-          appStorage={appStorage}
-          onMarkAllIncomplete={handleMarkAllIncomplete}
-          onImport={handleImport}
-        />
+    <>
+      <div className="not-prose flex h-full w-full flex-col">
+        <div className="bg-background shrink-0">
+          <TodoAppHeader
+            appStorage={appStorage}
+            onMarkAllIncomplete={handleMarkAllIncomplete}
+            onImport={handleImport}
+          />
 
-        {/* CategoryList の内部でリスト表示に p-1 を指定しているので pl-3 を付けて幅を揃えている */}
-        <div className="bg-background flex items-center gap-3 p-4 pl-3">
-          <div className="min-w-0 flex-1">
-            <CategoryList
-              categories={appStorage.data.categories}
-              activeCategoryId={activeCategoryId}
-              isLoaded={isLoaded}
+          {/* CategoryList の内部でリスト表示に p-1 を指定しているので pl-3 を付けて幅を揃えている */}
+          <div className="flex items-center gap-3 p-4 pl-3">
+            <div className="min-w-0 flex-1">
+              <CategoryList
+                categories={appStorage.data.categories}
+                activeCategoryId={activeCategoryId}
+                isLoaded={isLoaded}
+                isEditing={isEditing}
+                onSelect={handleSelectCategory}
+                onCreate={() =>
+                  setCategoryDialog({
+                    mode: "create",
+                    category: null,
+                  })
+                }
+              />
+            </div>
+
+            <TodoAppNavigation
               isEditing={isEditing}
-              onSelect={handleSelectCategory}
-              onCreate={() =>
-                setCategoryDialog({
-                  mode: "create",
-                  category: null,
-                })
-              }
+              appStorage={appStorage}
+              onToggleEditing={() => setIsEditing((prev) => !prev)}
             />
           </div>
 
-          <TodoAppNavigation
+          <Separator />
+        </div>
+
+        <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-28">
+          <TodoList
+            todos={visibleTodos}
+            categories={appStorage.data.categories}
+            isLoaded={isLoaded}
             isEditing={isEditing}
-            appStorage={appStorage}
-            onToggleEditing={() => setIsEditing((prev) => !prev)}
+            onDelete={handleDelete}
+            onUpdate={handleUpdate}
+            onReorder={handleReorder}
           />
         </div>
 
-        <Separator />
-      </header>
+        <TodoFormFooter onSubmit={handleCreate} />
+      </div>
 
-      {/* 3. メイン領域：ヘッダーとフッターの間の余白をすべて確保 */}
-      <main className="bg-background min-h-0 flex-1">
-        {/* TodoList 自体にスクロールとぼよん（overscroll-y-bounce）を許可 */}
-        <TodoList
-          todos={visibleTodos}
-          categories={appStorage.data.categories}
-          isLoaded={isLoaded}
-          isEditing={isEditing}
-          onDelete={handleDelete}
-          onUpdate={handleUpdate}
-          onReorder={handleReorder}
-          className="h-full overflow-y-auto overscroll-y-contain px-4 pb-28"
-        />
-      </main>
-
-      {/* 4. 下部フッター (スクロールせず画面最下部に固定) */}
-      <TodoFormFooter onSubmit={handleCreate} className="sticky bottom-0" />
-
-      {/* ダイアログ類 */}
       <CategorySettingDialog
         key={
           categoryDialog
@@ -381,6 +376,6 @@ export function TodoApp() {
         mode="corrupted"
         onReset={handleReset}
       />
-    </div>
+    </>
   );
 }
