@@ -345,7 +345,7 @@ export function TodoApp() {
           onDelete={handleDelete}
           onUpdate={handleUpdate}
           onReorder={handleReorder}
-          className="h-full overflow-y-auto overscroll-y-contain px-4 pb-28"
+          className="h-full overflow-y-auto overscroll-y-contain px-4 pb-4"
         />
       </main>
 
