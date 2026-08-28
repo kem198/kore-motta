@@ -1,6 +1,7 @@
 import { ExportDialog } from "@/components/shared/dialog/export-dialog";
 import { HelpDialog } from "@/components/shared/dialog/help-dialog";
 import { ImportDialog } from "@/components/shared/dialog/import-dialog";
+import { TipsDialog } from "@/components/shared/dialog/tips-dialog";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -19,6 +20,7 @@ import {
   CircleHelpIcon,
   DownloadIcon,
   EllipsisVerticalIcon,
+  LightbulbIcon,
   RefreshCcwIcon,
   UploadIcon,
 } from "lucide-react";
@@ -38,6 +40,7 @@ export function TodoAppHeaderContent({
   ...props
 }: TodoAppHeaderContentProps) {
   const [isHelpDialogOpen, setIsHelpDialogOpen] = React.useState(false);
+  const [isTipsDialogOpen, setIsTipsDialogOpen] = React.useState(false);
   const [isImportDialogOpen, setIsImportDialogOpen] = React.useState(false);
   const [isExportDialogOpen, setIsExportDialogOpen] = React.useState(false);
 
@@ -82,14 +85,21 @@ export function TodoAppHeaderContent({
             <DropdownMenuContent align="end" className="w-44">
               <DropdownMenuGroup>
                 <DropdownMenuItem
-                  onClick={onMarkAllIncomplete}
-                  aria-label="すべて未完了に戻す"
+                  onClick={() => setIsTipsDialogOpen(true)}
+                  aria-label="便利な使い方"
                 >
-                  <CircleDashedIcon /> すべて未完了に戻す
+                  <LightbulbIcon /> 便利な使い方
                 </DropdownMenuItem>
               </DropdownMenuGroup>
 
               <DropdownMenuSeparator />
+
+              <DropdownMenuItem
+                onClick={onMarkAllIncomplete}
+                aria-label="すべて未完了に戻す"
+              >
+                <CircleDashedIcon /> すべて未完了に戻す
+              </DropdownMenuItem>
 
               <DropdownMenuGroup>
                 <DropdownMenuItem
@@ -125,6 +135,8 @@ export function TodoAppHeaderContent({
       </div>
 
       <HelpDialog open={isHelpDialogOpen} onOpenChange={setIsHelpDialogOpen} />
+
+      <TipsDialog open={isTipsDialogOpen} onOpenChange={setIsTipsDialogOpen} />
 
       <ImportDialog
         open={isImportDialogOpen}

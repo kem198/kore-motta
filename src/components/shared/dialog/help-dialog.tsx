@@ -1,5 +1,6 @@
 "use client";
 
+import { UnorderedList } from "@/components/shared/unordered-list";
 import {
   Accordion,
   AccordionContent,
@@ -16,70 +17,14 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { FEATURES } from "@/constants/features";
+import {
+  ACCORDION_ITEM_CLASS_NAME,
+  ACCORDION_TRIGGER_CLASS_NAME,
+  TYPESET_CLASS_NAME,
+} from "@/constants/help";
 import { cn } from "@/lib/utils";
+import { ListItem, ListItemWithTitle } from "@/types/help";
 import { SquareArrowOutUpRightIcon } from "lucide-react";
-
-type ListItem = {
-  text: string;
-  children?: string[];
-};
-
-type ListItemWithTitle = {
-  title: string;
-  items: ListItem[];
-};
-
-const TIPS: ListItemWithTitle[] = [
-  {
-    title: "アプリとして使う",
-    items: [
-      {
-        text: "ホーム画面やデスクトップに置いて、アプリとして起動できます。",
-        children: [
-          "[PC Edge / Chrome]: URL 欄 > インストールボタン",
-          "[iPhone Safari]: 共有メニュー > ホーム画面に追加",
-          "[Android Chrome]: メニュー > ホーム画面に追加",
-        ],
-      },
-    ],
-  },
-  {
-    title: "カテゴリの並び順を調整する",
-    items: [
-      {
-        text: "カテゴリは名前順に並びます。",
-      },
-      {
-        text: "「01_毎朝」「02_旅行前」などとすると、並び順を調整できます。",
-      },
-    ],
-  },
-  {
-    title: "バックアップ",
-    items: [
-      {
-        text: "メニューから、登録した内容をエクスポートできます。",
-      },
-      {
-        text: "エクスポートした内容は、インポートして復元できます。",
-      },
-      {
-        text: "バックアップやブラウザ間のデータ移行にご利用ください。",
-      },
-    ],
-  },
-  {
-    title: "すべて未完了に戻す",
-    items: [
-      {
-        text: "メニューから、手動ですべてのアイテムを未完了に戻せます。",
-      },
-      {
-        text: "日付をまたいでから利用する時などにお使いください。",
-      },
-    ],
-  },
-];
 
 const ISSUES: ListItem[] = [
   {
@@ -119,9 +64,6 @@ const INFORMATION: ListItemWithTitle[] = [
       },
       {
         text: "ブラウザの「Cookie と他のサイトデータ」を削除すると、登録した内容が削除されます。必要に応じて事前にバックアップを取ってください。",
-      },
-      {
-        text: "ブラウザの開発者ツールなどで保存データを直接変更した場合、データの内容によっては初期化されることがあります。",
       },
     ],
   },
@@ -173,35 +115,6 @@ const CHANGELOG = [
     changes: [{ text: "初回リリース" }],
   },
 ];
-
-const TYPESET_CLASS_NAME = "typeset typeset-docs";
-const ACCORDION_ITEM_CLASS_NAME = "border-b px-4 last:border-b-0";
-const ACCORDION_TRIGGER_CLASS_NAME = "py-3";
-
-type UnorderedListProps = {
-  items: ListItem[];
-  className?: string;
-  codeStyle?: boolean;
-};
-
-function UnorderedList({ items, className }: UnorderedListProps) {
-  return (
-    <ul className={cn("flex list-disc flex-col gap-1 pl-5", className)}>
-      {items.map((item) => (
-        <li key={item.text} className="leading-relaxed">
-          {item.text}
-          {item.children && (
-            <ul className={cn("mt-1 flex list-[circle] flex-col gap-1 pl-5")}>
-              {item.children.map((child) => (
-                <li key={child}>{child}</li>
-              ))}
-            </ul>
-          )}
-        </li>
-      ))}
-    </ul>
-  );
-}
 
 type HelpAccordionProps = {
   children: React.ReactNode;
@@ -275,9 +188,13 @@ type HelpAccordionsProps = {
 function HelpAccordions({ className }: HelpAccordionsProps) {
   return (
     <HelpAccordion className={className}>
-      <HelpAccordionItem value="tips" title="便利な使い方">
+      <HelpAccordionItem value="terms" title="利用規約">
+        <UnorderedList items={TERMS} />
+      </HelpAccordionItem>
+
+      <HelpAccordionItem value="data" title="情報の取り扱いについて">
         <div className="flex flex-col gap-4">
-          {TIPS.map((section) => (
+          {INFORMATION.map((section) => (
             <InformationSection
               key={section.title}
               title={section.title}
@@ -305,32 +222,6 @@ function HelpAccordions({ className }: HelpAccordionsProps) {
 
               <UnorderedList items={release.changes} />
             </div>
-          ))}
-        </div>
-      </HelpAccordionItem>
-    </HelpAccordion>
-  );
-}
-
-type InformationAccordionsProps = {
-  className?: string;
-};
-
-function InformationAccordions({ className }: InformationAccordionsProps) {
-  return (
-    <HelpAccordion className={className}>
-      <HelpAccordionItem value="terms" title="利用規約">
-        <UnorderedList items={TERMS} />
-      </HelpAccordionItem>
-
-      <HelpAccordionItem value="data" title="情報の取り扱いについて">
-        <div className="flex flex-col gap-4">
-          {INFORMATION.map((section) => (
-            <InformationSection
-              key={section.title}
-              title={section.title}
-              items={section.items}
-            />
           ))}
         </div>
       </HelpAccordionItem>
@@ -457,7 +348,6 @@ export function HelpDialog({
           )}
         >
           <Summary className="mb-4" />
-          <InformationAccordions />
           <HelpAccordions />
           <Support />
         </div>
