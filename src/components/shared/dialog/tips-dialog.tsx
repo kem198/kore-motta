@@ -34,6 +34,9 @@ const TIPS: ListItemWithTitle[] = [
           "[Android Chrome]: メニュー > ホーム画面に追加",
         ],
       },
+      {
+        text: "アンインストールは通常のアプリと同様に行ってください。",
+      },
     ],
   },
   {
