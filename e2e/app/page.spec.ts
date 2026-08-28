@@ -672,7 +672,7 @@ test.describe("Todo ページのテスト", () => {
         ).toContainText("仕事");
       });
 
-      test("Todo の編集画面でカテゴリ名を変更すると、更新ボタンが有効になること", async ({
+      test("Todo の編集画面でカテゴリを変更すると、更新ボタンが有効になること", async ({
         page,
       }) => {
         // Arrange
@@ -680,7 +680,15 @@ test.describe("Todo ページのテスト", () => {
           version: 1,
           data: {
             settings: {},
-            todos: [],
+            todos: [
+              {
+                id: "test-todo",
+                name: "資料作成",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                completed: false,
+              },
+            ],
             categories: [
               {
                 id: DEFAULT_CATEGORY_ID,
@@ -703,20 +711,20 @@ test.describe("Todo ページのテスト", () => {
         await navigateToTodoPage(page, { storage: appStorage });
 
         await page.getByRole("button", { name: "編集開始" }).click();
-        await page.getByRole("button", { name: "仕事" }).click();
-        await page.getByRole("button", { name: "仕事" }).click();
+        await page.getByRole("button", { name: "編集: 資料作成" }).click();
 
-        const nameInput = page.getByRole("textbox", { name: "カテゴリ名" });
+        const categorySelect = page.getByRole("combobox", { name: "カテゴリ" });
         const updateButton = page.getByRole("button", { name: "更新" });
 
         // Act
-        await nameInput.fill("営業");
+        await categorySelect.click();
+        await page.getByRole("option", { name: "仕事" }).click();
 
         // Assert
         await expect(updateButton).toBeEnabled();
       });
 
-      test("Todo の編集画面でカテゴリ名に変更がなければ更新ボタンが無効であること", async ({
+      test("Todo の編集画面で変更がなければ更新ボタンが無効であること", async ({
         page,
       }) => {
         // Arrange
@@ -724,17 +732,20 @@ test.describe("Todo ページのテスト", () => {
           version: 1,
           data: {
             settings: {},
-            todos: [],
+            todos: [
+              {
+                id: "test-todo",
+                name: "資料作成",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                completed: false,
+              },
+            ],
             categories: [
               {
                 id: DEFAULT_CATEGORY_ID,
                 name: DEFAULT_CATEGORY_NAME,
                 order: DEFAULT_CATEGORY_ORDER,
-              },
-              {
-                id: "work",
-                name: "仕事",
-                order: 1,
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
@@ -747,8 +758,7 @@ test.describe("Todo ページのテスト", () => {
         await navigateToTodoPage(page, { storage: appStorage });
 
         await page.getByRole("button", { name: "編集開始" }).click();
-        await page.getByRole("button", { name: "仕事" }).click();
-        await page.getByRole("button", { name: "仕事" }).click();
+        await page.getByRole("button", { name: "編集: 資料作成" }).click();
 
         // Assert
         await expect(page.getByRole("button", { name: "更新" })).toBeDisabled();
