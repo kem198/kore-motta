@@ -3,9 +3,9 @@
 import { CategoryList } from "@/components/shared/category-list";
 import { CategorySettingDialog } from "@/components/shared/dialog/category-setting-dialog";
 import { StorageRecoveryDialog } from "@/components/shared/dialog/storage-recovery-dialog";
-import { TodoAppHeader } from "@/components/shared/todo-app-header";
+import { TodoAppHeaderContent } from "@/components/shared/todo-app-header";
 import { TodoAppNavigation } from "@/components/shared/todo-app-navigation";
-import { TodoFormFooter } from "@/components/shared/todo-form-footer";
+import { TodoForm } from "@/components/shared/todo-form";
 import { TodoList } from "@/components/shared/todo-list";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -296,17 +296,39 @@ export function TodoApp() {
   };
 
   return (
-    <>
-      <div className="not-prose flex h-full w-full flex-col">
-        <div className="bg-background shrink-0">
-          <TodoAppHeader
-            appStorage={appStorage}
-            onMarkAllIncomplete={handleMarkAllIncomplete}
-            onImport={handleImport}
-          />
+    /* 1. 最外枠：スクロールを完全に禁止して画面枠を固定 */
+    <div className="bg-background mx-auto flex h-dvh w-full max-w-3xl flex-col overflow-hidden">
+      {/* 2. 上部ヘッダー (スクロールせず固定) */}
+      <header>
+        <TodoAppHeaderContent
+          appStorage={appStorage}
+          onMarkAllIncomplete={handleMarkAllIncomplete}
+          onImport={handleImport}
+        />
 
-          {/* CategoryList の内部でリスト表示に p-1 を指定しているので pl-3 を付けて幅を揃えている */}
-          <div className="flex items-center gap-3 p-4 pl-3">
+        <TodoForm onSubmit={handleCreate} className="max-w-3xl p-4" />
+
+        <Separator />
+      </header>
+
+      <main className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain">
+        <TodoList
+          todos={visibleTodos}
+          categories={appStorage.data.categories}
+          isLoaded={isLoaded}
+          isEditing={isEditing}
+          onDelete={handleDelete}
+          onUpdate={handleUpdate}
+          onReorder={handleReorder}
+          className="px-4 pb-4"
+        />
+      </main>
+
+      {/* CategoryList の内部でリスト表示に p-1 を指定しているので pl-3 を付けて幅を揃えている */}
+      <footer className="bg-background shrink-0">
+        <Separator />
+        <div className="px-4 py-3 pl-3">
+          <div className="flex items-center gap-3">
             <div className="min-w-0 flex-1">
               <CategoryList
                 categories={appStorage.data.categories}
@@ -324,30 +346,15 @@ export function TodoApp() {
             </div>
 
             <TodoAppNavigation
+              categoryCount={appStorage.data.categories.length}
               isEditing={isEditing}
-              appStorage={appStorage}
               onToggleEditing={() => setIsEditing((prev) => !prev)}
             />
           </div>
-
-          <Separator />
         </div>
+      </footer>
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-28">
-          <TodoList
-            todos={visibleTodos}
-            categories={appStorage.data.categories}
-            isLoaded={isLoaded}
-            isEditing={isEditing}
-            onDelete={handleDelete}
-            onUpdate={handleUpdate}
-            onReorder={handleReorder}
-          />
-        </div>
-
-        <TodoFormFooter onSubmit={handleCreate} />
-      </div>
-
+      {/* ダイアログ類 */}
       <CategorySettingDialog
         key={
           categoryDialog
@@ -376,6 +383,6 @@ export function TodoApp() {
         mode="corrupted"
         onReset={handleReset}
       />
-    </>
+    </div>
   );
 }
