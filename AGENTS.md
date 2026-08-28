@@ -21,15 +21,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - 推測で実装せず、必要な情報が不足している場合は確認する。
 - 既存のコードで問題がない場合は、不要な変更を行わない。
 - ルールが競合する場合は、より具体的なファイルの指示を優先する。
-  例: テスト関連は testing.instructions.md を優先する。
-
-## 技術スタック
-
-- Next.js
-- React
-- TypeScript
-- Tailwind CSS
-- Playwright
+  例: テスト関連は `testing.instructions.md` を優先する。
 
 ## テストファースト
 
@@ -68,12 +60,8 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## 実装方針
 
-- TypeScript の型安全性を優先する。
-- `any` は原則として使用しない。
-- ファイルの編集後、TypeScript や Lint のエラーを確認して適宜修正すること。放置して次の実装に進まないこと。
-- Server Component をデフォルトとする。
-- Client Component が必要な場合のみ `"use client"` を使用する。
-- 既存のコンポーネントを優先して再利用する。
+- 型安全性を優先する。
+- 既存のコンポーネントやモジュールなど、既存の実装を優先して再利用する。
 - 新しいライブラリを追加する前に、既存のライブラリで実現できないか検討する。
 - 新しい抽象化を導入する前に、既存の実装を再利用できないか検討する。
 
@@ -83,15 +71,19 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - 変数名・関数名は役割が明確になる名前にする。
 - 略語は一般的なものを除いて使用しない。
 - Boolean 値には `is`、`has`、`can` などを使用する。
-- イベントハンドラには `handle` プレフィックスを使用する。
 
 ## 変更方針
 
 - 変更は必要最小限にする。
-- 既存 API やコンポーネントの仕様を不用意に変更しない。
+- 既存 API や仕様を不用意に変更しない。
 - 指示されていない変更やリファクタリングを行わない。
 - 関係のない既存コードを変更しない。
 - 指示されていない変更を行った場合は、その箇所と理由を説明する。
+
+## コマンド実行
+
+- コマンドを実行する場合は、まずプロジェクトの設定ファイルやドキュメントを確認する。
+- 定義済みのコマンドがある場合は、それを優先して実行する。
 
 ## 完了時
 
@@ -103,7 +95,3 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - テスト結果
 
 テストが失敗した場合は、失敗したテストと原因を説明する。
-
-## コマンド実行
-
-テスト実行などのコマンドを実行する場合、まずプロジェクトの `package.json` を確認し、定義済みであればそのスクリプトを優先して実行する。
