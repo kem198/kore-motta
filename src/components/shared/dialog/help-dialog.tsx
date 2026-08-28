@@ -255,7 +255,7 @@ function Support() {
             rel="noopener noreferrer"
             className="underline underline-offset-4"
           >
-            スターをつける{" "}
+            GitHub でスターをつける{" "}
             <SquareArrowOutUpRightIcon className="inline size-3.5 align-middle" />
           </a>
         </li>
