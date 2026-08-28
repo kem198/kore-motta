@@ -10,7 +10,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { FEATURES } from "@/constants/features";
 import { MESSAGES } from "@/constants/messages";
 import { SITE_NAME } from "@/constants/site";
 import { cn } from "@/lib/utils";
@@ -81,20 +80,18 @@ export function TodoAppHeader({
             />
 
             <DropdownMenuContent align="end" className="w-44">
-              {FEATURES.markAllIncomplete && (
-                <>
-                  <DropdownMenuGroup>
-                    <DropdownMenuItem
-                      onClick={onMarkAllIncomplete}
-                      aria-label="すべて未完了に戻す"
-                    >
-                      <CircleDashedIcon /> すべて未完了に戻す
-                    </DropdownMenuItem>
-                  </DropdownMenuGroup>
+              <>
+                <DropdownMenuGroup>
+                  <DropdownMenuItem
+                    onClick={onMarkAllIncomplete}
+                    aria-label="すべて未完了に戻す"
+                  >
+                    <CircleDashedIcon /> すべて未完了に戻す
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
 
-                  <DropdownMenuSeparator />
-                </>
-              )}
+                <DropdownMenuSeparator />
+              </>
 
               <DropdownMenuGroup>
                 <DropdownMenuItem
