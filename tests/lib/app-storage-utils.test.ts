@@ -1,3 +1,4 @@
+process.env.TZ = "Asia/Tokyo";
 import { describe, expect, test } from "vitest";
 
 import {
