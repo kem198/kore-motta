@@ -62,13 +62,18 @@ export function TodoEditDialog({
     },
   });
 
+  const {
+    formState: { isDirty },
+  } = form;
+  const isChanged = isDirty || categoryId !== todo.categoryId;
+
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);
 
     if (nextOpen) {
       form.reset({
         name: todo.name,
-        memo: todo.memo,
+        memo: todo.memo ?? "",
       });
       setCategoryId(todo.categoryId);
     }
@@ -199,7 +204,7 @@ export function TodoEditDialog({
             }
           />
 
-          <Button type="submit" form="todo-edit">
+          <Button type="submit" form="todo-edit" disabled={!isChanged}>
             {MESSAGES.actions.update}
           </Button>
         </DialogFooter>
