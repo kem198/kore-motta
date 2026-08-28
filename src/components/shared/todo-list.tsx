@@ -18,7 +18,7 @@ import { MESSAGES } from "@/constants/messages";
 import { cn } from "@/lib/utils";
 import { Category } from "@/schemas/category-schema";
 import { Todo } from "@/schemas/todo-schema";
-import { ChevronDown, ChevronUp, PencilIcon, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Trash2 } from "lucide-react";
 import { Fragment } from "react";
 
 function TodoListSkeleton() {
@@ -151,16 +151,18 @@ function TodoItem({
       aria-label={`Todo: ${todo.name}`}
       className="flex w-full items-center gap-2"
     >
-      <TodoToggle
-        completed={todo.completed}
-        aria-label={`完了状態を切り替え: ${todo.name}`}
-        onPressedChange={handleToggle}
-      />
+      <div className="flex shrink-0 items-center justify-center py-2">
+        <TodoToggle
+          completed={todo.completed}
+          aria-label={`完了状態を切り替え: ${todo.name}`}
+          onPressedChange={handleToggle}
+        />
+      </div>
 
       <TodoEditDialog todo={todo} categories={categories} onSave={onUpdate}>
         <button
           type="button"
-          className="group flex min-w-0 flex-1 cursor-pointer flex-col justify-center gap-1 self-stretch rounded-md border border-transparent text-left text-sm transition-colors duration-100 hover:bg-accent"
+          className="group hover:bg-accent flex min-w-0 flex-1 cursor-pointer flex-col justify-center gap-1 self-stretch rounded-md border border-transparent px-2 text-left text-sm transition-colors duration-100"
           aria-label={`編集: ${todo.name}`}
         >
           <span className="line-clamp-1 flex w-fit items-center gap-2 text-sm leading-snug font-medium wrap-break-word">
