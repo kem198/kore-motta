@@ -1,38 +1,19 @@
-"use client";
-
 import { Toggle } from "@/components/ui/toggle";
 import { cn } from "@/lib/utils";
-import { Todo } from "@/schemas/todo-schema";
 import { CheckIcon } from "lucide-react";
 import { ComponentProps } from "react";
 
 type TodoToggleProps = {
-  todo: Todo;
-  onChange?: (updated: Todo) => void;
-} & Omit<ComponentProps<typeof Toggle>, "onChange">;
+  completed: boolean;
+} & Omit<ComponentProps<typeof Toggle>, "pressed" | "onPressedChange">;
 
-export function TodoToggle({
-  todo,
-  className,
-  onChange,
-  ...rest
-}: TodoToggleProps) {
-  const checked = todo.completed;
-
-  const handleChange = (pressed: boolean) => {
-    onChange?.({
-      ...todo,
-      completed: pressed,
-    });
-  };
-
+export function TodoToggle({ completed, className, ...rest }: TodoToggleProps) {
   return (
     <Toggle
-      pressed={checked}
-      onPressedChange={handleChange}
+      pressed={completed}
       variant="outline"
       className={cn(
-        "group aria-pressed:bg-primary hover:bg-primary/10 size-9 cursor-pointer rounded-full transition-colors",
+        "group aria-pressed:bg-primary hover:bg-primary/10 size-9 rounded-full transition-colors",
         className,
       )}
       {...rest}
@@ -40,7 +21,7 @@ export function TodoToggle({
       <CheckIcon
         className={cn(
           "transition-opacity",
-          checked
+          completed
             ? "text-primary-foreground opacity-100"
             : "text-muted-foreground opacity-0 group-hover:opacity-75",
         )}
