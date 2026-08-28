@@ -1,142 +1,238 @@
 ---
 name: Testing Guidelines
-description: Vitest と Playwright のテストコードに適用するルール
+description: テストコードに適用するルール
 applyTo: "**/*.{spec,test}.{ts,tsx}"
 ---
 
-# Testing Instructions
+**目次**
 
-## 基本方針
+- [1. 基本方針](#1-基本方針)
+- [2. テスト種別](#2-テスト種別)
+  - [2.1. 単体テスト](#21-単体テスト)
+  - [2.2. E2E テスト](#22-e2e-テスト)
+  - [2.3. テストの配分](#23-テストの配分)
+- [3. テスト構造](#3-テスト構造)
+  - [3.1. describe と test](#31-describe-と-test)
+  - [3.2. Arrange / Act / Assert とコメント](#32-arrange--act--assert-とコメント)
+  - [3.3. テストの独立性](#33-テストの独立性)
+- [4. テストタイトル](#4-テストタイトル)
+  - [4.1. 基本方針](#41-基本方針)
+  - [4.2. Given / When / Then 構造](#42-given--when--then-構造)
+  - [4.3. 良い例と避ける例](#43-良い例と避ける例)
+- [5. Locator](#5-locator)
+  - [5.1. 取得の優先順位](#51-取得の優先順位)
+  - [5.2. Locator の命名](#52-locator-の命名)
+- [6. Assert](#6-assert)
+- [7. テストコードの実装ルール](#7-テストコードの実装ルール)
 
-- テストは実装詳細ではなく、期待される振る舞いを検証する。
-- テストタイトルも仕様の一部として扱う。
-- テストタイトルから、前提条件・操作・期待される結果が理解できるようにする。
-- 既存のテストパターン・命名規則を優先する。
-- テストコードも本番コードと同様に可読性を重視する。
-- 1 テストの責務は 1 機能に絞る。肥大化や依存性を避ける。
+## 1. 基本方針
 
-## テストタイトル
+- テストは内部実装ではなく、ユーザーから観測できる期待される振る舞いを検証する。
+- 1 つのテストの責務は 1 つの機能に絞り、肥大化やテスト間の依存を避ける。
+- 可読性を重視し、既存のテストパターン・命名規則・構造を優先する。
+- テストを PASS させることだけを目的として、`Assert` を弱めたり、テストを削除・スキップしたりしない。
 
-テストタイトルは、実装ではなく振る舞いを表現する。
+## 2. テスト種別
 
-基本的には以下の形式を使用する。
+### 2.1. 単体テスト
 
-- `〜すると、〜になる`
-- `〜の場合、〜になる`
-- `〜すると、〜できる`
-- `〜の場合、〜できない`
+ブラウザを必要としない処理には [Vitest](https://vitest.dev/) を使用する。
 
-### 良い例
+- 入力と出力、または観測可能な振る舞いを基準とする。
+
+- 境界値検査などのベストプラクティスに沿って検証する。
+
+**対象:**
+
+- 純粋な関数 / ユーティリティ
+- データ変換 / バリデーション
+- 状態変更ロジック / 日付・時刻に関するロジック
+
+**例:**
 
 ```ts
-it("Todo を完了すると、完了状態になる", () => {});
+describe("markAllIncompleteIfDateChanged", () => {
+  test("同日ではすべての Todo を未完了にしない", () => {
+    // Arrange
+    const appStorage = createInitialAppStorage();
+    appStorage.data.lastMarkedAllIncompleteAt = new Date(
+      2026,
+      7,
+      27,
+      0,
+      0,
+      0,
+    ).toISOString();
 
-it("リセット時刻を過ぎてアクセスすると、Todo が未完了に戻る", () => {});
+    const now = new Date(2026, 7, 27, 12, 0, 0);
 
-it("リセット時刻前にアクセスすると、Todo の完了状態が維持される", () => {});
+    // Act
+    const result = markAllIncompleteIfDateChanged(appStorage, now);
 
-it("未入力で送信すると、エラーメッセージが表示される", () => {});
+    // Assert
+    expect(result.didMarkAllIncomplete).toBe(false);
+    expect(result.appStorage).toBe(appStorage);
+  });
+
+  test("日付が変わる直前ではすべての Todo を未完了にしない", () => {
+    // Arrange
+    const appStorage = createInitialAppStorage();
+    appStorage.data.lastMarkedAllIncompleteAt = new Date(
+      2026,
+      7,
+      26,
+      0,
+      0,
+      0,
+    ).toISOString();
+
+    const now = new Date(2026, 7, 26, 23, 59, 59, 999);
+
+    // Act
+    const result = markAllIncompleteIfDateChanged(appStorage, now);
+
+    // Assert
+    expect(result.didMarkAllIncomplete).toBe(false);
+    expect(result.appStorage).toBe(appStorage);
+  });
+
+  test("日付が変わった瞬間にすべての Todo を未完了にする", () => {
+    // Arrange
+    const appStorage = createInitialAppStorage();
+
+    appStorage.data.todos = [
+      {
+        id: "todo-1",
+        name: "Todo 1",
+        order: 0,
+        categoryId: "uncategorized",
+        completed: true,
+      },
+      {
+        id: "todo-2",
+        name: "Todo 2",
+        order: 1,
+        categoryId: "uncategorized",
+        completed: false,
+      },
+    ];
+
+    appStorage.data.lastMarkedAllIncompleteAt = new Date(
+      2026,
+      7,
+      26,
+      0,
+      0,
+      0,
+    ).toISOString();
+
+    const now = new Date(2026, 7, 27, 0, 0, 0, 0);
+
+    // Act
+    const result = markAllIncompleteIfDateChanged(appStorage, now);
+
+    // Assert
+    expect(result.didMarkAllIncomplete).toBe(true);
+    expect(result.appStorage.data.todos).toEqual([
+      {
+        id: "todo-1",
+        name: "Todo 1",
+        order: 0,
+        categoryId: "uncategorized",
+        completed: false,
+      },
+      {
+        id: "todo-2",
+        name: "Todo 2",
+        order: 1,
+        categoryId: "uncategorized",
+        completed: false,
+      },
+    ]);
+  });
+});
 ```
 
-### 避ける例
+### 2.2. E2E テスト
+
+ユーザー操作やブラウザ上での振る舞いには [Playwright](https://playwright.dev/) を使用する。
+
+**対象:**
+
+- ユーザー操作 / ページ遷移 / フォーム操作
+- UI の表示状態 / ブラウザ上での機能
+- 複数のコンポーネントを組み合わせたユーザーシナリオ
+
+E2E テストでは、ユーザーから見える振る舞いを検証する。
+
+**例:**
 
 ```ts
-it("setCompleted が true を設定する", () => {});
-
-it("localStorage に false を保存する", () => {});
-
-it("handleChange が呼ばれる", () => {});
-
-it("useEffect が実行される", () => {});
+test("Todo を完了すると、完了状態として表示される", async ({ page }) => {
+  // ...
+});
 ```
 
-テストタイトルでは、可能な限り以下を表現しない。
+### 2.3. テストの配分
 
-- 関数名
-- 変数名
-- 内部状態
-- React Hook
-- localStorage などの内部実装
-- 使用しているライブラリ
+- **小規模アプリ:**
+  - E2E テストに重点を置き、ユーザー操作上考えられるケースを中心に構成する。
+  - 単体テストは重要なロジックに絞る。
+- **大規模アプリ・高品質を要求するアプリ:**
+  - 単体テストに重点を置き、各関数や処理などに対して正確にテストする。
+  - E2E テストではユーザー操作上考えられるケースの代表例を中心に構成する。
 
-## describe と it
+## 3. テスト構造
 
-`describe` はテスト対象となる機能や仕様を表す。
+### 3.1. describe と test
 
-`test` は、その機能において保証する具体的な振る舞いを表す。
-
-アプリケーションの仕様や CRUD の分類に応じて、適切にカテゴライズする。
+- `describe`: テスト対象の機能・仕様・カテゴリ (CRUD など) を表す。共通分類が不要なら省略可。
+- `test`: 保証する具体的な振る舞いを表す。条件が異なる場合はテストを分ける。
 
 例:
 
 ```ts
-test.describe("Todo ページのテスト", () => {
+test.describe("Todo ページ", () => {
   test.describe("Todo の操作", () => {
-    test.describe("初期表示のテスト", () => {
-      test("Todo が登録済みの状態で、画面が初期表示された時、登録済み Todo の各種情報が表示されること", async ({
-        ...
+    test.describe("初期表示", () => {
+      test("Todo が登録済みの状態で、画面が初期表示されると、登録済み Todo の各種情報が表示される", async ({
+        page,
+      }) => {
+        // ...
       });
-      ...
     });
-    test.describe("作成時のテスト", () => {
-      ...
+
+    test.describe("作成", () => {
+      test("Todo を登録すると、登録した Todo が表示される", async ({
+        page,
+      }) => {
+        // ...
+      });
     });
-    test.describe("更新時のテスト", () => {
-      ...
+
+    test.describe("更新", () => {
+      // ...
     });
-    test.describe("削除時のテスト", () => {
-      ...
+
+    test.describe("削除", () => {
+      // ...
     });
   });
 });
 ```
 
-アプリケーションの仕様や CRUD の分類に応じて、適切にカテゴライズし、条件を明確にする。
+### 3.2. Arrange / Act / Assert とコメント
+
+各テストは可能な限り以下の 3 段階に分けて構成し、対応する明示的なコメント `( // Arrange , // Act , // Assert )` を挿入する。
+
+1. **Arrange**: 前提条件の準備。
+2. **Act**: 検証対象の操作を実行。
+3. **Assert**: 期待される結果を検証。`Assert` が複数観点に分かれる場合は補足コメントを追記する。
+
+例:
 
 ```ts
-test.describe("Todo ページのテスト", () => {
-  test.describe("Todo の操作", () => {
-    test.describe("初期表示のテスト", () => {
-      test("Todo が登録済みの状態で、画面が初期表示された時、登録済み Todo の各種情報が表示されること", async ({
-        ...
-      });
-      ...
-    });
-    test.describe("作成時のテスト", () => {
-      ...
-    });
-    test.describe("更新時のテスト", () => {
-      ...
-    });
-    test.describe("削除時のテスト", () => {
-      ...
-    });
-  });
-});
-```
-
-## Given / When / Then
-
-テストタイトルでは `Given`、`When`、`Then` を可能な限り明示する。
-
-タイトルが長くなる場合は、自然な日本語で振る舞いを表現する。
-
-```ts
-it("リセット時刻を過ぎてアクセスすると、Todo が未完了に戻る", () => {});
-```
-
-このテストは以下の構造を持つ。
-
-- Given: Todo が完了している
-- When: リセット時刻を過ぎてアクセスする
-- Then: Todo が未完了になる
-
-## コメント
-
-各テスト用の処理について、`// Arrange`、 `// Act`、`// Assert` のコメントをつける。
-
-```ts
-test("Todo を登録できること", async ({ page }) => {
+test("Todo を登録すると、登録した Todo が表示される", async ({ page }) => {
   // Arrange
   await navigateToTodo(page);
   const nameInput = page.getByRole("textbox", { name: "新しいアイテム" });
@@ -153,120 +249,101 @@ test("Todo を登録できること", async ({ page }) => {
     (key) => JSON.parse(localStorage.getItem(key)),
     APP_STORAGE_KEY,
   );
+
   expect(todoStorage.data.todos[0].name).toBe("カギ");
 });
 ```
 
-## Vitest
+### 3.3. テストの独立性
 
-※現在の方針では Vitest は採用していない。テストが肥大化してきた際に環境構築を検討する。
+- テスト同士で状態を共有せず、実行順序に依存させない。
+- 各テストは単独実行で成立させる。
+- 共通のページ遷移処理などは関数化して再利用する。
 
-<!-- 以下のテストには Vitest を使用する。
+## 4. テストタイトル
 
-- 純粋な関数
-- ユーティリティ
-- データ変換
-- バリデーション
-- 状態変更ロジック
-- 日付・時刻に関するロジック
-- ブラウザを必要としない処理
+### 4.1. 基本方針
 
-実装詳細ではなく、入力と出力、または観測可能な振る舞いを検証する。
+実装ではなく、利用者の視点での操作と期待する振る舞いを表現する。
 
-正常系だけでなく、必要に応じて境界値や異常系も検証する。
+**推奨形式:**
 
-例:
+- `〜すると、〜になる`
+- `〜の場合、〜になる`
+- `〜すると、〜できる`
+- `〜の場合、〜できない`
 
-```ts
-describe("Todo のリセット判定", () => {
-  it("リセット時刻を過ぎると、リセットが必要になる", () => {
-    // ...
-  });
+**タイトルに含めない要素:**
 
-  it("リセット時刻前の場合、リセットは必要にならない", () => {
-    // ...
-  });
+- 関数名 / 変数名 / 内部状態
+- `React Hook` / `localStorage` などの内部実装や使用ライブラリ
 
-  it("リセット時刻ちょうどの場合、リセットが必要になる", () => {
-    // ...
-  });
-});
-``` -->
+### 4.2. Given / When / Then 構造
 
-## Playwright
+テストタイトルは可能な限り `Given` 、 `When` 、 `Then` の構造を意識する。
 
-以下のテストには Playwright を使用する。
+長くなりすぎる場合は自然な日本語表現を優先する。
 
-- ユーザー操作
-- ページ遷移
-- フォーム操作
-- UI の表示状態
-- ブラウザ上での機能
-- 複数のコンポーネントを組み合わせたユーザーシナリオ
-
-ユーザーから見える振る舞いを検証する。
-
-例:
+構造例:
 
 ```ts
-test("Todo を完了すると、完了状態として表示される", async ({ page }) => {
-  // ...
-});
+test("リセット時刻を過ぎてアクセスすると、Todo が未完了に戻る", () => {});
 ```
 
-## Locator
+上記の例では以下の構造を持つ。
 
-以下を優先する。
+- **Given**: Todo が完了している
+- **When**: リセット時刻を過ぎてアクセスする
+- **Then**: Todo が未完了になる
+
+### 4.3. 良い例と避ける例
+
+**良い例:**
+
+```ts
+test("Todo を完了すると、完了状態になる", () => {});
+test("未入力で送信すると、エラーメッセージが表示される", () => {});
+```
+
+**避ける例:**
+
+```ts
+test("setCompleted が true を設定する", () => {});
+test("localStorage に false を保存する", () => {});
+test("handleChange が呼ばれる", () => {});
+test("useEffect が実行される", () => {});
+```
+
+## 5. Locator
+
+### 5.1. 取得の優先順位
+
+ユーザーが認識できる情報やアクセシビリティ属性を優先する。
 
 1. `getByRole`
 2. `getByLabel`
 3. `getByText`
 4. その他の Locator
 
-CSS セレクタや XPath は、上記で適切に対象を特定できない場合のみ使用する。
+`aria-label` などの既存属性を活用し、テスト専用属性 (`data-testid`) や CSS セレクタ、`XPath` の使用は最小限にする。
 
-複数の要素が存在する場合は、適切な親要素でスコープを限定する。
+### 5.2. Locator の命名
 
-`first()`、`last()`、`nth()` は、位置による選択が仕様上適切な場合にのみ使用する。
+対象の役割が明確に伝わる命名にする。
 
-## Assert
+- **良い例:** `assertScope` , `calendarSection` , `resultArea`
+- **避ける例:** `locator` , `element` , `area`
 
-- Assert の対象範囲を明確にする。
-- ページ全体を対象にした曖昧な Assert を避ける。
-- 同じテキストが複数箇所に存在する場合は、適切な Locator にスコープを限定する。
-- Toast、Modal、Navigation など、テスト対象外の UI が Assert に影響しないようにする。
-- 実装詳細ではなく、ユーザーが確認できる状態を Assert する。
-- テストを PASS させるためだけに Assert を弱めない。
+## 6. Assert
 
-## Locator の命名
+- 検証対象を明確にし、適切な `Locator` にスコープを限定する。
+- 内部実装ではなく、ユーザーが確認できる UI 上の状態を検証する。
+- 必要に応じてデータストアへの反映を検証する。
+- テスト対象外の UI (Toast , Modal , Navigation など) が `Assert` に影響しないように構成する。
 
-Locator は、対象の役割が分かる名前にする。
+## 7. テストコードの実装ルール
 
-良い例:
-
-```ts
-# 優先
-let assertScope: Locator;
-
-# その他の例
-let calendarSection: Locator;
-let resultArea: Locator;
-```
-
-避ける例:
-
-```ts
-let locator: Locator;
-let element: Locator;
-let area: Locator;
-```
-
-ただし、`area`、`section`、`panel` 自体を禁止するものではない。
-
-## テスト構造
-
-- テスト対象ページへの共通の遷移処理は必要に応じて関数化する。
-- テスト同士で状態を共有しない。
-- テストの実行順序に依存しない。
-- 既存のテスト構造を優先する。
-- ロジック (正規表現や条件分岐など) はなるべく利用せず、手続き的に検証する。
+- 複雑なロジック (正規表現や条件分岐など) は避け、期待される結果を直接検証する。
+- 本番コードと同じロジックをテストコード内で再実装しない。
+- 既存の構造・命名規則・ヘルパーを優先利用する。
+- 抽象化や共通化は、明確な重複がある場合に限定する。

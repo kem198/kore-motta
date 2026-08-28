@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, test } from "vitest";
 
 import { deleteCategory, reorderTodos } from "@/lib/todo-utils";
 import { Todo } from "@/schemas/todo-schema";
@@ -17,7 +17,7 @@ const createTodo = (
 });
 
 describe("reorderTodos", () => {
-  it("Todoを前から後ろへ移動する", () => {
+  test("Todoを前から後ろへ移動する", () => {
     // Arrange
     const todos = [
       createTodo("todo-1", 0),
@@ -36,7 +36,7 @@ describe("reorderTodos", () => {
     ]);
   });
 
-  it("Todoを後ろから前へ移動する", () => {
+  test("Todoを後ろから前へ移動する", () => {
     // Arrange
     const todos = [
       createTodo("todo-1", 0),
@@ -55,7 +55,7 @@ describe("reorderTodos", () => {
     ]);
   });
 
-  it("範囲外のインデックスの場合は元の配列を返す", () => {
+  test("範囲外のインデックスの場合は元の配列を返す", () => {
     // Arrange
     const todos = [
       createTodo("todo-1", 0),
@@ -72,7 +72,7 @@ describe("reorderTodos", () => {
 });
 
 describe("deleteCategory", () => {
-  it("指定したカテゴリを削除し、そのカテゴリのTodoを未分類へ移動する", () => {
+  test("指定したカテゴリを削除し、そのカテゴリのTodoを未分類へ移動する", () => {
     // Arrange
     const data = {
       settings: {},
@@ -116,7 +116,7 @@ describe("deleteCategory", () => {
     ]);
   });
 
-  it("未分類カテゴリを削除しようとした場合は変更しない", () => {
+  test("未分類カテゴリを削除しようとした場合は変更しない", () => {
     // Arrange
     const data = {
       settings: {},
