@@ -297,7 +297,7 @@ export function TodoApp() {
 
   return (
     /* 1. 最外枠：スクロールを完全に禁止して画面枠を固定 */
-    <div className="bg-background mx-auto flex h-svh w-full max-w-3xl flex-col overflow-hidden">
+    <div className="bg-background mx-auto flex h-dvh w-full max-w-3xl flex-col overflow-hidden">
       {/* 2. 上部ヘッダー (スクロールせず固定) */}
       <div className="shrink-0">
         <TodoAppHeader
@@ -335,7 +335,7 @@ export function TodoApp() {
       </div>
 
       {/* 3. メイン領域：ヘッダーとフッターの間の余白をすべて確保 */}
-      <main className="bg-background min-h-0 flex-1">
+      <main className="bg-background min-h-0 flex-1 overflow-y-auto overscroll-y-contain">
         {/* TodoList 自体にスクロールとぼよん（overscroll-y-bounce）を許可 */}
         <TodoList
           todos={visibleTodos}
@@ -345,7 +345,7 @@ export function TodoApp() {
           onDelete={handleDelete}
           onUpdate={handleUpdate}
           onReorder={handleReorder}
-          className="h-full overflow-y-auto overscroll-y-contain px-4 pb-4"
+          className="px-4 pb-4"
         />
       </main>
 
