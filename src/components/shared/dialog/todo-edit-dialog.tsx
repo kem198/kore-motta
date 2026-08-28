@@ -73,7 +73,7 @@ export function TodoEditDialog({
     if (nextOpen) {
       form.reset({
         name: todo.name,
-        memo: todo.memo,
+        memo: todo.memo ?? "",
       });
       setCategoryId(todo.categoryId);
     }
