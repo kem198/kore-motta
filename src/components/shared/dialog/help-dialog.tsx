@@ -250,7 +250,7 @@ function Support() {
       <ul className="mt-0">
         <li>
           <a
-            href="https://github.com/kem198/kore-motta/tree/main"
+            href="https://github.com/kem198/kore-motta"
             target="_blank"
             rel="noopener noreferrer"
             className="underline underline-offset-4"
