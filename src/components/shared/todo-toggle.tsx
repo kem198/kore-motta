@@ -13,7 +13,7 @@ export function TodoToggle({ completed, className, ...rest }: TodoToggleProps) {
       pressed={completed}
       variant="outline"
       className={cn(
-        "group aria-pressed:bg-primary hover:bg-primary/10 size-9 rounded-full transition-colors",
+        "aria-pressed:bg-primary size-9 cursor-pointer rounded-full transition-colors hover:bg-transparent",
         className,
       )}
       {...rest}
