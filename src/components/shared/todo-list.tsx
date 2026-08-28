@@ -258,7 +258,11 @@ export function TodoList({
   className,
 }: TodoListProps) {
   if (!isLoaded) {
-    return <TodoListLoading />;
+    return (
+      <div className={className}>
+        <TodoListLoading />
+      </div>
+    );
   }
 
   if (todos.length === 0) {
