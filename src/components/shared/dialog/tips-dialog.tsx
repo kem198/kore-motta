@@ -62,7 +62,7 @@ const TIPS: ListItemWithTitle[] = [
     ],
   },
   {
-    title: "すべて未完了に戻す",
+    title: "手動で未完了に戻す",
     items: [
       {
         text: "メニューから、手動ですべてのアイテムを未完了に戻せます。",
