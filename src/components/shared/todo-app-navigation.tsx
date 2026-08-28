@@ -17,22 +17,20 @@ export function TodoAppNavigation({
 
   return (
     <div className="sticky bottom-0 z-50 flex justify-end gap-2">
-      <div className="flex gap-2">
-        <Button
-          variant={isEditing ? "default" : "secondary"}
-          onClick={onToggleEditing}
-          aria-label={
-            isEditing ? MESSAGES.actions.editDone : MESSAGES.actions.editStart
-          }
-        >
-          <SquarePenIcon />
-          {isEditing
-            ? MESSAGES.actions.done
-            : !shouldHideLabel
-              ? MESSAGES.actions.edit
-              : null}
-        </Button>
-      </div>
+      <Button
+        variant={isEditing ? "default" : "secondary"}
+        onClick={onToggleEditing}
+        aria-label={
+          isEditing ? MESSAGES.actions.editDone : MESSAGES.actions.editStart
+        }
+      >
+        <SquarePenIcon />
+        {isEditing
+          ? MESSAGES.actions.done
+          : !shouldHideLabel
+            ? MESSAGES.actions.edit
+            : null}
+      </Button>
     </div>
   );
 }
