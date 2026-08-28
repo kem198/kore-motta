@@ -92,6 +92,15 @@ const CHANGELOG = [
     ],
   },
   {
+    version: "v0.2.1",
+    date: "2026-08-28",
+    changes: [
+      {
+        text: "軽微な修正を行いました。",
+      },
+    ],
+  },
+  {
     version: "v0.2.0",
     date: "2026-08-28",
     changes: [
