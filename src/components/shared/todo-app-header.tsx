@@ -28,7 +28,7 @@ export type TodoAppHeaderProps = {
   appStorage: AppStorage;
   onMarkAllIncomplete: () => void;
   onImport: (data: string) => boolean;
-} & React.HTMLAttributes<HTMLElement>;
+} & React.HTMLAttributes<HTMLHeadElement>;
 
 export function TodoAppHeader({
   appStorage,
@@ -42,87 +42,85 @@ export function TodoAppHeader({
   const [isExportDialogOpen, setIsExportDialogOpen] = React.useState(false);
 
   return (
-    <>
-      <header
-        className={cn(
-          "bg-primary flex items-center justify-between gap-2 px-3 py-1 font-normal text-white",
-          className,
-        )}
-        {...props}
-      >
-        <h1 className="font-ubuntu-sans inline-flex w-auto cursor-default items-center gap-2 text-xl font-medium">
-          {SITE_NAME}
-        </h1>
+    <header
+      className={cn(
+        "bg-primary flex items-center justify-between gap-2 px-3 py-1 font-normal text-white",
+        className,
+      )}
+      {...props}
+    >
+      <h1 className="font-ubuntu-sans inline-flex w-auto cursor-default items-center gap-2 text-xl font-medium">
+        {SITE_NAME}
+      </h1>
 
-        <div className="flex gap-1">
-          <Button
-            variant="ghost"
-            size="icon-lg"
-            aria-label="使い方・利用規約"
-            onClick={() => setIsHelpDialogOpen(true)}
-            className="rounded-full text-white hover:bg-white/10 hover:text-white"
-          >
-            <CircleHelpIcon className="size-5" />
-          </Button>
+      <div className="flex gap-1">
+        <Button
+          variant="ghost"
+          size="icon-lg"
+          aria-label="使い方・利用規約"
+          onClick={() => setIsHelpDialogOpen(true)}
+          className="rounded-full text-white hover:bg-white/10 hover:text-white"
+        >
+          <CircleHelpIcon className="size-5" />
+        </Button>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <Button
-                  variant="ghost"
-                  size="icon-lg"
-                  aria-label="グローバルメニュー"
-                  className="rounded-full text-white hover:bg-white/10 hover:text-white aria-expanded:bg-white/10 aria-expanded:text-white"
-                >
-                  <EllipsisVerticalIcon className="size-5" />
-                </Button>
-              }
-            />
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={
+              <Button
+                variant="ghost"
+                size="icon-lg"
+                aria-label="グローバルメニュー"
+                className="rounded-full text-white hover:bg-white/10 hover:text-white aria-expanded:bg-white/10 aria-expanded:text-white"
+              >
+                <EllipsisVerticalIcon className="size-5" />
+              </Button>
+            }
+          />
 
-            <DropdownMenuContent align="end" className="w-44">
-              <DropdownMenuGroup>
-                <DropdownMenuItem
-                  onClick={onMarkAllIncomplete}
-                  aria-label="すべて未完了に戻す"
-                >
-                  <CircleDashedIcon /> すべて未完了に戻す
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
+          <DropdownMenuContent align="end" className="w-44">
+            <DropdownMenuGroup>
+              <DropdownMenuItem
+                onClick={onMarkAllIncomplete}
+                aria-label="すべて未完了に戻す"
+              >
+                <CircleDashedIcon /> すべて未完了に戻す
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
 
-              <DropdownMenuSeparator />
+            <DropdownMenuSeparator />
 
-              <DropdownMenuGroup>
-                <DropdownMenuItem
-                  onClick={() => window.location.reload()}
-                  aria-label="更新する"
-                >
-                  <RefreshCcwIcon /> 更新する
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
+            <DropdownMenuGroup>
+              <DropdownMenuItem
+                onClick={() => window.location.reload()}
+                aria-label="更新する"
+              >
+                <RefreshCcwIcon /> 更新する
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
 
-              <DropdownMenuSeparator />
+            <DropdownMenuSeparator />
 
-              <DropdownMenuGroup>
-                <DropdownMenuItem
-                  onClick={() => setIsExportDialogOpen(true)}
-                  aria-label="エクスポート"
-                >
-                  <UploadIcon /> {MESSAGES.actions.export}
-                </DropdownMenuItem>
+            <DropdownMenuGroup>
+              <DropdownMenuItem
+                onClick={() => setIsExportDialogOpen(true)}
+                aria-label="エクスポート"
+              >
+                <UploadIcon /> {MESSAGES.actions.export}
+              </DropdownMenuItem>
 
-                <DropdownMenuItem
-                  variant="destructive"
-                  onClick={() => setIsImportDialogOpen(true)}
-                  aria-label="インポート"
-                >
-                  <DownloadIcon />
-                  {MESSAGES.actions.import}
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </header>
+              <DropdownMenuItem
+                variant="destructive"
+                onClick={() => setIsImportDialogOpen(true)}
+                aria-label="インポート"
+              >
+                <DownloadIcon />
+                {MESSAGES.actions.import}
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
 
       <HelpDialog open={isHelpDialogOpen} onOpenChange={setIsHelpDialogOpen} />
 
@@ -137,6 +135,6 @@ export function TodoAppHeader({
         onOpenChange={setIsExportDialogOpen}
         appStorage={appStorage}
       />
-    </>
+    </header>
   );
 }
