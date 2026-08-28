@@ -34,7 +34,7 @@ const TIPS: ListItem[] = [
     ],
   },
   {
-    text: "カテゴリは名前順に並びます。「1-毎朝」「2-旅行前」などとすると、並び順を調整できます。",
+    text: "カテゴリは名前順に並びます。「01_毎朝」「02_旅行前」などとすると、並び順を調整できます。",
   },
   {
     text: "メニューから、手動ですべてのアイテムを未完了に戻せます。日付をまたいでから利用する時などにお使いください。",
@@ -52,6 +52,16 @@ const ISSUES: ListItem[] = [
 
 const CHANGELOG = [
   {
+    version: "v0.2.0",
+    date: "2026-08-28",
+    changes: [
+      { text: "手動で「すべて未完了に戻す」機能を追加しました。" },
+      {
+        text: "UI を調整し、アイテムの表示範囲を広げました。",
+      },
+    ],
+  },
+  {
     version: "v0.1.0",
     date: "2026-08-27",
     changes: [{ text: "初回リリース" }],
@@ -60,7 +70,7 @@ const CHANGELOG = [
 
 function UnorderedList({ items }: { items: ListItem[] }) {
   return (
-    <ul className="flex list-disc flex-col gap-2 pl-5">
+    <ul className="flex list-disc flex-col gap-0 pl-5">
       {items.map((item) => (
         <li key={item.text} className="leading-relaxed">
           {item.text}
