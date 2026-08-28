@@ -268,7 +268,7 @@ function InformationAccordions() {
   );
 }
 
-function Term() {
+function Summary() {
   return (
     <div
       className={TYPESET_CLASS_NAME}
@@ -276,7 +276,6 @@ function Term() {
     >
       <section>
         <h3>このアプリは何？</h3>
-
         <p>
           <span className="font-ubuntu-sans font-medium">Kore Motta?</span>{" "}
           は、日頃の「これ持った？」を確認するシンプルな Todo アプリです。
@@ -287,7 +286,6 @@ function Term() {
 
       <section>
         <h3>概要</h3>
-
         <UnorderedList items={OVERVIEW} />
       </section>
     </div>
@@ -370,7 +368,7 @@ export function HelpDialog({ open, onOpenChange }: HelpDialogProps) {
             "-mx-4 max-h-[60dvh] overflow-y-auto px-4",
           )}
         >
-          <Term />
+          <Summary />
           <InformationAccordions />
           <HelpAccordions />
           <Support />
