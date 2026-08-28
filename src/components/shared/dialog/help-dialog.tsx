@@ -87,7 +87,7 @@ const CHANGELOG = [
     date: "2026-08-28",
     changes: [
       {
-        text: "使い方・利用規約を更新しました。",
+        text: "このアプリについて・利用規約を更新しました。",
       },
     ],
   },
@@ -343,7 +343,7 @@ export function HelpDialog({
         className={cn("flex w-[90vw] max-w-xl! flex-col", className)}
       >
         <DialogHeader>
-          <DialogTitle>使い方・利用規約</DialogTitle>
+          <DialogTitle>このアプリについて・利用規約</DialogTitle>
         </DialogHeader>
 
         <div
