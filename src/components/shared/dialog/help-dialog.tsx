@@ -160,23 +160,30 @@ const ACCORDION_TRIGGER_CLASS_NAME = "py-3";
 type UnorderedListProps = {
   items: ListItem[];
   className?: string;
+  codeStyle?: boolean;
 };
 
-function UnorderedList({ items, className }: UnorderedListProps) {
+function UnorderedList({
+  items,
+  className,
+  codeStyle: code = false,
+}: UnorderedListProps) {
   return (
     <ul className={cn("flex list-disc flex-col gap-1 pl-5", className)}>
       {items.map((item) => (
         <li key={item.text} className="leading-relaxed">
           {item.text}
-
           {item.children && (
-            <ul className="mt-1 flex list-[circle] flex-col gap-1 pl-5">
+            <div
+              className={cn(
+                "mt-1 flex flex-col gap-1 pl-5",
+                code && "bg-muted/50 rounded-md border p-2 text-xs",
+              )}
+            >
               {item.children.map((child) => (
-                <li key={child} className="leading-relaxed">
-                  {child}
-                </li>
+                <div key={child}>{child}</div>
               ))}
-            </ul>
+            </div>
           )}
         </li>
       ))}
@@ -257,7 +264,7 @@ function HelpAccordions({ className }: HelpAccordionsProps) {
   return (
     <HelpAccordion className={className}>
       <HelpAccordionItem value="tips" title="便利な使い方">
-        <UnorderedList items={TIPS} />
+        <UnorderedList items={TIPS} codeStyle />
       </HelpAccordionItem>
 
       <HelpAccordionItem value="issues" title="既知の問題">
