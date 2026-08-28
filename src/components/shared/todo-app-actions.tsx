@@ -4,7 +4,6 @@ import { SquarePenIcon } from "lucide-react";
 
 type TodoAppActionsProps = {
   isEditing: boolean;
-  onOpenCategorySettings: () => void;
   onToggleEditing: () => void;
 };
 
