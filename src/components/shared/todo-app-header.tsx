@@ -28,7 +28,7 @@ export type TodoAppHeaderContentProps = {
   appStorage: AppStorage;
   onMarkAllIncomplete: () => void;
   onImport: (data: string) => boolean;
-} & React.ComponentPropsWithoutRef<"header">;
+} & React.ComponentPropsWithoutRef<"div">;
 
 export function TodoAppHeaderContent({
   appStorage,
