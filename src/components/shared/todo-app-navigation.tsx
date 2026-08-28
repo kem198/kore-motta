@@ -1,22 +1,30 @@
 import { Button } from "@/components/ui/button";
 import { MESSAGES } from "@/constants/messages";
-import { SquarePenIcon } from "lucide-react";
+import { FolderEditIcon, SquarePenIcon } from "lucide-react";
 
 type TodoAppNavigationProps = {
   categoryCount: number;
   isEditing: boolean;
   onToggleEditing: () => void;
+  onOpenCategorySetting: () => void;
 };
 
 export function TodoAppNavigation({
-  categoryCount,
   isEditing,
   onToggleEditing,
+  onOpenCategorySetting,
 }: TodoAppNavigationProps) {
-  const shouldHideLabel = categoryCount >= 4;
-
   return (
-    <div className="sticky bottom-0 z-50 flex justify-end gap-2">
+    <div className="flex justify-end gap-2">
+      <Button
+        variant="secondary"
+        aria-label="カテゴリ設定"
+        onClick={onOpenCategorySetting}
+      >
+        <FolderEditIcon />
+        カテゴリ設定
+      </Button>
+
       <Button
         variant={isEditing ? "default" : "secondary"}
         onClick={onToggleEditing}
@@ -25,11 +33,7 @@ export function TodoAppNavigation({
         }
       >
         <SquarePenIcon />
-        {isEditing
-          ? MESSAGES.actions.done
-          : !shouldHideLabel
-            ? MESSAGES.actions.edit
-            : null}
+        {isEditing ? MESSAGES.actions.done : MESSAGES.actions.edit}
       </Button>
     </div>
   );
