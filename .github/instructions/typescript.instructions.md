@@ -1,8 +1,8 @@
 ---
+name: TypeScript Guidelines
+description: TypeScript に関するルール
 applyTo: "**/*.{ts,tsx}"
 ---
-
-# TypeScript 開発ルール
 
 ## 型
 

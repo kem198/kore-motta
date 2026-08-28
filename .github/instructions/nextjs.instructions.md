@@ -1,8 +1,10 @@
 ---
+name: Next.js Guidelines
+description: Next.js に関するルール
 applyTo: "**/*.{js,jsx,ts,tsx}"
 ---
 
-# Next.js 開発ルール
+## 基本方針
 
 - Server Component をデフォルトとする。
 - Client Component が必要な場合のみ `"use client"` を使用する。
