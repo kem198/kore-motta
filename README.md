@@ -76,10 +76,6 @@ npm run start
 - [Playwright](https://playwright.dev/)
 - [GitHub Actions](https://github.com/features/actions)
 
-### コードレビュー
-
-- [Gemini Code Assist on GitHub](https://docs.cloud.google.com/gemini/docs/code-review/review-repo-code?hl=ja)
-
 ### ドメイン管理・ホスティング
 
 - [Xserver Domain](https://www.xdomain.ne.jp/)
