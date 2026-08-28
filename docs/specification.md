@@ -59,9 +59,9 @@ description: アプリケーションの概要、仕様、受け入れ条件を�
 
 ### 2.3. コードレビュー方針
 
-下記の各種ドキュメントを参照。
+下記のドキュメントを参照。
 
-- [.gemini/](/.gemini/styleguide.md)
+- [.gemini/styleguide.md](/.gemini/styleguide.md)
 
 ## 3. 用語の定義
 
