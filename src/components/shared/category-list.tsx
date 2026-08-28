@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { DEFAULT_CATEGORY_ID } from "@/constants/categories";
 import { MESSAGES } from "@/constants/messages";
 import { Category } from "@/schemas/category-schema";
-import { PlusIcon } from "lucide-react";
+import { PencilIcon, PlusIcon } from "lucide-react";
 
 const sortCategories = (categories: Category[]) =>
   [...categories].sort((a, b) => {
@@ -36,6 +36,7 @@ type CategoryListProps = {
   categories: Category[];
   activeCategoryId: string;
   isLoaded: boolean;
+  isEditing: boolean;
   onSelect: (categoryId: string) => void;
   onCreate: () => void;
 };
@@ -44,6 +45,7 @@ export function CategoryList({
   categories,
   activeCategoryId,
   isLoaded,
+  isEditing,
   onSelect,
   onCreate,
 }: CategoryListProps) {
@@ -76,6 +78,7 @@ export function CategoryList({
               onClick={() => onSelect(category.id)}
             >
               {category.name}
+              {isEditing && isSelected && <PencilIcon />}
             </Button>
           );
         })}

@@ -86,6 +86,14 @@ export function TodoApp() {
   };
 
   const handleSelectCategory = (categoryId: string) => {
+    if (categoryId === activeCategoryId) {
+      if (isEditing) {
+        handleOpenCategoryEditDialog();
+      }
+
+      return;
+    }
+
     updateAppStorage((current) => ({
       ...current,
       data: {
@@ -298,19 +306,22 @@ export function TodoApp() {
           />
 
           {/* CategoryList の内部でリスト表示に p-1 を指定しているので pl-3 を付けて幅を揃えている */}
-          <div className="flex flex-col gap-3 p-4 pl-3">
-            <CategoryList
-              categories={appStorage.data.categories}
-              activeCategoryId={activeCategoryId}
-              isLoaded={isLoaded}
-              onSelect={handleSelectCategory}
-              onCreate={() =>
-                setCategoryDialog({
-                  mode: "create",
-                  category: null,
-                })
-              }
-            />
+          <div className="flex items-center gap-3 p-4 pl-3">
+            <div className="min-w-0 flex-1">
+              <CategoryList
+                categories={appStorage.data.categories}
+                activeCategoryId={activeCategoryId}
+                isLoaded={isLoaded}
+                isEditing={isEditing}
+                onSelect={handleSelectCategory}
+                onCreate={() =>
+                  setCategoryDialog({
+                    mode: "create",
+                    category: null,
+                  })
+                }
+              />
+            </div>
 
             <TodoAppNavigation
               isEditing={isEditing}
