@@ -292,7 +292,7 @@ export function HelpDialog({ open, onOpenChange }: HelpDialogProps) {
         >
           <Term />
           <HelpAccordions />
-          <Support></Support>
+          <Support />
         </div>
 
         <DialogFooter>
