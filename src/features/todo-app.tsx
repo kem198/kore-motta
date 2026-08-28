@@ -299,7 +299,7 @@ export function TodoApp() {
     /* 1. 最外枠：スクロールを完全に禁止して画面枠を固定 */
     <div className="bg-background mx-auto flex h-svh w-full max-w-3xl flex-col overflow-hidden">
       {/* 2. 上部ヘッダー (スクロールせず固定) */}
-      <header className="shrink-0">
+      <div className="shrink-0">
         <TodoAppHeader
           appStorage={appStorage}
           onMarkAllIncomplete={handleMarkAllIncomplete}
@@ -332,7 +332,7 @@ export function TodoApp() {
         </div>
 
         <Separator />
-      </header>
+      </div>
 
       {/* 3. メイン領域：ヘッダーとフッターの間の余白をすべて確保 */}
       <main className="bg-background min-h-0 flex-1">
