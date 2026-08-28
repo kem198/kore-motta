@@ -15,6 +15,7 @@ import { ButtonGroup } from "@/components/ui/button-group";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MESSAGES } from "@/constants/messages";
+import { cn } from "@/lib/utils";
 import { Category } from "@/schemas/category-schema";
 import { Todo } from "@/schemas/todo-schema";
 import { ChevronDown, ChevronUp, Trash2 } from "lucide-react";
@@ -200,6 +201,7 @@ type TodoListContentProps = {
   onDelete: (todo: Todo) => void;
   onUpdate: (todo: Todo) => void;
   onReorder: (startIndex: number, endIndex: number) => void;
+  className?: string;
 };
 
 function TodoListContent({
@@ -209,9 +211,10 @@ function TodoListContent({
   onDelete,
   onUpdate,
   onReorder,
+  className,
 }: TodoListContentProps) {
   return (
-    <div className="flex w-full flex-col gap-2">
+    <div className={cn("flex w-full flex-col gap-2", className)}>
       <div>{/* 上部の隙間用 */}</div>
       {todos.map((todo, index) => (
         <Fragment key={todo.id}>
@@ -241,6 +244,7 @@ type TodoListProps = {
   onDelete: (todo: Todo) => void;
   onUpdate: (todo: Todo) => void;
   onReorder: (startIndex: number, endIndex: number) => void;
+  className?: string;
 };
 
 export function TodoList({
@@ -251,6 +255,7 @@ export function TodoList({
   onDelete,
   onUpdate,
   onReorder,
+  className,
 }: TodoListProps) {
   if (!isLoaded) {
     return <TodoListLoading />;
@@ -268,6 +273,7 @@ export function TodoList({
       onDelete={onDelete}
       onUpdate={onUpdate}
       onReorder={onReorder}
+      className={className}
     />
   );
 }
