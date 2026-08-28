@@ -410,7 +410,6 @@ type HelpDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   className?: string;
-  contentClassName?: string;
   bodyClassName?: string;
 };
 
@@ -418,18 +417,13 @@ export function HelpDialog({
   open,
   onOpenChange,
   className,
-  contentClassName,
   bodyClassName,
 }: HelpDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         initialFocus={false}
-        className={cn(
-          "flex w-[90vw] max-w-xl! flex-col",
-          className,
-          contentClassName,
-        )}
+        className={cn("flex w-[90vw] max-w-xl! flex-col", className)}
       >
         <DialogHeader>
           <DialogTitle>使い方・利用規約</DialogTitle>
