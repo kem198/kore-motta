@@ -50,7 +50,7 @@ export const MESSAGES = {
     title: "スマホ",
     memo: "充電しておく",
     newItem: "新しいアイテム",
-    categoryName: "毎朝",
+    categoryName: "お出かけ前",
   },
 
   validation: {
