@@ -263,9 +263,9 @@ function Summary({ className }: SummaryProps) {
         <p>
           <span className="font-ubuntu-sans font-medium">Kore Motta?</span>{" "}
           は、日頃の「これ持った？」を確認する Todo アプリです。
+          <br />
+          日付をまたぐと、すべてのアイテムが自動で未完了に戻ります。
         </p>
-
-        <p>日付をまたぐと、すべてのアイテムが自動で未完了に戻ります。</p>
       </section>
 
       <section>
