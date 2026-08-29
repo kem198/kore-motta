@@ -28,13 +28,13 @@ import { SquareArrowOutUpRightIcon } from "lucide-react";
 
 const OVERVIEW: ListItem[] = [
   {
-    text: "日付が変わると、すべてのアイテムが未完了に戻ります。",
-  },
-  {
     text: "持ち物や定期的な作業を登録しておくと、一日限りのチェックリストとして利用できます。",
   },
   {
     text: "アイテムが期限切れとして溜まらないため、好みのタイミングで使えます。",
+  },
+  {
+    text: "ログイン無しで利用できます。",
   },
 ];
 
@@ -66,7 +66,10 @@ const STORED_DATA: ListItemWithTitle[] = [
         text: "個人情報や機密情報など重要な情報は登録しないでください。",
       },
       {
-        text: "ブラウザの「Cookie と他のサイトデータ」を削除すると、登録した内容が削除されます。必要に応じて事前にバックアップを取ってください。",
+        text: "ブラウザの「Cookie と他のサイトデータ」を削除すると、登録した内容が削除されます。",
+        children: [
+          "必要に応じて「メニュー > エクスポート」から事前にバックアップを取ってください。",
+        ],
       },
     ],
   },
@@ -76,18 +79,36 @@ const ISSUES: ListItem[] = [
   {
     text: "iPhone の Safari では、キーボードの表示により末尾のアイテムが見づらくなる場合があります。お手数ですがキーボードを閉じてご確認ください。",
   },
-  {
-    text: "ページを開いたまま日付をまたいだ場合、未完了に戻りません。メニューから「更新する」をお試しください。",
-  },
 ];
 
 const CHANGELOG = [
+  {
+    version: "v0.3.0",
+    date: "2026-08-29",
+    changes: [
+      {
+        text: "日付が変わった後、別のページやアプリに切り替えて再び戻ってきたときも、すべて未完了に戻すようにしました。",
+      },
+      {
+        text: "「便利な使い方」を更新しました。",
+      },
+    ],
+  },
   {
     version: "v0.2.2",
     date: "2026-08-28",
     changes: [
       {
-        text: "使い方・利用規約を更新しました。",
+        text: "「アプリの概要・利用規約」を更新しました。",
+      },
+    ],
+  },
+  {
+    version: "v0.2.1",
+    date: "2026-08-28",
+    changes: [
+      {
+        text: "軽微な修正を行いました。",
       },
     ],
   },
@@ -244,11 +265,11 @@ function Summary({ className }: SummaryProps) {
           は、日頃の「これ持った？」を確認するシンプルな Todo アプリです。
         </p>
 
-        <p>一日ごとにすべてのアイテムが未完了に戻ることが特徴です。</p>
+        <p>日付をまたぐと、すべてのアイテムが未完了に戻ります。</p>
       </section>
 
       <section>
-        <h3>概要</h3>
+        <h3>特徴</h3>
         <UnorderedList items={OVERVIEW} />
       </section>
     </div>
@@ -334,7 +355,7 @@ export function HelpDialog({
         className={cn("flex w-[90vw] max-w-xl! flex-col", className)}
       >
         <DialogHeader>
-          <DialogTitle>使い方・利用規約</DialogTitle>
+          <DialogTitle>アプリの概要・利用規約</DialogTitle>
         </DialogHeader>
 
         <div

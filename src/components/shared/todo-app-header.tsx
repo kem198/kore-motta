@@ -61,7 +61,7 @@ export function TodoAppHeaderContent({
           <Button
             variant="ghost"
             size="icon-lg"
-            aria-label="使い方・利用規約"
+            aria-label="アプリの概要・利用規約"
             onClick={() => setIsHelpDialogOpen(true)}
             className="rounded-full text-white hover:bg-white/10 hover:text-white"
           >
