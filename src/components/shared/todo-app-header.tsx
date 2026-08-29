@@ -104,9 +104,9 @@ export function TodoAppHeaderContent({
               <DropdownMenuGroup>
                 <DropdownMenuItem
                   onClick={() => window.location.reload()}
-                  aria-label="更新する"
+                  aria-label="再読み込みする"
                 >
-                  <RefreshCcwIcon /> 更新する
+                  <RefreshCcwIcon /> 再読み込みする
                 </DropdownMenuItem>
               </DropdownMenuGroup>
 

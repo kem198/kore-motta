@@ -99,7 +99,7 @@ const OTHER_SPECIFICATIONS: ListItemWithTitle[] = [
     title: "アプリの再読み込み",
     items: [
       {
-        text: "「メニュー > 更新する」からアプリを再読み込みできます。",
+        text: "「メニュー > 再読み込みする」からアプリを再読み込みできます。",
         children: [
           "最新バージョンを利用したい場合や、挙動が不安定なときにお試しください。",
         ],

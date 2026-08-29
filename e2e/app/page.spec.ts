@@ -142,7 +142,7 @@ test.describe("Todo ページのテスト", () => {
         expect(legacyCategoriesKeyValue).toBeNull();
       });
 
-      test("日付が変わる前にページを更新すると、完了済みの Todo が完了のままであること", async ({
+      test("日付が変わる前にページを再読み込みすると、完了済みの Todo が完了のままであること", async ({
         page,
       }) => {
         // Arrange
@@ -179,7 +179,7 @@ test.describe("Todo ページのテスト", () => {
         // 当日にページを更新したことを再現する
         const afterMidnight = new Date("2026-08-24T23:59:59+09:00");
         await page.clock.setFixedTime(afterMidnight);
-        // 更新する
+        // 再読み込みする
         await page.reload();
 
         // Assert: UI 上で Todo が完了のままであること
@@ -208,7 +208,7 @@ test.describe("Todo ページのテスト", () => {
         );
       });
 
-      test("日付が変わってからページを更新すると、完了済みの Todo が未完了になること", async ({
+      test("日付が変わってからページを再読み込みすると、完了済みの Todo が未完了になること", async ({
         page,
       }) => {
         // Arrange
@@ -246,7 +246,7 @@ test.describe("Todo ページのテスト", () => {
         // 日付が変わった状態を再現する
         const afterMidnight = new Date("2026-08-25T00:00:00+09:00");
         await page.clock.setFixedTime(afterMidnight);
-        // 更新する
+        // 再読み込みする
         await page.reload();
 
         // Assert: UI 上で Todo が未完了になっていること
@@ -1817,8 +1817,8 @@ test.describe("Todo ページのテスト", () => {
   });
 
   test.describe("共通操作", () => {
-    test.describe("「更新する」ボタンのテスト", () => {
-      test("日付が変わる前に「更新する」ボタンを押すと、完了済みの Todo が完了のままであること", async ({
+    test.describe("「再読み込みする」ボタンのテスト", () => {
+      test("日付が変わる前に「再読み込みする」ボタンを押すと、完了済みの Todo が完了のままであること", async ({
         page,
       }) => {
         // Arrange
@@ -1857,7 +1857,7 @@ test.describe("Todo ページのテスト", () => {
         await page.clock.setFixedTime(afterMidnight);
         // 更新ボタンを押す
         await page.getByRole("button", { name: "グローバルメニュー" }).click();
-        await page.getByRole("menuitem", { name: "更新する" }).click();
+        await page.getByRole("menuitem", { name: "再読み込みする" }).click();
         await page.reload();
 
         // Assert: UI 上で Todo が完了のままであること
@@ -1886,7 +1886,7 @@ test.describe("Todo ページのテスト", () => {
         );
       });
 
-      test("日付が変わってから「更新する」ボタンを押すと、完了済みの Todo が未完了になること", async ({
+      test("日付が変わってから「再読み込みする」ボタンを押すと、完了済みの Todo が未完了になること", async ({
         page,
       }) => {
         // Arrange
@@ -1926,7 +1926,7 @@ test.describe("Todo ページのテスト", () => {
         await page.clock.setFixedTime(afterMidnight);
         // 更新ボタンを押す
         await page.getByRole("button", { name: "グローバルメニュー" }).click();
-        await page.getByRole("menuitem", { name: "更新する" }).click();
+        await page.getByRole("menuitem", { name: "再読み込みする" }).click();
 
         // Assert: UI 上で Todo が未完了になっていること
         await expect(
