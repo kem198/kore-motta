@@ -91,7 +91,7 @@ export function useAppStorage(
   // 初期読み込み時に、日付変更によって Todo を未完了に戻したかどうか
   const [didMarkAllIncomplete, setDidMarkAllIncomplete] = useState(false);
 
-  // storageKey が変更された場合に状態をリセットする
+  // 将来の拡張で storageKey が変更された場合に状態をリセットする
   // see: https://github.com/kem198/kore-motta/pull/73#discussion_r3884926793
   const [prevStorageKey, setPrevStorageKey] = useState(storageKey);
   if (storageKey !== prevStorageKey) {
