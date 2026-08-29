@@ -376,7 +376,7 @@ function Support({ className }: SupportProps) {
             className="underline underline-offset-4"
           >
             GitHub でスターをつける{" "}
-            <SquareArrowOutUpRightIcon className="inline size-3.5 align-middle" />
+            <SquareArrowOutUpRightIcon className="inline size-3 align-middle" />
           </a>
         </li>
 
