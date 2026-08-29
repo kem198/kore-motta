@@ -77,8 +77,6 @@ export function useAppStorage(
     try {
       const result = loadAppStorage(storageKey);
 
-      appStorageRef.current = result.appStorage;
-
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setAppStorage(result.appStorage);
       setDidMarkAllIncomplete(result.didMarkAllIncomplete);
@@ -107,17 +105,6 @@ export function useAppStorage(
     }
   }, [appStorage, isLoaded, isStorageCorrupted, storageKey]);
 
-  const updateAppStorage = useCallback(
-    (updater: (current: AppStorage) => AppStorage) => {
-      setAppStorage((current) => {
-        const next = updater(current);
-        appStorageRef.current = next;
-        return next;
-      });
-    },
-    [],
-  );
-
   useEffect(() => {
     if (!isLoaded || isStorageCorrupted) {
       return;
@@ -130,7 +117,6 @@ export function useAppStorage(
 
       const result = markAllIncompleteIfDateChanged(appStorageRef.current);
 
-      appStorageRef.current = result.appStorage;
       setAppStorage(result.appStorage);
       setDidMarkAllIncomplete(result.didMarkAllIncomplete);
     };
@@ -142,11 +128,25 @@ export function useAppStorage(
     };
   }, [isLoaded, isStorageCorrupted]);
 
+  // 常に最新の appStorage を ref に同期する
+  useEffect(() => {
+    appStorageRef.current = appStorage;
+  }, [appStorage]);
+
+  const updateAppStorage = useCallback(
+    (updater: (current: AppStorage) => AppStorage) => {
+      setAppStorage((current) => {
+        const next = updater(current);
+        return next;
+      });
+    },
+    [],
+  );
+
   const importAppStorage = useCallback((data: string) => {
     const parsed = parseAppStorage(JSON.parse(data));
     const result = markAllIncompleteIfDateChanged(parsed);
 
-    appStorageRef.current = result.appStorage;
     setAppStorage(result.appStorage);
     setDidMarkAllIncomplete(result.didMarkAllIncomplete);
   }, []);
@@ -154,7 +154,6 @@ export function useAppStorage(
   const resetAppStorage = useCallback(() => {
     const initialStorage = createInitialAppStorage();
 
-    appStorageRef.current = initialStorage;
     setAppStorage(initialStorage);
     setDidMarkAllIncomplete(false);
     setIsStorageCorrupted(false);
