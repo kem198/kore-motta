@@ -75,6 +75,38 @@ const STORED_DATA: ListItemWithTitle[] = [
   },
 ];
 
+const OTHER_SPECIFICATIONS: ListItemWithTitle[] = [
+  {
+    title: "未完了に戻るタイミング",
+    items: [
+      {
+        text: "以下のタイミングでアイテムが未完了に戻ります。",
+        children: [
+          "日付が変わった後、ページを再読み込みしたとき",
+          "日付が変わった後、別のページやアプリから戻ってきたとき",
+        ],
+      },
+      {
+        text: "ページを開いたまま日付が変わった場合は、未完了に戻りません。",
+        children: [
+          "その場合は、「メニュー > すべて未完了に戻す」をご利用ください。",
+        ],
+      },
+    ],
+  },
+  {
+    title: "アプリの更新",
+    items: [
+      {
+        text: "アプリ内からページを再読み込みできます。",
+        children: [
+          "最新バージョンを利用したい場合や、挙動が不安定なときは、「メニュー > 更新する」をお試しください。",
+        ],
+      },
+    ],
+  },
+];
+
 const ISSUES: ListItem[] = [
   {
     text: "iPhone の Safari では、キーボードの表示により末尾のアイテムが見づらくなる場合があります。お手数ですがキーボードを閉じてご確認ください。",
@@ -225,6 +257,18 @@ function HelpAccordions({ className }: HelpAccordionsProps) {
       <HelpAccordionItem value="data" title="情報の取り扱いについて">
         <div className="flex flex-col gap-4">
           {STORED_DATA.map((section) => (
+            <InformationSection
+              key={section.title}
+              title={section.title}
+              items={section.items}
+            />
+          ))}
+        </div>
+      </HelpAccordionItem>
+
+      <HelpAccordionItem value="other-specifications" title="その他の仕様">
+        <div className="flex flex-col gap-4">
+          {OTHER_SPECIFICATIONS.map((section) => (
             <InformationSection
               key={section.title}
               title={section.title}
