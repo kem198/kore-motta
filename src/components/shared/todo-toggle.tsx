@@ -22,8 +22,8 @@ export function TodoToggle({ completed, className, ...rest }: TodoToggleProps) {
         className={cn(
           "transition-opacity",
           completed
-            ? "text-primary-foreground opacity-100 transition-opacity duration-100"
-            : "text-muted-foreground opacity-0 transition-opacity duration-100 group-hover:opacity-75",
+            ? "text-primary-foreground opacity-100"
+            : "text-muted-foreground opacity-0 group-hover:opacity-75",
         )}
       />
     </Toggle>
