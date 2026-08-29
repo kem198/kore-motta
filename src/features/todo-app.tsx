@@ -144,17 +144,49 @@ export function TodoApp() {
       },
     }));
   };
-
   const handleUpdate = (todo: Todo) => {
-    updateAppStorage((current) => ({
-      ...current,
-      data: {
-        ...current.data,
-        todos: current.data.todos.map((currentTodo) =>
-          currentTodo.id === todo.id ? todo : currentTodo,
-        ),
-      },
-    }));
+    updateAppStorage((current) => {
+      const currentTodo = current.data.todos.find(
+        (currentTodo) => currentTodo.id === todo.id,
+      );
+
+      if (!currentTodo) {
+        return current;
+      }
+
+      // カテゴリ変更がない場合は、既存の order を維持する
+      if (currentTodo.categoryId === todo.categoryId) {
+        return {
+          ...current,
+          data: {
+            ...current.data,
+            todos: current.data.todos.map((currentTodo) =>
+              currentTodo.id === todo.id ? todo : currentTodo,
+            ),
+          },
+        };
+      }
+
+      // カテゴリを変更した場合は、移動先カテゴリの末尾に追加する
+      const destinationTodos = current.data.todos.filter(
+        (currentTodo) =>
+          currentTodo.categoryId === todo.categoryId &&
+          currentTodo.id !== todo.id,
+      );
+      const nextOrder = getNextTodoOrder(destinationTodos);
+
+      return {
+        ...current,
+        data: {
+          ...current.data,
+          todos: current.data.todos.map((currentTodo) =>
+            currentTodo.id === todo.id
+              ? { ...todo, order: nextOrder }
+              : currentTodo,
+          ),
+        },
+      };
+    });
   };
 
   const handleMarkAllIncomplete = () => {
