@@ -998,6 +998,106 @@ test.describe("Todo ページのテスト", () => {
         expect(persisted.data.todos[0].categoryId).toBe("work");
       });
 
+      test("Todo を別のカテゴリへ移動したとき、移動先カテゴリの末尾に追加されること", async ({
+        page,
+      }) => {
+        // Arrange
+        const appStorage: AppStorage = {
+          version: 1,
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "move-todo",
+                name: "資料作成",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                completed: false,
+              },
+              {
+                id: "work-todo-1",
+                name: "要件定義",
+                order: 0,
+                categoryId: "work",
+                completed: false,
+              },
+              {
+                id: "work-todo-2",
+                name: "実装",
+                order: 1,
+                categoryId: "work",
+                completed: false,
+              },
+              {
+                id: "work-todo-3",
+                name: "テスト",
+                order: 2,
+                categoryId: "work",
+                completed: false,
+              },
+            ],
+            categories: [
+              {
+                id: DEFAULT_CATEGORY_ID,
+                name: DEFAULT_CATEGORY_NAME,
+                order: DEFAULT_CATEGORY_ORDER,
+              },
+              {
+                id: "work",
+                name: "仕事",
+                order: 1,
+              },
+            ],
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00+09:00",
+            ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
+          },
+        };
+
+        await navigateToTodoPage(page, { storage: appStorage });
+
+        // Act
+        await page.getByRole("button", { name: "編集開始" }).click();
+        await page.getByRole("button", { name: "編集: 資料作成" }).click();
+        await page.getByRole("combobox", { name: "カテゴリ" }).click();
+        await page.getByRole("option", { name: "仕事" }).click();
+        await page.getByRole("button", { name: "更新" }).click();
+
+        // Assert (移動元カテゴリに Todo が表示されていないこと)
+        await expect(
+          page.getByRole("button", { name: "編集: 資料作成" }),
+        ).toHaveCount(0);
+
+        // Assert (移動先カテゴリに Todo が末尾に表示されること)
+        await page.getByRole("button", { name: "仕事" }).click();
+
+        const todos = page.getByRole("listitem");
+        await expect(todos).toHaveCount(4);
+        await expect(todos.nth(0)).toHaveAccessibleName("Todo: 要件定義");
+        await expect(todos.nth(1)).toHaveAccessibleName("Todo: 実装");
+        await expect(todos.nth(2)).toHaveAccessibleName("Todo: テスト");
+        await expect(todos.nth(3)).toHaveAccessibleName("Todo: 資料作成");
+
+        // Assert (データストア上でも移動先カテゴリの末尾の order になっていること)
+        const persisted: AppStorage = await getAppStorage(page);
+
+        const persistedTodos = persisted.data.todos;
+        expect(
+          persistedTodos.find((todo) => todo.id === "move-todo"),
+        ).toMatchObject({
+          categoryId: "work",
+          order: 3,
+        });
+
+        expect(
+          persistedTodos
+            .filter((todo) => todo.categoryId === "work")
+            .toSorted((a, b) => a.order - b.order)
+            .map((todo) => todo.id),
+        ).toEqual(["work-todo-1", "work-todo-2", "work-todo-3", "move-todo"]);
+      });
+
       test("Todo を下へ移動する操作を行ったら、対象の Todo が移動先 Todo よりも下に表示されること", async ({
         page,
       }) => {
