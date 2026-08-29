@@ -64,7 +64,7 @@ export function useAppStorage(
     createInitialAppStorage(),
   );
 
-  // バックグラウンドからの復帰時に現在の AppStorage を参照し、更新が必要か否かを判定するためため
+  // バックグラウンドからの復帰時に現在の AppStorage を参照し、更新が必要か否かを判定するため
   const appStorageRef = useRef(appStorage);
 
   const [isLoaded, setIsLoaded] = useState(false);
