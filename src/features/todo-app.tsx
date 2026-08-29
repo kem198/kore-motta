@@ -64,6 +64,11 @@ export function TodoApp() {
     toast.success(MESSAGES.toast.markedAllIncomplete);
   }, [isLoaded, didMarkAllIncomplete]);
 
+  /**
+   * 現在選択されているカテゴリに属する Todo の一覧。
+   *
+   * カテゴリ内の並び順に従って表示する。
+   */
   const visibleTodos = useMemo(() => {
     return appStorage.data.todos
       .filter((todo) => todo.categoryId === activeCategoryId)
@@ -287,6 +292,7 @@ export function TodoApp() {
     }));
   };
 
+  /** 現在選択されているカテゴリがデフォルトカテゴリか否か。 */
   const isDefaultCategorySelected = activeCategoryId === DEFAULT_CATEGORY_ID;
 
   const handleDeleteCategory = (category: { id: string; name: string }) => {
