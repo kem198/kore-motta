@@ -202,10 +202,8 @@ export function useAppStorage(
   /**
    * AppStorage を更新する関数。
    *
-   * - setAppStorage に現在の状態を受け取る関数を渡すことで、
-   * 更新時点での最新の AppStorage を基に次の状態を作成できる。
-   * - そのため、複数の更新が短い間隔で発生した場合でも、
-   * 古い状態を基に更新してしまうことを防げる。
+   * - `setAppStorage()` に現在の状態を受け取る関数を渡すことで、更新時点での最新の AppStorage を基に次の状態を作成できる。
+   * - これにより、複数の更新が短い間隔で発生した場合でも、古い状態を基に更新してしまうことを防げる。
    */
   const updateAppStorage = useCallback(
     (updater: (current: AppStorage) => AppStorage) => {
@@ -220,11 +218,10 @@ export function useAppStorage(
   /**
    * JSON 文字列から AppStorage をインポートする。
    *
-   * JSON.parse で JSON として読み込んだ後、
+   * `JSON.parse()` で JSON として読み込んだ後、
    * parseAppStorage で AppStorage の形式として正しいかを検証する。
    *
-   * インポートしたデータの日付も確認し、
-   * 必要であれば Todo を未完了に戻してから状態へ反映する。
+   * インポートしたデータの日付も確認し、必要であれば Todo を未完了に戻してから状態へ反映する。
    */
   const importAppStorage = useCallback((data: string) => {
     const parsed = parseAppStorage(JSON.parse(data));
