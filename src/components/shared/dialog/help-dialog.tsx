@@ -130,7 +130,7 @@ const CHANGELOG = [
   {
     version: "v0.1.0",
     date: "2026-08-27",
-    changes: [{ text: "アプリを公開しました" }],
+    changes: [{ text: "アプリを公開しました。" }],
   },
 ];
 
