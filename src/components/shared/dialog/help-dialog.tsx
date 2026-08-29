@@ -260,7 +260,16 @@ function Summary({ className }: SummaryProps) {
       <section>
         <h3>このアプリは何？</h3>
 
-        <p>
+        <div className="md:hidden">
+          <p>
+            <span className="font-ubuntu-sans font-medium">Kore Motta?</span>{" "}
+            は、日頃の「これ持った？」を確認する Todo アプリです。
+          </p>
+          <p>日付をまたぐと、すべてのアイテムが自動で未完了に戻ります。</p>
+        </div>
+
+        {/* PC */}
+        <p className="hidden md:block">
           <span className="font-ubuntu-sans font-medium">Kore Motta?</span>{" "}
           は、日頃の「これ持った？」を確認する Todo アプリです。
           <br />
