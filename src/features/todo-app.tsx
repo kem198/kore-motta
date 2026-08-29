@@ -320,7 +320,7 @@ export function TodoApp() {
         />
       </main>
 
-      <footer className="bg-background shrink-0">
+      <footer className="bg-background shrink-0 pb-[env(safe-area-inset-bottom)]">
         <Separator />
         <div className="px-4 py-3">
           <div className="flex flex-col gap-3">
