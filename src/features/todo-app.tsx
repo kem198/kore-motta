@@ -144,24 +144,23 @@ export function TodoApp() {
       },
     }));
   };
+
   const handleUpdate = (todo: Todo) => {
     updateAppStorage((current) => {
-      const currentTodo = current.data.todos.find(
-        (currentTodo) => currentTodo.id === todo.id,
-      );
+      const targetTodo = current.data.todos.find((item) => item.id === todo.id);
 
-      if (!currentTodo) {
+      if (!targetTodo) {
         return current;
       }
 
       // カテゴリ変更がない場合は、既存の order を維持する
-      if (currentTodo.categoryId === todo.categoryId) {
+      if (targetTodo.categoryId === todo.categoryId) {
         return {
           ...current,
           data: {
             ...current.data,
-            todos: current.data.todos.map((currentTodo) =>
-              currentTodo.id === todo.id ? todo : currentTodo,
+            todos: current.data.todos.map((item) =>
+              item.id === todo.id ? todo : item,
             ),
           },
         };
@@ -169,9 +168,7 @@ export function TodoApp() {
 
       // カテゴリを変更した場合は、移動先カテゴリの末尾に追加する
       const destinationTodos = current.data.todos.filter(
-        (currentTodo) =>
-          currentTodo.categoryId === todo.categoryId &&
-          currentTodo.id !== todo.id,
+        (item) => item.categoryId === todo.categoryId,
       );
       const nextOrder = getNextTodoOrder(destinationTodos);
 
@@ -179,10 +176,8 @@ export function TodoApp() {
         ...current,
         data: {
           ...current.data,
-          todos: current.data.todos.map((currentTodo) =>
-            currentTodo.id === todo.id
-              ? { ...todo, order: nextOrder }
-              : currentTodo,
+          todos: current.data.todos.map((item) =>
+            item.id === todo.id ? { ...todo, order: nextOrder } : item,
           ),
         },
       };
