@@ -301,7 +301,7 @@ function Support({ className }: SupportProps) {
         </a>{" "}
         までご連絡ください。
         <br />
-        アプリが気に入ったら、応援していただけると励みになります！
+        アプリが気に入ったら、応援いただけると励みになります！
       </p>
 
       <ul className="mt-0">
