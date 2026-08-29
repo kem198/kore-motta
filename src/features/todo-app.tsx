@@ -52,6 +52,10 @@ export function TodoApp() {
     | null
   >(null);
 
+  /**
+   * 初回の AppStorage 読み込み時に、日付変更によって Todo がすべて未完了に戻された場合、
+   * その旨をトーストで通知する。
+   */
   useEffect(() => {
     if (!isLoaded || !didMarkAllIncomplete) {
       return;
