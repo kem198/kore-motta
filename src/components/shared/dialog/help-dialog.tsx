@@ -116,7 +116,7 @@ const ISSUES: ListItem[] = [
 const CHANGELOG = [
   {
     version: "v0.3.1",
-    date: "2026-08-29",
+    date: "2026-08-30",
     changes: [
       {
         text: "スマートフォン表示時、上部・下部のナビゲーションにコンテンツが重ならないようにしました。",
