@@ -265,7 +265,7 @@ function Summary({ className }: SummaryProps) {
           は、日頃の「これ持った？」を確認するシンプルな Todo アプリです。
         </p>
 
-        <p>日付をまたぐと、すべてのアイテムが未完了に戻ります。</p>
+        <p>日付をまたぐと、すべてのアイテムが自動で未完了に戻ります。</p>
       </section>
 
       <section>
