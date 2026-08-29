@@ -2003,7 +2003,7 @@ test.describe("Todo ページのテスト", () => {
         // Assert
         await expect(
           page.getByText(
-            "アイテム情報の形式が不正なため、インポートできませんでした。",
+            "データの形式が不正なため、インポートできませんでした。",
           ),
         ).toBeVisible();
 
@@ -2073,7 +2073,7 @@ test.describe("Todo ページのテスト", () => {
         // Assert
         await expect(
           page.getByText(
-            "アイテム情報の形式が不正なため、インポートできませんでした。",
+            "データの形式が不正なため、インポートできませんでした。",
           ),
         ).toBeVisible();
 
