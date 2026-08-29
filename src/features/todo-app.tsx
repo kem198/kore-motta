@@ -295,7 +295,7 @@ export function TodoApp() {
     /* 1. 最外枠：スクロールを完全に禁止して画面枠を固定 */
     <div className="bg-background mx-auto flex h-dvh w-full max-w-3xl flex-col overflow-hidden">
       {/* 2. 上部ヘッダー (スクロールせず固定) */}
-      <header>
+      <header className="pt-[env(safe-area-inset-top)]">
         <TodoAppHeaderContent
           appStorage={appStorage}
           onMarkAllIncomplete={handleMarkAllIncomplete}
