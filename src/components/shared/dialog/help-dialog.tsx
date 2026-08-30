@@ -116,6 +116,15 @@ const ISSUES: ListItem[] = [
 
 const CHANGELOG = [
   {
+    version: "v0.4.0",
+    date: "2026-08-31",
+    changes: [
+      {
+        text: "チェックボタンの位置を左右から選べるようにしました。",
+      },
+    ],
+  },
+  {
     version: "v0.3.1",
     date: "2026-08-30",
     changes: [
