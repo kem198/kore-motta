@@ -25,7 +25,9 @@ export function createInitialAppStorage(): AppStorage {
   return {
     version: CURRENT_APP_STORAGE_VERSION,
     data: {
-      settings: {},
+      settings: {
+        todoTogglePosition: "left",
+      },
       categories: DEFAULT_CATEGORIES_STORAGE,
       todos: [],
       lastMarkedAllIncompleteAt: now.toISOString(),

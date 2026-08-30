@@ -1,3 +1,4 @@
+import { migrateAppStorage } from "@/lib/app-storage-migration";
 import {
   APP_STORAGE_KEY,
   createInitialAppStorage,
@@ -66,10 +67,10 @@ export function loadAppStorage(
     throw new AppStorageLoadError(raw, error);
   }
 
-  // AppStorage 型として解釈できなければ例外をスローする
+  // 現在の AppStorage のバージョンへ migration できなければ例外をスローする
   let appStorage: AppStorage;
   try {
-    appStorage = parseAppStorage(parsed);
+    appStorage = migrateAppStorage(parsed);
   } catch (error) {
     throw new AppStorageLoadError(raw, error);
   }

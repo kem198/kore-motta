@@ -17,6 +17,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { MESSAGES } from "@/constants/messages";
 import { cn } from "@/lib/utils";
 import { Category } from "@/schemas/category-schema";
+import { Settings } from "@/schemas/settings-schema";
 import { Todo } from "@/schemas/todo-schema";
 import { ChevronDown, ChevronUp, Trash2 } from "lucide-react";
 import { Fragment } from "react";
@@ -25,10 +26,10 @@ function TodoListSkeleton() {
   return (
     <div className="flex w-full items-center gap-3.5 rounded-md px-0 py-3.5 text-sm">
       <div className="flex shrink-0 items-center justify-center">
-        <Skeleton className="relative flex aspect-square h-10 w-10 shrink-0 overflow-hidden rounded-full" />
+        <Skeleton className="relative flex aspect-square size-9 shrink-0 overflow-hidden rounded-full max-sm:size-11" />
       </div>
 
-      <div className="flex flex-1 flex-col gap-1">
+      <div className="flex flex-1 flex-col gap-2">
         <Skeleton className="h-4 max-w-40" />
         <Skeleton className="h-4 max-w-[16rem]" />
       </div>
@@ -120,6 +121,7 @@ function TodoItemActions({
 type TodoItemProps = {
   todo: Todo;
   categories: Category[];
+  todoTogglePosition: Settings["todoTogglePosition"];
   index: number;
   length: number;
   isEditing: boolean;
@@ -132,6 +134,7 @@ function TodoItem({
   index,
   todo,
   categories,
+  todoTogglePosition,
   length,
   isEditing,
   onDelete,
@@ -149,7 +152,10 @@ function TodoItem({
     <div
       role="listitem"
       aria-label={`Todo: ${todo.name}`}
-      className="flex w-full items-center gap-2"
+      className={cn(
+        "flex w-full items-center gap-2",
+        todoTogglePosition === "right" && "flex-row-reverse",
+      )}
     >
       <div className="flex shrink-0 items-center justify-center py-2">
         <TodoToggle
@@ -202,6 +208,7 @@ function TodoListLoading() {
 type TodoListContentProps = {
   todos: Todo[];
   categories: Category[];
+  todoTogglePosition: Settings["todoTogglePosition"];
   isEditing: boolean;
   onDelete: (todo: Todo) => void;
   onUpdate: (todo: Todo) => void;
@@ -212,6 +219,7 @@ type TodoListContentProps = {
 function TodoListContent({
   todos,
   categories,
+  todoTogglePosition,
   isEditing,
   onDelete,
   onUpdate,
@@ -226,6 +234,7 @@ function TodoListContent({
           <TodoItem
             todo={todo}
             categories={categories}
+            todoTogglePosition={todoTogglePosition}
             index={index}
             length={todos.length}
             isEditing={isEditing}
@@ -244,6 +253,7 @@ function TodoListContent({
 type TodoListProps = {
   todos: Todo[];
   categories: Category[];
+  todoTogglePosition: Settings["todoTogglePosition"];
   isLoaded: boolean;
   isEditing: boolean;
   onDelete: (todo: Todo) => void;
@@ -255,6 +265,7 @@ type TodoListProps = {
 export function TodoList({
   todos,
   categories,
+  todoTogglePosition,
   isLoaded,
   isEditing,
   onDelete,
@@ -274,6 +285,7 @@ export function TodoList({
     <TodoListContent
       todos={todos}
       categories={categories}
+      todoTogglePosition={todoTogglePosition}
       isEditing={isEditing}
       onDelete={onDelete}
       onUpdate={onUpdate}

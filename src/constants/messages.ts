@@ -85,5 +85,7 @@ export const MESSAGES = {
     importError: "データの形式が不正なため、インポートできませんでした。",
     clipboardCopied: "登録内容をクリップボードにコピーしました",
     clipboardCopyError: "登録内容をクリップボードにコピーできませんでした",
+    changedTodoPosition: (position: "left" | "right") =>
+      `チェックボタンの位置を ${position === "right" ? "右" : "左"} へ変更しました`,
   },
 } as const;
