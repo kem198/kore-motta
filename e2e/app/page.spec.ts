@@ -2298,7 +2298,7 @@ test.describe("Todo ページのテスト", () => {
   });
 
   test.describe("異常時のテスト", () => {
-    test.describe("localStorage の破損", () => {
+    test.describe("localStorage の破損 (正しい JSON や型ではない)", () => {
       test("AppStorage が不正な JSON の場合、元のデータが保持されていること", async ({
         page,
       }) => {
@@ -2516,6 +2516,63 @@ test.describe("Todo ページのテスト", () => {
         expect(persistedData.data.lastSelectedCategoryId).toBe(
           DEFAULT_CATEGORY_ID,
         );
+      });
+    });
+
+    test.describe("localStorage の破損 (整合性が取れていない)", () => {
+      test("Todo.categoryId が存在しない場合、未分類カテゴリに変更して復旧すること", async ({
+        page,
+      }) => {
+        // Arrange
+        const corruptedAppStorage: unknown = {
+          version: 2,
+          data: {
+            settings: {
+              todoTogglePosition: "left",
+            },
+            // ★カテゴリの id: category-not-found に対応するカテゴリが無い
+            categories: DEFAULT_CATEGORIES_STORAGE,
+            todos: [
+              {
+                id: "todo-1",
+                name: "カギ",
+                order: 0,
+                // ★Todo の categoryId: category-not-found を指している
+                categoryId: "category-not-found",
+                memo: "家の鍵",
+                completed: true,
+              },
+            ],
+            lastMarkedAllIncompleteAt: "2026-08-30T00:00:00.000+09:00",
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
+          },
+        };
+
+        await page.addInitScript(
+          ([key, value]) => {
+            window.localStorage.setItem(key, value);
+          },
+          [APP_STORAGE_KEY, JSON.stringify(corruptedAppStorage)],
+        );
+
+        // Act
+        await page.goto("/");
+
+        // Assert
+        const persistedData = await getAppStorage(page);
+
+        expect(persistedData.data.todos).toEqual([
+          {
+            // データが移行されていること
+            id: "todo-1",
+            name: "カギ",
+            order: 0,
+            memo: "家の鍵",
+            completed: true,
+            // categoryId がデフォルトカテゴリになっていること
+            categoryId: DEFAULT_CATEGORY_ID,
+          },
+        ]);
       });
     });
 
