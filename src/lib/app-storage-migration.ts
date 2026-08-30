@@ -6,7 +6,7 @@ import * as z from "zod";
 const categoryV1Schema = z.object({
   id: z.string(),
   name: z.string(),
-  order: z.number(),
+  order: z.number().optional(),
 });
 
 const appStorageV1Schema = z
