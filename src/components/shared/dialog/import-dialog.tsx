@@ -65,7 +65,7 @@ export function ImportDialog({
               setValue(e.target.value);
               setError(false);
             }}
-            className="bg-muted/50 max-h-40 w-full cursor-text resize-none p-2 font-mono text-xs wrap-break-word whitespace-pre-wrap select-text"
+            className="bg-muted/50 h-40 w-full cursor-text resize-none p-2 font-mono text-xs wrap-break-word whitespace-pre-wrap select-text"
             aria-label="インポート用テキストエリア"
           />
 
