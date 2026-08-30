@@ -2246,7 +2246,7 @@ test.describe("Todo ページのテスト", () => {
 
   test.describe("設定のテスト", () => {
     test.describe("Todo トグルボタンの表示位置設定", () => {
-      test("「右へ」ボタンを押すと、Todo トグルボタンが右へ移動・ボタンの表示が変わり、設定が「右」になること", async ({
+      test("「位置切替」ボタンを押すと、Todo トグルボタンが右へ移動し、設定が「右」になること", async ({
         page,
       }) => {
         // Arrange
@@ -2257,10 +2257,7 @@ test.describe("Todo ページのテスト", () => {
         await page.getByRole("button", { name: "編集開始" }).click();
 
         // Act
-        await page.getByRole("button", { name: "右へ" }).click();
-
-        // Assert (「左へ」ボタンが表示されていること)
-        await expect(page.getByRole("button", { name: "左へ" })).toBeVisible();
+        await page.getByRole("button", { name: "位置切替" }).click();
 
         // Assert (Todo の表示順が逆順になっていること)
         const toggle = page.getByRole("button", {
@@ -2285,7 +2282,7 @@ test.describe("Todo ページのテスト", () => {
         expect(appStorage.data.settings.todoTogglePosition).toBe("right");
       });
 
-      test("「左へ」ボタンを押すと、Todo トグルボタンが左へ移動・ボタンの表示が変わり、設定が「左」になること", async ({
+      test("「左へ」ボタンを押すと、Todo トグルボタンが左へ移動し、設定が「左」になること", async ({
         page,
       }) => {
         // Arrange
@@ -2294,13 +2291,10 @@ test.describe("Todo ページのテスト", () => {
         await nameInput.fill("カギ");
         await page.getByRole("button", { name: MESSAGES.actions.add }).click();
         await page.getByRole("button", { name: "編集開始" }).click();
-        await page.getByRole("button", { name: "右へ" }).click();
+        await page.getByRole("button", { name: "位置切替" }).click();
 
         // Act
-        await page.getByRole("button", { name: "左へ" }).click();
-
-        // Assert (「右へ」ボタンが表示されていること)
-        await expect(page.getByRole("button", { name: "右へ" })).toBeVisible();
+        await page.getByRole("button", { name: "位置切替" }).click();
 
         // Assert (Todo の表示順が正順になっていること)
         const toggle = page.getByRole("button", {

@@ -4,7 +4,6 @@ import { CircleCheckIcon, FolderEditIcon, SquarePenIcon } from "lucide-react";
 
 type TodoAppNavigationProps = {
   isEditing: boolean;
-  todoTogglePosition: "left" | "right";
   onToggleEditing: () => void;
   onToggleTodoPosition: () => void;
   onOpenCategorySetting: () => void;
@@ -12,7 +11,6 @@ type TodoAppNavigationProps = {
 
 export function TodoAppNavigation({
   isEditing,
-  todoTogglePosition,
   onToggleEditing,
   onOpenCategorySetting,
   onToggleTodoPosition,
@@ -22,10 +20,9 @@ export function TodoAppNavigation({
       <Button
         variant="secondary"
         onClick={onToggleTodoPosition}
-        aria-label={todoTogglePosition === "left" ? "右へ" : "左へ"}
+        aria-label={"チェックボタンの位置切替"}
       >
-        <CircleCheckIcon />
-        {todoTogglePosition === "left" ? "右へ" : "左へ"}
+        <CircleCheckIcon /> 位置切替
       </Button>
       <Button
         variant="secondary"
