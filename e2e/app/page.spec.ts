@@ -1318,43 +1318,41 @@ test.describe("Todo ページのテスト", () => {
         expect(defaultCategory?.name).toBe(DEFAULT_CATEGORY_NAME);
       });
 
-      test.describe("表示時のテスト", () => {
-        test("ページを開いたとき、最後に選択していたカテゴリが表示されること", async ({
-          page,
-        }) => {
-          // Arrange
-          const appStorage: AppStorage = {
-            version: 1,
-            data: {
-              settings: {},
-              todos: [],
-              categories: [
-                {
-                  id: DEFAULT_CATEGORY_ID,
-                  name: DEFAULT_CATEGORY_NAME,
-                  order: DEFAULT_CATEGORY_ORDER,
-                },
-                {
-                  id: "work",
-                  name: "仕事",
-                  order: 1,
-                },
-              ],
-              lastMarkedAllIncompleteAt: new Date(
-                "2026-08-24T00:00:00+09:00",
-              ).toISOString(),
-              lastSelectedCategoryId: "work",
-            },
-          };
+      test("ページを開いたとき、最後に選択していたカテゴリが表示されること", async ({
+        page,
+      }) => {
+        // Arrange
+        const appStorage: AppStorage = {
+          version: 1,
+          data: {
+            settings: {},
+            todos: [],
+            categories: [
+              {
+                id: DEFAULT_CATEGORY_ID,
+                name: DEFAULT_CATEGORY_NAME,
+                order: DEFAULT_CATEGORY_ORDER,
+              },
+              {
+                id: "work",
+                name: "仕事",
+                order: 1,
+              },
+            ],
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00+09:00",
+            ).toISOString(),
+            lastSelectedCategoryId: "work",
+          },
+        };
 
-          // Act
-          await navigateToTodoPage(page, { storage: appStorage });
+        // Act
+        await navigateToTodoPage(page, { storage: appStorage });
 
-          // Assert
-          await expect(
-            page.getByRole("button", { name: "仕事" }),
-          ).toHaveAttribute("aria-pressed", "true");
-        });
+        // Assert
+        await expect(
+          page.getByRole("button", { name: "仕事" }),
+        ).toHaveAttribute("aria-pressed", "true");
       });
     });
 
