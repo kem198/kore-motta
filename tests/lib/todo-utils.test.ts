@@ -106,7 +106,6 @@ describe("deleteCategory", () => {
       {
         id: "uncategorized",
         name: "未分類",
-        order: 0,
       },
     ]);
 
