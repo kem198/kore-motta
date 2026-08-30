@@ -257,6 +257,24 @@ export function TodoApp() {
     }
   };
 
+  const handleToggleTodoPosition = () => {
+    const nextPosition =
+      appStorage.data.settings.todoTogglePosition === "left" ? "right" : "left";
+
+    updateAppStorage((current) => ({
+      ...current,
+      data: {
+        ...current.data,
+        settings: {
+          ...current.data.settings,
+          todoTogglePosition: nextPosition,
+        },
+      },
+    }));
+
+    toast.success(MESSAGES.toast.changedTodoPosition(nextPosition));
+  };
+
   const handleOpenCategoryEditDialog = () => {
     const selectedCategory = appStorage.data.categories.find(
       (category) => category.id === activeCategoryId,
@@ -349,6 +367,7 @@ export function TodoApp() {
         <TodoList
           todos={visibleTodos}
           categories={appStorage.data.categories}
+          todoTogglePosition={appStorage.data.settings.todoTogglePosition}
           isLoaded={isLoaded}
           isEditing={isEditing}
           onDelete={handleDelete}
@@ -379,7 +398,9 @@ export function TodoApp() {
 
             <TodoAppNavigation
               isEditing={isEditing}
+              todoTogglePosition={appStorage.data.settings.todoTogglePosition}
               onToggleEditing={() => setIsEditing((prev) => !prev)}
+              onToggleTodoPosition={handleToggleTodoPosition}
               onOpenCategorySetting={handleOpenCategoryEditDialog}
             />
           </div>
