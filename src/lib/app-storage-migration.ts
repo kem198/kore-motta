@@ -1,8 +1,13 @@
 import { CURRENT_APP_STORAGE_VERSION } from "@/constants/version";
 import { AppStorage, parseAppStorage } from "@/schemas/app-storage-schema";
-import { categorySchema } from "@/schemas/category-schema";
 import { todoSchema } from "@/schemas/todo-schema";
 import * as z from "zod";
+
+const categoryV1Schema = z.object({
+  id: z.string(),
+  name: z.string(),
+  order: z.number(),
+});
 
 const appStorageV1Schema = z
   .object({
@@ -10,7 +15,7 @@ const appStorageV1Schema = z
     data: z
       .object({
         settings: z.record(z.string(), z.unknown()),
-        categories: z.array(categorySchema),
+        categories: z.array(categoryV1Schema),
         todos: z.array(todoSchema),
         lastMarkedAllIncompleteAt: z.iso.datetime(),
         lastSelectedCategoryId: z.string(),
@@ -54,6 +59,10 @@ export function migrateAppStorage(rawData: unknown): AppStorage {
       version: CURRENT_APP_STORAGE_VERSION,
       data: {
         ...appStorageV1.data,
+        categories: appStorageV1.data.categories.map((category) => ({
+          id: category.id,
+          name: category.name,
+        })),
         settings: {
           todoTogglePosition: "left",
         },
