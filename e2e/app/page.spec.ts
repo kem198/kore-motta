@@ -471,10 +471,15 @@ test.describe("Todo ページのテスト", () => {
               },
             ],
             categories: [
-              ...DEFAULT_CATEGORIES_STORAGE,
+              {
+                id: "uncategorized",
+                name: "未分類",
+                order: 0,
+              },
               {
                 id: "work",
                 name: "仕事",
+                order: 1,
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
@@ -487,7 +492,7 @@ test.describe("Todo ページのテスト", () => {
         // Act
         await navigateToTodoPage(page, { storage: appStorageV1 });
 
-        // Assert
+        // Assert (引き継ぐデータが表示されていること)
         await expect(
           assertScope.getByText("カギ", { exact: true }),
         ).toBeVisible();
@@ -498,9 +503,11 @@ test.describe("Todo ページのテスト", () => {
           assertScope.getByText("仕事", { exact: true }),
         ).toBeVisible();
 
+        // Assert (移行対象の情報が更新されていること)
         const actualStorage = await getAppStorage(page);
         expect(actualStorage.version).toBe(2);
         expect(actualStorage.data.settings.todoTogglePosition).toBe("left");
+        expect(actualStorage.data.categories[0]).not.toHaveProperty("order");
       });
     });
 
