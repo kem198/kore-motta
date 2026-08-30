@@ -160,7 +160,7 @@ export function validateIntegrity(storage: AppStorage): void {
 export function repairAppStorage(storage: AppStorage): AppStorage {
   const data = { ...storage.data };
 
-  // カテゴリ系の不整合をチェック
+  // 1. カテゴリの重複チェックとデフォルトカテゴリの検証
   const categoryIds = new Set(data.categories.map((c) => c.id));
   const defaultCategory = data.categories.find(
     (c) => c.id === DEFAULT_CATEGORY_ID,
@@ -168,34 +168,46 @@ export function repairAppStorage(storage: AppStorage): AppStorage {
   const hasDuplicateCategories = categoryIds.size !== data.categories.length;
   const isDefaultCategoryInvalid =
     !defaultCategory || defaultCategory.name !== DEFAULT_CATEGORY_NAME;
-  const isLastSelectedCategoryInvalid = !categoryIds.has(
-    data.lastSelectedCategoryId,
-  );
-  const hasInvalidTodoCategory = data.todos.some(
-    (todo) => !categoryIds.has(todo.categoryId),
-  );
 
-  const hasCategoryInconsistency =
-    hasDuplicateCategories ||
-    isDefaultCategoryInvalid ||
-    isLastSelectedCategoryInvalid ||
-    hasInvalidTodoCategory;
-
-  // カテゴリ系不整合がある場合は、カテゴリを初期化して全 Todo を未分類に変更
-  if (hasCategoryInconsistency) {
+  // カテゴリ自体が致命的に破損している場合は初期化する
+  if (hasDuplicateCategories || isDefaultCategoryInvalid) {
     data.categories = DEFAULT_CATEGORIES_STORAGE.map((c) => ({ ...c }));
-    data.lastSelectedCategoryId = DEFAULT_CATEGORY_ID;
-    data.todos = data.todos.map((todo) => ({
-      ...todo,
-      categoryId: DEFAULT_CATEGORY_ID,
-    }));
+    // カテゴリを初期化したので、有効なIDはデフォルトのみになる
+    categoryIds.clear();
+    categoryIds.add(DEFAULT_CATEGORY_ID);
   }
 
-  // Todo ID の重複修復 (1 件目を維持し、2 件目以降の ID を再生成)
+  // 2. lastSelectedCategoryId の個別修復
+  if (!categoryIds.has(data.lastSelectedCategoryId)) {
+    data.lastSelectedCategoryId = DEFAULT_CATEGORY_ID;
+  }
+
+  // 3. Todo の categoryId の個別修復
+  let hasTodoCategoryModified = false;
+  const repairedTodos = data.todos.map((todo) => {
+    if (!categoryIds.has(todo.categoryId)) {
+      hasTodoCategoryModified = true;
+      return { ...todo, categoryId: DEFAULT_CATEGORY_ID };
+    }
+    return todo;
+  });
+  if (hasTodoCategoryModified) {
+    data.todos = repairedTodos;
+  }
+
+  // 4. Todo ID の重複修復 (1 件目を維持し、2 件目以降の ID を再生成)
   const seenIds = new Set<string>();
   data.todos = data.todos.map((todo) => {
     if (seenIds.has(todo.id)) {
-      return { ...todo, id: crypto.randomUUID() };
+      const newId =
+        typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+          ? crypto.randomUUID()
+          : "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+              const r = (Math.random() * 16) | 0;
+              const v = c === "x" ? r : (r & 0x3) | 0x8;
+              return v.toString(16);
+            });
+      return { ...todo, id: newId };
     }
     seenIds.add(todo.id);
     return todo;
