@@ -8,10 +8,7 @@ import { TodoAppNavigation } from "@/components/shared/todo-app-navigation";
 import { TodoForm } from "@/components/shared/todo-form";
 import { TodoList } from "@/components/shared/todo-list";
 import { Separator } from "@/components/ui/separator";
-import {
-  DEFAULT_CATEGORY_ID,
-  DEFAULT_CATEGORY_ORDER,
-} from "@/constants/categories";
+import { DEFAULT_CATEGORY_ID } from "@/constants/categories";
 import { MESSAGES } from "@/constants/messages";
 import { useAppStorage } from "@/hooks/use-app-storage";
 import {
@@ -85,7 +82,6 @@ export function TodoApp() {
     const newCategory: Category = {
       id,
       name,
-      order: DEFAULT_CATEGORY_ORDER,
     };
 
     updateAppStorage((current) => ({

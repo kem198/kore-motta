@@ -83,12 +83,10 @@ describe("deleteCategory", () => {
         {
           id: "uncategorized",
           name: "未分類",
-          order: 0,
         },
         {
           id: "category-1",
           name: "カテゴリ1",
-          order: 1,
         },
       ],
       todos: [
@@ -129,7 +127,6 @@ describe("deleteCategory", () => {
         {
           id: "uncategorized",
           name: "未分類",
-          order: 0,
         },
       ],
       todos: [createTodo("todo-1", 0)],
