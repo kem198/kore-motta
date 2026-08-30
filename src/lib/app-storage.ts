@@ -3,13 +3,15 @@ import {
   APP_STORAGE_KEY,
   createInitialAppStorage,
   markAllIncompleteIfDateChanged,
+  validateIntegrity,
 } from "@/lib/app-storage-utils";
 import { AppStorage, parseAppStorage } from "@/schemas/app-storage-schema";
 
 /**
  * AppStorage の読み込みに失敗したことを表すエラー。
  *
- * JSON の解析または AppStorage のバリデーションに失敗した場合に使用する。
+ * JSON の解析、AppStorage のバリデーション、またはデータの整合性検証に
+ * 失敗した場合に使用する。
  */
 export class AppStorageLoadError extends Error {
   constructor(
@@ -30,11 +32,14 @@ type AppStorageLoadResult = {
  * localStorage から AppStorage を読み込む。
  *
  * - 保存データが存在しない場合は初期データを作成して保存する。
+ * - 保存データを現在の AppStorage のバージョンへ migration する。
+ * - 保存データの整合性を検証する。
  * - 保存データの日付が前回の未完了化日時と異なる場合は、すべての Todo を未完了にする。
  *
  * @param storageKey localStorage に使用するキー
  * @returns 読み込んだ AppStorage と、Todo を未完了化したかどうか
- * @throws {AppStorageLoadError} 保存データの JSON 解析または AppStorage のバリデーションに失敗した場合
+ * @throws {AppStorageLoadError} 保存データの JSON 解析、AppStorage のバリデーション、
+ * データの整合性検証に失敗した場合
  */
 export function loadAppStorage(
   storageKey = APP_STORAGE_KEY,
@@ -71,6 +76,7 @@ export function loadAppStorage(
   let appStorage: AppStorage;
   try {
     appStorage = migrateAppStorage(parsed);
+    validateIntegrity(appStorage);
   } catch (error) {
     throw new AppStorageLoadError(raw, error);
   }
@@ -103,5 +109,7 @@ export function saveAppStorage(
  * @throws JSON の解析または AppStorage のバリデーションに失敗した場合
  */
 export function importAppStorage(data: string): AppStorage {
-  return parseAppStorage(JSON.parse(data));
+  const appStorage = parseAppStorage(JSON.parse(data));
+  validateIntegrity(appStorage);
+  return appStorage;
 }
