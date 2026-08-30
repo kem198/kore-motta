@@ -56,7 +56,7 @@ export function ImportDialog({
         <div
           className={cn(
             "flex flex-col gap-4",
-            "max-sm:no-scrollbar -mx-4 max-h-[50dvh] overflow-y-auto px-4",
+            "-mx-4 max-h-[50dvh] overflow-y-auto px-4",
           )}
         >
           <Textarea
@@ -65,7 +65,7 @@ export function ImportDialog({
               setValue(e.target.value);
               setError(false);
             }}
-            className="bg-muted/50 h-40 w-full cursor-text resize-none p-2 font-mono text-xs wrap-break-word whitespace-pre-wrap select-text"
+            className="bg-muted/50 border-border h-40 w-full cursor-text resize-none rounded-md border p-2 font-mono text-xs wrap-break-word whitespace-pre-wrap select-text max-sm:h-28"
             aria-label="インポート用テキストエリア"
           />
 
