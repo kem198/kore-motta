@@ -56,7 +56,7 @@ export function ImportDialog({
         <div
           className={cn(
             "flex flex-col gap-4",
-            "max-sm:no-scrollbar -mx-4 max-h-[50vh] overflow-y-auto px-4",
+            "max-sm:no-scrollbar -mx-4 max-h-[50dvh] overflow-y-auto px-4",
           )}
         >
           <Textarea
