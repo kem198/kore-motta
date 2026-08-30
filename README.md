@@ -50,13 +50,13 @@ npm run start
 
 ## 使用技術
 
-### フレームワーク
-
-- [Next.js](https://nextjs.org/)
-
 ### 言語
 
 - [TypeScript](https://www.typescriptlang.org/)
+
+### フレームワーク
+
+- [Next.js](https://nextjs.org/)
 
 ### UI 構築
 

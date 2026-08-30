@@ -75,6 +75,39 @@ const STORED_DATA: ListItemWithTitle[] = [
   },
 ];
 
+const OTHER_SPECIFICATIONS: ListItemWithTitle[] = [
+  {
+    title: "未完了に戻るタイミング",
+    items: [
+      {
+        text: "日付が変わった後、以下のいずれかの操作で未完了に戻ります。",
+        children: [
+          "アプリを再読み込みしたとき",
+          "アプリを開いたとき",
+          "別のページやアプリから戻ったとき",
+        ],
+      },
+      {
+        text: "アプリを開いたまま日付が変わった場合、アイテムは未完了に戻りません。",
+        children: [
+          "その場合は、上記の操作をするか、「メニュー > すべて未完了に戻す」をご利用ください。",
+        ],
+      },
+    ],
+  },
+  {
+    title: "アプリの再読み込み",
+    items: [
+      {
+        text: "「メニュー > 再読み込みする」からアプリを再読み込みできます。",
+        children: [
+          "最新バージョンを利用したい場合や、挙動が不安定なときにお試しください。",
+        ],
+      },
+    ],
+  },
+];
+
 const ISSUES: ListItem[] = [
   {
     text: "iPhone の Safari では、キーボードの表示により末尾のアイテムが見づらくなる場合があります。お手数ですがキーボードを閉じてご確認ください。",
@@ -84,13 +117,16 @@ const ISSUES: ListItem[] = [
 const CHANGELOG = [
   {
     version: "v0.3.1",
-    date: "2026-08-29",
+    date: "2026-08-30",
     changes: [
       {
         text: "スマートフォン表示時、上部・下部のナビゲーションにコンテンツが重ならないようにしました。",
       },
       {
-        text: "アイテムのカテゴリ変更を行ったとき、末尾に追加されない場合がある不具合を修正しました。",
+        text: "アイテムのカテゴリを変更した際、移動先カテゴリのアイテムの中間に挿入されることがある不具合を修正しました。",
+      },
+      {
+        text: "インポート機能で、テキストが長い場合に実行ボタンが画面の外にはみ出し、操作できなくなる問題を修正しました。",
       },
     ],
   },
@@ -101,9 +137,6 @@ const CHANGELOG = [
       {
         text: "日付が変わった後、別のページやアプリに切り替えて再び戻ってきたときも、すべて未完了に戻すようにしました。",
       },
-      {
-        text: "「便利な使い方」を更新しました。",
-      },
     ],
   },
   {
@@ -111,7 +144,7 @@ const CHANGELOG = [
     date: "2026-08-28",
     changes: [
       {
-        text: "「アプリの概要・利用規約」を更新しました。",
+        text: "軽微な修正を行いました。",
       },
     ],
   },
@@ -234,6 +267,18 @@ function HelpAccordions({ className }: HelpAccordionsProps) {
         </div>
       </HelpAccordionItem>
 
+      <HelpAccordionItem value="other-specifications" title="その他の仕様">
+        <div className="flex flex-col gap-4">
+          {OTHER_SPECIFICATIONS.map((section) => (
+            <InformationSection
+              key={section.title}
+              title={section.title}
+              items={section.items}
+            />
+          ))}
+        </div>
+      </HelpAccordionItem>
+
       <HelpAccordionItem value="issues" title="既知の問題">
         <UnorderedList items={ISSUES} />
       </HelpAccordionItem>
@@ -334,7 +379,7 @@ function Support({ className }: SupportProps) {
             className="underline underline-offset-4"
           >
             GitHub でスターをつける{" "}
-            <SquareArrowOutUpRightIcon className="inline size-3.5 align-middle" />
+            <SquareArrowOutUpRightIcon className="inline size-3 align-middle" />
           </a>
         </li>
 
@@ -382,7 +427,7 @@ export function HelpDialog({
         <div
           className={cn(
             "flex flex-col gap-4 py-2",
-            "-mx-4 max-h-[60dvh] overflow-y-auto px-4",
+            "-mx-4 max-h-[50dvh] overflow-y-auto px-4",
             bodyClassName,
           )}
         >

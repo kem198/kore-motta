@@ -10,9 +10,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { MESSAGES } from "@/constants/messages";
+import { cn } from "@/lib/utils";
 import { AlertCircleIcon } from "lucide-react";
 import { useState } from "react";
 
@@ -53,28 +53,33 @@ export function ImportDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <ScrollArea className="border-border max-h-[60dvh] rounded-md border">
+        <div
+          className={cn(
+            "flex flex-col gap-4",
+            "-mx-4 max-h-[50dvh] overflow-y-auto px-4",
+          )}
+        >
           <Textarea
             value={value}
             onChange={(e) => {
               setValue(e.target.value);
               setError(false);
             }}
-            className="bg-muted/50 min-h-40 w-full cursor-text resize-none p-2 font-mono text-xs wrap-break-word whitespace-pre-wrap select-text"
+            className="bg-muted/50 border-border h-40 w-full cursor-text resize-none rounded-md border p-2 font-mono text-xs wrap-break-word whitespace-pre-wrap select-text max-sm:h-28"
             aria-label="インポート用テキストエリア"
           />
-        </ScrollArea>
 
-        <Alert variant="destructive">
-          <AlertCircleIcon size={16} />
-          <AlertTitle>{MESSAGES.warnings.overwrite}</AlertTitle>
-        </Alert>
+          <Alert variant="destructive">
+            <AlertCircleIcon size={16} />
+            <AlertTitle>{MESSAGES.warnings.overwrite}</AlertTitle>
+          </Alert>
 
-        {error && (
-          <p className="text-destructive text-sm">
-            {MESSAGES.toast.importError}
-          </p>
-        )}
+          {error && (
+            <p className="text-destructive text-sm">
+              {MESSAGES.toast.importError}
+            </p>
+          )}
+        </div>
 
         <DialogFooter>
           <Button variant="destructive" onClick={handleImport}>

@@ -13,8 +13,8 @@ export const APP_STORAGE_KEY = "appStorage";
 /**
  * AppStorage の初期値を作成する。
  *
- * - lastMarkedAllIncompleteAt には、実行日当日の 00:00:00.000 を設定する。
- *   -  * 例: "2026-08-24T15:00:00.000Z"
+ * `lastMarkedAllIncompleteAt` には、実行日当日の 00:00:00.000 を設定する。
+ * - 例: `"2026-08-24T15:00:00.000Z"`
  *
  * @returns 初期状態の AppStorage
  */

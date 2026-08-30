@@ -13,7 +13,11 @@ export function UnorderedList({ items, className }: UnorderedListProps) {
         <li key={item.text} className="leading-relaxed">
           {item.text}
           {item.children && (
-            <ul className={cn("mt-1 flex list-[circle] flex-col gap-1 pl-5")}>
+            <ul
+              className={cn(
+                "text-muted-foreground mt-1 flex list-[circle] flex-col gap-1 pl-5 text-sm",
+              )}
+            >
               {item.children.map((child) => (
                 <li key={child}>{child}</li>
               ))}

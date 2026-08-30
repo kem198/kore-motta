@@ -37,13 +37,6 @@ export function TodoApp() {
     resetAppStorage,
   } = useAppStorage();
 
-  // 削除済みカテゴリが最後に選択されていた場合は、デフォルトカテゴリを使用する
-  const activeCategoryId = appStorage.data.categories.some(
-    (c) => c.id === appStorage.data.lastSelectedCategoryId,
-  )
-    ? appStorage.data.lastSelectedCategoryId
-    : DEFAULT_CATEGORY_ID;
-
   const [isEditing, setIsEditing] = useState(false);
 
   const [categoryDialog, setCategoryDialog] = useState<
@@ -52,6 +45,21 @@ export function TodoApp() {
     | null
   >(null);
 
+  /** 現在選択されているカテゴリの ID */
+  const activeCategoryId = appStorage.data.categories.some(
+    // 削除済みカテゴリが最後に選択されていた場合は、デフォルトカテゴリを使用する
+    (c) => c.id === appStorage.data.lastSelectedCategoryId,
+  )
+    ? appStorage.data.lastSelectedCategoryId
+    : DEFAULT_CATEGORY_ID;
+
+  /** 現在選択されているカテゴリがデフォルトカテゴリか否か。 */
+  const isDefaultCategorySelected = activeCategoryId === DEFAULT_CATEGORY_ID;
+
+  /**
+   * 初回の AppStorage 読み込み時に、日付変更によって Todo がすべて未完了に戻された場合、
+   * その旨をトーストで通知する。
+   */
   useEffect(() => {
     if (!isLoaded || !didMarkAllIncomplete) {
       return;
@@ -60,6 +68,11 @@ export function TodoApp() {
     toast.success(MESSAGES.toast.markedAllIncomplete);
   }, [isLoaded, didMarkAllIncomplete]);
 
+  /**
+   * 現在選択されているカテゴリに属する Todo の一覧。
+   *
+   * カテゴリ内の並び順に従って表示する。
+   */
   const visibleTodos = useMemo(() => {
     return appStorage.data.todos
       .filter((todo) => todo.categoryId === activeCategoryId)
@@ -282,8 +295,6 @@ export function TodoApp() {
       },
     }));
   };
-
-  const isDefaultCategorySelected = activeCategoryId === DEFAULT_CATEGORY_ID;
 
   const handleDeleteCategory = (category: { id: string; name: string }) => {
     const categoryId = category.id;
