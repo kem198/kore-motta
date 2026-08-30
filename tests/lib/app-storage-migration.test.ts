@@ -13,7 +13,7 @@ describe("migrateAppStorage", () => {
           {
             id: "uncategorized",
             name: "未分類",
-            order: 0,
+            order: 1,
           },
         ],
         todos: [
@@ -44,7 +44,6 @@ describe("migrateAppStorage", () => {
           {
             id: "uncategorized",
             name: "未分類",
-            order: 0,
           },
         ],
         todos: [

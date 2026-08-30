@@ -4,7 +4,6 @@ export const categorySchema = z
   .object({
     id: z.string(),
     name: z.string(),
-    order: z.number(),
   })
   .strict();
 

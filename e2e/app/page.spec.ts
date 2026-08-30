@@ -2,7 +2,6 @@ import {
   DEFAULT_CATEGORIES_STORAGE,
   DEFAULT_CATEGORY_ID,
   DEFAULT_CATEGORY_NAME,
-  DEFAULT_CATEGORY_ORDER,
 } from "@/constants/categories";
 import { MESSAGES } from "@/constants/messages";
 import { AppStorageV1 } from "@/lib/app-storage-migration";
@@ -472,7 +471,11 @@ test.describe("Todo ページのテスト", () => {
               },
             ],
             categories: [
-              ...DEFAULT_CATEGORIES_STORAGE,
+              {
+                id: "uncategorized",
+                name: "未分類",
+                order: 0,
+              },
               {
                 id: "work",
                 name: "仕事",
@@ -489,7 +492,7 @@ test.describe("Todo ページのテスト", () => {
         // Act
         await navigateToTodoPage(page, { storage: appStorageV1 });
 
-        // Assert
+        // Assert (引き継ぐデータが表示されていること)
         await expect(
           assertScope.getByText("カギ", { exact: true }),
         ).toBeVisible();
@@ -500,9 +503,11 @@ test.describe("Todo ページのテスト", () => {
           assertScope.getByText("仕事", { exact: true }),
         ).toBeVisible();
 
+        // Assert (移行対象の情報が更新されていること)
         const actualStorage = await getAppStorage(page);
         expect(actualStorage.version).toBe(2);
         expect(actualStorage.data.settings.todoTogglePosition).toBe("left");
+        expect(actualStorage.data.categories[0]).not.toHaveProperty("order");
       });
     });
 
@@ -766,7 +771,6 @@ test.describe("Todo ページのテスト", () => {
               {
                 id: "temporary-category",
                 name: "仮カテゴリ",
-                order: 1,
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
@@ -875,12 +879,10 @@ test.describe("Todo ページのテスト", () => {
               {
                 id: DEFAULT_CATEGORY_ID,
                 name: DEFAULT_CATEGORY_NAME,
-                order: DEFAULT_CATEGORY_ORDER,
               },
               {
                 id: "work",
                 name: "仕事",
-                order: 1,
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
@@ -923,12 +925,10 @@ test.describe("Todo ページのテスト", () => {
               {
                 id: DEFAULT_CATEGORY_ID,
                 name: DEFAULT_CATEGORY_NAME,
-                order: DEFAULT_CATEGORY_ORDER,
               },
               {
                 id: "work",
                 name: "仕事",
-                order: 1,
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
@@ -975,7 +975,6 @@ test.describe("Todo ページのテスト", () => {
               {
                 id: DEFAULT_CATEGORY_ID,
                 name: DEFAULT_CATEGORY_NAME,
-                order: DEFAULT_CATEGORY_ORDER,
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
@@ -1013,12 +1012,10 @@ test.describe("Todo ページのテスト", () => {
               {
                 id: DEFAULT_CATEGORY_ID,
                 name: DEFAULT_CATEGORY_NAME,
-                order: DEFAULT_CATEGORY_ORDER,
               },
               {
                 id: "work",
                 name: "仕事",
-                order: 1,
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
@@ -1094,12 +1091,10 @@ test.describe("Todo ページのテスト", () => {
               {
                 id: DEFAULT_CATEGORY_ID,
                 name: DEFAULT_CATEGORY_NAME,
-                order: DEFAULT_CATEGORY_ORDER,
               },
               {
                 id: "work",
                 name: "仕事",
-                order: 1,
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
@@ -1194,12 +1189,10 @@ test.describe("Todo ページのテスト", () => {
               {
                 id: DEFAULT_CATEGORY_ID,
                 name: DEFAULT_CATEGORY_NAME,
-                order: DEFAULT_CATEGORY_ORDER,
               },
               {
                 id: "work",
                 name: "仕事",
-                order: 1,
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
@@ -1264,12 +1257,10 @@ test.describe("Todo ページのテスト", () => {
               {
                 id: DEFAULT_CATEGORY_ID,
                 name: DEFAULT_CATEGORY_NAME,
-                order: DEFAULT_CATEGORY_ORDER,
               },
               {
                 id: "work",
                 name: "仕事",
-                order: 1,
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
@@ -1385,12 +1376,10 @@ test.describe("Todo ページのテスト", () => {
               {
                 id: DEFAULT_CATEGORY_ID,
                 name: DEFAULT_CATEGORY_NAME,
-                order: DEFAULT_CATEGORY_ORDER,
               },
               {
                 id: "work",
                 name: "仕事",
-                order: 1,
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
@@ -1545,12 +1534,10 @@ test.describe("Todo ページのテスト", () => {
               {
                 id: DEFAULT_CATEGORY_ID,
                 name: DEFAULT_CATEGORY_NAME,
-                order: DEFAULT_CATEGORY_ORDER,
               },
               {
                 id: "work",
                 name: "仕事",
-                order: 1,
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
@@ -1588,12 +1575,10 @@ test.describe("Todo ページのテスト", () => {
               {
                 id: DEFAULT_CATEGORY_ID,
                 name: DEFAULT_CATEGORY_NAME,
-                order: DEFAULT_CATEGORY_ORDER,
               },
               {
                 id: "work",
                 name: "仕事",
-                order: 1,
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
@@ -1634,12 +1619,10 @@ test.describe("Todo ページのテスト", () => {
               {
                 id: DEFAULT_CATEGORY_ID,
                 name: DEFAULT_CATEGORY_NAME,
-                order: DEFAULT_CATEGORY_ORDER,
               },
               {
                 id: "work",
                 name: "仕事",
-                order: 1,
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
@@ -1686,17 +1669,14 @@ test.describe("Todo ページのテスト", () => {
               {
                 id: DEFAULT_CATEGORY_ID,
                 name: DEFAULT_CATEGORY_NAME,
-                order: DEFAULT_CATEGORY_ORDER,
               },
               {
                 id: "work",
                 name: "仕事",
-                order: 1,
               },
               {
                 id: "personal",
                 name: "個人",
-                order: 2,
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
@@ -1755,12 +1735,10 @@ test.describe("Todo ページのテスト", () => {
               {
                 id: DEFAULT_CATEGORY_ID,
                 name: DEFAULT_CATEGORY_NAME,
-                order: DEFAULT_CATEGORY_ORDER,
               },
               {
                 id: "work",
                 name: "仕事",
-                order: 1,
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
@@ -1835,12 +1813,10 @@ test.describe("Todo ページのテスト", () => {
               {
                 id: DEFAULT_CATEGORY_ID,
                 name: DEFAULT_CATEGORY_NAME,
-                order: DEFAULT_CATEGORY_ORDER,
               },
               {
                 id: "work",
                 name: "仕事",
-                order: 1,
               },
             ],
             lastMarkedAllIncompleteAt: new Date(
@@ -2558,7 +2534,6 @@ test.describe("Todo ページのテスト", () => {
               {
                 id: "category-1",
                 name: '<script>alert("settings")</script>',
-                order: 0,
               },
             ],
             todos: [
