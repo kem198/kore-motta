@@ -4,6 +4,7 @@ import {
   DEFAULT_CATEGORY_NAME,
   DEFAULT_CATEGORY_ORDER,
 } from "@/constants/categories";
+import { AppStorageV1 } from "@/lib/app-storage-migration";
 import { APP_STORAGE_KEY } from "@/lib/app-storage-utils";
 import { AppStorage } from "@/schemas/app-storage-schema";
 import { Category } from "@/schemas/category-schema";
@@ -26,7 +27,7 @@ test.describe("Todo ページのテスト", () => {
    */
   const navigateToTodoPage = async (
     page: Page,
-    options: { storage?: AppStorage; clockTime?: Date } = {},
+    options: { storage?: AppStorage | AppStorageV1; clockTime?: Date } = {},
   ) => {
     const clockTime = options.clockTime ?? DEFAULT_CLOCK_TIME;
     await page.clock.install({
@@ -482,7 +483,7 @@ test.describe("Todo ページのテスト", () => {
             ).toISOString(),
             lastSelectedCategoryId: "work",
           },
-        };
+        } satisfies AppStorageV1;
 
         // Act
         await navigateToTodoPage(page, { storage: appStorageV1 });
@@ -494,10 +495,13 @@ test.describe("Todo ページのテスト", () => {
         await expect(
           assertScope.getByText("家の鍵", { exact: true }),
         ).toBeVisible();
-
         await expect(
           assertScope.getByText("仕事", { exact: true }),
         ).toBeVisible();
+
+        const actualStorage = await getAppStorage(page);
+        expect(actualStorage.version).toBe(2);
+        expect(actualStorage.data.settings.todoTogglePosition).toBe("left");
       });
     });
 

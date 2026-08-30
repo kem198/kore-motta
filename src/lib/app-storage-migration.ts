@@ -19,7 +19,7 @@ const appStorageV1Schema = z
   })
   .strict();
 
-type AppStorageV1 = z.infer<typeof appStorageV1Schema>;
+export type AppStorageV1 = z.infer<typeof appStorageV1Schema>;
 
 /**
  * 値を v1 の AppStorage として検証・パースする。

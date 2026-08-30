@@ -67,7 +67,7 @@ export function loadAppStorage(
     throw new AppStorageLoadError(raw, error);
   }
 
-  // AppStorage 型として解釈できなければ例外をスローする
+  // 現在の AppStorage のバージョンへ migration できなければ例外をスローする
   let appStorage: AppStorage;
   try {
     appStorage = migrateAppStorage(parsed);
