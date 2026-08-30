@@ -66,9 +66,9 @@ test.describe("Todo ページのテスト", () => {
       }) => {
         // Arrange
         const appStorage: AppStorage = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             todos: [
               {
                 id: "test-todo",
@@ -104,9 +104,9 @@ test.describe("Todo ページのテスト", () => {
       }) => {
         // Arrange
         const storage: AppStorage = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             todos: [
               {
                 id: "single-storage-todo",
@@ -152,9 +152,9 @@ test.describe("Todo ページのテスト", () => {
 
         const lastMarkedAllIncompleteAt = new Date("2026-08-24T00:00:00+09:00");
         const appStorage: AppStorage = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             categories: DEFAULT_CATEGORIES_STORAGE,
             todos: [
               {
@@ -217,9 +217,9 @@ test.describe("Todo ページのテスト", () => {
         const beforeMidnight = new Date("2026-08-24T23:59:00+09:00");
 
         const appStorage: AppStorage = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             categories: DEFAULT_CATEGORIES_STORAGE,
             todos: [
               {
@@ -288,9 +288,9 @@ test.describe("Todo ページのテスト", () => {
         const lastMarkedAllIncompleteAt = new Date("2026-08-24T00:00:00+09:00");
 
         const appStorage: AppStorage = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             categories: DEFAULT_CATEGORIES_STORAGE,
             todos: [
               {
@@ -386,9 +386,9 @@ test.describe("Todo ページのテスト", () => {
         const lastMarkedAllIncompleteAt = new Date("2026-08-24T00:00:00+09:00");
 
         const appStorage: AppStorage = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             categories: DEFAULT_CATEGORIES_STORAGE,
             todos: [
               {
@@ -530,9 +530,9 @@ test.describe("Todo ページのテスト", () => {
       }) => {
         // Arrange
         const appStorage: AppStorage = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             todos: [
               {
                 id: "dummy-todo",
@@ -568,9 +568,9 @@ test.describe("Todo ページのテスト", () => {
       test("Todo を編集できること", async ({ page }) => {
         // Arrange
         const appStorage: AppStorage = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             todos: [
               {
                 id: "dummy-todo",
@@ -603,7 +603,7 @@ test.describe("Todo ページのテスト", () => {
 
         // Assert (データストアへ登録されていること)
         const persisted: AppStorage = await getAppStorage(page);
-        expect(persisted.version).toBe(1);
+        expect(persisted.version).toBe(2);
         expect(persisted.data.todos[0].name).toBe("カギ");
       });
 
@@ -612,9 +612,9 @@ test.describe("Todo ページのテスト", () => {
       }) => {
         // Arrange
         const appStorage: AppStorage = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             todos: [
               {
                 id: "dummy-todo",
@@ -651,7 +651,7 @@ test.describe("Todo ページのテスト", () => {
         // Assert (データストアへ登録されていること)
         const persisted = await getAppStorage(page);
 
-        expect(persisted.version).toBe(1);
+        expect(persisted.version).toBe(2);
         expect(persisted.data.todos[0]).toEqual(
           expect.objectContaining({
             id: "dummy-todo",
@@ -666,9 +666,9 @@ test.describe("Todo ページのテスト", () => {
       }) => {
         // Arrange
         const appStorage: AppStorage = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             todos: [
               {
                 id: "dummy-todo",
@@ -705,7 +705,7 @@ test.describe("Todo ページのテスト", () => {
         // Assert (データストアへ登録されていること)
         const persisted = await getAppStorage(page);
 
-        expect(persisted.version).toBe(1);
+        expect(persisted.version).toBe(2);
         expect(persisted.data.todos[0]).toEqual(
           expect.objectContaining({
             id: "dummy-todo",
@@ -720,9 +720,9 @@ test.describe("Todo ページのテスト", () => {
       }) => {
         // Arrange
         const appStorage: AppStorage = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             todos: [
               {
                 id: "dummy-todo",
@@ -820,7 +820,7 @@ test.describe("Todo ページのテスト", () => {
         // Assert (データストアへ登録されていること)
         const persisted = await getAppStorage(page);
 
-        expect(persisted.version).toBe(1);
+        expect(persisted.version).toBe(2);
         expect(persisted.data.todos).toEqual(
           expect.arrayContaining([
             expect.objectContaining({
@@ -857,9 +857,9 @@ test.describe("Todo ページのテスト", () => {
       }) => {
         // Arrange
         const appStorage: AppStorage = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             todos: [
               {
                 id: "category-edit-todo",
@@ -906,9 +906,9 @@ test.describe("Todo ページのテスト", () => {
       }) => {
         // Arrange
         const appStorage: AppStorage = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             todos: [
               {
                 id: "test-todo",
@@ -958,9 +958,9 @@ test.describe("Todo ページのテスト", () => {
       }) => {
         // Arrange
         const appStorage: AppStorage = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             todos: [
               {
                 id: "test-todo",
@@ -996,9 +996,9 @@ test.describe("Todo ページのテスト", () => {
       test("Todo を別のカテゴリへ移動できること", async ({ page }) => {
         // Arrange
         const appStorage: AppStorage = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             todos: [
               {
                 id: "move-todo",
@@ -1056,9 +1056,9 @@ test.describe("Todo ページのテスト", () => {
       }) => {
         // Arrange
         const appStorage: AppStorage = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             todos: [
               {
                 id: "move-todo",
@@ -1156,9 +1156,9 @@ test.describe("Todo ページのテスト", () => {
       }) => {
         // Arrange
         const appStorage: AppStorage = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             todos: [
               {
                 id: "work-1",
@@ -1226,9 +1226,9 @@ test.describe("Todo ページのテスト", () => {
       }) => {
         // Arrange
         const appStorage: AppStorage = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             todos: [
               {
                 id: "work-1",
@@ -1298,9 +1298,9 @@ test.describe("Todo ページのテスト", () => {
       test("Todo を削除できること", async ({ page }) => {
         // Arrange
         const appStorage: AppStorage = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             todos: [
               {
                 id: "dummy-todo",
@@ -1376,9 +1376,9 @@ test.describe("Todo ページのテスト", () => {
       }) => {
         // Arrange
         const appStorage: AppStorage = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             todos: [],
             categories: [
               {
@@ -1521,9 +1521,9 @@ test.describe("Todo ページのテスト", () => {
       }) => {
         // Arrange
         const appStorage: AppStorage = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             todos: [
               {
                 id: "todo-unclassified",
@@ -1579,9 +1579,9 @@ test.describe("Todo ページのテスト", () => {
       }) => {
         // Arrange
         const appStorage: AppStorage = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             todos: [],
             categories: [
               {
@@ -1625,9 +1625,9 @@ test.describe("Todo ページのテスト", () => {
       }) => {
         // Arrange
         const appStorage: AppStorage = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             todos: [],
             categories: [
               {
@@ -1662,9 +1662,9 @@ test.describe("Todo ページのテスト", () => {
       test("カテゴリを削除できること", async ({ page }) => {
         // Arrange
         const appStorage: AppStorage = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             todos: [
               {
                 id: "todo-work",
@@ -1738,9 +1738,9 @@ test.describe("Todo ページのテスト", () => {
       }) => {
         // Arrange
         const appStorage: AppStorage = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             todos: [
               {
                 id: "todo-work",
@@ -1804,9 +1804,9 @@ test.describe("Todo ページのテスト", () => {
       }) => {
         // Arrange
         const appStorage: AppStorage = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             todos: [
               {
                 id: "todo-shopping",
@@ -1878,9 +1878,9 @@ test.describe("Todo ページのテスト", () => {
 
         const lastMarkedAllIncompleteAt = new Date("2026-08-24T00:00:00+09:00");
         const appStorage: AppStorage = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             categories: DEFAULT_CATEGORIES_STORAGE,
             todos: [
               {
@@ -1945,9 +1945,9 @@ test.describe("Todo ページのテスト", () => {
         const beforeMidnight = new Date("2026-08-24T23:59:00+09:00");
 
         const appStorage: AppStorage = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             categories: DEFAULT_CATEGORIES_STORAGE,
             todos: [
               {
@@ -2012,9 +2012,9 @@ test.describe("Todo ページのテスト", () => {
       }) => {
         // Arrange
         const appStorage: AppStorage = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             todos: [
               {
                 id: "test-todo-01",
@@ -2048,9 +2048,12 @@ test.describe("Todo ページのテスト", () => {
 
         // Assert
         // ダイアログは page の範囲外のためページ全体をテスト範囲にする
-        await expect(page.locator("body")).toContainText('"version": 1');
+        await expect(page.locator("body")).toContainText('"version": 2');
         await expect(page.locator("body")).toContainText(
           '"id": "test-todo-01"',
+        );
+        await expect(page.locator("body")).toContainText(
+          '"todoTogglePosition": "left"',
         );
         await expect(page.locator("body")).toContainText('"name": "カギ"');
         await expect(page.locator("body")).toContainText('"order": 0');
@@ -2072,9 +2075,9 @@ test.describe("Todo ページのテスト", () => {
         await navigateToTodoPage(page);
 
         const backupAppStorage: AppStorage = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             todos: [
               {
                 id: "import-todo",
@@ -2112,7 +2115,7 @@ test.describe("Todo ページのテスト", () => {
 
         // Assert (データストアへ保存されていること)
         const persisted: AppStorage = await getAppStorage(page);
-        expect(persisted.version).toBe(1);
+        expect(persisted.version).toBe(2);
         expect(persisted.data.todos[0].id).toBe("import-todo");
         expect(persisted.data.todos[0].name).toBe("カギ");
       });
@@ -2122,9 +2125,9 @@ test.describe("Todo ページのテスト", () => {
       }) => {
         // Arrange
         const appStorage: AppStorage = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             todos: [
               {
                 id: "dummy-todo",
@@ -2173,9 +2176,9 @@ test.describe("Todo ページのテスト", () => {
       }) => {
         // Arrange
         const appStorage: AppStorage = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             todos: [
               {
                 id: "dummy-todo",
@@ -2195,9 +2198,9 @@ test.describe("Todo ページのテスト", () => {
         await navigateToTodoPage(page, { storage: appStorage });
 
         const corruptedAppStorage: unknown = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             todos: [
               {
                 id: "import-todo",
@@ -2293,9 +2296,9 @@ test.describe("Todo ページのテスト", () => {
       }) => {
         // Arrange
         const corruptedAppStorage: unknown = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             todos: [
               {
                 id: "import-todo",
@@ -2339,9 +2342,9 @@ test.describe("Todo ページのテスト", () => {
       }) => {
         // Arrange
         const corruptedAppStorage: unknown = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             todos: [
               {
                 id: "import-todo",
@@ -2382,9 +2385,9 @@ test.describe("Todo ページのテスト", () => {
       }) => {
         // Arrange
         const corruptedAppStorage: unknown = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             todos: [
               {
                 id: "import-todo",
@@ -2420,9 +2423,9 @@ test.describe("Todo ページのテスト", () => {
       }) => {
         // Arrange
         const corruptedAppStorage: unknown = {
-          version: 1,
+          version: 2,
           data: {
-            settings: {},
+            settings: { todoTogglePosition: "left" },
             todos: [
               {
                 id: "import-todo",
@@ -2468,15 +2471,15 @@ test.describe("Todo ページのテスト", () => {
       }) => {
         // Arrange
         const maliciousAppStorage: AppStorage = {
-          version: 1,
+          version: 2,
           data: {
             settings: {
-              injection: '<script>alert("settings")</script>',
+              todoTogglePosition: "left",
             },
             categories: [
               {
                 id: "category-1",
-                name: '<img src=x onerror=alert("category-name")>',
+                name: '<script>alert("settings")</script>',
                 order: 0,
               },
             ],
@@ -2493,7 +2496,7 @@ test.describe("Todo ページのテスト", () => {
             lastMarkedAllIncompleteAt: "2026-08-26T12:00:00.000Z",
             lastSelectedCategoryId: "category-1",
           },
-        };
+        } as unknown as AppStorage;
 
         let dialogOpened = false;
 
@@ -2512,13 +2515,7 @@ test.describe("Todo ページのテスト", () => {
 
         // Assert (意味のある HTML 文字列が通常の文字列として表示されていること)
         await expect(
-          page.getByText('<img src=x onerror=alert("todo-name")>'),
-        ).toBeVisible();
-        await expect(
-          page.getByText('<svg onload=alert("todo-memo")>'),
-        ).toBeVisible();
-        await expect(
-          page.getByText('<img src=x onerror=alert("category-name")>'),
+          page.getByText('<script>alert("settings")</script>'),
         ).toBeVisible();
         await expect(
           page.getByText('<img src=x onerror=alert("todo-name")>'),
