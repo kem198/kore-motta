@@ -450,6 +450,55 @@ test.describe("Todo ページのテスト", () => {
           lastMarkedAllIncompleteAt.toISOString(),
         );
       });
+
+      test("v1 のデータが保存されている状態でアプリを起動すると、既存の Todo とカテゴリを引き継いで利用できること", async ({
+        page,
+      }) => {
+        // Arrange
+        const appStorageV1 = {
+          version: 1,
+          data: {
+            settings: {},
+            todos: [
+              {
+                id: "migration-todo",
+                name: "カギ",
+                order: 0,
+                categoryId: "work",
+                memo: "家の鍵",
+                completed: false,
+              },
+            ],
+            categories: [
+              ...DEFAULT_CATEGORIES_STORAGE,
+              {
+                id: "work",
+                name: "仕事",
+                order: 1,
+              },
+            ],
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-30T00:00:00+09:00",
+            ).toISOString(),
+            lastSelectedCategoryId: "work",
+          },
+        };
+
+        // Act
+        await navigateToTodoPage(page, { storage: appStorageV1 });
+
+        // Assert
+        await expect(
+          assertScope.getByText("カギ", { exact: true }),
+        ).toBeVisible();
+        await expect(
+          assertScope.getByText("家の鍵", { exact: true }),
+        ).toBeVisible();
+
+        await expect(
+          assertScope.getByText("仕事", { exact: true }),
+        ).toBeVisible();
+      });
     });
 
     test.describe("作成時のテスト", () => {
