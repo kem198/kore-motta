@@ -2574,6 +2574,269 @@ test.describe("Todo ページのテスト", () => {
           },
         ]);
       });
+
+      test.describe("localStorage の破損 (整合性が取れていない)", () => {
+        test.describe("1. カテゴリ系の不整合による修復", () => {
+          test("未分類カテゴリの名前が変更されている場合、カテゴリを初期化し Todo を未分類に変更して復旧すること", async ({
+            page,
+          }) => {
+            // Arrange
+            const corruptedAppStorage: AppStorage = {
+              version: 2,
+              data: {
+                settings: { todoTogglePosition: "left" },
+                categories: [
+                  { id: DEFAULT_CATEGORY_ID, name: "変更されたカテゴリ名" },
+                  { id: "category-1", name: "旅行" },
+                ],
+                todos: [
+                  {
+                    id: "todo-1",
+                    name: "カギ",
+                    order: 0,
+                    categoryId: "category-1",
+                    memo: "家の鍵",
+                    completed: true,
+                  },
+                ],
+                lastMarkedAllIncompleteAt: "2026-08-24T00:00:00.000+09:00",
+                lastSelectedCategoryId: "category-1",
+              },
+            };
+
+            // Act
+            await navigateToTodoPage(page, { storage: corruptedAppStorage });
+
+            // Assert: 画面上に Todo が表示されていること
+            await expect(page.locator("body")).toContainText("カギ");
+
+            // Assert: localStorage の修復結果を確認
+            const actualStorage = await getAppStorage(page);
+            expect(actualStorage.data.categories).toEqual(
+              DEFAULT_CATEGORIES_STORAGE,
+            );
+            expect(actualStorage.data.todos).toEqual([
+              {
+                id: "todo-1",
+                name: "カギ",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                memo: "家の鍵",
+                completed: true,
+              },
+            ]);
+            expect(actualStorage.data.lastSelectedCategoryId).toBe(
+              DEFAULT_CATEGORY_ID,
+            );
+
+            // Act & Assert: 再読み込み後も永続化されていることを確認
+            await page.reload();
+            await expect(page.locator("body")).toContainText("カギ");
+
+            const reloadedStorage = await getAppStorage(page);
+            expect(reloadedStorage.data.categories).toEqual(
+              DEFAULT_CATEGORIES_STORAGE,
+            );
+            expect(reloadedStorage.data.todos[0].categoryId).toBe(
+              DEFAULT_CATEGORY_ID,
+            );
+          });
+
+          test("存在しない categoryId を参照している Todo がある場合、カテゴリを初期化して復旧すること", async ({
+            page,
+          }) => {
+            // Arrange
+            const corruptedAppStorage: AppStorage = {
+              version: 2,
+              data: {
+                settings: { todoTogglePosition: "left" },
+                categories: [{ id: DEFAULT_CATEGORY_ID, name: "未分類" }],
+                todos: [
+                  {
+                    id: "todo-1",
+                    name: "パスポート",
+                    order: 0,
+                    categoryId: "ghost-category", // 存在しないカテゴリID
+                    memo: "有効期限確認",
+                    completed: false,
+                  },
+                ],
+                lastMarkedAllIncompleteAt: "2026-08-24T00:00:00.000+09:00",
+                lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
+              },
+            };
+
+            // Act
+            await navigateToTodoPage(page, { storage: corruptedAppStorage });
+
+            // Assert
+            await expect(page.locator("body")).toContainText("パスポート");
+
+            const actualStorage = await getAppStorage(page);
+            expect(actualStorage.data.categories).toEqual(
+              DEFAULT_CATEGORIES_STORAGE,
+            );
+            expect(actualStorage.data.todos[0].categoryId).toBe(
+              DEFAULT_CATEGORY_ID,
+            );
+          });
+
+          test("lastSelectedCategoryId が存在しないカテゴリを参照している場合、カテゴリを初期化すること", async ({
+            page,
+          }) => {
+            // Arrange
+            const corruptedAppStorage: AppStorage = {
+              version: 2,
+              data: {
+                settings: { todoTogglePosition: "left" },
+                categories: [{ id: DEFAULT_CATEGORY_ID, name: "未分類" }],
+                todos: [],
+                lastMarkedAllIncompleteAt: "2026-08-24T00:00:00.000+09:00",
+                lastSelectedCategoryId: "non-existent-category",
+              },
+            };
+
+            // Act
+            await navigateToTodoPage(page, { storage: corruptedAppStorage });
+
+            // Assert
+            const actualStorage = await getAppStorage(page);
+            expect(actualStorage.data.categories).toEqual(
+              DEFAULT_CATEGORIES_STORAGE,
+            );
+            expect(actualStorage.data.lastSelectedCategoryId).toBe(
+              DEFAULT_CATEGORY_ID,
+            );
+          });
+        });
+
+        test.describe("Todo ID の重複による修復", () => {
+          test("Todo.id が重複している場合、1件目を維持し2件目以降の ID を再生成して修復すること", async ({
+            page,
+          }) => {
+            // Arrange
+            const duplicateId = "duplicate-id-123";
+            const corruptedAppStorage: AppStorage = {
+              version: 2,
+              data: {
+                settings: { todoTogglePosition: "left" },
+                categories: [{ id: DEFAULT_CATEGORY_ID, name: "未分類" }],
+                todos: [
+                  {
+                    id: duplicateId,
+                    name: "1件目のタスク",
+                    order: 0,
+                    categoryId: DEFAULT_CATEGORY_ID,
+                    memo: "メモ1",
+                    completed: false,
+                  },
+                  {
+                    id: duplicateId, // 重複
+                    name: "2件目のタスク",
+                    order: 1,
+                    categoryId: DEFAULT_CATEGORY_ID,
+                    memo: "メモ2",
+                    completed: true,
+                  },
+                ],
+                lastMarkedAllIncompleteAt: "2026-08-24T00:00:00.000+09:00",
+                lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
+              },
+            };
+
+            // Act
+            await navigateToTodoPage(page, { storage: corruptedAppStorage });
+
+            // Assert: 両方の Todo が画面上に表示されていること
+            await expect(page.locator("body")).toContainText("1件目のタスク");
+            await expect(page.locator("body")).toContainText("2件目のタスク");
+
+            // Assert: 1件目の ID は維持され、2件目の ID は変更されていること
+            const actualStorage = await getAppStorage(page);
+            const todos = actualStorage.data.todos;
+
+            expect(todos.length).toBe(2);
+            expect(todos[0].id).toBe(duplicateId);
+            expect(todos[1].id).not.toBe(duplicateId);
+
+            // ID の一意性を確認
+            const todoIds = todos.map((t) => t.id);
+            expect(new Set(todoIds).size).toBe(2);
+
+            // ID 以外の属性（名前・メモ・完了フラグ等）が適切に保持されていること
+            expect(todos[1].name).toBe("2件目のタスク");
+            expect(todos[1].memo).toBe("メモ2");
+            expect(todos[1].completed).toBe(true);
+          });
+        });
+
+        test.describe("3. カテゴリ系と Todo ID 系の複合不整合", () => {
+          test("カテゴリ不整合と Todo ID 重複が同時に存在する場合、両方を一括修復すること", async ({
+            page,
+          }) => {
+            // Arrange
+            const duplicateId = "shared-todo-id";
+            const corruptedAppStorage: AppStorage = {
+              version: 2,
+              data: {
+                settings: { todoTogglePosition: "left" },
+                categories: [
+                  { id: DEFAULT_CATEGORY_ID, name: "壊れた未分類名" }, // カテゴリ不整合
+                  { id: "cat-1", name: "仕事" },
+                ],
+                todos: [
+                  {
+                    id: duplicateId,
+                    name: "資料作成",
+                    order: 0,
+                    categoryId: "cat-1",
+                    memo: "重要",
+                    completed: false,
+                  },
+                  {
+                    id: duplicateId, // ID重複 & 存在しない参照
+                    name: "メール送信",
+                    order: 1,
+                    categoryId: "cat-ghost",
+                    memo: "",
+                    completed: false,
+                  },
+                ],
+                lastMarkedAllIncompleteAt: "2026-08-24T00:00:00.000+09:00",
+                lastSelectedCategoryId: "cat-1",
+              },
+            };
+
+            // Act
+            await navigateToTodoPage(page, { storage: corruptedAppStorage });
+
+            // Assert: アプリ上に双方の Todo が表示されること
+            await expect(page.locator("body")).toContainText("資料作成");
+            await expect(page.locator("body")).toContainText("メール送信");
+
+            // Assert: カテゴリ初期化および Todo ID の再生成が同時に行われていること
+            const actualStorage = await getAppStorage(page);
+
+            // カテゴリは初期化
+            expect(actualStorage.data.categories).toEqual(
+              DEFAULT_CATEGORIES_STORAGE,
+            );
+            expect(actualStorage.data.lastSelectedCategoryId).toBe(
+              DEFAULT_CATEGORY_ID,
+            );
+
+            // Todo のカテゴリIDはどちらも未分類へ、ID は一意に修復される
+            const todos = actualStorage.data.todos;
+            expect(todos.length).toBe(2);
+            expect(todos[0].categoryId).toBe(DEFAULT_CATEGORY_ID);
+            expect(todos[1].categoryId).toBe(DEFAULT_CATEGORY_ID);
+
+            expect(todos[0].id).toBe(duplicateId);
+            expect(todos[1].id).not.toBe(duplicateId);
+            expect(new Set(todos.map((t) => t.id)).size).toBe(2);
+          });
+        });
+      });
     });
 
     test.describe("セキュリティ対策", () => {
