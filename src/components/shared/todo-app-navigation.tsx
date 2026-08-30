@@ -16,7 +16,7 @@ export function TodoAppNavigation({
   onToggleTodoPosition,
 }: TodoAppNavigationProps) {
   return (
-    <div className="flex justify-end gap-2">
+    <div className="flex justify-between gap-2">
       <Button
         variant="secondary"
         onClick={onToggleTodoPosition}
@@ -24,25 +24,27 @@ export function TodoAppNavigation({
       >
         <CircleCheckIcon /> 位置切替
       </Button>
-      <Button
-        variant="secondary"
-        aria-label="カテゴリ設定"
-        onClick={onOpenCategorySetting}
-      >
-        <FolderEditIcon />
-        カテゴリ設定
-      </Button>
+      <div className="flex gap-2">
+        <Button
+          variant="secondary"
+          aria-label="カテゴリ設定"
+          onClick={onOpenCategorySetting}
+        >
+          <FolderEditIcon />
+          カテゴリ設定
+        </Button>
 
-      <Button
-        variant={isEditing ? "default" : "secondary"}
-        onClick={onToggleEditing}
-        aria-label={
-          isEditing ? MESSAGES.actions.editDone : MESSAGES.actions.editStart
-        }
-      >
-        <SquarePenIcon />
-        {isEditing ? MESSAGES.actions.done : MESSAGES.actions.edit}
-      </Button>
+        <Button
+          variant={isEditing ? "default" : "secondary"}
+          onClick={onToggleEditing}
+          aria-label={
+            isEditing ? MESSAGES.actions.editDone : MESSAGES.actions.editStart
+          }
+        >
+          <SquarePenIcon />
+          {isEditing ? MESSAGES.actions.done : MESSAGES.actions.edit}
+        </Button>
+      </div>
     </div>
   );
 }
