@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { MESSAGES } from "@/constants/messages";
-import { CircleCheckIcon, FolderEditIcon, SquarePenIcon } from "lucide-react";
+import { FolderEditIcon, ListTodoIcon, SquarePenIcon } from "lucide-react";
 
 type TodoAppNavigationProps = {
   isEditing: boolean;
@@ -22,7 +22,7 @@ export function TodoAppNavigation({
         onClick={onToggleTodoPosition}
         aria-label={"チェックボタンの位置切替"}
       >
-        <CircleCheckIcon /> 位置切替
+        <ListTodoIcon /> 位置切替
       </Button>
       <div className="flex gap-2">
         <Button
