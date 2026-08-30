@@ -26,10 +26,10 @@ function TodoListSkeleton() {
   return (
     <div className="flex w-full items-center gap-3.5 rounded-md px-0 py-3.5 text-sm">
       <div className="flex shrink-0 items-center justify-center">
-        <Skeleton className="relative flex aspect-square h-10 w-10 shrink-0 overflow-hidden rounded-full" />
+        <Skeleton className="relative flex aspect-square size-9 shrink-0 overflow-hidden rounded-full max-sm:size-11" />
       </div>
 
-      <div className="flex flex-1 flex-col gap-1">
+      <div className="flex flex-1 flex-col gap-2">
         <Skeleton className="h-4 max-w-40" />
         <Skeleton className="h-4 max-w-[16rem]" />
       </div>
