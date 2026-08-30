@@ -55,7 +55,6 @@ export function migrateAppStorage(rawData: unknown): AppStorage {
       data: {
         ...appStorageV1.data,
         settings: {
-          ...appStorageV1.data.settings,
           todoTogglePosition: "left",
         },
       },
