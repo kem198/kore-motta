@@ -4,6 +4,7 @@ import {
   DEFAULT_CATEGORY_NAME,
   DEFAULT_CATEGORY_ORDER,
 } from "@/constants/categories";
+import { MESSAGES } from "@/constants/messages";
 import { AppStorageV1 } from "@/lib/app-storage-migration";
 import { APP_STORAGE_KEY } from "@/lib/app-storage-utils";
 import { AppStorage } from "@/schemas/app-storage-schema";
@@ -2239,6 +2240,87 @@ test.describe("Todo ページのテスト", () => {
         // Assert (データストアが更新されていないこと)
         const persistedCorrupted: AppStorage = await getAppStorage(page);
         expect(persistedCorrupted.data.todos[0].id).toBe("dummy-todo");
+      });
+    });
+  });
+
+  test.describe("設定のテスト", () => {
+    test.describe("Todo トグルボタンの表示位置設定", () => {
+      test("「右へ」ボタンを押すと、Todo トグルボタンが右へ移動し、設定が「右」になること", async ({
+        page,
+      }) => {
+        // Arrange
+        const nameInput = page.getByPlaceholder(MESSAGES.placeholders.newItem);
+        await nameInput.fill("カギ");
+        await page.getByRole("button", { name: MESSAGES.actions.add }).click();
+        await page.getByRole("button", { name: "編集" }).click();
+
+        // Act
+        await page.getByRole("button", { name: "右へ" }).click();
+
+        // Assert (「左へ」ボタンが表示されていること)
+        await expect(page.getByRole("button", { name: "左へ" })).toBeVisible();
+
+        // Assert (Todo の表示順が逆順になっていること)
+        const toggle = page.getByRole("button", {
+          name: "完了状態を切り替え: カギ",
+        });
+        const editButton = page.getByRole("button", {
+          name: "編集: カギ",
+        });
+        const deleteButton = page.getByRole("button", {
+          name: "削除: カギ",
+        });
+        const toggleBox = await toggle.boundingBox();
+        const editBox = await editButton.boundingBox();
+        const deleteBox = await deleteButton.boundingBox();
+        expect(deleteBox!.x).toBeLessThan(editBox!.x);
+        expect(editBox!.x).toBeLessThan(toggleBox!.x);
+
+        // Assert (Todo の表示位置が「右」で保存されていること)
+        const appStorage = await page.evaluate(() =>
+          JSON.parse(localStorage.getItem("appStorage")!),
+        );
+        expect(appStorage.data.settings.todoTogglePosition).toBe("right");
+      });
+
+      test("「左へ」ボタンを押すと、Todo トグルボタンが左へ移動し、設定が「左」になること", async ({
+        page,
+      }) => {
+        // Arrange
+        const nameInput = page.getByPlaceholder(MESSAGES.placeholders.newItem);
+        await nameInput.fill("カギ");
+        await page.getByRole("button", { name: MESSAGES.actions.add }).click();
+        await page.getByRole("button", { name: "編集" }).click();
+        await page.getByRole("button", { name: "右へ" }).click();
+
+        // Act
+        await page.getByRole("button", { name: "左へ" }).click();
+
+        // Assert (「右へ」ボタンが表示されていること)
+        await expect(page.getByRole("button", { name: "右へ" })).toBeVisible();
+
+        // Assert (Todo の表示順が正順になっていること)
+        const toggle = page.getByRole("button", {
+          name: "完了状態を切り替え: カギ",
+        });
+        const editButton = page.getByRole("button", {
+          name: "編集: カギ",
+        });
+        const deleteButton = page.getByRole("button", {
+          name: "削除: カギ",
+        });
+        const toggleBox = await toggle.boundingBox();
+        const editBox = await editButton.boundingBox();
+        const deleteBox = await deleteButton.boundingBox();
+        expect(toggleBox!.x).toBeLessThan(editBox!.x);
+        expect(editBox!.x).toBeLessThan(deleteBox!.x);
+
+        // Assert (Todo の表示位置が「左」で保存されていること)
+        const appStorage = await page.evaluate(() =>
+          JSON.parse(localStorage.getItem("appStorage")!),
+        );
+        expect(appStorage.data.settings.todoTogglePosition).toBe("left");
       });
     });
   });
