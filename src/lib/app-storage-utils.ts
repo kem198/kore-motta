@@ -148,11 +148,13 @@ export function validateIntegrity(storage: AppStorage): void {
 /**
  * AppStorage の整合性を検証し、必要に応じて修復した新しい AppStorage を返す。
  *
- * - カテゴリ系不整合:
- *   - カテゴリを初期化 (未分類以外すべて削除) し、全 Todo を未分類に変更する。
- *   - あわせて選択カテゴリを未分類に設定する。
- * - Todo ID 重複:
- *   - 1件目の ID を維持し、2件目以降の ID を `crypto.randomUUID()` で再生成する
+ * - カテゴリ系の不整合修復:
+ *   - カテゴリの重複やデフォルトカテゴリの破損を検知し、カテゴリを初期化して全 Todo を未分類に再割り当てする。
+ *   - 選択中のカテゴリIDが不正な場合はデフォルトカテゴリにリセットする。
+ * - Todo のカテゴリ参照修復:
+ *   - 存在しないカテゴリを参照している Todo をデフォルトカテゴリに再割り当てする。
+ * - Todo ID の重複修復:
+ *   - 重複する ID を持つ Todo を検知し、2件目以降の ID を一意な UUID に再生成する。
  *
  * @param storage 修復対象の AppStorage オブジェクト
  * @returns 修復済みの新しい AppStorage オブジェクト
@@ -160,7 +162,7 @@ export function validateIntegrity(storage: AppStorage): void {
 export function repairAppStorage(storage: AppStorage): AppStorage {
   const data = { ...storage.data };
 
-  // 1. カテゴリの重複チェックとデフォルトカテゴリの検証
+  // 1. カテゴリ構造の検証と修復
   const categoryIds = new Set(data.categories.map((c) => c.id));
   const defaultCategory = data.categories.find(
     (c) => c.id === DEFAULT_CATEGORY_ID,
@@ -169,20 +171,18 @@ export function repairAppStorage(storage: AppStorage): AppStorage {
   const isDefaultCategoryInvalid =
     !defaultCategory || defaultCategory.name !== DEFAULT_CATEGORY_NAME;
 
-  // カテゴリ自体が致命的に破損している場合は初期化する
   if (hasDuplicateCategories || isDefaultCategoryInvalid) {
     data.categories = DEFAULT_CATEGORIES_STORAGE.map((c) => ({ ...c }));
-    // カテゴリを初期化したので、有効なIDはデフォルトのみになる
     categoryIds.clear();
     categoryIds.add(DEFAULT_CATEGORY_ID);
   }
 
-  // 2. lastSelectedCategoryId の個別修復
+  // 2. 選択カテゴリIDの整合性修復
   if (!categoryIds.has(data.lastSelectedCategoryId)) {
     data.lastSelectedCategoryId = DEFAULT_CATEGORY_ID;
   }
 
-  // 3. Todo の categoryId の個別修復
+  // 3. Todo のカテゴリ参照の整合性修復
   let hasTodoCategoryModified = false;
   const repairedTodos = data.todos.map((todo) => {
     if (!categoryIds.has(todo.categoryId)) {
@@ -195,7 +195,7 @@ export function repairAppStorage(storage: AppStorage): AppStorage {
     data.todos = repairedTodos;
   }
 
-  // 4. Todo ID の重複修復 (1 件目を維持し、2 件目以降の ID を再生成)
+  // 4. Todo ID の一意性修復
   const seenIds = new Set<string>();
   data.todos = data.todos.map((todo) => {
     if (seenIds.has(todo.id)) {
