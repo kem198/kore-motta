@@ -1,5 +1,6 @@
-import { migrateAppStorage } from "@/lib/app-storage-migration";
 import { describe, expect, test } from "vitest";
+
+import { migrateAppStorage } from "@/lib/app-storage-migration";
 
 describe("migrateAppStorage", () => {
   test("v1 の AppStorage を v2 に migration できる", () => {
@@ -7,9 +8,7 @@ describe("migrateAppStorage", () => {
     const appStorageV1 = {
       version: 1,
       data: {
-        settings: {
-          example: "value",
-        },
+        settings: {},
         categories: [
           {
             id: "uncategorized",
@@ -39,7 +38,7 @@ describe("migrateAppStorage", () => {
       version: 2,
       data: {
         settings: {
-          example: "value",
+          todoTogglePosition: "left",
         },
         categories: [
           {
@@ -57,11 +56,31 @@ describe("migrateAppStorage", () => {
             completed: true,
           },
         ],
-        internal: {
-          lastMarkedAllIncompleteAt: "2026-08-29T15:00:00.000Z",
-          lastSelectedCategoryId: "uncategorized",
-        },
+        lastMarkedAllIncompleteAt: "2026-08-29T15:00:00.000Z",
+        lastSelectedCategoryId: "uncategorized",
       },
+    });
+  });
+
+  test("v1 の空の settings に todoTogglePosition のデフォルト値が追加される", () => {
+    // Arrange
+    const appStorageV1 = {
+      version: 1,
+      data: {
+        settings: {},
+        categories: [],
+        todos: [],
+        lastMarkedAllIncompleteAt: "2026-08-29T15:00:00.000Z",
+        lastSelectedCategoryId: "uncategorized",
+      },
+    };
+
+    // Act
+    const result = migrateAppStorage(appStorageV1);
+
+    // Assert
+    expect(result.data.settings).toEqual({
+      todoTogglePosition: "left",
     });
   });
 
@@ -70,19 +89,13 @@ describe("migrateAppStorage", () => {
     const appStorageV2 = {
       version: 2,
       data: {
-        settings: {},
-        categories: [
-          {
-            id: "uncategorized",
-            name: "未分類",
-            order: 0,
-          },
-        ],
-        todos: [],
-        internal: {
-          lastMarkedAllIncompleteAt: "2026-08-29T15:00:00.000Z",
-          lastSelectedCategoryId: "uncategorized",
+        settings: {
+          todoTogglePosition: "right",
         },
+        categories: [],
+        todos: [],
+        lastMarkedAllIncompleteAt: "2026-08-29T15:00:00.000Z",
+        lastSelectedCategoryId: "uncategorized",
       },
     };
 
@@ -90,6 +103,6 @@ describe("migrateAppStorage", () => {
     const result = migrateAppStorage(appStorageV2);
 
     // Assert
-    expect(result).toBe(appStorageV2);
+    expect(result).toEqual(appStorageV2);
   });
 });
