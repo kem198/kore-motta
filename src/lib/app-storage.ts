@@ -3,6 +3,7 @@ import {
   APP_STORAGE_KEY,
   createInitialAppStorage,
   markAllIncompleteIfDateChanged,
+  repairAppStorage,
   validateIntegrity,
 } from "@/lib/app-storage-utils";
 import { AppStorage, parseAppStorage } from "@/schemas/app-storage-schema";
@@ -76,9 +77,19 @@ export function loadAppStorage(
   let appStorage: AppStorage;
   try {
     appStorage = migrateAppStorage(parsed);
-    validateIntegrity(appStorage);
   } catch (error) {
     throw new AppStorageLoadError(raw, error);
+  }
+
+  try {
+    validateIntegrity(appStorage);
+  } catch (error) {
+    try {
+      appStorage = repairAppStorage(appStorage);
+      saveAppStorage(appStorage, storageKey);
+    } catch (repairError) {
+      throw new AppStorageLoadError(raw, error);
+    }
   }
 
   return markAllIncompleteIfDateChanged(appStorage);
