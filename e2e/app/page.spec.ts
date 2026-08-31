@@ -2589,7 +2589,48 @@ test.describe("Todo ページのテスト", () => {
 
       test("未分類カテゴリが存在しない場合、カテゴリを初期状態に戻して Todo を未分類に戻すこと", async ({
         page,
-      }) => {});
+      }) => {
+        // Arrange
+        const corruptedAppStorage: AppStorage = {
+          version: 2,
+          data: {
+            settings: { todoTogglePosition: "left" },
+            categories: [{ id: "category-1", name: "旅行" }],
+            todos: [
+              {
+                id: "todo-1",
+                name: "パスポート",
+                order: 0,
+                categoryId: "category-1",
+                memo: "有効期限確認",
+                completed: false,
+              },
+            ],
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00+09:00",
+            ).toISOString(),
+            lastSelectedCategoryId: "category-1",
+          },
+        };
+
+        // Act
+        await navigateToTodoPage(page, { storage: corruptedAppStorage });
+
+        // Assert: Todo が画面上に表示されていること
+        await expect(page.locator("body")).toContainText("パスポート");
+
+        // Assert: localStorage の修復結果を確認
+        const actualStorage = await getAppStorage(page);
+        expect(actualStorage.data.categories).toEqual(
+          DEFAULT_CATEGORIES_STORAGE,
+        );
+        expect(actualStorage.data.todos[0].categoryId).toBe(
+          DEFAULT_CATEGORY_ID,
+        );
+        expect(actualStorage.data.lastSelectedCategoryId).toBe(
+          DEFAULT_CATEGORY_ID,
+        );
+      });
 
       test("既存 Todo が存在しないカテゴリに属している場合、その Todo を未分類に戻すこと", async ({
         page,
