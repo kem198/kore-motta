@@ -146,37 +146,115 @@ export function validateIntegrity(storage: AppStorage): void {
 }
 
 /**
- * AppStorage の整合性を検証し、必要に応じて修復した新しい AppStorage を返す。
+ * カテゴリに異常があるか否か。
  *
- * - カテゴリ系の不整合修復:
- *   - カテゴリの重複やデフォルトカテゴリの破損を検知し、カテゴリを初期化して全 Todo を未分類に再割り当てする。
- *   - 選択中のカテゴリIDが不正な場合はデフォルトカテゴリにリセットする。
+ * 下記を満たせば true を返す。
  *
- * - Todo のカテゴリ参照修復:
- *   - 存在しないカテゴリを参照している Todo をデフォルトカテゴリに再割り当てする。
- *
- * - Todo ID の重複修復:
- *   - 重複する ID を持つ Todo を検知し、2件目以降の ID を一意な UUID に再生成する。
- *
- * @param storage 修復対象の AppStorage オブジェクト
- * @returns 修復済みの新しい AppStorage オブジェクト
+ * - カテゴリ ID が重複している。
+ * - デフォルト (未分類) カテゴリが書き換えられている。
  */
-export function repairAppStorage(storage: AppStorage): AppStorage {
-  const data = { ...storage.data };
-
-  // カテゴリ構造の検証と修復
-  const categoryIds = new Set(data.categories.map((c) => c.id));
-  const defaultCategory = data.categories.find(
-    (c) => c.id === DEFAULT_CATEGORY_ID,
+function hasInvalidCategories(
+  categories: AppStorage["data"]["categories"],
+): boolean {
+  const categoryIds = new Set(categories.map((category) => category.id));
+  const defaultCategory = categories.find(
+    (category) => category.id === DEFAULT_CATEGORY_ID,
   );
-  const hasDuplicateCategories = categoryIds.size !== data.categories.length;
+  const hasDuplicateCategories = categoryIds.size !== categories.length;
+
   const isDefaultCategoryInvalid =
     !defaultCategory || defaultCategory.name !== DEFAULT_CATEGORY_NAME;
 
-  if (hasDuplicateCategories || isDefaultCategoryInvalid) {
-    data.categories = DEFAULT_CATEGORIES_STORAGE.map((c) => ({ ...c }));
+  return hasDuplicateCategories || isDefaultCategoryInvalid;
+}
+
+/**
+ * Todo が存在しないカテゴリを参照しているか否か。
+ */
+function hasInvalidTodoCategoryReferences(
+  todos: AppStorage["data"]["todos"],
+  categoryIds: Set<string>,
+): boolean {
+  return todos.some((todo) => !categoryIds.has(todo.categoryId));
+}
+
+/**
+ * Todo ID が重複しているか否か。
+ */
+function hasDuplicateTodoIds(todos: AppStorage["data"]["todos"]): boolean {
+  const seenIds = new Set<string>();
+
+  for (const todo of todos) {
+    if (seenIds.has(todo.id)) {
+      return true;
+    }
+
+    seenIds.add(todo.id);
+  }
+
+  return false;
+}
+
+/**
+ * AppStorage の整合性を検証し、必要に応じて修復した新しい AppStorage を返す。
+ *
+ * - カテゴリが壊れている
+ *     ⇒ カテゴリを初期化し、全 Todo を未分類に再割り当てする。
+ * - Todo のカテゴリ参照が壊れている
+ *     ⇒ Todo をデフォルトカテゴリに再割り当てする。
+ * - ID が重複する Todo が存在する
+ *     ⇒ 2 件目以降の ID を一意な UUID に再生成する。
+ * - 選択中のカテゴリの ID が存在しない
+ *     ⇒ 未分類カテゴリに再割り当てする。
+ *
+ * @param appStorage 修復対象の AppStorage オブジェクト
+ * @returns 修復済みの新しい AppStorage オブジェクト
+ */
+export function repairAppStorage(appStorage: AppStorage): AppStorage {
+  const data = { ...appStorage.data };
+  const categoryIds = new Set(data.categories.map((c) => c.id));
+
+  // カテゴリ構造が壊れていればカテゴリを初期化する
+  if (hasInvalidCategories(data.categories)) {
+    data.categories = DEFAULT_CATEGORIES_STORAGE.map((category) => ({
+      ...category,
+    }));
     categoryIds.clear();
     categoryIds.add(DEFAULT_CATEGORY_ID);
+  }
+
+  // Todo のカテゴリ参照の整合性修復
+  if (hasInvalidTodoCategoryReferences(data.todos, categoryIds)) {
+    data.todos = data.todos.map((todo) => {
+      if (!categoryIds.has(todo.categoryId)) {
+        return { ...todo, categoryId: DEFAULT_CATEGORY_ID };
+      }
+      return todo;
+    });
+  }
+
+  // Todo ID の一意性修復
+  if (hasDuplicateTodoIds(data.todos)) {
+    const seenIds = new Set<string>();
+
+    data.todos = data.todos.map((todo) => {
+      if (seenIds.has(todo.id)) {
+        const newId =
+          typeof crypto !== "undefined" &&
+          typeof crypto.randomUUID === "function"
+            ? crypto.randomUUID()
+            : "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+                const r = (Math.random() * 16) | 0;
+                const v = c === "x" ? r : (r & 0x3) | 0x8;
+                return v.toString(16);
+              });
+
+        return { ...todo, id: newId };
+      }
+
+      seenIds.add(todo.id);
+      return todo;
+    });
   }
 
   // 選択カテゴリIDの整合性修復
@@ -184,39 +262,8 @@ export function repairAppStorage(storage: AppStorage): AppStorage {
     data.lastSelectedCategoryId = DEFAULT_CATEGORY_ID;
   }
 
-  // Todo のカテゴリ参照の整合性修復
-  let hasTodoCategoryModified = false;
-  const repairedTodos = data.todos.map((todo) => {
-    if (!categoryIds.has(todo.categoryId)) {
-      hasTodoCategoryModified = true;
-      return { ...todo, categoryId: DEFAULT_CATEGORY_ID };
-    }
-    return todo;
-  });
-  if (hasTodoCategoryModified) {
-    data.todos = repairedTodos;
-  }
-
-  // Todo ID の一意性修復
-  const seenIds = new Set<string>();
-  data.todos = data.todos.map((todo) => {
-    if (seenIds.has(todo.id)) {
-      const newId =
-        typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
-          ? crypto.randomUUID()
-          : "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
-              const r = (Math.random() * 16) | 0;
-              const v = c === "x" ? r : (r & 0x3) | 0x8;
-              return v.toString(16);
-            });
-      return { ...todo, id: newId };
-    }
-    seenIds.add(todo.id);
-    return todo;
-  });
-
   return {
-    ...storage,
+    ...appStorage,
     data,
   };
 }
