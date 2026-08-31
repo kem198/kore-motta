@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { FEATURES } from "@/constants/features";
 import { MESSAGES } from "@/constants/messages";
 import { FolderEditIcon, ListTodoIcon, SquarePenIcon } from "lucide-react";
 
@@ -17,13 +18,18 @@ export function TodoAppNavigation({
 }: TodoAppNavigationProps) {
   return (
     <div className="flex justify-between gap-2">
-      <Button
-        variant="secondary"
-        onClick={onToggleTodoPosition}
-        aria-label={"チェックボタンの位置切替"}
-      >
-        <ListTodoIcon /> 位置切替
-      </Button>
+      {FEATURES.todoTogglePosition ? (
+        <Button
+          variant="secondary"
+          onClick={onToggleTodoPosition}
+          aria-label={"チェックボタンの位置切替"}
+        >
+          <ListTodoIcon /> 位置切替
+        </Button>
+      ) : (
+        <div></div>
+      )}
+
       <div className="flex gap-2">
         <Button
           variant="secondary"
