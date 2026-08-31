@@ -251,7 +251,9 @@ export function repairAppStorage(appStorage: AppStorage): AppStorage {
     }));
 
     categoryIds.clear();
-    categoryIds.add(DEFAULT_CATEGORY_ID);
+    data.categories.forEach((category) => {
+      categoryIds.add(category.id);
+    });
   }
 
   // 選択カテゴリ ID の整合性修復
