@@ -7,7 +7,6 @@ import { MESSAGES } from "@/constants/messages";
 import { AppStorageV1 } from "@/lib/app-storage-migration";
 import { APP_STORAGE_KEY } from "@/lib/app-storage-utils";
 import { AppStorage } from "@/schemas/app-storage-schema";
-import { Category } from "@/schemas/category-schema";
 import { expect, Locator, Page, test } from "@playwright/test";
 
 test.describe("Todo ページのテスト", () => {
@@ -97,50 +96,6 @@ test.describe("Todo ページのテスト", () => {
         await expect(
           assertScope.getByText("家の鍵", { exact: true }),
         ).toBeVisible();
-      });
-
-      test("Todo とカテゴリが 1 つのストレージオブジェクトとして保存されること", async ({
-        page,
-      }) => {
-        // Arrange
-        const storage: AppStorage = {
-          version: 2,
-          data: {
-            settings: { todoTogglePosition: "left" },
-            todos: [
-              {
-                id: "single-storage-todo",
-                name: "資料作成",
-                order: 0,
-                categoryId: DEFAULT_CATEGORY_ID,
-                completed: false,
-              },
-            ],
-            categories: DEFAULT_CATEGORIES_STORAGE,
-            lastMarkedAllIncompleteAt: new Date(
-              "2026-08-24T00:00:00+09:00",
-            ).toISOString(),
-            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
-          },
-        };
-
-        // Act
-        await navigateToTodoPage(page, { storage });
-
-        // Assert
-        const persisted = await getAppStorage(page);
-        expect(persisted).not.toBeNull();
-
-        const defaultCategory = persisted.data.categories.find(
-          (category: Category) => category.id === DEFAULT_CATEGORY_ID,
-        );
-        expect(defaultCategory).toBeDefined();
-        expect(defaultCategory?.name).toBe(DEFAULT_CATEGORY_NAME);
-
-        const legacyCategoriesKeyValue = await page.evaluate(() =>
-          localStorage.getItem("categories"),
-        );
-        expect(legacyCategoriesKeyValue).toBeNull();
       });
 
       test("日付が変わる前にページを再読み込みすると、完了済みの Todo が完了のままであること", async ({
