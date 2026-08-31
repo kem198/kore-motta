@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 
 import { deleteCategory, reorderTodos } from "@/lib/todo-utils";
+import { AppStorage } from "@/schemas/app-storage-schema";
 import { Todo } from "@/schemas/todo-schema";
 
 const createTodo = (
@@ -75,17 +76,17 @@ describe("deleteCategory", () => {
   test("指定したカテゴリを削除し、そのカテゴリのTodoを未分類へ移動する", () => {
     // Arrange
     const data = {
-      settings: {},
+      settings: {
+        todoTogglePosition: "left",
+      },
       categories: [
         {
           id: "uncategorized",
           name: "未分類",
-          order: 0,
         },
         {
           id: "category-1",
           name: "カテゴリ1",
-          order: 1,
         },
       ],
       todos: [
@@ -95,7 +96,7 @@ describe("deleteCategory", () => {
       ],
       lastMarkedAllIncompleteAt: new Date(2026, 7, 27).toISOString(),
       lastSelectedCategoryId: "category-1",
-    };
+    } satisfies AppStorage["data"];
 
     // Act
     const result = deleteCategory(data, "category-1");
@@ -105,7 +106,6 @@ describe("deleteCategory", () => {
       {
         id: "uncategorized",
         name: "未分類",
-        order: 0,
       },
     ]);
 
@@ -119,18 +119,19 @@ describe("deleteCategory", () => {
   test("未分類カテゴリを削除しようとした場合は変更しない", () => {
     // Arrange
     const data = {
-      settings: {},
+      settings: {
+        todoTogglePosition: "left",
+      },
       categories: [
         {
           id: "uncategorized",
           name: "未分類",
-          order: 0,
         },
       ],
       todos: [createTodo("todo-1", 0)],
       lastMarkedAllIncompleteAt: new Date(2026, 7, 27).toISOString(),
       lastSelectedCategoryId: "uncategorized",
-    };
+    } satisfies AppStorage["data"];
 
     // Act
     const result = deleteCategory(data, "uncategorized");

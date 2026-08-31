@@ -1,11 +1,12 @@
 import { CURRENT_APP_STORAGE_VERSION } from "@/constants/version";
 import { categorySchema } from "@/schemas/category-schema";
+import { settingsSchema } from "@/schemas/settings-schema";
 import { todoSchema } from "@/schemas/todo-schema";
 import * as z from "zod";
 
 const appStorageDataSchema = z
   .object({
-    settings: z.record(z.string(), z.unknown()),
+    settings: settingsSchema,
     categories: z.array(categorySchema),
     todos: z.array(todoSchema),
     lastMarkedAllIncompleteAt: z.iso.datetime(),

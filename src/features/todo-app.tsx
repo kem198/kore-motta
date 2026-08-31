@@ -8,10 +8,7 @@ import { TodoAppNavigation } from "@/components/shared/todo-app-navigation";
 import { TodoForm } from "@/components/shared/todo-form";
 import { TodoList } from "@/components/shared/todo-list";
 import { Separator } from "@/components/ui/separator";
-import {
-  DEFAULT_CATEGORY_ID,
-  DEFAULT_CATEGORY_ORDER,
-} from "@/constants/categories";
+import { DEFAULT_CATEGORY_ID } from "@/constants/categories";
 import { MESSAGES } from "@/constants/messages";
 import { useAppStorage } from "@/hooks/use-app-storage";
 import {
@@ -31,6 +28,7 @@ export function TodoApp() {
     corruptedStorage,
     isLoaded,
     didMarkAllIncomplete,
+    didRepair,
     isStorageCorrupted,
     updateAppStorage,
     importAppStorage,
@@ -57,7 +55,7 @@ export function TodoApp() {
   const isDefaultCategorySelected = activeCategoryId === DEFAULT_CATEGORY_ID;
 
   /**
-   * 初回の AppStorage 読み込み時に、日付変更によって Todo がすべて未完了に戻された場合、
+   * AppStorage 読み込み時に、日付変更によって Todo がすべて未完了に戻された場合、
    * その旨をトーストで通知する。
    */
   useEffect(() => {
@@ -67,6 +65,19 @@ export function TodoApp() {
 
     toast.success(MESSAGES.toast.markedAllIncomplete);
   }, [isLoaded, didMarkAllIncomplete]);
+
+  /**
+   * AppStorage 読み込み時に、データ復旧が行なわれていた場合、
+   * その旨をトーストで通知する。
+   */
+  useEffect(() => {
+    if (!isLoaded || !didRepair) {
+      return;
+    }
+    toast.success(MESSAGES.toast.repaired, {
+      description: MESSAGES.toast.repairedDescription,
+    });
+  }, [isLoaded, didRepair]);
 
   /**
    * 現在選択されているカテゴリに属する Todo の一覧。
@@ -85,7 +96,6 @@ export function TodoApp() {
     const newCategory: Category = {
       id,
       name,
-      order: DEFAULT_CATEGORY_ORDER,
     };
 
     updateAppStorage((current) => ({
@@ -257,6 +267,24 @@ export function TodoApp() {
     }
   };
 
+  const handleToggleTodoPosition = () => {
+    const nextPosition =
+      appStorage.data.settings.todoTogglePosition === "left" ? "right" : "left";
+
+    updateAppStorage((current) => ({
+      ...current,
+      data: {
+        ...current.data,
+        settings: {
+          ...current.data.settings,
+          todoTogglePosition: nextPosition,
+        },
+      },
+    }));
+
+    toast.success(MESSAGES.toast.changedTodoPosition(nextPosition));
+  };
+
   const handleOpenCategoryEditDialog = () => {
     const selectedCategory = appStorage.data.categories.find(
       (category) => category.id === activeCategoryId,
@@ -349,6 +377,7 @@ export function TodoApp() {
         <TodoList
           todos={visibleTodos}
           categories={appStorage.data.categories}
+          todoTogglePosition={appStorage.data.settings.todoTogglePosition}
           isLoaded={isLoaded}
           isEditing={isEditing}
           onDelete={handleDelete}
@@ -380,6 +409,7 @@ export function TodoApp() {
             <TodoAppNavigation
               isEditing={isEditing}
               onToggleEditing={() => setIsEditing((prev) => !prev)}
+              onToggleTodoPosition={handleToggleTodoPosition}
               onOpenCategorySetting={handleOpenCategoryEditDialog}
             />
           </div>
