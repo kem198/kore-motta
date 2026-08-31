@@ -28,6 +28,7 @@ export function TodoApp() {
     corruptedStorage,
     isLoaded,
     didMarkAllIncomplete,
+    didRepair,
     isStorageCorrupted,
     updateAppStorage,
     importAppStorage,
@@ -54,7 +55,7 @@ export function TodoApp() {
   const isDefaultCategorySelected = activeCategoryId === DEFAULT_CATEGORY_ID;
 
   /**
-   * 初回の AppStorage 読み込み時に、日付変更によって Todo がすべて未完了に戻された場合、
+   * AppStorage 読み込み時に、日付変更によって Todo がすべて未完了に戻された場合、
    * その旨をトーストで通知する。
    */
   useEffect(() => {
@@ -64,6 +65,19 @@ export function TodoApp() {
 
     toast.success(MESSAGES.toast.markedAllIncomplete);
   }, [isLoaded, didMarkAllIncomplete]);
+
+  /**
+   * AppStorage 読み込み時に、データ復旧が行なわれていた場合、
+   * その旨をトーストで通知する。
+   */
+  useEffect(() => {
+    if (!isLoaded || !didRepair) {
+      return;
+    }
+    toast.success(MESSAGES.toast.repaired, {
+      description: MESSAGES.toast.repairedDescription,
+    });
+  }, [isLoaded, didRepair]);
 
   /**
    * 現在選択されているカテゴリに属する Todo の一覧。
