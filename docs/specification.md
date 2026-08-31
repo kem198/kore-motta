@@ -9,7 +9,8 @@ description: アプリケーションの概要、仕様、受け入れ条件を�
 - [2. 開発ルール](#2-開発ルール)
   - [2.1. 基本方針](#21-基本方針)
   - [2.2. コーディング規約](#22-コーディング規約)
-  - [2.3. コードレビュー方針](#23-コードレビュー方針)
+  - [2.3. テスト方針](#23-テスト方針)
+  - [2.4. コードレビュー方針](#24-コードレビュー方針)
 - [3. 用語の定義](#3-用語の定義)
 - [4. 主要機能](#4-主要機能)
   - [4.1. Todo](#41-todo)
@@ -58,9 +59,16 @@ description: アプリケーションの概要、仕様、受け入れ条件を�
 下記の各種ドキュメントを参照。
 
 - [docs/coding-conventions.md](/docs/coding-conventions.md)
-- [.github/instructions/*](/.github/instructions)
+- [.github/instructions/typescript.instructions.md](/.github/instructions/typescript.instructions.md)
+- [.github/instructions/nextjs.instructions.md](/.github/instructions/nextjs.instructions.md)
 
-### 2.3. コードレビュー方針
+### 2.3. テスト方針
+
+下記のドキュメントを参照。
+
+- [.github/instructions/testing.instructions.md](/.github/instructions/testing.instructions.md)
+
+### 2.4. コードレビュー方針
 
 下記のドキュメントを参照。
 
