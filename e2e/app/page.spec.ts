@@ -2675,7 +2675,56 @@ test.describe("Todo ページのテスト", () => {
 
       test("カテゴリが重複している場合、カテゴリを初期状態に戻して既存の Todo を未分類に戻すこと", async ({
         page,
-      }) => {});
+      }) => {
+        // Arrange
+        const duplicatedCategoryId = "category-1";
+
+        const corruptedAppStorage: AppStorage = {
+          version: 2,
+          data: {
+            settings: { todoTogglePosition: "left" },
+            categories: [
+              { id: DEFAULT_CATEGORY_ID, name: "未分類" },
+              { id: duplicatedCategoryId, name: "旅行" },
+              { id: duplicatedCategoryId, name: "仕事" },
+            ],
+            todos: [
+              {
+                id: "todo-1",
+                name: "パスポート",
+                order: 0,
+                categoryId: duplicatedCategoryId,
+                memo: "有効期限確認",
+                completed: false,
+              },
+            ],
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00+09:00",
+            ).toISOString(),
+            lastSelectedCategoryId: duplicatedCategoryId,
+          },
+        };
+
+        // Act
+        await navigateToTodoPage(page, { storage: corruptedAppStorage });
+
+        // Assert: Todo が画面上に表示されていること
+        await expect(page.locator("body")).toContainText("パスポート");
+
+        // Assert: カテゴリが初期状態に戻っていること
+        const actualStorage = await getAppStorage(page);
+        expect(actualStorage.data.categories).toEqual(
+          DEFAULT_CATEGORIES_STORAGE,
+        );
+
+        // Assert: Todo と選択中のカテゴリが未分類に戻っていること
+        expect(actualStorage.data.todos[0].categoryId).toBe(
+          DEFAULT_CATEGORY_ID,
+        );
+        expect(actualStorage.data.lastSelectedCategoryId).toBe(
+          DEFAULT_CATEGORY_ID,
+        );
+      });
 
       test("選択中のカテゴリが存在しない場合、未分類カテゴリを選択状態にすること", async ({
         page,
