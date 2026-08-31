@@ -88,84 +88,40 @@ export function markAllIncompleteIfDateChanged(
     didMarkAllIncomplete: true,
   };
 }
-
 /**
- * AppStorage のデータ間の整合性を検証する。
- *
- * 以下の項目を検証し、不整合がある場合はエラーをスローする。
- *
- * - Category.id が一意であること
- * - 未分類カテゴリが存在し、ID と名前が変更されていないこと
- * - `lastSelectedCategoryId` が存在するカテゴリを参照していること
- * - Todo の `categoryId` が存在するカテゴリを参照していること
- * - Todo.id が一意であること
- *
- * @param storage 検証対象の AppStorage
- * @throws {Error} AppStorage のデータに整合性の不備がある場合
+ * Category ID が重複しているか否か。
  */
-export function validateIntegrity(storage: AppStorage): void {
-  const categoryIds = new Set(
-    storage.data.categories.map((category) => category.id),
-  );
-
-  // Category.id が一意であること
-  if (categoryIds.size !== storage.data.categories.length) {
-    throw new Error("Duplicate Category IDs found");
-  }
-
-  // 未分類カテゴリが存在し、名前が変更されていないこと
-  const defaultCategory = storage.data.categories.find(
-    (category) => category.id === DEFAULT_CATEGORY_ID,
-  );
-  if (
-    defaultCategory === undefined ||
-    defaultCategory.name !== DEFAULT_CATEGORY_NAME
-  ) {
-    throw new Error("Invalid default category");
-  }
-
-  // lastSelectedCategoryId が存在するカテゴリを参照していること
-  if (!categoryIds.has(storage.data.lastSelectedCategoryId)) {
-    throw new Error("Invalid lastSelectedCategoryId");
-  }
-
-  // Todo.categoryId が存在するカテゴリを参照していること
-  storage.data.todos.forEach((todo) => {
-    if (!categoryIds.has(todo.categoryId)) {
-      throw new Error(
-        `Todo ${todo.id} references non-existent category ${todo.categoryId}`,
-      );
-    }
-  });
-
-  // Todo.id が一意であること
-  const todoIds = new Set(storage.data.todos.map((todo) => todo.id));
-  if (todoIds.size !== storage.data.todos.length) {
-    throw new Error("Duplicate Todo IDs found");
-  }
-}
-
-/**
- * カテゴリに異常があるか否か。
- *
- * 下記を満たせば true を返す。
- *
- * - カテゴリ ID が重複している。
- * - デフォルト (未分類) カテゴリが書き換えられている。
- */
-function hasInvalidCategories(
+function hasDuplicateCategoryIds(
   categories: AppStorage["data"]["categories"],
 ): boolean {
   const categoryIds = new Set(categories.map((category) => category.id));
+
+  return categoryIds.size !== categories.length;
+}
+
+/**
+ * デフォルト (未分類) カテゴリが存在しないか否か。
+ */
+function hasMissingDefaultCategory(
+  categories: AppStorage["data"]["categories"],
+): boolean {
+  return !categories.some((category) => category.id === DEFAULT_CATEGORY_ID);
+}
+
+/**
+ * デフォルト (未分類) カテゴリの名前が変更されているか否か。
+ */
+function hasChangedDefaultCategoryName(
+  categories: AppStorage["data"]["categories"],
+): boolean {
   const defaultCategory = categories.find(
     (category) => category.id === DEFAULT_CATEGORY_ID,
   );
-  const hasDuplicateCategories = categoryIds.size !== categories.length;
 
-  const isDefaultCategoryInvalid =
-    !defaultCategory || defaultCategory.name !== DEFAULT_CATEGORY_NAME;
-
-  return hasDuplicateCategories || isDefaultCategoryInvalid;
+  return (
+    defaultCategory !== undefined &&
+    defaultCategory.name !== DEFAULT_CATEGORY_NAME
+  );
 }
 
 /**
@@ -176,6 +132,16 @@ function hasInvalidTodoCategoryReferences(
   categoryIds: Set<string>,
 ): boolean {
   return todos.some((todo) => !categoryIds.has(todo.categoryId));
+}
+
+/**
+ * 選択中のカテゴリ ID が存在しないカテゴリを参照しているか否か。
+ */
+function hasInvalidSelectedCategoryId(
+  selectedCategoryId: string,
+  categoryIds: Set<string>,
+): boolean {
+  return !categoryIds.has(selectedCategoryId);
 }
 
 /**
@@ -196,6 +162,80 @@ function hasDuplicateTodoIds(todos: AppStorage["data"]["todos"]): boolean {
 }
 
 /**
+ * AppStorage の整合性を検証する。
+ *
+ * 以下の項目を検証し、不整合がある場合はエラーをスローする。
+ *
+ * - Category.id が一意であること
+ * - 未分類カテゴリが存在し、ID と名前が変更されていないこと
+ * - `lastSelectedCategoryId` が存在するカテゴリを参照していること
+ * - Todo の `categoryId` が存在するカテゴリを参照していること
+ * - Todo.id が一意であること
+ *
+ * @param storage 検証対象の AppStorage
+ * @throws {Error} AppStorage のデータに整合性の不備がある場合
+ */
+/**
+ * AppStorage の整合性を検証する。
+ *
+ * 以下の項目を検証し、不整合がある場合はエラーをスローする。
+ *
+ * - Category.id が一意であること
+ * - 未分類カテゴリが存在すること
+ * - 未分類カテゴリの名前が変更されていないこと
+ * - `lastSelectedCategoryId` が存在するカテゴリを参照していること
+ * - Todo の `categoryId` が存在するカテゴリを参照していること
+ * - Todo.id が一意であること
+ *
+ * @param storage 検証対象の AppStorage
+ * @throws {Error} AppStorage のデータに整合性の不備がある場合
+ */
+export function validateIntegrity(storage: AppStorage): void {
+  const categoryIds = new Set(
+    storage.data.categories.map((category) => category.id),
+  );
+
+  // Category.id が一意であること
+  if (hasDuplicateCategoryIds(storage.data.categories)) {
+    throw new Error("Duplicate Category IDs found");
+  }
+
+  // 未分類カテゴリが存在すること
+  if (hasMissingDefaultCategory(storage.data.categories)) {
+    throw new Error("Invalid default category");
+  }
+
+  // 未分類カテゴリの名前が変更されていないこと
+  if (hasChangedDefaultCategoryName(storage.data.categories)) {
+    throw new Error("Invalid default category");
+  }
+
+  // lastSelectedCategoryId が存在するカテゴリを参照していること
+  if (
+    hasInvalidSelectedCategoryId(
+      storage.data.lastSelectedCategoryId,
+      categoryIds,
+    )
+  ) {
+    throw new Error("Invalid lastSelectedCategoryId");
+  }
+
+  // Todo のカテゴリ参照の整合性
+  storage.data.todos.forEach((todo) => {
+    if (!categoryIds.has(todo.categoryId)) {
+      throw new Error(
+        `Todo ${todo.id} references non-existent category ${todo.categoryId}`,
+      );
+    }
+  });
+
+  // Todo ID が一意であること
+  if (hasDuplicateTodoIds(storage.data.todos)) {
+    throw new Error("Duplicate Todo IDs found");
+  }
+}
+
+/**
  * AppStorage の整合性を検証し、必要に応じて修復した新しい AppStorage を返す。
  *
  * - カテゴリが壊れている
@@ -212,15 +252,25 @@ function hasDuplicateTodoIds(todos: AppStorage["data"]["todos"]): boolean {
  */
 export function repairAppStorage(appStorage: AppStorage): AppStorage {
   const data = { ...appStorage.data };
-  const categoryIds = new Set(data.categories.map((c) => c.id));
+  const categoryIds = new Set(data.categories.map((category) => category.id));
 
   // カテゴリ構造が壊れていればカテゴリを初期化する
-  if (hasInvalidCategories(data.categories)) {
+  if (
+    hasDuplicateCategoryIds(data.categories) ||
+    hasMissingDefaultCategory(data.categories) ||
+    hasChangedDefaultCategoryName(data.categories)
+  ) {
     data.categories = DEFAULT_CATEGORIES_STORAGE.map((category) => ({
       ...category,
     }));
+
     categoryIds.clear();
     categoryIds.add(DEFAULT_CATEGORY_ID);
+  }
+
+  // 選択カテゴリ ID の整合性修復
+  if (hasInvalidSelectedCategoryId(data.lastSelectedCategoryId, categoryIds)) {
+    data.lastSelectedCategoryId = DEFAULT_CATEGORY_ID;
   }
 
   // Todo のカテゴリ参照の整合性修復
@@ -229,6 +279,7 @@ export function repairAppStorage(appStorage: AppStorage): AppStorage {
       if (!categoryIds.has(todo.categoryId)) {
         return { ...todo, categoryId: DEFAULT_CATEGORY_ID };
       }
+
       return todo;
     });
   }
@@ -257,11 +308,6 @@ export function repairAppStorage(appStorage: AppStorage): AppStorage {
       seenIds.add(todo.id);
       return todo;
     });
-  }
-
-  // 選択カテゴリIDの整合性修復
-  if (!categoryIds.has(data.lastSelectedCategoryId)) {
-    data.lastSelectedCategoryId = DEFAULT_CATEGORY_ID;
   }
 
   return {
