@@ -106,6 +106,7 @@ export function useAppStorage(
     setIsLoaded(false);
     setIsStorageCorrupted(false);
     setCorruptedStorage(null);
+    setDidRepair(false);
   }
 
   /**
@@ -123,7 +124,10 @@ export function useAppStorage(
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setAppStorage(result.appStorage);
       setDidMarkAllIncomplete(result.didMarkAllIncomplete);
-      setDidRepair(result.didRepair);
+      // 在の値が true なら (一度でもデータを復旧したら) true のままにする。
+      // loadAppStorage() は複数回読み込まれることがあり、後の読み込みで didRepair が false になる場合があるため。
+      // これが無いとトースト通知が呼ばれない。
+      setDidRepair((current) => current || result.didRepair);
     } catch (error) {
       // localStorage の JSON が壊れているなど、
       // AppStorage の読み込みに失敗した場合は破損データを保持する。
