@@ -2886,65 +2886,68 @@ test.describe("Todo ページのテスト", () => {
         expect(new Set(todos.map((t) => t.id)).size).toBe(2);
       });
     });
+  });
 
-    test.describe("セキュリティ対策", () => {
-      test("悪意のある文字列を含む保存データから JavaScript が実行されないこと", async ({
-        page,
-      }) => {
-        // Arrange
-        const maliciousAppStorage: AppStorage = {
-          version: 2,
-          data: {
-            settings: {
-              todoTogglePosition: "left",
-            },
-            categories: [
-              {
-                id: "category-1",
-                name: '<script>alert("settings")</script>',
-              },
-            ],
-            todos: [
-              {
-                id: "todo-1",
-                name: '<img src=x onerror=alert("todo-name")>',
-                order: 0,
-                categoryId: "category-1",
-                memo: '<svg onload=alert("todo-memo")>',
-                completed: false,
-              },
-            ],
-            lastMarkedAllIncompleteAt: "2026-08-26T12:00:00.000Z",
-            lastSelectedCategoryId: "category-1",
+  test.describe("セキュリティ対策", () => {
+    test("悪意のある文字列を含む保存データから JavaScript が実行されないこと", async ({
+      page,
+    }) => {
+      // Arrange
+      const maliciousAppStorage: AppStorage = {
+        version: 2,
+        data: {
+          settings: {
+            todoTogglePosition: "left",
           },
-        } as unknown as AppStorage;
+          categories: [
+            {
+              id: "category-1",
+              name: '<script>alert("settings")</script>',
+            },
+            ...DEFAULT_CATEGORIES_STORAGE,
+          ],
+          todos: [
+            {
+              id: "todo-1",
+              name: '<img src=x onerror=alert("todo-name")>',
+              order: 0,
+              categoryId: "category-1",
+              memo: '<svg onload=alert("todo-memo")>',
+              completed: false,
+            },
+          ],
+          lastMarkedAllIncompleteAt: new Date(
+            "2026-08-24T00:00:00+09:00",
+          ).toISOString(),
+          lastSelectedCategoryId: "category-1",
+        },
+      } as unknown as AppStorage;
 
-        let dialogOpened = false;
+      let dialogOpened = false;
 
-        page.on("dialog", async (dialog) => {
-          dialogOpened = true;
-          await dialog.dismiss();
-        });
-
-        // Act
-        await navigateToTodoPage(page, {
-          storage: maliciousAppStorage,
-        });
-
-        // Assert (JavaScript が実行されないこと)
-        expect(dialogOpened).toBe(false);
-
-        // Assert (意味のある HTML 文字列が通常の文字列として表示されていること)
-        await expect(
-          page.getByText('<script>alert("settings")</script>'),
-        ).toBeVisible();
-        await expect(
-          page.getByText('<img src=x onerror=alert("todo-name")>'),
-        ).toBeVisible();
-        await expect(
-          page.getByText('<svg onload=alert("todo-memo")>'),
-        ).toBeVisible();
+      page.on("dialog", async (dialog) => {
+        dialogOpened = true;
+        await dialog.dismiss();
       });
+
+      // Act
+      await navigateToTodoPage(page, {
+        storage: maliciousAppStorage,
+      });
+
+      // Assert (JavaScript が実行されないこと)
+      expect(dialogOpened).toBe(false);
+
+      // Assert (意味のある HTML 文字列が通常の文字列として表示されていること)
+      await expect(
+        page.getByText('<script>alert("settings")</script>'),
+      ).toBeVisible();
+      await expect(
+        page.getByText('<img src=x onerror=alert("todo-name")>'),
+      ).toBeVisible();
+      await expect(
+        page.getByText('<svg onload=alert("todo-memo")>'),
+      ).toBeVisible();
     });
   });
 });
