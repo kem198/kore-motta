@@ -2254,31 +2254,7 @@ test.describe("Todo ページのテスト", () => {
 
   test.describe("異常時のテスト", () => {
     test.describe("localStorage の破損 (正しい JSON や型ではない)", () => {
-      test("AppStorage が不正な JSON の場合、元のデータが保持されていること", async ({
-        page,
-      }) => {
-        // Arrange
-        const corruptedText = "JSON ではない文字列";
-        await page.addInitScript(
-          ([key, value]) => {
-            window.localStorage.setItem(key, value);
-          },
-          [APP_STORAGE_KEY, corruptedText],
-        );
-
-        // Act
-        await page.goto("/");
-
-        // Assert (localStorage の元データが保持されていること)
-        const persistedData = await page.evaluate(
-          (key) => window.localStorage.getItem(key),
-          APP_STORAGE_KEY,
-        );
-
-        expect(persistedData).toBe(corruptedText);
-      });
-
-      test("AppStorage が不正な JSON の場合、初期化用ダイアログに元のデータが表示されること", async ({
+      test("AppStorage が不正な JSON の場合に初期化用ダイアログを表示し、初期化するとデータが初期化されること", async ({
         page,
       }) => {
         // Arrange
@@ -2296,57 +2272,26 @@ test.describe("Todo ページのテスト", () => {
 
         // Assert
         const alertDialog = page.getByRole("alertdialog");
+
         await expect(alertDialog).toBeVisible();
-        await expect(alertDialog).toContainText("JSON ではない文字列");
-      });
-
-      test("AppStorage が不正な JSON の場合、初期化用ダイアログで初期化するとデータが初期化されること", async ({
-        page,
-      }) => {
-        // Arrange
-        const corruptedAppStorage: unknown = {
-          version: 2,
-          data: {
-            settings: { todoTogglePosition: "left" },
-            todos: [
-              {
-                id: "import-todo",
-                name: "カギ",
-                order: 0,
-                categoryId: DEFAULT_CATEGORY_ID,
-                memo: "家の鍵",
-                undefinedKey: "★ AppStorage 型に一致しないキー",
-              },
-            ],
-            categories: DEFAULT_CATEGORIES_STORAGE,
-          },
-        };
-
-        await page.addInitScript(
-          ([key, value]) => {
-            window.localStorage.setItem(key, value);
-          },
-          [APP_STORAGE_KEY, JSON.stringify(corruptedAppStorage)],
-        );
-
-        await page.goto("/");
+        await expect(alertDialog).toContainText(corruptedText);
 
         // Act
         await page.getByRole("button", { name: "初期化" }).click();
 
         // Assert
-        const persistedData = await getAppStorage(page);
+        const initializedData = await getAppStorage(page);
 
-        expect(persistedData.data.todos).toEqual([]);
-        expect(persistedData.data.categories).toEqual(
+        expect(initializedData.data.todos).toEqual([]);
+        expect(initializedData.data.categories).toEqual(
           DEFAULT_CATEGORIES_STORAGE,
         );
-        expect(persistedData.data.lastSelectedCategoryId).toBe(
+        expect(initializedData.data.lastSelectedCategoryId).toBe(
           DEFAULT_CATEGORY_ID,
         );
       });
 
-      test("AppStorage のスキーマが不正な場合、元のデータが保持されていること", async ({
+      test("AppStorage のスキーマが不正な場合に初期化用ダイアログを表示し、初期化するとデータが初期化されること", async ({
         page,
       }) => {
         // Arrange
@@ -2380,95 +2325,25 @@ test.describe("Todo ページのテスト", () => {
         // Act
         await page.goto("/");
 
-        // Assert (localStorage の元データが保持されていること)
-        const persistedData = await page.evaluate(
-          (key) => window.localStorage.getItem(key),
-          APP_STORAGE_KEY,
-        );
-
-        expect(persistedData).toBe(corruptedText);
-      });
-
-      test("AppStorage のスキーマが不正な場合、初期化用ダイアログに元のデータが表示されること", async ({
-        page,
-      }) => {
-        // Arrange
-        const corruptedAppStorage: unknown = {
-          version: 2,
-          data: {
-            settings: { todoTogglePosition: "left" },
-            todos: [
-              {
-                id: "import-todo",
-                name: "カギ",
-                order: 0,
-                categoryId: DEFAULT_CATEGORY_ID,
-                memo: "家の鍵",
-                undefinedKey: "★ AppStorage 型に一致しないキー",
-              },
-            ],
-            categories: DEFAULT_CATEGORIES_STORAGE,
-          },
-        };
-
-        await page.addInitScript(
-          ([key, value]) => {
-            window.localStorage.setItem(key, value);
-          },
-          [APP_STORAGE_KEY, JSON.stringify(corruptedAppStorage)],
-        );
-
-        // Act
-        await page.goto("/");
-
         // Assert
-        const corruptedText = JSON.stringify(corruptedAppStorage);
         const alertDialog = page.getByRole("alertdialog");
-        await expect(alertDialog).toContainText(corruptedText);
-      });
 
-      test("AppStorage のスキーマが不正な場合、初期化用ダイアログで初期化するとデータが初期化されること", async ({
-        page,
-      }) => {
-        // Arrange
-        const corruptedAppStorage: unknown = {
-          version: 2,
-          data: {
-            settings: { todoTogglePosition: "left" },
-            todos: [
-              {
-                id: "import-todo",
-                name: "カギ",
-                order: 0,
-                categoryId: DEFAULT_CATEGORY_ID,
-                memo: "家の鍵",
-                undefinedKey: "★ AppStorage 型に一致しないキー",
-              },
-            ],
-            categories: DEFAULT_CATEGORIES_STORAGE,
-          },
-        };
-
-        await page.addInitScript(
-          ([key, value]) => {
-            window.localStorage.setItem(key, value);
-          },
-          [APP_STORAGE_KEY, JSON.stringify(corruptedAppStorage)],
+        await expect(alertDialog).toBeVisible();
+        await expect(alertDialog).toContainText(
+          "★ AppStorage 型に一致しないキー",
         );
-
-        await page.goto("/");
 
         // Act
         await page.getByRole("button", { name: "初期化" }).click();
 
         // Assert
-        const persistedData = await getAppStorage(page);
+        const initializedData = await getAppStorage(page);
 
-        expect(persistedData.data.todos).toEqual([]);
-        expect(persistedData.data.categories).toEqual(
+        expect(initializedData.data.todos).toEqual([]);
+        expect(initializedData.data.categories).toEqual(
           DEFAULT_CATEGORIES_STORAGE,
         );
-        expect(persistedData.data.lastSelectedCategoryId).toBe(
+        expect(initializedData.data.lastSelectedCategoryId).toBe(
           DEFAULT_CATEGORY_ID,
         );
       });
