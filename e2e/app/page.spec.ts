@@ -60,7 +60,7 @@ test.describe("Todo ページのテスト", () => {
   });
 
   test.describe("Todo の操作", () => {
-    test.describe("初期表示のテスト", () => {
+    test.describe("表示時のテスト", () => {
       test("Todo が登録済みの状態で、画面が初期表示された時、登録済み Todo の各種情報が表示されること", async ({
         page,
       }) => {
@@ -1331,7 +1331,7 @@ test.describe("Todo ページのテスト", () => {
   });
 
   test.describe("カテゴリの操作", () => {
-    test.describe("初期表示時のテスト", () => {
+    test.describe("表示時のテスト", () => {
       test("初めて訪問したとき、デフォルトカテゴリが作成されること", async ({
         page,
       }) => {
@@ -1561,7 +1561,7 @@ test.describe("Todo ページのテスト", () => {
       });
     });
 
-    test.describe("編集時のテスト", () => {
+    test.describe("更新時のテスト", () => {
       test("カテゴリ名を変更すると、一覧表示とストレージが更新されること", async ({
         page,
       }) => {
