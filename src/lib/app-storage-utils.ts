@@ -164,7 +164,7 @@ export function validateIntegrity(storage: AppStorage): void {
 export function repairAppStorage(storage: AppStorage): AppStorage {
   const data = { ...storage.data };
 
-  // 1. カテゴリ構造の検証と修復
+  // カテゴリ構造の検証と修復
   const categoryIds = new Set(data.categories.map((c) => c.id));
   const defaultCategory = data.categories.find(
     (c) => c.id === DEFAULT_CATEGORY_ID,
@@ -179,12 +179,12 @@ export function repairAppStorage(storage: AppStorage): AppStorage {
     categoryIds.add(DEFAULT_CATEGORY_ID);
   }
 
-  // 2. 選択カテゴリIDの整合性修復
+  // 選択カテゴリIDの整合性修復
   if (!categoryIds.has(data.lastSelectedCategoryId)) {
     data.lastSelectedCategoryId = DEFAULT_CATEGORY_ID;
   }
 
-  // 3. Todo のカテゴリ参照の整合性修復
+  // Todo のカテゴリ参照の整合性修復
   let hasTodoCategoryModified = false;
   const repairedTodos = data.todos.map((todo) => {
     if (!categoryIds.has(todo.categoryId)) {
@@ -197,7 +197,7 @@ export function repairAppStorage(storage: AppStorage): AppStorage {
     data.todos = repairedTodos;
   }
 
-  // 4. Todo ID の一意性修復
+  // Todo ID の一意性修復
   const seenIds = new Set<string>();
   data.todos = data.todos.map((todo) => {
     if (seenIds.has(todo.id)) {
