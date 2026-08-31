@@ -27,6 +27,7 @@ export class AppStorageLoadError extends Error {
 type AppStorageLoadResult = {
   appStorage: AppStorage;
   didMarkAllIncomplete: boolean;
+  didRepair: boolean;
 };
 
 /**
@@ -49,6 +50,7 @@ export function loadAppStorage(
     return {
       appStorage: createInitialAppStorage(),
       didMarkAllIncomplete: false,
+      didRepair: false,
     };
   }
 
@@ -62,6 +64,7 @@ export function loadAppStorage(
     return {
       appStorage: initialStorage,
       didMarkAllIncomplete: false,
+      didRepair: false,
     };
   }
 
@@ -74,10 +77,12 @@ export function loadAppStorage(
   }
 
   // 整合性に問題がある場合は修復して保存する
+  let didRepair = false;
   try {
     validateIntegrity(appStorage);
   } catch {
     appStorage = repairAppStorage(appStorage);
+    didRepair = true;
     try {
       saveAppStorage(appStorage, storageKey);
     } catch {
@@ -85,7 +90,10 @@ export function loadAppStorage(
     }
   }
 
-  return markAllIncompleteIfDateChanged(appStorage);
+  return {
+    ...markAllIncompleteIfDateChanged(appStorage),
+    didRepair,
+  };
 }
 
 /**

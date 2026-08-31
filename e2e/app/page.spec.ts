@@ -2840,6 +2840,37 @@ test.describe("Todo ページのテスト", () => {
         expect(todos[1].id).not.toBe(duplicateId);
         expect(new Set(todos.map((t) => t.id)).size).toBe(2);
       });
+
+      test("保存データを自動的に復旧した場合、復旧したことが通知されること", async ({
+        page,
+      }) => {
+        // Arrange
+        const corruptedAppStorage: AppStorage = {
+          version: 2,
+          data: {
+            settings: { todoTogglePosition: "left" },
+            categories: [
+              {
+                id: DEFAULT_CATEGORY_ID,
+                name: "変更された未分類",
+              },
+            ],
+            todos: [],
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00+09:00",
+            ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
+          },
+        };
+
+        // Act
+        await navigateToTodoPage(page, {
+          storage: corruptedAppStorage,
+        });
+
+        // Assert
+        await expect(page.getByText("データを復旧しました")).toBeVisible();
+      });
     });
   });
 

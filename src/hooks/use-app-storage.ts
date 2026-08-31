@@ -31,6 +31,8 @@ type UseAppStorageReturn = {
   isLoaded: boolean;
   /** AppStorage の読み込み時に Todo が未完了に戻されたかどうか。 */
   didMarkAllIncomplete: boolean;
+  /** AppStorage の読み込み時にデータを復旧したかどうか。 */
+  didRepair: boolean;
   /**
    * 現在の AppStorage を基に更新する。
    *
@@ -93,6 +95,9 @@ export function useAppStorage(
   // 初期読み込み時に、日付変更によって Todo を未完了に戻したかどうか
   const [didMarkAllIncomplete, setDidMarkAllIncomplete] = useState(false);
 
+  // AppStorage の読み込み時にデータを復旧したかどうか。
+  const [didRepair, setDidRepair] = useState(false);
+
   // 将来の拡張で storageKey が変更された場合に状態をリセットする
   // see: https://github.com/kem198/kore-motta/pull/73#discussion_r3884926793
   const [prevStorageKey, setPrevStorageKey] = useState(storageKey);
@@ -118,6 +123,7 @@ export function useAppStorage(
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setAppStorage(result.appStorage);
       setDidMarkAllIncomplete(result.didMarkAllIncomplete);
+      setDidRepair(result.didRepair);
     } catch (error) {
       // localStorage の JSON が壊れているなど、
       // AppStorage の読み込みに失敗した場合は破損データを保持する。
@@ -261,6 +267,7 @@ export function useAppStorage(
     isLoaded,
     isStorageCorrupted,
     didMarkAllIncomplete,
+    didRepair,
     updateAppStorage,
     importAppStorage,
     resetAppStorage,
