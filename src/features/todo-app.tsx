@@ -74,7 +74,9 @@ export function TodoApp() {
     if (!isLoaded || !didRepair) {
       return;
     }
-    toast.success(MESSAGES.toast.repaired);
+    toast.success(MESSAGES.toast.repaired, {
+      description: MESSAGES.toast.repairedDescription,
+    });
   }, [isLoaded, didRepair]);
 
   /**
