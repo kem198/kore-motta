@@ -260,9 +260,10 @@ export function useAppStorage(
     const initialStorage = createInitialAppStorage();
 
     setAppStorage(initialStorage);
-    setDidMarkAllIncomplete(false);
     setIsStorageCorrupted(false);
     setCorruptedStorage(null);
+    setDidMarkAllIncomplete(false);
+    setDidRepair(false);
   }, []);
 
   return {
