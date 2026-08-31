@@ -124,7 +124,7 @@ export function useAppStorage(
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setAppStorage(result.appStorage);
       setDidMarkAllIncomplete(result.didMarkAllIncomplete);
-      // 在の値が true なら (一度でもデータを復旧したら) true のままにする。
+      // 現在の値が true なら (一度でもデータを復旧したら) true のままにする。
       // loadAppStorage() は複数回読み込まれることがあり、後の読み込みで didRepair が false になる場合があるため。
       // これが無いとトースト通知が呼ばれない。
       setDidRepair((current) => current || result.didRepair);
