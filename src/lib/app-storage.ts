@@ -3,13 +3,16 @@ import {
   APP_STORAGE_KEY,
   createInitialAppStorage,
   markAllIncompleteIfDateChanged,
+  repairAppStorage,
+  validateIntegrity,
 } from "@/lib/app-storage-utils";
-import { AppStorage, parseAppStorage } from "@/schemas/app-storage-schema";
+import { AppStorage } from "@/schemas/app-storage-schema";
 
 /**
  * AppStorage の読み込みに失敗したことを表すエラー。
  *
- * JSON の解析または AppStorage のバリデーションに失敗した場合に使用する。
+ * JSON の解析、AppStorage のバリデーション、またはデータの整合性検証に
+ * 失敗した場合に使用する。
  */
 export class AppStorageLoadError extends Error {
   constructor(
@@ -30,11 +33,14 @@ type AppStorageLoadResult = {
  * localStorage から AppStorage を読み込む。
  *
  * - 保存データが存在しない場合は初期データを作成して保存する。
+ * - 保存データを現在の AppStorage のバージョンへ migration する。
+ * - 保存データの整合性を検証する。
  * - 保存データの日付が前回の未完了化日時と異なる場合は、すべての Todo を未完了にする。
  *
  * @param storageKey localStorage に使用するキー
  * @returns 読み込んだ AppStorage と、Todo を未完了化したかどうか
- * @throws {AppStorageLoadError} 保存データの JSON 解析または AppStorage のバリデーションに失敗した場合
+ * @throws {AppStorageLoadError} 保存データの JSON 解析、AppStorage のバリデーション、
+ * データの整合性検証に失敗した場合
  */
 export function loadAppStorage(
   storageKey = APP_STORAGE_KEY,
@@ -59,20 +65,24 @@ export function loadAppStorage(
     };
   }
 
-  // JSON として解釈できなければ例外をスローする
-  let parsed: unknown;
+  // JSON の解析および現在の AppStorage のバージョンへの migration に失敗した場合は例外をスローする
+  let appStorage: AppStorage;
   try {
-    parsed = JSON.parse(raw);
+    appStorage = migrateAppStorage(JSON.parse(raw));
   } catch (error) {
     throw new AppStorageLoadError(raw, error);
   }
 
-  // 現在の AppStorage のバージョンへ migration できなければ例外をスローする
-  let appStorage: AppStorage;
+  // 整合性に問題がある場合は修復して保存する
   try {
-    appStorage = migrateAppStorage(parsed);
-  } catch (error) {
-    throw new AppStorageLoadError(raw, error);
+    validateIntegrity(appStorage);
+  } catch {
+    appStorage = repairAppStorage(appStorage);
+    try {
+      saveAppStorage(appStorage, storageKey);
+    } catch {
+      // localStorage への保存に失敗しても、メモリ上のデータで動作を継続させるため例外は無視する
+    }
   }
 
   return markAllIncompleteIfDateChanged(appStorage);
@@ -93,15 +103,4 @@ export function saveAppStorage(
   }
 
   window.localStorage.setItem(storageKey, JSON.stringify(appStorage));
-}
-
-/**
- * JSON 文字列を AppStorage として解析する。
- *
- * @param data AppStorage の JSON 文字列
- * @returns 解析済みの AppStorage
- * @throws JSON の解析または AppStorage のバリデーションに失敗した場合
- */
-export function importAppStorage(data: string): AppStorage {
-  return parseAppStorage(JSON.parse(data));
 }
