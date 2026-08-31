@@ -280,6 +280,7 @@ export function repairAppStorage(appStorage: AppStorage): AppStorage {
       if (seenIds.has(todo.id)) {
         const newId =
           typeof crypto !== "undefined" &&
+          crypto &&
           typeof crypto.randomUUID === "function"
             ? crypto.randomUUID()
             : "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
