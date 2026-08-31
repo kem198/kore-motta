@@ -1,3 +1,4 @@
+import { migrateAppStorage } from "@/lib/app-storage-migration";
 import {
   APP_STORAGE_KEY,
   createInitialAppStorage,
@@ -5,7 +6,7 @@ import {
   repairAppStorage,
   validateIntegrity,
 } from "@/lib/app-storage-utils";
-import { AppStorage, parseAppStorage } from "@/schemas/app-storage-schema";
+import { AppStorage } from "@/schemas/app-storage-schema";
 
 /**
  * AppStorage の読み込みに失敗したことを表すエラー。
@@ -64,11 +65,10 @@ export function loadAppStorage(
     };
   }
 
-  // JSON の解析または AppStorage のバリデーションに失敗した場合は例外をスローする
+  // JSON の解析および現在の AppStorage のバージョンへの migration に失敗した場合は例外をスローする
   let appStorage: AppStorage;
-
   try {
-    appStorage = parseAppStorage(JSON.parse(raw));
+    appStorage = migrateAppStorage(JSON.parse(raw));
   } catch (error) {
     throw new AppStorageLoadError(raw, error);
   }
