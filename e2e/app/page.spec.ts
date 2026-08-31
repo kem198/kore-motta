@@ -2644,7 +2644,11 @@ test.describe("Todo ページのテスト", () => {
           version: 2,
           data: {
             settings: { todoTogglePosition: "left" },
-            categories: [{ id: DEFAULT_CATEGORY_ID, name: "未分類" }],
+            categories: [
+              { id: "category-3", name: "いつもの" },
+              { id: DEFAULT_CATEGORY_ID, name: "未分類" },
+              { id: "category-1", name: "旅行" },
+            ],
             todos: [],
             lastMarkedAllIncompleteAt: new Date(
               "2026-08-24T00:00:00+09:00",
@@ -2657,10 +2661,12 @@ test.describe("Todo ページのテスト", () => {
         await navigateToTodoPage(page, { storage: corruptedAppStorage });
 
         // Assert
-        const actualStorage = await getAppStorage(page);
-        expect(actualStorage.data.lastSelectedCategoryId).toBe(
-          DEFAULT_CATEGORY_ID,
-        );
+        await expect
+          .poll(async () => {
+            const storage = await getAppStorage(page);
+            return storage.data.lastSelectedCategoryId;
+          })
+          .toBe(DEFAULT_CATEGORY_ID);
       });
 
       test("Todo.id が重複している場合、1 件目を維持したまま重複を解消すること", async ({
