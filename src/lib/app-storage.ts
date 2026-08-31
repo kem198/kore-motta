@@ -1,5 +1,11 @@
 import { migrateAppStorage } from "@/lib/app-storage-migration";
-import { repairAppStorage, validateIntegrity } from "@/lib/app-storage-utils";
+import {
+  APP_STORAGE_KEY,
+  createInitialAppStorage,
+  markAllIncompleteIfDateChanged,
+  repairAppStorage,
+  validateIntegrity,
+} from "@/lib/app-storage-utils";
 import { AppStorage, parseAppStorage } from "@/schemas/app-storage-schema";
 
 /**
