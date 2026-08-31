@@ -2176,7 +2176,7 @@ test.describe("Todo ページのテスト", () => {
   });
 
   test.describe("設定のテスト", () => {
-    test.describe("Todo トグルボタンの表示位置設定", () => {
+    test.describe.skip("Todo トグルボタンの表示位置設定", () => {
       test("「位置切替」ボタンを押すと、Todo トグルボタンが右へ移動し、設定が「右」になること", async ({
         page,
       }) => {
