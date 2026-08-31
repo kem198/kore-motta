@@ -2543,7 +2543,9 @@ test.describe("Todo ページのテスト", () => {
                   completed: true,
                 },
               ],
-              lastMarkedAllIncompleteAt: "2026-08-24T00:00:00.000+09:00",
+              lastMarkedAllIncompleteAt: new Date(
+                "2026-08-24T00:00:00+09:00",
+              ).toISOString(),
               lastSelectedCategoryId: "category-1",
             },
           };
@@ -2605,7 +2607,9 @@ test.describe("Todo ページのテスト", () => {
                   completed: false,
                 },
               ],
-              lastMarkedAllIncompleteAt: "2026-08-24T00:00:00.000+09:00",
+              lastMarkedAllIncompleteAt: new Date(
+                "2026-08-24T00:00:00+09:00",
+              ).toISOString(),
               lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
             },
           };
@@ -2635,7 +2639,9 @@ test.describe("Todo ページのテスト", () => {
               settings: { todoTogglePosition: "left" },
               categories: [{ id: DEFAULT_CATEGORY_ID, name: "未分類" }],
               todos: [],
-              lastMarkedAllIncompleteAt: "2026-08-24T00:00:00.000+09:00",
+              lastMarkedAllIncompleteAt: new Date(
+                "2026-08-24T00:00:00+09:00",
+              ).toISOString(),
               lastSelectedCategoryId: "non-existent-category",
             },
           };
@@ -2683,7 +2689,9 @@ test.describe("Todo ページのテスト", () => {
                   completed: true,
                 },
               ],
-              lastMarkedAllIncompleteAt: "2026-08-24T00:00:00.000+09:00",
+              lastMarkedAllIncompleteAt: new Date(
+                "2026-08-24T00:00:00+09:00",
+              ).toISOString(),
               lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
             },
           };
@@ -2746,7 +2754,9 @@ test.describe("Todo ページのテスト", () => {
                   completed: false,
                 },
               ],
-              lastMarkedAllIncompleteAt: "2026-08-24T00:00:00.000+09:00",
+              lastMarkedAllIncompleteAt: new Date(
+                "2026-08-24T00:00:00+09:00",
+              ).toISOString(),
               lastSelectedCategoryId: "cat-1",
             },
           };
