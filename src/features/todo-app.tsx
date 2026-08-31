@@ -71,7 +71,6 @@ export function TodoApp() {
    * その旨をトーストで通知する。
    */
   useEffect(() => {
-    console.log("repair toast", { isLoaded, didRepair });
     if (!isLoaded || !didRepair) {
       return;
     }
