@@ -121,6 +121,11 @@ export function saveAppStorage(
  */
 export function importAppStorage(data: string): AppStorage {
   const appStorage = parseAppStorage(JSON.parse(data));
-  validateIntegrity(appStorage);
-  return appStorage;
+
+  try {
+    validateIntegrity(appStorage);
+    return appStorage;
+  } catch {
+    return repairAppStorage(appStorage);
+  }
 }

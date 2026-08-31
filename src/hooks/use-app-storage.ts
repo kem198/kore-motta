@@ -3,6 +3,7 @@
 import {
   AppStorageLoadError,
   loadAppStorage,
+  parseAndValidateAppStorage,
   saveAppStorage,
 } from "@/lib/app-storage";
 import {
@@ -10,7 +11,7 @@ import {
   createInitialAppStorage,
   markAllIncompleteIfDateChanged,
 } from "@/lib/app-storage-utils";
-import { AppStorage, parseAppStorage } from "@/schemas/app-storage-schema";
+import { AppStorage } from "@/schemas/app-storage-schema";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 type UseAppStorageOptions = {
@@ -224,8 +225,8 @@ export function useAppStorage(
    * インポートしたデータの日付も確認し、必要であれば Todo を未完了に戻してから状態へ反映する。
    */
   const importAppStorage = useCallback((data: string) => {
-    const parsed = parseAppStorage(JSON.parse(data));
-    const result = markAllIncompleteIfDateChanged(parsed);
+    const appStorage = parseAndValidateAppStorage(data);
+    const result = markAllIncompleteIfDateChanged(appStorage);
 
     setAppStorage(result.appStorage);
     setDidMarkAllIncomplete(result.didMarkAllIncomplete);

@@ -40,14 +40,14 @@ cd kore-motta
 # パッケージのインストール
 npm install
 
-# テスト実行 (Unit Test)
+# 単体テスト
 npm run test
-
-# テスト実行 (E2E Test)
-npm run e2e
 
 # 開発用ローカルサーバの起動
 npm run dev
+
+# E2E テスト
+npm run e2e
 
 # 本番用ビルド・本番用ローカルサーバの起動
 npm run build
