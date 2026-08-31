@@ -249,6 +249,8 @@ export function repairAppStorage(appStorage: AppStorage): AppStorage {
                 return v.toString(16);
               });
 
+        seenIds.add(newId);
+
         return { ...todo, id: newId };
       }
 
