@@ -167,20 +167,6 @@ function hasDuplicateTodoIds(todos: AppStorage["data"]["todos"]): boolean {
  * 以下の項目を検証し、不整合がある場合はエラーをスローする。
  *
  * - Category.id が一意であること
- * - 未分類カテゴリが存在し、ID と名前が変更されていないこと
- * - `lastSelectedCategoryId` が存在するカテゴリを参照していること
- * - Todo の `categoryId` が存在するカテゴリを参照していること
- * - Todo.id が一意であること
- *
- * @param storage 検証対象の AppStorage
- * @throws {Error} AppStorage のデータに整合性の不備がある場合
- */
-/**
- * AppStorage の整合性を検証する。
- *
- * 以下の項目を検証し、不整合がある場合はエラーをスローする。
- *
- * - Category.id が一意であること
  * - 未分類カテゴリが存在すること
  * - 未分類カテゴリの名前が変更されていないこと
  * - `lastSelectedCategoryId` が存在するカテゴリを参照していること
