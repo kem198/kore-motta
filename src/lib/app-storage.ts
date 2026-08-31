@@ -78,7 +78,11 @@ export function loadAppStorage(
     validateIntegrity(appStorage);
   } catch {
     appStorage = repairAppStorage(appStorage);
-    saveAppStorage(appStorage, storageKey);
+    try {
+      saveAppStorage(appStorage, storageKey);
+    } catch {
+      // localStorage への保存に失敗しても、メモリ上のデータで動作を継続させるため例外は無視する
+    }
   }
 
   return markAllIncompleteIfDateChanged(appStorage);
