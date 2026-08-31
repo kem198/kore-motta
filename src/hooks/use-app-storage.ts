@@ -237,17 +237,22 @@ export function useAppStorage(
    */
   const importAppStorage = useCallback((data: string) => {
     let appStorage = parseAppStorage(JSON.parse(data));
+    let repaired = false;
 
     try {
       validateIntegrity(appStorage);
     } catch {
       appStorage = repairAppStorage(appStorage);
+      repaired = true;
     }
 
     const result = markAllIncompleteIfDateChanged(appStorage);
 
     setAppStorage(result.appStorage);
     setDidMarkAllIncomplete(result.didMarkAllIncomplete);
+    if (repaired) {
+      setDidRepair(true);
+    }
   }, []);
 
   /**
