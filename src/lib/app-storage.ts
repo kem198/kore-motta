@@ -119,13 +119,8 @@ export function saveAppStorage(
  * @returns 解析済みの AppStorage
  * @throws JSON の解析または AppStorage のバリデーションに失敗した場合
  */
-export function importAppStorage(data: string): AppStorage {
+export function parseAndValidateAppStorage(data: string): AppStorage {
   const appStorage = parseAppStorage(JSON.parse(data));
-
-  try {
-    validateIntegrity(appStorage);
-    return appStorage;
-  } catch {
-    return repairAppStorage(appStorage);
-  }
+  validateIntegrity(appStorage);
+  return appStorage;
 }
