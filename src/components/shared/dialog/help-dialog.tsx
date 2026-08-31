@@ -129,7 +129,7 @@ const CHANGELOG = [
       ]
     : []),
   {
-    version: "v0.4.0",
+    version: "v0.3.2",
     date: "2026-08-31",
     changes: [
       {
