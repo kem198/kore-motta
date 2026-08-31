@@ -2869,7 +2869,7 @@ test.describe("Todo ページのテスト", () => {
         });
 
         // Assert
-        await expect(page.getByText("データを復旧しました")).toBeVisible();
+        await expect(page.getByText(MESSAGES.toast.repaired)).toBeVisible();
       });
     });
   });
