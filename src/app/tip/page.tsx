@@ -12,7 +12,7 @@ export default function TipPage() {
       <div className={cn(TYPESET_CLASS_NAME, "flex flex-col gap-8 p-4")}>
         <div>
           <h2>おやつをおごる</h2>
-          <p>投げ銭で制作者を応援できます。</p>
+          <p>投げ銭で開発者 (KeM198) を応援できます。</p>
           <ul>
             <li>
               <a
