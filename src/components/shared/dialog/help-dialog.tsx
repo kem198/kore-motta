@@ -38,12 +38,17 @@ const OVERVIEW: ListItem[] = [
   },
 ];
 
+const TERMS_LAST_MODIFIED = "2026-09-01";
+
 const TERMS: ListItem[] = [
   {
-    text: "本サービスは、予告なく内容の変更、停止、または終了する場合があります。",
+    text: "本サービスは、予告なく機能の変更、停止、または終了する場合があります。",
   },
   {
-    text: "本サービスの利用によって生じた損害について、運営者は責任を負いません。",
+    text: "本サービスの利用によって生じた損害について、運営者は、故意または重大な過失による場合を除き、一切の責任を負いません。",
+  },
+  {
+    text: "本サービスに事実上または法律上の瑕疵 (バグ、エラー、不具合等) がないことを保証するものではありません。",
   },
 ];
 
@@ -272,6 +277,9 @@ function HelpAccordions({ className }: HelpAccordionsProps) {
   return (
     <HelpAccordion className={className}>
       <HelpAccordionItem value="terms" title="利用規約">
+        <p className="text-muted-foreground space-y-6 text-sm">
+          最終更新日: <span className="font-mono">{TERMS_LAST_MODIFIED}</span>
+        </p>
         <UnorderedList items={TERMS} />
       </HelpAccordionItem>
 
