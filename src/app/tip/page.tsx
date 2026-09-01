@@ -21,7 +21,7 @@ export default function TipPage() {
                 rel="noopener noreferrer"
               >
                 おやつをおごる (100 円){" "}
-                <SquareArrowOutUpRightIcon className="inline size-3 align-middle" />
+                <SquareArrowOutUpRightIcon className="inline size-3.5 align-middle" />
               </a>
             </li>
             <li>
@@ -31,14 +31,14 @@ export default function TipPage() {
                 rel="noopener noreferrer"
               >
                 コーヒーをおごる (300 円){" "}
-                <SquareArrowOutUpRightIcon className="inline size-3 align-middle" />
+                <SquareArrowOutUpRightIcon className="inline size-3.5 align-middle" />
               </a>
             </li>
           </ul>
         </div>
 
         <div className="rounded-md bg-gray-200 p-4 text-sm">
-          <ul className="mt-0 *:mt-0">
+          <ul className="mt-0 space-y-1 *:mt-0">
             <li>金額を選ぶと、決済画面に進みます。</li>
             <li>投げ銭です。お礼の品やサービスの提供はございません。</li>
             <li>カード番号は決済会社が取り扱い、こちらには届きません。</li>
