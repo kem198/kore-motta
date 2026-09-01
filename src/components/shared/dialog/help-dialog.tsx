@@ -35,16 +35,21 @@ const OVERVIEW: ListItem[] = [
     text: "アイテムが期限切れとして溜まらないため、好みのタイミングで使えます。",
   },
   {
-    text: "ログイン無しで利用できます。",
+    text: "アカウント登録・ログイン無しで利用できます。",
   },
 ];
 
+const TERMS_LAST_MODIFIED = "2026-09-01";
+
 const TERMS: ListItem[] = [
   {
-    text: "本サービスは、予告なく内容の変更、停止、または終了する場合があります。",
+    text: "本サービスは、予告なく変更、停止、または終了する場合があります。",
   },
   {
-    text: "本サービスの利用によって生じた損害について、運営者は責任を負いません。",
+    text: "本サービスに不具合がないことを保証するものではありません。",
+  },
+  {
+    text: "本サービスの利用による損害について、運営者は故意または重大な過失による場合を除き、責任を負いません。",
   },
 ];
 
@@ -81,7 +86,7 @@ const OTHER_SPECIFICATIONS: ListItemWithTitle[] = [
     title: "未完了に戻るタイミング",
     items: [
       {
-        text: "日付が変わってからアプリを開き直した際に未完了に戻ります。",
+        text: "日付が変わってからアプリを開くと、未完了に戻ります。",
       },
       {
         text: "アプリを開いたまま日付が変わった場合は、未完了に戻りません。",
@@ -273,6 +278,9 @@ function HelpAccordions({ className }: HelpAccordionsProps) {
   return (
     <HelpAccordion className={className}>
       <HelpAccordionItem value="terms" title="利用規約">
+        <p className="text-muted-foreground space-y-6 text-sm">
+          最終更新日: <span className="font-mono">{TERMS_LAST_MODIFIED}</span>
+        </p>
         <UnorderedList items={TERMS} />
       </HelpAccordionItem>
 

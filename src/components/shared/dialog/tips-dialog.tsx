@@ -32,7 +32,7 @@ const TIPS: ListItemWithTitle[] = [
           "[PC Edge / Chrome]: URL 欄 > インストールボタン",
           "[iPhone Safari]: 共有メニュー > ホーム画面に追加",
           "[Android Chrome]: メニュー > ホーム画面に追加",
-          "上記以外のブラウザでも同様です。",
+          "上記以外でも同様です。",
         ],
       },
       {
