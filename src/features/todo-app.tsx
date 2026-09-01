@@ -3,7 +3,8 @@
 import { CategoryList } from "@/components/shared/category-list";
 import { CategorySettingDialog } from "@/components/shared/dialog/category-setting-dialog";
 import { StorageRecoveryDialog } from "@/components/shared/dialog/storage-recovery-dialog";
-import { TodoAppHeaderContent } from "@/components/shared/todo-app-header";
+import { TodoAppHeader } from "@/components/shared/todo-app-header";
+import { TodoAppHeaderMenu } from "@/components/shared/todo-app-header-menu";
 import { TodoAppNavigation } from "@/components/shared/todo-app-navigation";
 import { TodoForm } from "@/components/shared/todo-form";
 import { TodoList } from "@/components/shared/todo-list";
@@ -362,11 +363,13 @@ export function TodoApp() {
     <div className="bg-background mx-auto flex h-dvh w-full max-w-3xl flex-col overflow-hidden">
       {/* 2. 上部ヘッダー (スクロールせず固定) */}
       <header className="pt-[env(safe-area-inset-top)]">
-        <TodoAppHeaderContent
-          appStorage={appStorage}
-          onMarkAllIncomplete={handleMarkAllIncomplete}
-          onImport={handleImport}
-        />
+        <TodoAppHeader>
+          <TodoAppHeaderMenu
+            appStorage={appStorage}
+            onMarkAllIncomplete={handleMarkAllIncomplete}
+            onImport={handleImport}
+          ></TodoAppHeaderMenu>
+        </TodoAppHeader>
 
         <TodoForm onSubmit={handleCreate} className="max-w-3xl p-4" />
 

@@ -83,7 +83,7 @@ export function TipsDialog({ open, onOpenChange }: TipsDialogProps) {
           <DialogTitle>便利な使い方</DialogTitle>
         </DialogHeader>
 
-        <Accordion className="max-h-[60dvh] overflow-y-auto rounded-lg border">
+        <Accordion className="max-h-[65dvh] overflow-y-auto rounded-lg border">
           {TIPS.map((section) => (
             <AccordionItem
               key={section.title}
