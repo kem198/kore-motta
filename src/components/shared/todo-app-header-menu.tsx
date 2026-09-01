@@ -1,3 +1,5 @@
+"use client";
+
 import { ExportDialog } from "@/components/shared/dialog/export-dialog";
 import { HelpDialog } from "@/components/shared/dialog/help-dialog";
 import { ImportDialog } from "@/components/shared/dialog/import-dialog";
