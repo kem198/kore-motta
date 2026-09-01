@@ -403,7 +403,7 @@ function Support({ className }: SupportProps) {
             rel="noopener noreferrer"
             className="underline underline-offset-4"
           >
-            GitHub でスターをつける{" "}
+            GitHub{" "}
             <SquareArrowOutUpRightIcon className="inline size-3 align-middle" />
           </a>
         </li>
