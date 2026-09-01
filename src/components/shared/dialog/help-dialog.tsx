@@ -25,6 +25,7 @@ import {
 import { cn } from "@/lib/utils";
 import { ListItem, ListItemWithTitle } from "@/types/help";
 import { SquareArrowOutUpRightIcon } from "lucide-react";
+import Link from "next/link";
 
 const OVERVIEW: ListItem[] = [
   {
@@ -406,6 +407,9 @@ function Support({ className }: SupportProps) {
             GitHub{" "}
             <SquareArrowOutUpRightIcon className="inline size-3 align-middle" />
           </a>
+        </li>
+        <li>
+          <Link href={"/tip"}>おやつをおごる</Link>
         </li>
 
         {FEATURES.tip && (
