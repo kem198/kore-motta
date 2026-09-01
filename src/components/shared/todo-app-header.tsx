@@ -1,19 +1,14 @@
 import { SITE_NAME } from "@/constants/site";
 import { cn } from "@/lib/utils";
-import { AppStorage } from "@/schemas/app-storage-schema";
 import * as React from "react";
 
-export type TodoAppHeaderProps = {
-  appStorage: AppStorage;
-  onMarkAllIncomplete: () => void;
-  onImport: (data: string) => boolean;
-} & React.ComponentPropsWithoutRef<"div">;
+export type TodoAppHeaderProps = React.ComponentPropsWithoutRef<"div">;
 
 export function TodoAppHeader({
   className,
   children,
   ...props
-}: React.ComponentPropsWithoutRef<"div">) {
+}: TodoAppHeaderProps) {
   return (
     <div
       className={cn(
