@@ -387,7 +387,8 @@ function Support({ className }: SupportProps) {
           rel="noopener noreferrer"
           className="underline underline-offset-4"
         >
-          @KeM198
+          @KeM198{" "}
+          <SquareArrowOutUpRightIcon className="inline size-3 align-middle" />
         </a>{" "}
         までご連絡ください。
         <br />
