@@ -116,7 +116,7 @@ const ISSUES: ListItem[] = [
 
 const CHANGELOG = [
   {
-    version: "v0.4.1",
+    version: "v0.4.0",
     date: "2026-09-02",
     changes: [
       {
