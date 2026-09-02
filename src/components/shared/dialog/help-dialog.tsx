@@ -414,20 +414,6 @@ function Support({ className }: SupportProps) {
         <li>
           <Link href={"/tip"}>おやつをおごる</Link>
         </li>
-
-        {FEATURES.tip && (
-          <li>
-            <a
-              href="#"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline underline-offset-4"
-            >
-              おやつをおごる{" "}
-              <SquareArrowOutUpRightIcon className="inline size-3.5 align-middle" />
-            </a>
-          </li>
-        )}
       </ul>
     </section>
   );
