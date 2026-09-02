@@ -12,7 +12,7 @@ export function TodoAppHeader({
   return (
     <div
       className={cn(
-        "bg-primary flex h-13 items-center justify-between gap-2 px-3 py-1 font-normal text-white",
+        "bg-primary text-primary-foreground flex h-13 items-center justify-between gap-2 px-3 py-1 font-normal",
         className,
       )}
       {...props}

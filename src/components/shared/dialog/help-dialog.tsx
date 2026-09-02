@@ -16,7 +16,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { FEATURES } from "@/constants/features";
 import {
   ACCORDION_ITEM_CLASS_NAME,
   ACCORDION_TRIGGER_CLASS_NAME,
@@ -25,6 +24,7 @@ import {
 import { cn } from "@/lib/utils";
 import { ListItem, ListItemWithTitle } from "@/types/help";
 import { SquareArrowOutUpRightIcon } from "lucide-react";
+import Link from "next/link";
 
 const OVERVIEW: ListItem[] = [
   {
@@ -115,19 +115,15 @@ const ISSUES: ListItem[] = [
 ];
 
 const CHANGELOG = [
-  ...(FEATURES.todoTogglePosition
-    ? [
-        {
-          version: "v0.4.1",
-          date: "2026-09-02",
-          changes: [
-            {
-              text: "チェックボタンの位置を左右から選べるようにしました。",
-            },
-          ],
-        },
-      ]
-    : []),
+  {
+    version: "v0.4.0",
+    date: "2026-09-02",
+    changes: [
+      {
+        text: "チェックボタンの位置を左右から選べるようにしました。",
+      },
+    ],
+  },
   {
     version: "v0.3.2",
     date: "2026-08-31",
@@ -395,7 +391,7 @@ function Support({ className }: SupportProps) {
         </a>{" "}
         までご連絡ください。
         <br />
-        アプリが気に入ったら、応援いただけると励みになります！
+        アプリが気に入ったら、応援いただけると励みになります。
       </p>
 
       <ul className="mt-0">
@@ -410,20 +406,11 @@ function Support({ className }: SupportProps) {
             <SquareArrowOutUpRightIcon className="inline size-3 align-middle" />
           </a>
         </li>
-
-        {FEATURES.tip && (
-          <li>
-            <a
-              href="#"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline underline-offset-4"
-            >
-              おやつをおごる{" "}
-              <SquareArrowOutUpRightIcon className="inline size-3.5 align-middle" />
-            </a>
-          </li>
-        )}
+        <li>
+          <Link href={"/tip"} className="underline underline-offset-4">
+            おやつをおごる
+          </Link>
+        </li>
       </ul>
     </section>
   );
