@@ -1,5 +1,5 @@
 import { TodoAppHeader } from "@/components/shared/todo-app-header";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { TYPESET_CLASS_NAME } from "@/constants/help";
 import { cn } from "@/lib/utils";
 import { SquareArrowOutUpRightIcon } from "lucide-react";
@@ -50,8 +50,8 @@ export default function TipPage() {
           </ul>
         </div>
         <div>
-          <Link href={"/"}>
-            <Button>アプリへ戻る</Button>
+          <Link href={"/"} className={cn(buttonVariants(), "no-underline")}>
+            アプリへ戻る
           </Link>
         </div>
       </div>
