@@ -16,7 +16,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { FEATURES } from "@/constants/features";
 import {
   ACCORDION_ITEM_CLASS_NAME,
   ACCORDION_TRIGGER_CLASS_NAME,
@@ -408,7 +407,9 @@ function Support({ className }: SupportProps) {
           </a>
         </li>
         <li>
-          <Link href={"/tip"}>おやつをおごる</Link>
+          <Link href={"/tip"} className="underline underline-offset-4">
+            おやつをおごる
+          </Link>
         </li>
       </ul>
     </section>
