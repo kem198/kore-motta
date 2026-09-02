@@ -115,19 +115,15 @@ const ISSUES: ListItem[] = [
 ];
 
 const CHANGELOG = [
-  ...(FEATURES.todoTogglePosition
-    ? [
-        {
-          version: "v0.4.1",
-          date: "2026-09-02",
-          changes: [
-            {
-              text: "チェックボタンの位置を左右から選べるようにしました。",
-            },
-          ],
-        },
-      ]
-    : []),
+  {
+    version: "v0.4.0",
+    date: "2026-09-02",
+    changes: [
+      {
+        text: "チェックボタンの位置を左右から選べるようにしました。",
+      },
+    ],
+  },
   {
     version: "v0.3.2",
     date: "2026-08-31",
