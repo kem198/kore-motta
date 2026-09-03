@@ -205,6 +205,7 @@ export function TodoApp() {
         return current;
       }
 
+      // カテゴリ変更がない場合は、既存の order を維持する
       if (targetTodo.categoryId === todo.categoryId) {
         return {
           ...current,
@@ -217,12 +218,11 @@ export function TodoApp() {
         };
       }
 
-      // カテゴリを変更した場合
+      // カテゴリを変更した場合は、移動先カテゴリの末尾に追加する
       const destinationTodos = current.data.todos.filter(
         (item) => item.categoryId === todo.categoryId,
       );
       const nextOrder = getNextTodoOrder(destinationTodos);
-
       return {
         ...current,
         data: {
