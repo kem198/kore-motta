@@ -11,26 +11,16 @@ export default function TipPage() {
       <TodoAppHeader />
       <div className={cn(TYPESET_CLASS_NAME, "flex flex-col gap-8 p-4")}>
         <div>
-          <h2>おやつをおごる</h2>
-          <p>投げ銭で開発者 (KeM198) を応援できます。</p>
+          <h2>コーヒーをおごる</h2>
+          <p>OFUSE を通じて、開発者 (KeM198) を応援できます。</p>
           <ul>
             <li>
               <a
-                href="https://buy.stripe.com/4gMeVcfXo0mg5qb9vh48001"
+                href="https://ofuse.me/kem198"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                おやつをおごる (100 円){" "}
-                <SquareArrowOutUpRightIcon className="inline size-3.5 align-middle" />
-              </a>
-            </li>
-            <li>
-              <a
-                href="https://buy.stripe.com/7sY9ASfXod929Gr36T48000"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                コーヒーをおごる (300 円){" "}
+                OFUSE{" "}
                 <SquareArrowOutUpRightIcon className="inline size-3.5 align-middle" />
               </a>
             </li>
@@ -41,12 +31,28 @@ export default function TipPage() {
           <ul className="mt-0 space-y-1 *:mt-0">
             <li>投げ銭です。お礼の品やサービスの提供はございません。</li>
             <li>
-              カード情報は決済会社が取り扱います。運営者がカード番号を取得・保存することはありません。
+              支援に関する情報の取り扱いについては、
+              <a
+                href="https://ofuse.me/terms"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-4"
+              >
+                OFUSE 利用規約{" "}
+                <SquareArrowOutUpRightIcon className="inline size-3 align-middle" />
+              </a>{" "}
+              および{" "}
+              <a
+                href="https://sozi.co.jp/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-4"
+              >
+                プライバシーポリシー{" "}
+                <SquareArrowOutUpRightIcon className="inline size-3 align-middle" />
+              </a>{" "}
+              をご確認ください。
             </li>
-            <li>
-              メールアドレス、カード番号の下4桁、カード名義が決済会社から提供されます。これらは決済の確認や購入履歴の管理に利用します。
-            </li>
-            <li>ご支援後の返金は、原則として受け付けておりません。</li>
             <li>
               ご不明な点は{" "}
               <a
@@ -64,7 +70,7 @@ export default function TipPage() {
         </div>
 
         <div>
-          <Link href={"/"} className={cn(buttonVariants(), "no-underline")}>
+          <Link href="/" className={cn(buttonVariants(), "no-underline")}>
             アプリへ戻る
           </Link>
         </div>
