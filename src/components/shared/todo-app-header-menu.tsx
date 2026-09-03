@@ -25,13 +25,13 @@ import {
   RefreshCcwIcon,
   UploadIcon,
 } from "lucide-react";
-import * as React from "react";
+import { ComponentPropsWithoutRef, useState } from "react";
 
 export type TodoAppHeaderMenuProps = {
   appStorage: AppStorage;
   onMarkAllIncomplete: () => void;
   onImport: (data: string) => boolean;
-} & React.ComponentPropsWithoutRef<"div">;
+} & ComponentPropsWithoutRef<"div">;
 
 export function TodoAppHeaderMenu({
   appStorage,
@@ -40,10 +40,10 @@ export function TodoAppHeaderMenu({
   className,
   ...props
 }: TodoAppHeaderMenuProps) {
-  const [isHelpDialogOpen, setIsHelpDialogOpen] = React.useState(false);
-  const [isTipsDialogOpen, setIsTipsDialogOpen] = React.useState(false);
-  const [isImportDialogOpen, setIsImportDialogOpen] = React.useState(false);
-  const [isExportDialogOpen, setIsExportDialogOpen] = React.useState(false);
+  const [isHelpDialogOpen, setIsHelpDialogOpen] = useState(false);
+  const [isTipsDialogOpen, setIsTipsDialogOpen] = useState(false);
+  const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
+  const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
 
   return (
     <>

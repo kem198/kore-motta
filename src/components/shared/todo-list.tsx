@@ -20,7 +20,7 @@ import { Category } from "@/schemas/category-schema";
 import { Settings } from "@/schemas/settings-schema";
 import { Todo } from "@/schemas/todo-schema";
 import { ChevronDown, ChevronUp, Trash2 } from "lucide-react";
-import { Fragment } from "react";
+import { ComponentPropsWithoutRef, Fragment } from "react";
 
 function TodoListSkeleton() {
   return (
@@ -44,7 +44,7 @@ type TodoItemActionsProps = {
   isEditing: boolean;
   onDelete: (todo: Todo) => void;
   onReorder: (startIndex: number, endIndex: number) => void;
-};
+} & ComponentPropsWithoutRef<"div">;
 
 function TodoItemActions({
   todo,
@@ -53,13 +53,16 @@ function TodoItemActions({
   isEditing,
   onDelete,
   onReorder,
+  className,
 }: TodoItemActionsProps) {
   if (!isEditing) {
     return null;
   }
 
   return (
-    <div className="flex shrink-0 items-center justify-end gap-2">
+    <div
+      className={cn("flex shrink-0 items-center justify-end gap-2", className)}
+    >
       <AlertDialog>
         <AlertDialogTrigger
           render={

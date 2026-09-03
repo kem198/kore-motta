@@ -1,8 +1,8 @@
 import { SITE_NAME } from "@/constants/site";
 import { cn } from "@/lib/utils";
-import * as React from "react";
+import { ComponentPropsWithoutRef } from "react";
 
-export type TodoAppHeaderProps = React.ComponentPropsWithoutRef<"div">;
+export type TodoAppHeaderProps = ComponentPropsWithoutRef<"div">;
 
 export function TodoAppHeader({
   className,

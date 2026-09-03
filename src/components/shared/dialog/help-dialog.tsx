@@ -25,6 +25,7 @@ import { cn } from "@/lib/utils";
 import { ListItem, ListItemWithTitle } from "@/types/help";
 import { SquareArrowOutUpRightIcon } from "lucide-react";
 import Link from "next/link";
+import { CSSProperties, ReactNode } from "react";
 
 const OVERVIEW: ListItem[] = [
   {
@@ -201,7 +202,7 @@ const CHANGELOG = [
 ];
 
 type HelpAccordionProps = {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
 };
 
@@ -216,7 +217,7 @@ function HelpAccordion({ children, className }: HelpAccordionProps) {
 type HelpAccordionItemProps = {
   value: string;
   title: string;
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
   triggerClassName?: string;
   contentClassName?: string;
@@ -336,7 +337,7 @@ function Summary({ className }: SummaryProps) {
   return (
     <div
       className={cn(TYPESET_CLASS_NAME, className)}
-      style={{ "--typeset-size": "0.9rem" } as React.CSSProperties}
+      style={{ "--typeset-size": "0.9rem" } as CSSProperties}
     >
       <section>
         <h3>このアプリは何？</h3>
