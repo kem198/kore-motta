@@ -160,7 +160,7 @@ function TodoItem({
         todoTogglePosition === "right" && "flex-row-reverse",
       )}
     >
-      <div className="flex shrink-0 items-center justify-center py-2">
+      <div className="flex shrink-0 items-center justify-center py-2 max-sm:px-3">
         <TodoToggle
           completed={todo.completed}
           aria-label={`完了状態を切り替え: ${todo.name}`}
