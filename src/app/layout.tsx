@@ -1,6 +1,11 @@
 import { Toaster } from "@/components/ui/sonner";
 import { notoSansJp, ubuntuSans, ubuntuSansMono } from "@/constants/fonts";
-import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/constants/site";
+import {
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  SITE_THEME_COLOR,
+  SITE_URL,
+} from "@/constants/site";
 import { cn } from "@/lib/utils";
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
@@ -9,6 +14,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: `${SITE_NAME}`,
   description: SITE_DESCRIPTION,
+  themeColor: SITE_THEME_COLOR,
 };
 
 export const viewport: Viewport = {
