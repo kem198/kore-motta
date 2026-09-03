@@ -5,7 +5,7 @@ import { ComponentPropsWithoutRef } from "react";
 
 type TodoToggleProps = {
   completed: boolean;
-} & ComponentPropsWithoutRef<typeof Toggle>;
+} & Omit<ComponentPropsWithoutRef<typeof Toggle>, "pressed">;
 
 export function TodoToggle({ completed, className, ...rest }: TodoToggleProps) {
   return (
