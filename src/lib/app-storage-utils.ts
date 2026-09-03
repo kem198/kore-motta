@@ -73,6 +73,11 @@ export function markAllIncompleteIfDateChanged(
     };
   }
 
+  // 差異があれば完了にしたとみなす
+  const hadCompletedTodos = appStorage.data.todos.some(
+    (todo) => todo.completed,
+  );
+
   return {
     appStorage: {
       ...appStorage,
@@ -85,9 +90,10 @@ export function markAllIncompleteIfDateChanged(
         lastMarkedAllIncompleteAt: now.toISOString(),
       },
     },
-    didMarkAllIncomplete: true,
+    didMarkAllIncomplete: hadCompletedTodos,
   };
 }
+
 /**
  * Category ID が重複しているか否か。
  */

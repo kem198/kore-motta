@@ -754,6 +754,57 @@ test.describe("Todo ページのテスト", () => {
         );
       });
 
+      // 修正前でもテストが通るのでスキップしている
+      // トースト通知は自動で非表示になるが、そのタイミングで「未完了文字列が非表示であること」が発火してしまい、
+      // 実装の修正前でもテストが PASS してしまうため
+      test.skip("未完了 Todo しかない状態で、日付が変わってからページを再読み込みすると、未完了に戻したトーストが表示されないこと", async ({
+        page,
+      }) => {
+        // Arrange
+        // 当日の未完了化がすでに実行済みの状態を再現する
+        const beforeMidnight = new Date("2026-08-24T23:59:00+09:00");
+
+        const appStorage: AppStorage = {
+          version: 2,
+          data: {
+            settings: { todoTogglePosition: "left" },
+            categories: DEFAULT_CATEGORIES_STORAGE,
+            todos: [
+              {
+                id: "test-todo",
+                name: "カギ",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                memo: "家の鍵",
+                completed: false,
+              },
+            ],
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00+09:00",
+            ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
+          },
+        };
+
+        await navigateToTodoPage(page, {
+          storage: appStorage,
+          clockTime: beforeMidnight,
+        });
+
+        // Act
+        // 日付が変わった状態を再現する
+        const afterMidnight = new Date("2026-08-25T00:00:00+09:00");
+        await page.clock.setFixedTime(afterMidnight);
+        // 再読み込みする
+        await page.reload();
+
+        // Assert: UI 上に指定のテキストを含むトーストが表示されいないこと
+        await expect(page.getByText("カギ")).toBeVisible();
+        await expect(page.locator("body")).not.toContainText(
+          MESSAGES.toast.markedAllIncomplete,
+        );
+      });
+
       test("Todo の編集画面に現在のカテゴリ名が表示されること", async ({
         page,
       }) => {
