@@ -39,7 +39,7 @@ const OVERVIEW: ListItem[] = [
   },
 ];
 
-const TERMS_LAST_MODIFIED = "2026-09-01";
+const TERMS_LAST_MODIFIED = "2026-09-03";
 
 const TERMS: ListItem[] = [
   {
@@ -49,7 +49,7 @@ const TERMS: ListItem[] = [
     text: "本サービスに不具合がないことを保証するものではありません。",
   },
   {
-    text: "本サービスの利用による損害について、運営者は故意または重大な過失による場合を除き、責任を負いません。",
+    text: "本サービスの利用による損害について、運営者は故意または重大な過失がある場合を除き、責任を負いません。",
   },
 ];
 
