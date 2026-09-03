@@ -170,42 +170,61 @@ export function TodoApp() {
   };
 
   const handleUpdate = (todo: Todo) => {
-    updateAppStorage((current) => {
-      const targetTodo = current.data.todos.find((item) => item.id === todo.id);
+    /** 更新対象の Todo */
+    const targetTodo = appStorage.data.todos.find(
+      (item) => item.id === todo.id,
+    );
 
-      if (!targetTodo) {
-        return current;
-      }
+    if (!targetTodo) {
+      return;
+    }
 
-      // カテゴリ変更がない場合は、既存の order を維持する
-      if (targetTodo.categoryId === todo.categoryId) {
-        return {
-          ...current,
-          data: {
-            ...current.data,
-            todos: current.data.todos.map((item) =>
-              item.id === todo.id ? todo : item,
-            ),
-          },
-        };
-      }
+    /** 未完了から完了にした場合のみ true */
+    const isCompletingTodo = !targetTodo.completed && todo.completed;
 
-      // カテゴリを変更した場合は、移動先カテゴリの末尾に追加する
-      const destinationTodos = current.data.todos.filter(
-        (item) => item.categoryId === todo.categoryId,
+    if (targetTodo.categoryId === todo.categoryId) {
+      const updatedTodos = appStorage.data.todos.map((item) =>
+        item.id === todo.id ? todo : item,
       );
-      const nextOrder = getNextTodoOrder(destinationTodos);
 
-      return {
+      const isAllCompleted =
+        isCompletingTodo &&
+        updatedTodos
+          .filter((item) => item.categoryId === todo.categoryId)
+          .every((item) => item.completed);
+
+      updateAppStorage((current) => ({
         ...current,
         data: {
           ...current.data,
           todos: current.data.todos.map((item) =>
-            item.id === todo.id ? { ...todo, order: nextOrder } : item,
+            item.id === todo.id ? todo : item,
           ),
         },
-      };
-    });
+      }));
+
+      if (isAllCompleted) {
+        toast.success(MESSAGES.toast.markedAllCompletedInCategory);
+      }
+
+      return;
+    }
+
+    // カテゴリを変更した場合
+    const destinationTodos = appStorage.data.todos.filter(
+      (item) => item.categoryId === todo.categoryId,
+    );
+    const nextOrder = getNextTodoOrder(destinationTodos);
+
+    updateAppStorage((current) => ({
+      ...current,
+      data: {
+        ...current.data,
+        todos: current.data.todos.map((item) =>
+          item.id === todo.id ? { ...todo, order: nextOrder } : item,
+        ),
+      },
+    }));
   };
 
   const handleMarkAllIncomplete = () => {

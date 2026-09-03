@@ -805,6 +805,76 @@ test.describe("Todo ページのテスト", () => {
         );
       });
 
+      test("カテゴリ内の Todo をすべて完了したとき、トーストが表示されること", async ({
+        page,
+      }) => {
+        // Arrange
+        // カテゴリ二種類に対して完了・未完了の Todo を割り振り、
+        // 他のカテゴリの未完了状況がすべて完了にしたカテゴリに影響がないことを確認する
+        const appStorage: AppStorage = {
+          version: 2,
+          data: {
+            settings: { todoTogglePosition: "left" },
+            todos: [
+              {
+                id: "dummy-todo-1",
+                name: "資料作成",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                completed: true,
+              },
+              {
+                id: "dummy-todo-2",
+                name: "財布",
+                order: 0,
+                categoryId: DEFAULT_CATEGORY_ID,
+                completed: false,
+              },
+              {
+                id: "another-todo-1",
+                name: "別カテゴリ 1",
+                order: 0,
+                categoryId: "another-category",
+                completed: true,
+              },
+              {
+                id: "another-todo-2",
+                name: "別カテゴリ 2",
+                order: 0,
+                categoryId: "another-category",
+                completed: false,
+              },
+            ],
+            categories: [
+              ...DEFAULT_CATEGORIES_STORAGE,
+              {
+                id: "another-category",
+                name: "別カテゴリ",
+              },
+            ],
+
+            lastMarkedAllIncompleteAt: new Date(
+              "2026-08-24T00:00:00+09:00",
+            ).toISOString(),
+            lastSelectedCategoryId: DEFAULT_CATEGORY_ID,
+          },
+        };
+
+        await navigateToTodoPage(page, { storage: appStorage });
+
+        // Act
+        await page
+          .getByRole("button", {
+            name: "完了状態を切り替え: 財布",
+          })
+          .click();
+
+        // Assert (表示が正しいこと)
+        await expect(
+          page.getByText(MESSAGES.toast.markedAllCompletedInCategory),
+        ).toBeVisible();
+      });
+
       test("Todo の編集画面に現在のカテゴリ名が表示されること", async ({
         page,
       }) => {
