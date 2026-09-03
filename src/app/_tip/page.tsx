@@ -39,18 +39,26 @@ export default function TipPage() {
 
         <div className="rounded-md bg-gray-200 p-4 text-sm">
           <ul className="mt-0 space-y-1 *:mt-0">
-            <li>金額を選ぶと、決済画面へ進みます。</li>
             <li>投げ銭です。お礼の品やサービスの提供はございません。</li>
             <li>
-              カード情報は決済会社が取り扱います。運営者がカード番号そのものを取得・保存することはありません。
+              カード情報は決済会社が取り扱います。運営者がカード番号を取得・保存することはありません。
             </li>
             <li>
-              決済に際して、以下の情報が決済会社から提供されます。これらの情報は、決済の確認や購入履歴の管理などに利用します。
-              <ul>
-                <li>メールアドレス</li>
-                <li>カード番号の下4桁</li>
-                <li>カード名義</li>
-              </ul>
+              メールアドレス、カード番号の下4桁、カード名義が決済会社から提供されます。これらは決済の確認や購入履歴の管理に利用します。
+            </li>
+            <li>ご支援後の返金は、原則として受け付けておりません。</li>
+            <li>
+              ご不明な点は{" "}
+              <a
+                href="https://x.com/kem198_x"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-4"
+              >
+                @KeM198{" "}
+                <SquareArrowOutUpRightIcon className="inline size-3 align-middle" />
+              </a>{" "}
+              までお問い合わせください。
             </li>
           </ul>
         </div>
