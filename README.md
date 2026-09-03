@@ -23,7 +23,7 @@
 
 ### 必須
 
-- [Node.js](https://nodejs.org/ja) ^24.19.0
+- [Node.js](https://nodejs.org/ja) v24.x.x 以上
 
 ### 推奨
 
