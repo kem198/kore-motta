@@ -7,11 +7,12 @@ import { MESSAGES } from "@/constants/messages";
 import { TodoFormValues, todoFormSchema } from "@/schemas/todo-form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PlusIcon } from "lucide-react";
+import { ComponentProps } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 type TodoFormProps = {
   onSubmit: (values: TodoFormValues) => void;
-} & Omit<React.ComponentProps<"form">, "onSubmit">;
+} & Omit<ComponentProps<"form">, "onSubmit">;
 
 export function TodoForm({ onSubmit, ...props }: TodoFormProps) {
   const form = useForm<TodoFormValues>({

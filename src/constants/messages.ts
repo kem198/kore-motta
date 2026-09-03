@@ -82,6 +82,7 @@ export const MESSAGES = {
     categoryDeleted: "カテゴリを削除しました",
     reordered: "並び順を更新しました",
     markedAllIncomplete: "すべてのアイテムを未完了に戻しました",
+    markedAllCompletedInCategory: "カテゴリ内の全アイテムを完了しました！",
     reset: "登録内容を初期化しました",
     error: "エラー",
     importError: "データの形式が不正なため、インポートできませんでした。",

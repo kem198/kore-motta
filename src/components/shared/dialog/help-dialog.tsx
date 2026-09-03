@@ -24,6 +24,7 @@ import {
 import { cn } from "@/lib/utils";
 import { ListItem, ListItemWithTitle } from "@/types/help";
 import { SquareArrowOutUpRightIcon } from "lucide-react";
+import { CSSProperties, ReactNode } from "react";
 
 const OVERVIEW: ListItem[] = [
   {
@@ -37,7 +38,7 @@ const OVERVIEW: ListItem[] = [
   },
 ];
 
-const TERMS_LAST_MODIFIED = "2026-09-01";
+const TERMS_LAST_MODIFIED = "2026-09-03";
 
 const TERMS: ListItem[] = [
   {
@@ -47,7 +48,7 @@ const TERMS: ListItem[] = [
     text: "本サービスに不具合がないことを保証するものではありません。",
   },
   {
-    text: "本サービスの利用による損害について、運営者は故意または重大な過失による場合を除き、責任を負いません。",
+    text: "本サービスの利用による損害について、運営者は故意または重大な過失がある場合を除き、責任を負いません。",
   },
 ];
 
@@ -114,6 +115,21 @@ const ISSUES: ListItem[] = [
 ];
 
 const CHANGELOG = [
+  {
+    version: "v0.4.1",
+    date: "2026-09-03",
+    changes: [
+      {
+        text: "スマートフォンではチェックボタンの位置を少し中央に寄せ、タップしやすくしました。",
+      },
+      {
+        text: "未完了のアイテムしかない状態で日付をまたいだとき、完了にした通知を表示しないようにしました。",
+      },
+      {
+        text: "カテゴリ内のアイテムをすべて完了したとき、通知を出すようにしました",
+      },
+    ],
+  },
   {
     version: "v0.4.0",
     date: "2026-09-02",
@@ -200,7 +216,7 @@ const CHANGELOG = [
 ];
 
 type HelpAccordionProps = {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
 };
 
@@ -215,7 +231,7 @@ function HelpAccordion({ children, className }: HelpAccordionProps) {
 type HelpAccordionItemProps = {
   value: string;
   title: string;
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
   triggerClassName?: string;
   contentClassName?: string;
@@ -335,7 +351,7 @@ function Summary({ className }: SummaryProps) {
   return (
     <div
       className={cn(TYPESET_CLASS_NAME, className)}
-      style={{ "--typeset-size": "0.9rem" } as React.CSSProperties}
+      style={{ "--typeset-size": "0.9rem" } as CSSProperties}
     >
       <section>
         <h3>このアプリは何？</h3>

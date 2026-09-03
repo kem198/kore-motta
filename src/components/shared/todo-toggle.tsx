@@ -1,11 +1,11 @@
 import { Toggle } from "@/components/ui/toggle";
 import { cn } from "@/lib/utils";
 import { CheckIcon } from "lucide-react";
-import { ComponentProps } from "react";
+import { ComponentPropsWithoutRef } from "react";
 
 type TodoToggleProps = {
   completed: boolean;
-} & Omit<ComponentProps<typeof Toggle>, "pressed">;
+} & Omit<ComponentPropsWithoutRef<typeof Toggle>, "pressed">;
 
 export function TodoToggle({ completed, className, ...rest }: TodoToggleProps) {
   return (
