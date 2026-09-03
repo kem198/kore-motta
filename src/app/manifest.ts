@@ -1,4 +1,8 @@
-import { SITE_NAME } from "@/constants/site";
+import {
+  SITE_BACKGROUND_COLOR,
+  SITE_NAME,
+  SITE_THEME_COLOR,
+} from "@/constants/site";
 import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
@@ -7,8 +11,8 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: SITE_NAME,
     display: "standalone",
     start_url: "/",
-    theme_color: "#4e4a4e",
-    background_color: "#f8f9f9",
+    theme_color: SITE_THEME_COLOR,
+    background_color: SITE_BACKGROUND_COLOR,
     icons: [
       {
         src: "/assets/icons/icon-192x192.png",
