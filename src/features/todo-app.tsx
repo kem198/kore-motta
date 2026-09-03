@@ -20,7 +20,7 @@ import {
 import { Category } from "@/schemas/category-schema";
 import { TodoFormValues } from "@/schemas/todo-form-schema";
 import { Todo } from "@/schemas/todo-schema";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
 export function TodoApp() {
@@ -79,6 +79,34 @@ export function TodoApp() {
       description: MESSAGES.toast.repairedDescription,
     });
   }, [isLoaded, didRepair]);
+
+  // 選択中のカテゴリ内ですべての Todo が完了になったらトーストを表示する
+  // カテゴリを切り替えたときに切替先が全完了済みでは表示しない
+  const previousCategoryIdRef = useRef<string | null>(null);
+  const previousIsAllCompletedRef = useRef<boolean | null>(null);
+  useEffect(() => {
+    if (!isLoaded) {
+      return;
+    }
+
+    const categoryTodos = appStorage.data.todos.filter(
+      (todo) => todo.categoryId === activeCategoryId,
+    );
+
+    const isAllCompleted =
+      categoryTodos.length > 0 && categoryTodos.every((todo) => todo.completed);
+
+    const isSameCategory = previousCategoryIdRef.current === activeCategoryId;
+
+    const wasNotAllCompleted = previousIsAllCompletedRef.current === false;
+
+    if (isSameCategory && wasNotAllCompleted && isAllCompleted) {
+      toast.success(MESSAGES.toast.markedAllCompletedInCategory);
+    }
+
+    previousCategoryIdRef.current = activeCategoryId;
+    previousIsAllCompletedRef.current = isAllCompleted;
+  }, [isLoaded, activeCategoryId, appStorage.data.todos]);
 
   /**
    * 現在選択されているカテゴリに属する Todo の一覧。
@@ -170,61 +198,41 @@ export function TodoApp() {
   };
 
   const handleUpdate = (todo: Todo) => {
-    /** 更新対象の Todo */
-    const targetTodo = appStorage.data.todos.find(
-      (item) => item.id === todo.id,
-    );
+    updateAppStorage((current) => {
+      const targetTodo = current.data.todos.find((item) => item.id === todo.id);
 
-    if (!targetTodo) {
-      return;
-    }
+      if (!targetTodo) {
+        return current;
+      }
 
-    /** 未完了から完了にした場合のみ true */
-    const isCompletingTodo = !targetTodo.completed && todo.completed;
+      if (targetTodo.categoryId === todo.categoryId) {
+        return {
+          ...current,
+          data: {
+            ...current.data,
+            todos: current.data.todos.map((item) =>
+              item.id === todo.id ? todo : item,
+            ),
+          },
+        };
+      }
 
-    if (targetTodo.categoryId === todo.categoryId) {
-      const updatedTodos = appStorage.data.todos.map((item) =>
-        item.id === todo.id ? todo : item,
+      // カテゴリを変更した場合
+      const destinationTodos = current.data.todos.filter(
+        (item) => item.categoryId === todo.categoryId,
       );
+      const nextOrder = getNextTodoOrder(destinationTodos);
 
-      const isAllCompleted =
-        isCompletingTodo &&
-        updatedTodos
-          .filter((item) => item.categoryId === todo.categoryId)
-          .every((item) => item.completed);
-
-      updateAppStorage((current) => ({
+      return {
         ...current,
         data: {
           ...current.data,
           todos: current.data.todos.map((item) =>
-            item.id === todo.id ? todo : item,
+            item.id === todo.id ? { ...todo, order: nextOrder } : item,
           ),
         },
-      }));
-
-      if (isAllCompleted) {
-        toast.success(MESSAGES.toast.markedAllCompletedInCategory);
-      }
-
-      return;
-    }
-
-    // カテゴリを変更した場合
-    const destinationTodos = appStorage.data.todos.filter(
-      (item) => item.categoryId === todo.categoryId,
-    );
-    const nextOrder = getNextTodoOrder(destinationTodos);
-
-    updateAppStorage((current) => ({
-      ...current,
-      data: {
-        ...current.data,
-        todos: current.data.todos.map((item) =>
-          item.id === todo.id ? { ...todo, order: nextOrder } : item,
-        ),
-      },
-    }));
+      };
+    });
   };
 
   const handleMarkAllIncomplete = () => {
