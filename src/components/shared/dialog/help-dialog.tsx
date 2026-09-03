@@ -24,7 +24,6 @@ import {
 import { cn } from "@/lib/utils";
 import { ListItem, ListItemWithTitle } from "@/types/help";
 import { SquareArrowOutUpRightIcon } from "lucide-react";
-import Link from "next/link";
 
 const OVERVIEW: ListItem[] = [
   {
@@ -407,11 +406,11 @@ function Support({ className }: SupportProps) {
             <SquareArrowOutUpRightIcon className="inline size-3 align-middle" />
           </a>
         </li>
-        <li>
+        {/* <li>
           <Link href={"/tip"} className="underline underline-offset-4">
             おやつをおごる
           </Link>
-        </li>
+        </li> */}
       </ul>
     </section>
   );
