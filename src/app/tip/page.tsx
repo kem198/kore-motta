@@ -20,7 +20,7 @@ export default function TipPage() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                OFUSE{" "}
+                OFUSE で応援する{" "}
                 <SquareArrowOutUpRightIcon className="inline size-3.5 align-middle" />
               </a>
             </li>
@@ -31,7 +31,7 @@ export default function TipPage() {
           <ul className="mt-0 space-y-1 *:mt-0">
             <li>投げ銭です。お礼の品やサービスの提供はございません。</li>
             <li>
-              支援に関する情報の取り扱いについては、
+              OFUSE を通じた応援・決済にあたっては、
               <a
                 href="https://ofuse.me/terms"
                 target="_blank"
