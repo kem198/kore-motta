@@ -27,7 +27,7 @@ export default function TipPage() {
           </ul>
         </div>
 
-        <div className="rounded-md bg-gray-200 p-4 text-sm">
+        <div className="bg-muted rounded-md p-4 text-sm">
           <ul className="mt-0 space-y-1 *:mt-0">
             <li>投げ銭です。お礼の品やサービスの提供はございません。</li>
             <li>
